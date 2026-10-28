@@ -1,2 +1,10 @@
 .claude/*
 .agentkit
+
+# AWS Architecture Icons package. Only the selected SVGs are copied into web/ by scripts/import-aws-icons.mjs
+aws-icon-pkg/
+
+# Python (server/)
+server/.venv/
+__pycache__/
+.pytest_cache/
