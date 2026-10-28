@@ -1,6 +1,6 @@
 # PRD: Cloudy Labs — hands-on labs for AWS với lớp kiến trúc 3D
 
-- Trạng thái: **Bản nháp v0.6**. Đã chốt A1–A3 và A7–A12 (A10 đổi tên thành Cloudy Labs ngày 2026-10-28). A4 và A6 đã kiểm chứng qua [spike M0](../plans/reports/spike-261027-2248-m0-validation.md). A5 chờ ý kiến pháp lý
+- Trạng thái: **Bản nháp v0.7**. Đã chốt A1–A3 và A7–A13 (A10 đổi tên thành Cloudy Labs, A13 dùng và sửa icon AWS, cùng ngày 2026-10-28). A4 và A6 đã kiểm chứng qua [spike M0](../plans/reports/spike-261027-2248-m0-validation.md). A5 chờ ý kiến pháp lý, người dùng chấp nhận rủi ro trong lúc chờ
 - Cập nhật: 2026-10-28
 - Nguồn quyết định:
   - [Báo cáo nghiên cứu emulator](../plans/reports/research-261027-1027-cloud-simulator-for-hands-on-labs.md)
@@ -41,7 +41,7 @@ Sản phẩm là một phòng lab AWS chạy hoàn toàn trên máy cá nhân. �
 - Giả lập lưu lượng mạng hay data plane của VPC, và mọi hoạt ảnh luồng dữ liệu không có thật.
 - Nhiều người dùng, đăng nhập, hay triển khai lên cloud.
 - GCP. Kiến trúc chỉ chừa sẵn interface `Provider` cho nó.
-- Mô hình 3D tả thực hoặc pipeline asset (Blender/glTF). Hình khối được dựng bằng code.
+- Mô hình 3D tả thực hoặc pipeline asset (Blender/glTF). Hình khối được dựng bằng code; icon SVG được ép đùn thành khối lúc chạy (F3.8).
 - Thay thế AWS Console. Builder chỉ phục vụ các lab, không nhằm phủ toàn bộ API.
 
 ## 6. Nguyên tắc sản phẩm
@@ -58,9 +58,9 @@ Mức ưu tiên: **P0** là bắt buộc cho lát cắt đầu (Lab 6 + 7), **P1
 ### F1. Lab engine (`labctl`): P0
 
 - F1.1 Định nghĩa lab bằng YAML, gồm các trường `id, provider, title, setup, tasks, checks, hints`. Trường mới cho lớp 3D là `target`, mô tả kiến trúc mục tiêu dùng để vẽ ghost.
-- F1.2 Các lệnh `labctl up | env | start <lab> | check <lab> | reset <lab> | status`.
+- F1.2 Các lệnh `labctl up | down | env | start <lab> | check <lab> | reset <lab> | status`.
 - F1.3 Checker là các hàm Python dùng boto3, chạy trên emulator. Mỗi check trả về `pass/fail`, kèm thông điệp và ID tài nguyên liên quan để cảnh 3D tô sáng.
-- F1.4 Interface `Provider` có `client(service)`, `env()`, `reset(lab)`, `health()`. Bản đầu tiên là `AwsProvider`.
+- F1.4 Interface `Provider` có `client(service)`, `env()`, `reset()`, `health()`. Mỗi provider gắn với một emulator, lab chọn emulator qua trường `emulator`. Bản đầu tiên là `AwsProvider`.
 - F1.5 Tiến độ học lưu trong SQLite cục bộ.
 
 ### F2. Resource graph và đồng bộ trạng thái: P0
@@ -73,7 +73,7 @@ Mức ưu tiên: **P0** là bắt buộc cho lát cắt đầu (Lab 6 + 7), **P1
 ### F3. Cảnh 3D theo phong cách sơ đồ AWS: P0
 
 - F3.1 Các nhóm Region, VPC, AZ và Subnet là khay trong suốt ép đùn (extruded), có màu và viền theo quy ước nhóm của sơ đồ kiến trúc AWS. Subnet public và private có màu khác nhau.
-- F3.2 Mỗi dịch vụ là một khối có icon ở mặt trên. Icon dùng AWS Architecture Icons nếu điều khoản cho phép, nếu không thì dùng icon tự vẽ.
+- F3.2 Mỗi dịch vụ là một khối có icon ở mặt trên. Icon lấy từ AWS Architecture Icons, được ép đùn thành khối 3D nổi trên đế màu danh mục (F3.8).
 - F3.3 Bố cục được tính một cách xác định (deterministic) từ cây `contains`, nên cùng một trạng thái luôn cho ra cùng một bố cục.
 - F3.4 Có xoay, zoom và pan camera. Bấm vào một node sẽ mở panel thuộc tính lấy từ emulator.
 - F3.5 Cạnh nối thể hiện quan hệ cấu hình, ví dụ route `0.0.0.0/0` trỏ tới IGW hay SG gắn vào instance. Cạnh này không biểu diễn lưu lượng.
@@ -97,7 +97,7 @@ Mức ưu tiên: **P0** là bắt buộc cho lát cắt đầu (Lab 6 + 7), **P1
   - **Nhãn:** dùng troika `Text` có viền chữ, với font `.woff` có đủ dấu tiếng Việt. Nhãn node tự ẩn khi zoom xa.
   - **Chuyển động:** react-spring cho node xuất hiện và biến mất. Xung sáng chạy dọc cạnh nối khi có sự kiện API thật. Hover và chọn được tô bằng `Outlines`.
   - **Render theo nhu cầu:** dùng `frameloop="demand"`, chỉ render khi cảnh thay đổi.
-- F3.8 Icon dịch vụ được nạp từ một bộ icon có thể thay thế. Vì sản phẩm sẽ được thương mại hoá và chia sẻ công khai (đã chốt A8), **bộ icon mặc định là icon tự vẽ** và được phân phối cùng sản phẩm. AWS Architecture Icons chỉ được bật khi đã có xác nhận pháp lý. Khi bật, phải tuân theo điều khoản của AWS: không cắt, lật, xoay hay đổi màu icon.
+- F3.8 Icon dịch vụ được nạp từ một bộ icon có thể thay thế, qua manifest ánh xạ loại tài nguyên sang file SVG. **Bộ icon mặc định là AWS Architecture Icons** (bản 07312026, đã chốt A13). Icon được phép sửa tuỳ ý: ép đùn thành khối 3D, đổi màu theo chủ đề và ghép lên đế. Chỉ các SVG đã chọn được chép vào repo, kèm NOTICE. Gói không có icon cho Security Group, Key Pair và AZ: Security Group dùng icon khiên tự vẽ, Key Pair dùng icon IAM long-term credential của gói, AZ chỉ có đường viền. Nếu ý kiến pháp lý (A5) không cho phép, thay manifest bằng một bộ icon từ nguồn khác có giấy phép phù hợp (hoặc bộ tự vẽ) mà không phải sửa code cảnh. Thư viện object: [plan M2](../plans/261028-0230-m2-aws-icon-3d-object-library/plan.md).
 - F3.9 **Hai chủ đề sáng và tối** (đã chốt A9). Mặc định theo cài đặt hệ thống, và người học có thể chuyển tay. Mỗi chủ đề có bảng token riêng gồm màu nền, màu và độ trong suốt của khay, màu nhãn, cường độ ánh sáng và môi trường. Mỗi chủ đề cũng có biến thể icon riêng. Màu viền nhóm vẫn giữ quy ước AWS ở F3.7, chỉ chỉnh độ sáng nếu cần để đủ tương phản trên nền tối.
 
 ### F4. Builder kéo-thả: P0 (ưu tiên số 1 của người dùng)
@@ -172,6 +172,7 @@ Chi tiết ở [báo cáo brainstorm, mục 3](../plans/reports/brainstorm-26102
 | A10 | Tên sản phẩm là **Cloudy Labs**, slug `cloudy-labs` (dùng cho repo, package và thư mục). Tên cũ XLabs đã bỏ ngày 2026-10-28. Tên không chứa "AWS". Khi cần nói rõ phạm vi thì chỉ dùng "AWS" như một từ mô tả, ví dụ "Cloudy Labs — hands-on labs for AWS", và không dùng logo AWS |
 | A11 | Mã nguồn mở, giấy phép **MIT** |
 | A12 | Hình thức thương mại hoá là **bản chạy trên máy người dùng**. Không host thành dịch vụ, nên phần "Ngoài phạm vi" giữ nguyên |
+| A13 | (2026-10-28) Dùng **AWS Architecture Icons làm bộ icon mặc định** và **được sửa icon tuỳ ý**, kể cả ép đùn thành khối 3D và đổi màu. Thay thế mặc định "icon tự vẽ" và điều khoản "không cắt, lật, xoay hay đổi màu" trước đây của F3.8. Người dùng chấp nhận rủi ro pháp lý trong lúc A5 còn mở |
 
 Đã kiểm chứng qua [spike M0](../plans/reports/spike-261027-2248-m0-validation.md):
 
@@ -184,7 +185,7 @@ Còn chờ kiểm chứng:
 
 | Mã | Giả định | Ảnh hưởng nếu sai |
 |---|---|---|
-| A5 | AWS Architecture Icons được phép dùng trong sản phẩm thương mại. Hiện AWS chưa có văn bản rõ ràng nên cần ý kiến pháp lý. Từ nay giả định này không còn chặn công việc, vì mặc định đã là icon tự vẽ | Giữ icon tự vẽ (F3.8) |
+| A5 | AWS Architecture Icons, kể cả bản đã sửa, được phép phân phối trong sản phẩm thương mại mã nguồn mở. Hiện AWS chưa có văn bản rõ ràng nên cần ý kiến pháp lý. Icon được dùng trước khi có ý kiến này (A13); vẫn phải xem lại trước bản phát hành công khai | Thay manifest bằng bộ icon từ nguồn khác có giấy phép phù hợp, hoặc bộ tự vẽ (F3.8), và gỡ các SVG AWS đã chép khỏi repo |
 
 ## 11. Rủi ro
 
@@ -192,7 +193,7 @@ Còn chờ kiểm chứng:
 2. **Phạm vi lớn** vì gồm ba chế độ cộng với 3D. Giảm thiểu: làm trọn lát cắt Lab 6 + 7 bằng builder trước, rồi chat và twin dùng lại cùng resource graph.
 3. **Chat có thể gợi ý lệnh sai.** Giảm thiểu: đưa trạng thái thật vào prompt, validate lệnh, và bắt buộc người học xác nhận.
 4. **Người học quen bấm chuột thay vì gõ lệnh.** Giảm thiểu: luôn hiện lệnh CLI, và có chế độ luyện tập ở F4.7.
-5. **Rủi ro pháp lý khi thương mại hoá.** Có thể vướng thương hiệu AWS, giấy phép icon, hoặc giấy phép của thư viện. Giảm thiểu: icon tự vẽ làm mặc định, kiểm tra giấy phép của mọi phụ thuộc trước mỗi bản phát hành, và đặt tên theo câu hỏi Q4.
+5. **Rủi ro pháp lý khi thương mại hoá.** Có thể vướng thương hiệu AWS, giấy phép icon, hoặc giấy phép của thư viện. Giảm thiểu: icon nằm sau interface có thể thay thế (F3.8) để đổi sang bộ icon từ nguồn khác mà không sửa code cảnh, chỉ chép các SVG cần dùng kèm NOTICE, xin ý kiến pháp lý (A5) trước bản phát hành công khai, kiểm tra giấy phép của mọi phụ thuộc trước mỗi bản phát hành, và đặt tên theo câu hỏi Q4.
 
 ## 12. Câu hỏi mở
 
