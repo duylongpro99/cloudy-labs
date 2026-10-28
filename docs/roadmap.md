@@ -1,6 +1,6 @@
-# Roadmap: XLabs — hands-on labs for AWS
+# Roadmap: Cloudy Labs — hands-on labs for AWS
 
-- Cập nhật: 2026-10-27
+- Cập nhật: 2026-10-28
 - Yêu cầu sản phẩm: [product-requirements.md](product-requirements.md). Mã F*/NFR*/A* trong file này trỏ về PRD.
 - Mỗi giai đoạn sẽ có plan riêng trong `plans/` trước khi bắt đầu làm. Roadmap này chỉ ghi thứ tự, phạm vi và điều kiện để chuyển sang giai đoạn sau.
 - Cột "Quy mô" là ước lượng tương đối cho một người làm, chưa được kiểm chứng: S nghĩa là vài ngày, M khoảng 1–2 tuần, L khoảng 2–4 tuần.

@@ -28,7 +28,7 @@ Nguồn dữ liệu:
 | PSF-2.0 / Python Software Foundation License | 2 | Cho phép | typing_extensions, aiohappyeyeballs |
 | MPL-2.0 | 1 | Cần xem xét | certifi (gián tiếp qua httpx/requests). Dùng không sửa đổi; nếu sửa bundle CA thì phải công bố phần sửa đó |
 
-Gói lớn nhất kéo vào là `moto[server]` (cfn-lint, sympy, networkx, Flask, docker…). moto chỉ chạy cục bộ như một backend; nếu XLabs không phân phối kèm moto thì các gói này không nằm trong bản phát hành. Gói nào có metadata không chuẩn (ví dụ "BSD" chung chung của antlr4-python3-runtime) đã được đối chiếu tay: antlr4 dùng BSD-3-Clause theo repo antlr/antlr4.
+Gói lớn nhất kéo vào là `moto[server]` (cfn-lint, sympy, networkx, Flask, docker…). moto chỉ chạy cục bộ như một backend; nếu Cloudy Labs không phân phối kèm moto thì các gói này không nằm trong bản phát hành. Gói nào có metadata không chuẩn (ví dụ "BSD" chung chung của antlr4-python3-runtime) đã được đối chiếu tay: antlr4 dùng BSD-3-Clause theo repo antlr/antlr4.
 
 ## Emulator, font và icon
 
@@ -41,7 +41,7 @@ Gói lớn nhất kéo vào là `moto[server]` (cfn-lint, sympy, networkx, Flask
 | AWS Architecture Icons | không dùng | không phân phối | Giữ quyết định F3.8: icon tự vẽ là mặc định. Spike này chỉ dùng icon SVG tự vẽ (`spikes/m0-render/src/scene/icons.ts`) |
 
 Lưu ý ngoài phạm vi lockfile:
-- Image Docker mà Floci kéo lúc chạy (`public.ecr.aws/amazonlinux/amazonlinux:2023`, `alpine/socat`) do máy người học tải trực tiếp, XLabs không phân phối lại. Nếu sau này XLabs đóng gói sẵn các image này (cài offline), cần kiểm tra lại giấy phép của chúng; Amazon Linux có nhiều gói GPL.
+- Image Docker mà Floci kéo lúc chạy (`public.ecr.aws/amazonlinux/amazonlinux:2023`, `alpine/socat`) do máy người học tải trực tiếp, Cloudy Labs không phân phối lại. Nếu sau này Cloudy Labs đóng gói sẵn các image này (cài offline), cần kiểm tra lại giấy phép của chúng; Amazon Linux có nhiều gói GPL.
 - Kiểm tra này dựa trên metadata khai báo của gói, không quét nội dung từng file (ví dụ file vendor bên trong gói).
 
 ## Việc cần làm sau này
