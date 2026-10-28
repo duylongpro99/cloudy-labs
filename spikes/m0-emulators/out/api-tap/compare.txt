@@ -1,0 +1,16 @@
+== read diff (direct vs tap)
+diff -r ./out/api-tap/direct/describe-instances.json ./out/api-tap/tap/describe-instances.json
+4c4
+<             "ReservationId": "r-e4af2c9f1e8357770",
+---
+>             "ReservationId": "r-f5555aff516201547",
+== writes through tap
+ok   ec2 create-security-group -> sg-ac9c9ac1b00c6237c
+ok   ec2 authorize-security-group-ingress --group-id sg-ac9c9ac1b00c6237c --protocol tcp --port 443 --cidr 0.0.0.0/0
+ok   ec2 create-tags --resources sg-ac9c9ac1b00c6237c --tags Key=via,Value=api-tap
+ok   ec2 delete-security-group --group-id sg-ac9c9ac1b00c6237c
+ok   s3api create-bucket --bucket tap-probe
+ok   s3 cp ./out/api-tap/probe.txt s3://tap-probe/probe.txt
+ok   s3 round-trip content identical
+ok   s3 rm s3://tap-probe/probe.txt
+ok   s3api delete-bucket --bucket tap-probe

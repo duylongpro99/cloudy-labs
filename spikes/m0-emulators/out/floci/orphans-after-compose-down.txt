@@ -1,0 +1,6 @@
+Orphans after 'docker compose down -v' (Floci 2.3.0, memory mode):
+floci-aws-ec2-volume-helper
+floci-aws-ec2-i-cf9b60212850e39f0
+floci-aws-vpc-4566-us-east-1-vpc-2c6e2321
+floci-aws-vpc-4566-us-east-1-vpc-ed49eb99
+floci-aws-ec2-volumes

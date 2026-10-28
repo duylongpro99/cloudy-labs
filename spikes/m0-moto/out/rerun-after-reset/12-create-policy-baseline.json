@@ -1,0 +1,13 @@
+{
+    "Policy": {
+        "PolicyName": "lab03-alice-prefix",
+        "PolicyId": "A2CM4QUV52V68Z5RKVUGU",
+        "Arn": "arn:aws:iam::123456789012:policy/lab03-alice-prefix",
+        "Path": "/",
+        "DefaultVersionId": "v1",
+        "AttachmentCount": 0,
+        "IsAttachable": true,
+        "CreateDate": "2026-10-27T15:09:01.842904+00:00",
+        "UpdateDate": "2026-10-27T15:09:01.842905+00:00"
+    }
+}

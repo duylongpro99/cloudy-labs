@@ -1,0 +1,7 @@
+# Dependencies
+node_modules/
+.venv/
+# lab-03.sh writes fake moto credentials here; never commit them
+m0-moto/out/**/.aws/
+# Vite dev-server log
+m0-render/results/vite-dev.log

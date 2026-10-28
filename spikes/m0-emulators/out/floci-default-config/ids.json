@@ -1,0 +1,3 @@
+{"vpc":"vpc-5f0b6853","public_subnets":["subnet-7545dfaa","subnet-564a80a9"],"private_subnets":["subnet-170b26c5","subnet-81d2e2d1"],
+ "igw":"igw-966afd5d","eip":"eipalloc-258d3b021bd428f8c","nat":"nat-6e8f4afa2a9ff9b4c","rt_public":"rtb-709d251a","rt_private":"rtb-184a85aa",
+ "sg":"sg-c2ee2229d2ee146f3","instance":"i-e8a23a980dbce9a59"}

@@ -1,0 +1,16 @@
+{
+    "Return": true,
+    "SecurityGroupRules": [
+        {
+            "SecurityGroupRuleId": "sgr-c6c8df6823b45b369",
+            "GroupId": "sg-1b2fed75b6a090623",
+            "GroupOwnerId": "000000000000",
+            "IsEgress": false,
+            "IpProtocol": "tcp",
+            "FromPort": 22,
+            "ToPort": 22,
+            "CidrIpv4": "203.0.113.10/32",
+            "SecurityGroupRuleArn": "arn:aws:ec2:us-east-1:000000000000:security-group-rule/sgr-c6c8df6823b45b369"
+        }
+    ]
+}

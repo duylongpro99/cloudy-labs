@@ -1,0 +1,34 @@
+{
+  "browser": "safari",
+  "post": "flat",
+  "theme": "dark",
+  "dpr": 2,
+  "run": 1,
+  "mode": "bench",
+  "frames": 599,
+  "frameTimeMs": {
+    "p50": 17,
+    "p95": 17,
+    "p99": 20,
+    "max": 43
+  },
+  "avgFps": 59.8,
+  "drawCalls": {
+    "p50": 445,
+    "max": 445
+  },
+  "triangles": {
+    "p50": 21678,
+    "max": 21678
+  },
+  "canvasCss": {
+    "width": 1280,
+    "height": 800
+  },
+  "windowDevicePixelRatio": 2,
+  "userAgent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/26.6.2 Safari/605.1.15",
+  "measuredAt": "2026-10-27T15:45:13.902Z",
+  "programs": 12,
+  "rendererPixelRatio": 2,
+  "gpu": "Apple GPU"
+}

@@ -1,0 +1,3 @@
+<h1>XLabs Lab 7 web server</h1>
+
+HTTP 200

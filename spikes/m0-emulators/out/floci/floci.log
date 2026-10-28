@@ -1,0 +1,89 @@
+ _____  _      ___   ____   __
+|  ___|| |    / _ \ / ___| | |
+| |_   | |   | | | || |    | |
+|  _|  | |___| |_| || |__  | |
+|_|    |_____|\___/ \____| |_|
+
+   AWS Local Emulator  ·  Always Free
+
+            Powered by Quarkus 3.40.1
+2026-10-27 14:46:21,718 INFO  [io.git.hec.flo.ser.clo.CloudTrailLogWriter] CloudTrail log writer started (flushIntervalSeconds=60)
+2026-10-27 14:46:21,719 INFO  [io.git.hec.flo.ser.fir.FirehoseService] Firehose buffer flusher started (tick every 1s)
+2026-10-27 14:46:21,719 INFO  [io.git.hec.flo.ser.iot.IotMqttBrokerService] IoT MQTT broker auto-start disabled by configuration
+2026-10-27 14:46:21,719 INFO  [io.git.hec.flo.cor.com.doc.ContainerDetector] Container detection result: true
+2026-10-27 14:46:21,720 INFO  [io.git.hec.flo.cor.com.dns.EmbeddedDnsServer] Embedded DNS server started on 172.19.0.3:53, resolving [localhost.floci.io, localhost.localstack.cloud] → 172.19.0.3
+2026-10-27 14:46:21,722 INFO  [io.git.hec.flo.lif.EmulatorLifecycle] === AWS Local Emulator 2.3.0 Starting ===
+2026-10-27 14:46:21,722 INFO  [io.git.hec.flo.lif.EmulatorLifecycle] Endpoint:  http://0.0.0.0:4566
+2026-10-27 14:46:21,722 INFO  [io.git.hec.flo.lif.EmulatorLifecycle] Region:    us-east-1  Account: 000000000000
+2026-10-27 14:46:21,722 INFO  [io.git.hec.flo.lif.EmulatorLifecycle] Storage:   memory  Path: /app/data
+2026-10-27 14:46:21,722 INFO  [io.git.hec.flo.lif.EmulatorLifecycle] TLS:       disabled (HTTP only)
+2026-10-27 14:46:21,722 INFO  [io.git.hec.flo.lif.EmulatorLifecycle] IAM:       policy enforcement disabled (set FLOCI_SERVICES_IAM_ENFORCEMENT_ENABLED=true to enforce)
+2026-10-27 14:46:21,722 INFO  [io.git.hec.flo.cor.sto.PersistentPathValidator] Storage mode: persistent (state for resourceexplorer2=hybrid is written to /app/data)
+2026-10-27 14:46:21,722 INFO  [io.git.hec.flo.cor.com.ServiceRegistry] Enabled services: [ssm, sqs, s3, dynamodb, sns, lambda, apigateway, iam, msk, amazonmq, elasticache, memorydb, rds, rds-data, neptune, docdb, redshift, redshift-data, redshift-serverless, eventbridge, cloudmap, emr, emrserverless, wafv2, scheduler, cloudwatchlogs, cloudwatchmetrics, secretsmanager, apigatewayv2, kinesis, kinesisanalytics, kms, cognito, stepfunctions, swf, cloudformation, acm, athena, glue, firehose, ses, opensearch, ec2, ecs, appconfig, appconfigdata, ecr, tagging, bedrock, bedrock-runtime, eks, mwaa, pipes, bedrock-agentcore-control, bedrock-agentcore, elbv2, elb, codebuild, batch, sagemaker, codedeploy, codepipeline, servicequotas, ram, configservice, cloudtrail, lightsail, cloudcontrol, ssoadmin, ssooidc, macie2, account, accessanalyzer, identitystore, budgets, detective, inspector2, securityhub, autoscaling, applicationautoscaling, elasticbeanstalk, backup, resourceexplorer2, fis, transfer, route53, textract, comprehend, rekognition, pricing, transcribe, translate, ce, cur, bcmpricingcalculator, timestreaminfluxdb, bcmdataexports, oam, cloudfront, appsync, s3vectors, s3tables, iot, iotdata, cloudhsmv2, organizations, rum, guardduty, route53resolver, connect, appintegrations, dlm, cognitoidentity, globalaccelerator, datasync, networkfirewall, servicecatalog, controlcatalog, controltower, aps, lakeformation, efs, codegurureviewer, codeartifact, verifiedpermissions, marketplace, dms]
+2026-10-27 14:46:21,722 INFO  [io.git.hec.flo.ser.app.gra.SchemaCreationWorker] SchemaCreationWorker started with 4 threads
+2026-10-27 14:46:21,723 INFO  [io.git.hec.flo.ser.dyn.DynamoDbTtlService] DynamoDB TTL sweeper scheduled (60s interval)
+2026-10-27 14:46:21,723 INFO  [io.git.hec.flo.ser.lam.SqsEventSourcePoller] SqsEventSourcePoller initialized, 0 ESM(s) active
+2026-10-27 14:46:21,723 INFO  [io.git.hec.flo.ser.lam.DynamoDbStreamsEventSourcePoller] DynamoDbStreamsEventSourcePoller initialized
+2026-10-27 14:46:21,724 INFO  [io.git.hec.flo.cor.com.doc.DockerClientProducer] Creating control-plane DockerClient pool (maxConnections=1,024) for host: unix:///var/run/docker.sock
+2026-10-27 14:46:21,728 INFO  [io.git.hec.flo.cor.com.doc.DockerClientProducer] Wrapping control-plane docker transport in transient-I/O retry
+2026-10-27 14:46:21,740 INFO  [io.git.hec.flo.lif.EmulatorLifecycle] === AWS Local Emulator Ready ===
+2026-10-27 14:46:21,740 INFO  [io.git.hec.flo.lif.EmulatorLifecycle] Ready.
+2026-10-27 14:46:21,740 INFO  [io.git.hec.flo.ser.ec2.Ec2MetadataServer] EC2 IMDS server listening on port 9169
+2026-10-27 14:46:21,741 INFO  [io.git.hec.flo.ser.sch.ScheduleDispatcher] Scheduler dispatcher started (tick every 10s)
+2026-10-27 14:46:21,741 INFO  [io.git.hec.flo.ser.sqs.SqsRetentionSweeper] SQS retention sweeper scheduled (60s interval)
+2026-10-27 14:46:21,741 INFO  [io.git.hec.flo.ser.sec.SecretRotationScheduler] Secrets Manager rotation scheduler started (tick every 60s)
+2026-10-27 14:46:21,742 INFO  [io.git.hec.flo.cor.sto.HybridStorage] Loaded 1 entries from /app/data/resourceexplorer2-indexes.json
+2026-10-27 14:46:21,742 INFO  [io.git.hec.flo.cor.sto.HybridStorage] Loaded 1 entries from /app/data/resourceexplorer2-views.json
+2026-10-27 14:46:21,742 INFO  [io.git.hec.flo.cor.sto.HybridStorage] Loaded 1 entries from /app/data/resourceexplorer2-default-views.json
+2026-10-27 14:46:21,743 INFO  [io.git.hec.flo.cor.sto.HybridStorage] Loaded 0 entries from /app/data/resourceexplorer2-setup-tasks.json
+2026-10-27 14:46:21,743 INFO  [io.git.hec.flo.ser.ec2.FlowLogService] FlowLog generator scheduled (every 60s)
+2026-10-27 14:46:21,743 INFO  [io.git.hec.flo.con.PartitionStartupValidator] Partition: aws (default-region us-east-1, dns suffix amazonaws.com)
+2026-10-27 14:46:21,755 INFO  [io.quarkus] floci 2.3.0 native (powered by Quarkus 3.40.1) started in 0.059s. Listening on: http://0.0.0.0:4566
+2026-10-27 14:46:21,755 INFO  [io.quarkus] Profile prod activated. 
+2026-10-27 14:46:21,755 INFO  [io.quarkus] Installed features: [cdi, config-yaml, rest, rest-jackson, security, smallrye-context-propagation, vertx]
+2026-10-27 14:46:28,251 WARN  [io.git.hec.flo.ser.ec2.net.VpcNetworkManager] VPC vpc-ed49eb99 in us-east-1: declared CIDR 10.0.0.0/16 is unusable (overlaps an existing Docker network (10.0.0.0/24)). Substituting 10.240.0.0/16 from the fallback pool. Reported private IPs for this VPC will NOT match the declared CIDR.
+2026-10-27 14:46:28,251 WARN  [io.git.hec.flo.ser.ec2.net.VpcNetworkManager] Subnet subnet-d9b7ef36 in VPC vpc-ed49eb99: declared CIDR 10.0.1.0/24 cannot be used (its VPC's CIDR was itself substituted for 10.240.0.0/16). Substituting 10.240.0.0/24: reported private IPs for this subnet will NOT match the declared CIDR.
+2026-10-27 14:46:28,251 WARN  [io.git.hec.flo.ser.ec2.net.VpcNetworkManager] Subnet subnet-7d321525 in VPC vpc-ed49eb99: declared CIDR 10.0.2.0/24 cannot be used (its VPC's CIDR was itself substituted for 10.240.0.0/16). Substituting 10.240.1.0/24: reported private IPs for this subnet will NOT match the declared CIDR.
+2026-10-27 14:46:28,251 WARN  [io.git.hec.flo.ser.ec2.net.VpcNetworkManager] Subnet subnet-c1993104 in VPC vpc-ed49eb99: declared CIDR 10.0.11.0/24 cannot be used (its VPC's CIDR was itself substituted for 10.240.0.0/16). Substituting 10.240.2.0/24: reported private IPs for this subnet will NOT match the declared CIDR.
+2026-10-27 14:46:28,251 WARN  [io.git.hec.flo.ser.ec2.net.VpcNetworkManager] Subnet subnet-5c6d7f57 in VPC vpc-ed49eb99: declared CIDR 10.0.12.0/24 cannot be used (its VPC's CIDR was itself substituted for 10.240.0.0/16). Substituting 10.240.3.0/24: reported private IPs for this subnet will NOT match the declared CIDR.
+2026-10-27 14:46:35,514 INFO  [io.git.hec.flo.cor.com.doc.CurrentContainerNetworkResolver] Detected current Docker network for spawned containers: m0-emulators_default (172.19.0.3)
+2026-10-27 14:46:35,514 INFO  [io.git.hec.flo.cor.com.doc.DockerHostResolver] Running in Docker — using current network IP for Runtime API: 172.19.0.3
+2026-10-27 14:46:35,524 INFO  [io.git.hec.flo.ser.lam.lau.ImageCacheService] Image already present locally, skipping pull: public.ecr.aws/amazonlinux/amazonlinux:2023
+2026-10-27 14:46:35,564 INFO  [io.git.hec.flo.cor.com.doc.ContainerLifecycleManager] Created container 3ef5ac52e394fa2278b11ab4141ddb5918bf89d486a2172e030162461d721ec0 (name=floci-aws-ec2-i-cf9b60212850e39f0, not yet started)
+2026-10-27 14:46:35,667 INFO  [io.git.hec.flo.ser.ec2.net.VpcNetworkManager] Attached Floci container ae2762c97b66 to VPC network floci-aws-vpc-4566-us-east-1-vpc-ed49eb99
+2026-10-27 14:46:35,667 INFO  [io.git.hec.flo.ser.ec2.net.VpcNetworkManager] Created Docker network floci-aws-vpc-4566-us-east-1-vpc-ed49eb99 for VPC vpc-ed49eb99 (10.240.0.0/16) [substituted; declared 10.0.0.0/16]
+2026-10-27 14:46:35,671 INFO  [io.git.hec.flo.ser.ec2.net.VpcNetworkManager] Attached container 3ef5ac52e394fa2278b11ab4141ddb5918bf89d486a2172e030162461d721ec0 to VPC network floci-aws-vpc-4566-us-east-1-vpc-ed49eb99 at 10.240.0.11
+2026-10-27 14:46:35,765 INFO  [io.git.hec.flo.cor.com.doc.ContainerLifecycleManager] Started container 3ef5ac52e394fa2278b11ab4141ddb5918bf89d486a2172e030162461d721ec0
+2026-10-27 14:46:35,789 INFO  [io.git.hec.flo.ser.ec2.ContainerNetworkReachability] Docker backend is docker desktop: container IPs are not routable from the host, so EC2 public addresses stay on 127.0.0.1 with published ports. Set FLOCI_SERVICES_EC2_CONTAINER_IPS_ROUTABLE=true to override.
+2026-10-27 14:46:35,790 INFO  [io.git.hec.flo.ser.ec2.ContainerNetworkReachability] Container network routability from Floci's API clients: false (probed 10.240.0.11:22)
+2026-10-27 14:46:35,790 INFO  [io.git.hec.flo.ser.ec2.Ec2ContainerManager] EC2 instance i-cf9b60212850e39f0 running in container 3ef5ac52e394fa2278b11ab4141ddb5918bf89d486a2172e030162461d721ec0 (SSH host port 2200)
+2026-10-27 14:49:35,829 WARN  [io.git.hec.flo.ser.ec2.Ec2ContainerManager] Could not install IMDS proxy dependencies for EC2 instance i-cf9b60212850e39f0: Timed out after 180s
+2026-10-27 14:49:35,868 INFO  [io.git.hec.flo.ser.lam.lau.ImageCacheService] Image already present locally, skipping pull: alpine/socat
+2026-10-27 14:49:35,908 INFO  [io.git.hec.flo.cor.com.doc.ContainerLifecycleManager] Created container 9b31e14d30ea740feec193654f6642277c2ec2c08c3a8cc6061846ce7563690b (name=floci-aws-ec2-fwd-i-cf9b60212850e39f0-80, not yet started)
+2026-10-27 14:49:35,925 INFO  [io.git.hec.flo.ser.ec2.Ec2ContainerManager] Injected SSH public key into container 3ef5ac52e394fa2278b11ab4141ddb5918bf89d486a2172e030162461d721ec0
+2026-10-27 14:49:35,988 INFO  [io.git.hec.flo.cor.com.doc.ContainerLifecycleManager] Started container 9b31e14d30ea740feec193654f6642277c2ec2c08c3a8cc6061846ce7563690b
+2026-10-27 14:49:36,020 INFO  [io.git.hec.flo.ser.ec2.por.Ec2PortForwardManager] Published EC2 instance i-cf9b60212850e39f0 app port 80 on host port 30,000 (socat -> 10.240.0.11:80)
+2026-10-27 14:51:08,795 INFO  [io.git.hec.flo.ser.ec2.Ec2ContainerManager] Started sshd in EC2 instance i-cf9b60212850e39f0
+2026-10-27 14:52:25,930 INFO  [io.git.hec.flo.cor.com.doc.UserDataPipeline] UserData shellscript part 1/1 completed for EC2 instance i-cf9b60212850e39f0: (no output)
+2026-10-27 14:58:23,282 INFO  [io.git.hec.flo.cor.com.doc.DockerHostResolver] Running in Docker — using current network IP for Runtime API: 172.19.0.3
+2026-10-27 14:58:23,331 INFO  [io.git.hec.flo.cor.com.doc.ContainerLifecycleManager] Created container dfff9d23e758aec578eb987a34a72afa6279f19197afb50c2926c37f89aae181 (name=floci-aws-ec2-i-913eb958c7a899951, not yet started)
+2026-10-27 14:58:23,449 INFO  [io.git.hec.flo.ser.ec2.net.VpcNetworkManager] Attached Floci container ae2762c97b66 to VPC network floci-aws-vpc-4566-us-east-1-vpc-2c6e2321
+2026-10-27 14:58:23,449 INFO  [io.git.hec.flo.ser.ec2.net.VpcNetworkManager] Created Docker network floci-aws-vpc-4566-us-east-1-vpc-2c6e2321 for VPC vpc-2c6e2321 (10.50.0.0/16)
+2026-10-27 14:58:23,454 INFO  [io.git.hec.flo.ser.ec2.net.VpcNetworkManager] Attached container dfff9d23e758aec578eb987a34a72afa6279f19197afb50c2926c37f89aae181 to VPC network floci-aws-vpc-4566-us-east-1-vpc-2c6e2321 at 10.50.1.10
+2026-10-27 14:58:23,572 INFO  [io.git.hec.flo.cor.com.doc.ContainerLifecycleManager] Started container dfff9d23e758aec578eb987a34a72afa6279f19197afb50c2926c37f89aae181
+2026-10-27 14:58:23,591 INFO  [io.git.hec.flo.ser.ec2.Ec2ContainerManager] EC2 instance i-913eb958c7a899951 running in container dfff9d23e758aec578eb987a34a72afa6279f19197afb50c2926c37f89aae181 (SSH host port 2201)
+2026-10-27 14:58:27,385 INFO  [io.git.hec.flo.ser.lam.lau.ImageCacheService] Image already present locally, skipping pull: alpine:3.21
+2026-10-27 14:58:27,391 WARN  [io.git.hec.flo.ser.ec2.Ec2ContainerManager] Could not install IMDS proxy dependencies for EC2 instance i-913eb958c7a899951: (no output)
+2026-10-27 14:58:27,428 INFO  [io.git.hec.flo.cor.com.doc.ContainerLifecycleManager] Created container 9c997b5d8d4516fe32a215c481146312036caea1968b0c35c5c6e01aaee65d2e (name=floci-aws-ec2-volume-helper, not yet started)
+2026-10-27 14:58:27,505 INFO  [io.git.hec.flo.cor.com.doc.ContainerLifecycleManager] Started container 9c997b5d8d4516fe32a215c481146312036caea1968b0c35c5c6e01aaee65d2e
+2026-10-27 14:58:27,678 WARN  [io.git.hec.flo.ser.ec2.Ec2ContainerManager] Could not install openssh-server for EC2 instance i-913eb958c7a899951: Status 409: {"message":"container dfff9d23e758aec578eb987a34a72afa6279f19197afb50c2926c37f89aae181 is not running"}
+2026-10-27 14:58:52,201 WARN  [io.git.hec.flo.ser.ec2.net.VpcNetworkManager] Could not remove Docker network floci-aws-vpc-4566-us-east-1-vpc-2c6e2321 after 5 attempts: Status 403: {"message":"error while removing network: network floci-aws-vpc-4566-us-east-1-vpc-2c6e2321 has active endpoints (name:\"m0-floci\" id:\"30b5eb65fbbc\")"}
+. It will be reconciled at the next startup.
+2026-10-27 14:59:23,976 INFO  [io.git.hec.flo.ser.s3.S3Service] Created bucket: tap-probe in region: us-east-1
+2026-10-27 14:59:27,187 INFO  [io.git.hec.flo.ser.s3.S3Service] Deleted bucket: tap-probe
+2026-10-27 14:59:47,292 INFO  [io.git.hec.flo.ser.s3.S3Service] Created bucket: tap-probe in region: us-east-1
+2026-10-27 14:59:48,881 INFO  [io.git.hec.flo.ser.s3.S3Service] Deleted bucket: tap-probe
+2026-10-27 15:07:53,944 INFO  [io.git.hec.flo.ser.iam.IamService] Created IAM user: alice
+2026-10-27 15:07:54,348 INFO  [io.git.hec.flo.ser.iam.IamService] Created IAM policy: arn:aws:iam::000000000000:policy/lab03-alice-prefix
+2026-10-27 15:07:57,108 INFO  [io.git.hec.flo.ser.iam.IamService] Deleted IAM policy: arn:aws:iam::000000000000:policy/lab03-alice-prefix
+2026-10-27 15:07:57,497 INFO  [io.git.hec.flo.ser.iam.IamService] Deleted IAM user: alice

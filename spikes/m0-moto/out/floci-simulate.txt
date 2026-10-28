@@ -1,0 +1,7 @@
+simulate-principal-policy on Floci:
+arn:aws:s3:::lab03/alice/x	allowed
+arn:aws:s3:::lab03/bob/x	implicitDeny
+simulate-custom-policy on Floci (Condition, no context):
+arn:aws:s3:::lab03/alice/x	implicitDeny
+with context AES256:
+arn:aws:s3:::lab03/alice/x	allowed

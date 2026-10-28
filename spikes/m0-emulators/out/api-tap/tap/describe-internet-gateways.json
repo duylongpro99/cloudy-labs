@@ -1,0 +1,24 @@
+{
+    "InternetGateways": [
+        {
+            "Attachments": [
+                {
+                    "State": "available",
+                    "VpcId": "vpc-ed49eb99"
+                }
+            ],
+            "InternetGatewayId": "igw-7aceb8a3",
+            "OwnerId": "000000000000",
+            "Tags": [
+                {
+                    "Key": "Name",
+                    "Value": "lab06-igw"
+                },
+                {
+                    "Key": "lab",
+                    "Value": "06"
+                }
+            ]
+        }
+    ]
+}

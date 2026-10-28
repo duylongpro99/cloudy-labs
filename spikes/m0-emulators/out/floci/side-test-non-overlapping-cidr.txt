@@ -1,0 +1,8 @@
+vpc=vpc-2c6e2321 (10.50.0.0/16) subnet=subnet-6ad611e1 (10.50.1.0/24) instance=i-913eb958c7a899951
+{
+    "Private": "10.50.1.10",
+    "Public": null,
+    "State": "running"
+}
+INFO  [io.git.hec.flo.ser.ec2.net.VpcNetworkManager] Attached container dfff9d23e758aec578eb987a34a72afa6279f19197afb50c2926c37f89aae181 to VPC network floci-aws-vpc-4566-us-ea
+cleaned

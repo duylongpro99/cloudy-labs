@@ -1,0 +1,10 @@
+{
+    "KeyPairs": [
+        {
+            "KeyPairId": "key-d0e4dc34c10ac9997",
+            "Tags": [],
+            "KeyName": "lab07-key",
+            "KeyFingerprint": "fd:41:d9:a3:83:e8:88:da:7a:d9:83:e1:38:be:b3:73:c9:ad:d6:0d"
+        }
+    ]
+}

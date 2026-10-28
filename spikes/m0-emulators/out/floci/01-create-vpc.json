@@ -1,0 +1,31 @@
+{
+    "Vpc": {
+        "OwnerId": "000000000000",
+        "InstanceTenancy": "default",
+        "Ipv6CidrBlockAssociationSet": [],
+        "CidrBlockAssociationSet": [
+            {
+                "AssociationId": "vpc-cidr-assoc-4c95887b",
+                "CidrBlock": "10.0.0.0/16",
+                "CidrBlockState": {
+                    "State": "associated"
+                }
+            }
+        ],
+        "IsDefault": false,
+        "Tags": [
+            {
+                "Key": "Name",
+                "Value": "lab06-vpc"
+            },
+            {
+                "Key": "lab",
+                "Value": "06"
+            }
+        ],
+        "VpcId": "vpc-ed49eb99",
+        "State": "available",
+        "CidrBlock": "10.0.0.0/16",
+        "DhcpOptionsId": "dopt-default"
+    }
+}

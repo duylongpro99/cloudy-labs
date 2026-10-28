@@ -1,0 +1,13 @@
+{
+    "Policy": {
+        "PolicyName": "lab03-explicit-deny",
+        "PolicyId": "AO8FOR49BZWYDP65E4TRT",
+        "Arn": "arn:aws:iam::123456789012:policy/lab03-explicit-deny",
+        "Path": "/",
+        "DefaultVersionId": "v1",
+        "AttachmentCount": 0,
+        "IsAttachable": true,
+        "CreateDate": "2026-10-27T15:07:34.026640+00:00",
+        "UpdateDate": "2026-10-27T15:07:34.026640+00:00"
+    }
+}

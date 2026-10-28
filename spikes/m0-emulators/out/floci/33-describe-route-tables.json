@@ -1,0 +1,126 @@
+{
+    "RouteTables": [
+        {
+            "Associations": [
+                {
+                    "Main": false,
+                    "RouteTableAssociationId": "rtbassoc-57cc0f94",
+                    "RouteTableId": "rtb-01d072b6",
+                    "SubnetId": "subnet-d9b7ef36",
+                    "AssociationState": {
+                        "State": "associated"
+                    }
+                },
+                {
+                    "Main": false,
+                    "RouteTableAssociationId": "rtbassoc-9359bbfe",
+                    "RouteTableId": "rtb-01d072b6",
+                    "SubnetId": "subnet-7d321525",
+                    "AssociationState": {
+                        "State": "associated"
+                    }
+                }
+            ],
+            "RouteTableId": "rtb-01d072b6",
+            "Routes": [
+                {
+                    "DestinationCidrBlock": "10.0.0.0/16",
+                    "GatewayId": "local",
+                    "Origin": "CreateRouteTable",
+                    "State": "active"
+                },
+                {
+                    "DestinationCidrBlock": "0.0.0.0/0",
+                    "GatewayId": "igw-7aceb8a3",
+                    "Origin": "CreateRoute",
+                    "State": "active"
+                }
+            ],
+            "Tags": [
+                {
+                    "Key": "Name",
+                    "Value": "lab06-rt-public"
+                },
+                {
+                    "Key": "lab",
+                    "Value": "06"
+                }
+            ],
+            "VpcId": "vpc-ed49eb99",
+            "OwnerId": "000000000000"
+        },
+        {
+            "Associations": [
+                {
+                    "Main": false,
+                    "RouteTableAssociationId": "rtbassoc-b11eb7fe",
+                    "RouteTableId": "rtb-bcffa2b4",
+                    "SubnetId": "subnet-c1993104",
+                    "AssociationState": {
+                        "State": "associated"
+                    }
+                },
+                {
+                    "Main": false,
+                    "RouteTableAssociationId": "rtbassoc-63795cf7",
+                    "RouteTableId": "rtb-bcffa2b4",
+                    "SubnetId": "subnet-5c6d7f57",
+                    "AssociationState": {
+                        "State": "associated"
+                    }
+                }
+            ],
+            "RouteTableId": "rtb-bcffa2b4",
+            "Routes": [
+                {
+                    "DestinationCidrBlock": "10.0.0.0/16",
+                    "GatewayId": "local",
+                    "Origin": "CreateRouteTable",
+                    "State": "active"
+                },
+                {
+                    "DestinationCidrBlock": "0.0.0.0/0",
+                    "NatGatewayId": "nat-c51ca6353b8de229f",
+                    "Origin": "CreateRoute",
+                    "State": "active"
+                }
+            ],
+            "Tags": [
+                {
+                    "Key": "Name",
+                    "Value": "lab06-rt-private"
+                },
+                {
+                    "Key": "lab",
+                    "Value": "06"
+                }
+            ],
+            "VpcId": "vpc-ed49eb99",
+            "OwnerId": "000000000000"
+        },
+        {
+            "Associations": [
+                {
+                    "Main": true,
+                    "RouteTableAssociationId": "rtbassoc-9a030d111ec6308e3",
+                    "RouteTableId": "rtb-9e573a0b0c9efb70a",
+                    "AssociationState": {
+                        "State": "associated"
+                    }
+                }
+            ],
+            "RouteTableId": "rtb-9e573a0b0c9efb70a",
+            "Routes": [
+                {
+                    "DestinationCidrBlock": "10.0.0.0/16",
+                    "GatewayId": "local",
+                    "Origin": "CreateRouteTable",
+                    "State": "active"
+                }
+            ],
+            "Tags": [],
+            "VpcId": "vpc-ed49eb99",
+            "OwnerId": "000000000000"
+        }
+    ]
+}

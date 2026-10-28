@@ -1,0 +1,134 @@
+{
+    "Reservations": [
+        {
+            "ReservationId": "r-f5555aff516201547",
+            "OwnerId": "000000000000",
+            "Groups": [],
+            "Instances": [
+                {
+                    "Architecture": "arm64",
+                    "BlockDeviceMappings": [
+                        {
+                            "DeviceName": "/dev/xvda",
+                            "Ebs": {
+                                "AttachTime": "2026-10-27T14:46:35.496000+00:00",
+                                "DeleteOnTermination": true,
+                                "Status": "attached",
+                                "VolumeId": "vol-a5a7e1bb466b33e09"
+                            }
+                        }
+                    ],
+                    "ClientToken": "2be9b0bf-7249-4b8c-93e9-41951a4fb618",
+                    "EbsOptimized": false,
+                    "EnaSupport": true,
+                    "Hypervisor": "xen",
+                    "NetworkInterfaces": [
+                        {
+                            "Attachment": {
+                                "AttachTime": "2026-10-27T14:46:35.496000+00:00",
+                                "AttachmentId": "eni-attach-4953001faa4ad9a92",
+                                "DeleteOnTermination": true,
+                                "DeviceIndex": 0,
+                                "Status": "attached"
+                            },
+                            "Groups": [
+                                {
+                                    "GroupId": "sg-e2bfdb7b45e5447dd",
+                                    "GroupName": "lab07-web"
+                                }
+                            ],
+                            "NetworkInterfaceId": "eni-f96a7ef59a9a1f40d",
+                            "OwnerId": "000000000000",
+                            "PrivateDnsName": "ip-10-240-0-11.ec2.internal",
+                            "PrivateIpAddress": "10.240.0.11",
+                            "PrivateIpAddresses": [
+                                {
+                                    "Primary": true,
+                                    "PrivateDnsName": "ip-10-240-0-11.ec2.internal",
+                                    "PrivateIpAddress": "10.240.0.11"
+                                }
+                            ],
+                            "SourceDestCheck": true,
+                            "Status": "in-use",
+                            "SubnetId": "subnet-d9b7ef36",
+                            "VpcId": "vpc-ed49eb99"
+                        }
+                    ],
+                    "RootDeviceName": "/dev/xvda",
+                    "RootDeviceType": "ebs",
+                    "SecurityGroups": [
+                        {
+                            "GroupId": "sg-e2bfdb7b45e5447dd",
+                            "GroupName": "lab07-web"
+                        }
+                    ],
+                    "SourceDestCheck": true,
+                    "Tags": [
+                        {
+                            "Key": "Name",
+                            "Value": "lab07-web"
+                        },
+                        {
+                            "Key": "lab",
+                            "Value": "06"
+                        }
+                    ],
+                    "VirtualizationType": "hvm",
+                    "CpuOptions": {
+                        "CoreCount": 1,
+                        "ThreadsPerCore": 1
+                    },
+                    "CapacityReservationSpecification": {
+                        "CapacityReservationPreference": "open"
+                    },
+                    "HibernationOptions": {
+                        "Configured": false
+                    },
+                    "MetadataOptions": {
+                        "State": "applied",
+                        "HttpTokens": "optional",
+                        "HttpPutResponseHopLimit": 1,
+                        "HttpEndpoint": "enabled",
+                        "HttpProtocolIpv6": "disabled",
+                        "InstanceMetadataTags": "disabled"
+                    },
+                    "EnclaveOptions": {
+                        "Enabled": false
+                    },
+                    "PlatformDetails": "Linux/UNIX",
+                    "PrivateDnsNameOptions": {
+                        "HostnameType": "ip-name",
+                        "EnableResourceNameDnsARecord": false,
+                        "EnableResourceNameDnsAAAARecord": false
+                    },
+                    "MaintenanceOptions": {
+                        "AutoRecovery": "default"
+                    },
+                    "InstanceId": "i-cf9b60212850e39f0",
+                    "ImageId": "ami-amazonlinux2023-arm64",
+                    "State": {
+                        "Code": 16,
+                        "Name": "running"
+                    },
+                    "PrivateDnsName": "ip-10-240-0-11.ec2.internal",
+                    "PublicDnsName": "localhost",
+                    "KeyName": "lab07-key",
+                    "AmiLaunchIndex": 0,
+                    "InstanceType": "t4g.micro",
+                    "LaunchTime": "2026-10-27T14:46:35.496000+00:00",
+                    "Placement": {
+                        "Tenancy": "default",
+                        "AvailabilityZone": "us-east-1a"
+                    },
+                    "Monitoring": {
+                        "State": "disabled"
+                    },
+                    "SubnetId": "subnet-d9b7ef36",
+                    "VpcId": "vpc-ed49eb99",
+                    "PrivateIpAddress": "10.240.0.11",
+                    "PublicIpAddress": "127.0.0.1"
+                }
+            ]
+        }
+    ]
+}

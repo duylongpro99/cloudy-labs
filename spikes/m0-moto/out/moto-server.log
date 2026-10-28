@@ -1,0 +1,486 @@
+[31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on http://127.0.0.1:5050
+[33mPress CTRL+C to quit[0m
+127.0.0.1 - - [27/Oct/2026 22:07:26] "GET /moto-api/ HTTP/1.1" 200 -
+127.0.0.1 - - [27/Oct/2026 22:07:28] "POST / HTTP/1.1" 200 -
+127.0.0.1 - - [27/Oct/2026 22:07:28] "POST / HTTP/1.1" 200 -
+127.0.0.1 - - [27/Oct/2026 22:07:28] "POST / HTTP/1.1" 200 -
+127.0.0.1 - - [27/Oct/2026 22:07:29] "[31m[1mPOST / HTTP/1.1[0m" 403 -
+127.0.0.1 - - [27/Oct/2026 22:07:29] "PUT /lab03 HTTP/1.1" 200 -
+127.0.0.1 - - [27/Oct/2026 22:07:30] "POST / HTTP/1.1" 200 -
+127.0.0.1 - - [27/Oct/2026 22:07:30] "POST / HTTP/1.1" 200 -
+127.0.0.1 - - [27/Oct/2026 22:07:31] "POST / HTTP/1.1" 200 -
+127.0.0.1 - - [27/Oct/2026 22:07:31] "POST / HTTP/1.1" 200 -
+127.0.0.1 - - [27/Oct/2026 22:07:31] "PUT /lab03/alice/x HTTP/1.1" 200 -
+127.0.0.1 - - [27/Oct/2026 22:07:32] "[31m[1mPUT /lab03/bob/x HTTP/1.1[0m" 403 -
+127.0.0.1 - - [27/Oct/2026 22:07:32] "[31m[1mPOST / HTTP/1.1[0m" 403 -
+127.0.0.1 - - [27/Oct/2026 22:07:33] "[31m[1mGET /lab03/alice/x HTTP/1.1[0m" 403 -
+127.0.0.1 - - [27/Oct/2026 22:07:33] "POST / HTTP/1.1" 200 -
+127.0.0.1 - - [27/Oct/2026 22:07:34] "POST / HTTP/1.1" 200 -
+127.0.0.1 - - [27/Oct/2026 22:07:34] "POST / HTTP/1.1" 200 -
+127.0.0.1 - - [27/Oct/2026 22:07:34] "PUT /lab03/alice/y HTTP/1.1" 200 -
+127.0.0.1 - - [27/Oct/2026 22:07:35] "[31m[1mPUT /lab03/bob/y HTTP/1.1[0m" 403 -
+127.0.0.1 - - [27/Oct/2026 22:07:35] "PUT /lab03/carol/y HTTP/1.1" 200 -
+127.0.0.1 - - [27/Oct/2026 22:07:36] "POST / HTTP/1.1" 200 -
+127.0.0.1 - - [27/Oct/2026 22:07:36] "POST / HTTP/1.1" 200 -
+127.0.0.1 - - [27/Oct/2026 22:07:36] "POST / HTTP/1.1" 200 -
+127.0.0.1 - - [27/Oct/2026 22:07:37] "PUT /lab03/alice/z HTTP/1.1" 200 -
+127.0.0.1 - - [27/Oct/2026 22:07:37] "PUT /lab03/alice/z2 HTTP/1.1" 200 -
+127.0.0.1 - - [27/Oct/2026 22:07:38] "POST / HTTP/1.1" 200 -
+127.0.0.1 - - [27/Oct/2026 22:07:38] "POST / HTTP/1.1" 200 -
+127.0.0.1 - - [27/Oct/2026 22:07:38] "POST / HTTP/1.1" 200 -
+127.0.0.1 - - [27/Oct/2026 22:07:39] "[35m[1mPOST / HTTP/1.1[0m" 500 -
+Error on request:
+Traceback (most recent call last):
+  File "/Users/onedayin20902/personal/agent/aws-hands-on-labs/spikes/m0-moto/.venv/lib/python3.13/site-packages/werkzeug/serving.py", line 374, in run_wsgi
+    execute(self.server.app)
+    ~~~~~~~^^^^^^^^^^^^^^^^^
+  File "/Users/onedayin20902/personal/agent/aws-hands-on-labs/spikes/m0-moto/.venv/lib/python3.13/site-packages/werkzeug/serving.py", line 335, in execute
+    application_iter = app(environ, start_response)
+  File "/Users/onedayin20902/personal/agent/aws-hands-on-labs/spikes/m0-moto/.venv/lib/python3.13/site-packages/moto/moto_server/werkzeug_app.py", line 347, in __call__
+    return backend_app(environ, start_response)
+  File "/Users/onedayin20902/personal/agent/aws-hands-on-labs/spikes/m0-moto/.venv/lib/python3.13/site-packages/flask/app.py", line 1536, in __call__
+    return self.wsgi_app(environ, start_response)
+           ~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/onedayin20902/personal/agent/aws-hands-on-labs/spikes/m0-moto/.venv/lib/python3.13/site-packages/flask/app.py", line 1514, in wsgi_app
+    response = self.handle_exception(e)
+  File "/Users/onedayin20902/personal/agent/aws-hands-on-labs/spikes/m0-moto/.venv/lib/python3.13/site-packages/flask_cors/extension.py", line 206, in wrapped_function
+    return cors_after_request(app_any.make_response(f(*args, **kwargs)))
+                                                    ~^^^^^^^^^^^^^^^^^
+  File "/Users/onedayin20902/personal/agent/aws-hands-on-labs/spikes/m0-moto/.venv/lib/python3.13/site-packages/flask/app.py", line 1511, in wsgi_app
+    response = self.full_dispatch_request()
+  File "/Users/onedayin20902/personal/agent/aws-hands-on-labs/spikes/m0-moto/.venv/lib/python3.13/site-packages/flask/app.py", line 919, in full_dispatch_request
+    rv = self.handle_user_exception(e)
+  File "/Users/onedayin20902/personal/agent/aws-hands-on-labs/spikes/m0-moto/.venv/lib/python3.13/site-packages/flask_cors/extension.py", line 206, in wrapped_function
+    return cors_after_request(app_any.make_response(f(*args, **kwargs)))
+                                                    ~^^^^^^^^^^^^^^^^^
+  File "/Users/onedayin20902/personal/agent/aws-hands-on-labs/spikes/m0-moto/.venv/lib/python3.13/site-packages/flask/app.py", line 917, in full_dispatch_request
+    rv = self.dispatch_request()
+  File "/Users/onedayin20902/personal/agent/aws-hands-on-labs/spikes/m0-moto/.venv/lib/python3.13/site-packages/flask/app.py", line 902, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**view_args)  # type: ignore[no-any-return]
+           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^
+  File "/Users/onedayin20902/personal/agent/aws-hands-on-labs/spikes/m0-moto/.venv/lib/python3.13/site-packages/moto/core/utils.py", line 130, in __call__
+    result = self.callback(request, request.raw_url, dict(request.headers))
+  File "/Users/onedayin20902/personal/agent/aws-hands-on-labs/spikes/m0-moto/.venv/lib/python3.13/site-packages/moto/core/responses.py", line 220, in dispatch
+    return cls()._dispatch(*args, **kwargs)
+           ~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^
+  File "/Users/onedayin20902/personal/agent/aws-hands-on-labs/spikes/m0-moto/.venv/lib/python3.13/site-packages/moto/core/responses.py", line 404, in _dispatch
+    return self.call_action()
+           ~~~~~~~~~~~~~~~~^^
+  File "/Users/onedayin20902/personal/agent/aws-hands-on-labs/spikes/m0-moto/.venv/lib/python3.13/site-packages/moto/core/responses.py", line 567, in call_action
+    raise NotImplementedError(f"The {action} action has not been implemented")
+NotImplementedError: The simulate_principal_policy action has not been implemented
+127.0.0.1 - - [27/Oct/2026 22:07:39] "[35m[1mPOST / HTTP/1.1[0m" 500 -
+Error on request:
+Traceback (most recent call last):
+  File "/Users/onedayin20902/personal/agent/aws-hands-on-labs/spikes/m0-moto/.venv/lib/python3.13/site-packages/werkzeug/serving.py", line 374, in run_wsgi
+    execute(self.server.app)
+    ~~~~~~~^^^^^^^^^^^^^^^^^
+  File "/Users/onedayin20902/personal/agent/aws-hands-on-labs/spikes/m0-moto/.venv/lib/python3.13/site-packages/werkzeug/serving.py", line 335, in execute
+    application_iter = app(environ, start_response)
+  File "/Users/onedayin20902/personal/agent/aws-hands-on-labs/spikes/m0-moto/.venv/lib/python3.13/site-packages/moto/moto_server/werkzeug_app.py", line 347, in __call__
+    return backend_app(environ, start_response)
+  File "/Users/onedayin20902/personal/agent/aws-hands-on-labs/spikes/m0-moto/.venv/lib/python3.13/site-packages/flask/app.py", line 1536, in __call__
+    return self.wsgi_app(environ, start_response)
+           ~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/onedayin20902/personal/agent/aws-hands-on-labs/spikes/m0-moto/.venv/lib/python3.13/site-packages/flask/app.py", line 1514, in wsgi_app
+    response = self.handle_exception(e)
+  File "/Users/onedayin20902/personal/agent/aws-hands-on-labs/spikes/m0-moto/.venv/lib/python3.13/site-packages/flask_cors/extension.py", line 206, in wrapped_function
+    return cors_after_request(app_any.make_response(f(*args, **kwargs)))
+                                                    ~^^^^^^^^^^^^^^^^^
+  File "/Users/onedayin20902/personal/agent/aws-hands-on-labs/spikes/m0-moto/.venv/lib/python3.13/site-packages/flask/app.py", line 1511, in wsgi_app
+    response = self.full_dispatch_request()
+  File "/Users/onedayin20902/personal/agent/aws-hands-on-labs/spikes/m0-moto/.venv/lib/python3.13/site-packages/flask/app.py", line 919, in full_dispatch_request
+    rv = self.handle_user_exception(e)
+  File "/Users/onedayin20902/personal/agent/aws-hands-on-labs/spikes/m0-moto/.venv/lib/python3.13/site-packages/flask_cors/extension.py", line 206, in wrapped_function
+    return cors_after_request(app_any.make_response(f(*args, **kwargs)))
+                                                    ~^^^^^^^^^^^^^^^^^
+  File "/Users/onedayin20902/personal/agent/aws-hands-on-labs/spikes/m0-moto/.venv/lib/python3.13/site-packages/flask/app.py", line 917, in full_dispatch_request
+    rv = self.dispatch_request()
+  File "/Users/onedayin20902/personal/agent/aws-hands-on-labs/spikes/m0-moto/.venv/lib/python3.13/site-packages/flask/app.py", line 902, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**view_args)  # type: ignore[no-any-return]
+           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^
+  File "/Users/onedayin20902/personal/agent/aws-hands-on-labs/spikes/m0-moto/.venv/lib/python3.13/site-packages/moto/core/utils.py", line 130, in __call__
+    result = self.callback(request, request.raw_url, dict(request.headers))
+  File "/Users/onedayin20902/personal/agent/aws-hands-on-labs/spikes/m0-moto/.venv/lib/python3.13/site-packages/moto/core/responses.py", line 220, in dispatch
+    return cls()._dispatch(*args, **kwargs)
+           ~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^
+  File "/Users/onedayin20902/personal/agent/aws-hands-on-labs/spikes/m0-moto/.venv/lib/python3.13/site-packages/moto/core/responses.py", line 404, in _dispatch
+    return self.call_action()
+           ~~~~~~~~~~~~~~~~^^
+  File "/Users/onedayin20902/personal/agent/aws-hands-on-labs/spikes/m0-moto/.venv/lib/python3.13/site-packages/moto/core/responses.py", line 567, in call_action
+    raise NotImplementedError(f"The {action} action has not been implemented")
+NotImplementedError: The simulate_custom_policy action has not been implemented
+127.0.0.1 - - [27/Oct/2026 22:08:12] "PUT /lab03/alice/tap HTTP/1.1" 200 -
+127.0.0.1 - - [27/Oct/2026 22:08:13] "[31m[1mPUT /lab03/bob/tap HTTP/1.1[0m" 403 -
+127.0.0.1 - - [27/Oct/2026 22:08:13] "POST / HTTP/1.1" 200 -
+127.0.0.1 - - [27/Oct/2026 22:08:13] "[35m[1mPUT /lab03/alice/forged HTTP/1.1[0m" 500 -
+Error on request:
+Traceback (most recent call last):
+  File "/Users/onedayin20902/personal/agent/aws-hands-on-labs/spikes/m0-moto/.venv/lib/python3.13/site-packages/werkzeug/serving.py", line 374, in run_wsgi
+    execute(self.server.app)
+    ~~~~~~~^^^^^^^^^^^^^^^^^
+  File "/Users/onedayin20902/personal/agent/aws-hands-on-labs/spikes/m0-moto/.venv/lib/python3.13/site-packages/werkzeug/serving.py", line 335, in execute
+    application_iter = app(environ, start_response)
+  File "/Users/onedayin20902/personal/agent/aws-hands-on-labs/spikes/m0-moto/.venv/lib/python3.13/site-packages/moto/moto_server/werkzeug_app.py", line 347, in __call__
+    return backend_app(environ, start_response)
+  File "/Users/onedayin20902/personal/agent/aws-hands-on-labs/spikes/m0-moto/.venv/lib/python3.13/site-packages/flask/app.py", line 1536, in __call__
+    return self.wsgi_app(environ, start_response)
+           ~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/onedayin20902/personal/agent/aws-hands-on-labs/spikes/m0-moto/.venv/lib/python3.13/site-packages/flask/app.py", line 1514, in wsgi_app
+    response = self.handle_exception(e)
+  File "/Users/onedayin20902/personal/agent/aws-hands-on-labs/spikes/m0-moto/.venv/lib/python3.13/site-packages/flask_cors/extension.py", line 206, in wrapped_function
+    return cors_after_request(app_any.make_response(f(*args, **kwargs)))
+                                                    ~^^^^^^^^^^^^^^^^^
+  File "/Users/onedayin20902/personal/agent/aws-hands-on-labs/spikes/m0-moto/.venv/lib/python3.13/site-packages/flask/app.py", line 1511, in wsgi_app
+    response = self.full_dispatch_request()
+  File "/Users/onedayin20902/personal/agent/aws-hands-on-labs/spikes/m0-moto/.venv/lib/python3.13/site-packages/flask/app.py", line 919, in full_dispatch_request
+    rv = self.handle_user_exception(e)
+  File "/Users/onedayin20902/personal/agent/aws-hands-on-labs/spikes/m0-moto/.venv/lib/python3.13/site-packages/flask_cors/extension.py", line 206, in wrapped_function
+    return cors_after_request(app_any.make_response(f(*args, **kwargs)))
+                                                    ~^^^^^^^^^^^^^^^^^
+  File "/Users/onedayin20902/personal/agent/aws-hands-on-labs/spikes/m0-moto/.venv/lib/python3.13/site-packages/flask/app.py", line 917, in full_dispatch_request
+    rv = self.dispatch_request()
+  File "/Users/onedayin20902/personal/agent/aws-hands-on-labs/spikes/m0-moto/.venv/lib/python3.13/site-packages/flask/app.py", line 902, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**view_args)  # type: ignore[no-any-return]
+           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^
+  File "/Users/onedayin20902/personal/agent/aws-hands-on-labs/spikes/m0-moto/.venv/lib/python3.13/site-packages/moto/core/utils.py", line 130, in __call__
+    result = self.callback(request, request.raw_url, dict(request.headers))
+  File "/Users/onedayin20902/personal/agent/aws-hands-on-labs/spikes/m0-moto/.venv/lib/python3.13/site-packages/moto/s3/responses.py", line 384, in key_dispatch
+    return cls().key_response(*args, **kwargs)
+           ~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^
+  File "/Users/onedayin20902/personal/agent/aws-hands-on-labs/spikes/m0-moto/.venv/lib/python3.13/site-packages/moto/s3/responses.py", line 1884, in key_response
+    response = self._key_response(request, full_url)
+  File "/Users/onedayin20902/personal/agent/aws-hands-on-labs/spikes/m0-moto/.venv/lib/python3.13/site-packages/moto/s3/responses.py", line 1961, in _key_response
+    return self._key_response_put(query, key_name)
+           ~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^
+  File "/Users/onedayin20902/personal/agent/aws-hands-on-labs/spikes/m0-moto/.venv/lib/python3.13/site-packages/moto/s3/responses.py", line 2222, in _key_response_put
+    self._authenticate_and_authorize_s3_action(
+    ^
+  File "/Users/onedayin20902/personal/agent/aws-hands-on-labs/spikes/m0-moto/.venv/lib/python3.13/site-packages/moto/core/authorization.py", line 80, in _authenticate_and_authorize_s3_action
+    self._authenticate_and_authorize_action(S3IAMRequest, resource)
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/onedayin20902/personal/agent/aws-hands-on-labs/spikes/m0-moto/.venv/lib/python3.13/site-packages/moto/core/authorization.py", line 53, in _authenticate_and_authorize_action
+    iam_request = iam_request_cls(
+    
+  File "/Users/onedayin20902/personal/agent/aws-hands-on-labs/spikes/m0-moto/.venv/lib/python3.13/site-packages/moto/iam/access_control.py", line 233, in __init__
+    "Credential=", ",", self._headers["Authorization"]
+                        ~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^
+  File "/Users/onedayin20902/personal/agent/aws-hands-on-labs/spikes/m0-moto/.venv/lib/python3.13/site-packages/werkzeug/datastructures/headers.py", line 651, in __getitem__
+    return self._get_key(key)
+           ~~~~~~~~~~~~~^^^^^
+  File "/Users/onedayin20902/personal/agent/aws-hands-on-labs/spikes/m0-moto/.venv/lib/python3.13/site-packages/werkzeug/datastructures/headers.py", line 662, in _get_key
+    return self.environ[f"HTTP_{key}"]  # type: ignore[no-any-return]
+           ~~~~~~~~~~~~^^^^^^^^^^^^^^^
+KeyError: 'HTTP_AUTHORIZATION'
+127.0.0.1 - - [27/Oct/2026 22:08:14] "[35m[1mPUT /lab03/alice/forged HTTP/1.1[0m" 500 -
+Error on request:
+Traceback (most recent call last):
+  File "/Users/onedayin20902/personal/agent/aws-hands-on-labs/spikes/m0-moto/.venv/lib/python3.13/site-packages/werkzeug/serving.py", line 374, in run_wsgi
+    execute(self.server.app)
+    ~~~~~~~^^^^^^^^^^^^^^^^^
+  File "/Users/onedayin20902/personal/agent/aws-hands-on-labs/spikes/m0-moto/.venv/lib/python3.13/site-packages/werkzeug/serving.py", line 335, in execute
+    application_iter = app(environ, start_response)
+  File "/Users/onedayin20902/personal/agent/aws-hands-on-labs/spikes/m0-moto/.venv/lib/python3.13/site-packages/moto/moto_server/werkzeug_app.py", line 347, in __call__
+    return backend_app(environ, start_response)
+  File "/Users/onedayin20902/personal/agent/aws-hands-on-labs/spikes/m0-moto/.venv/lib/python3.13/site-packages/flask/app.py", line 1536, in __call__
+    return self.wsgi_app(environ, start_response)
+           ~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/onedayin20902/personal/agent/aws-hands-on-labs/spikes/m0-moto/.venv/lib/python3.13/site-packages/flask/app.py", line 1514, in wsgi_app
+    response = self.handle_exception(e)
+  File "/Users/onedayin20902/personal/agent/aws-hands-on-labs/spikes/m0-moto/.venv/lib/python3.13/site-packages/flask_cors/extension.py", line 206, in wrapped_function
+    return cors_after_request(app_any.make_response(f(*args, **kwargs)))
+                                                    ~^^^^^^^^^^^^^^^^^
+  File "/Users/onedayin20902/personal/agent/aws-hands-on-labs/spikes/m0-moto/.venv/lib/python3.13/site-packages/flask/app.py", line 1511, in wsgi_app
+    response = self.full_dispatch_request()
+  File "/Users/onedayin20902/personal/agent/aws-hands-on-labs/spikes/m0-moto/.venv/lib/python3.13/site-packages/flask/app.py", line 919, in full_dispatch_request
+    rv = self.handle_user_exception(e)
+  File "/Users/onedayin20902/personal/agent/aws-hands-on-labs/spikes/m0-moto/.venv/lib/python3.13/site-packages/flask_cors/extension.py", line 206, in wrapped_function
+    return cors_after_request(app_any.make_response(f(*args, **kwargs)))
+                                                    ~^^^^^^^^^^^^^^^^^
+  File "/Users/onedayin20902/personal/agent/aws-hands-on-labs/spikes/m0-moto/.venv/lib/python3.13/site-packages/flask/app.py", line 917, in full_dispatch_request
+    rv = self.dispatch_request()
+  File "/Users/onedayin20902/personal/agent/aws-hands-on-labs/spikes/m0-moto/.venv/lib/python3.13/site-packages/flask/app.py", line 902, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**view_args)  # type: ignore[no-any-return]
+           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^
+  File "/Users/onedayin20902/personal/agent/aws-hands-on-labs/spikes/m0-moto/.venv/lib/python3.13/site-packages/moto/core/utils.py", line 130, in __call__
+    result = self.callback(request, request.raw_url, dict(request.headers))
+  File "/Users/onedayin20902/personal/agent/aws-hands-on-labs/spikes/m0-moto/.venv/lib/python3.13/site-packages/moto/s3/responses.py", line 384, in key_dispatch
+    return cls().key_response(*args, **kwargs)
+           ~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^
+  File "/Users/onedayin20902/personal/agent/aws-hands-on-labs/spikes/m0-moto/.venv/lib/python3.13/site-packages/moto/s3/responses.py", line 1884, in key_response
+    response = self._key_response(request, full_url)
+  File "/Users/onedayin20902/personal/agent/aws-hands-on-labs/spikes/m0-moto/.venv/lib/python3.13/site-packages/moto/s3/responses.py", line 1961, in _key_response
+    return self._key_response_put(query, key_name)
+           ~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^
+  File "/Users/onedayin20902/personal/agent/aws-hands-on-labs/spikes/m0-moto/.venv/lib/python3.13/site-packages/moto/s3/responses.py", line 2222, in _key_response_put
+    self._authenticate_and_authorize_s3_action(
+    ^
+  File "/Users/onedayin20902/personal/agent/aws-hands-on-labs/spikes/m0-moto/.venv/lib/python3.13/site-packages/moto/core/authorization.py", line 80, in _authenticate_and_authorize_s3_action
+    self._authenticate_and_authorize_action(S3IAMRequest, resource)
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/onedayin20902/personal/agent/aws-hands-on-labs/spikes/m0-moto/.venv/lib/python3.13/site-packages/moto/core/authorization.py", line 53, in _authenticate_and_authorize_action
+    iam_request = iam_request_cls(
+    
+  File "/Users/onedayin20902/personal/agent/aws-hands-on-labs/spikes/m0-moto/.venv/lib/python3.13/site-packages/moto/iam/access_control.py", line 233, in __init__
+    "Credential=", ",", self._headers["Authorization"]
+                        ~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^
+  File "/Users/onedayin20902/personal/agent/aws-hands-on-labs/spikes/m0-moto/.venv/lib/python3.13/site-packages/werkzeug/datastructures/headers.py", line 651, in __getitem__
+    return self._get_key(key)
+           ~~~~~~~~~~~~~^^^^^
+  File "/Users/onedayin20902/personal/agent/aws-hands-on-labs/spikes/m0-moto/.venv/lib/python3.13/site-packages/werkzeug/datastructures/headers.py", line 662, in _get_key
+    return self.environ[f"HTTP_{key}"]  # type: ignore[no-any-return]
+           ~~~~~~~~~~~~^^^^^^^^^^^^^^^
+KeyError: 'HTTP_AUTHORIZATION'
+127.0.0.1 - - [27/Oct/2026 22:08:15] "[35m[1mPUT /lab03/alice/forged HTTP/1.1[0m" 500 -
+Error on request:
+Traceback (most recent call last):
+  File "/Users/onedayin20902/personal/agent/aws-hands-on-labs/spikes/m0-moto/.venv/lib/python3.13/site-packages/werkzeug/serving.py", line 374, in run_wsgi
+    execute(self.server.app)
+    ~~~~~~~^^^^^^^^^^^^^^^^^
+  File "/Users/onedayin20902/personal/agent/aws-hands-on-labs/spikes/m0-moto/.venv/lib/python3.13/site-packages/werkzeug/serving.py", line 335, in execute
+    application_iter = app(environ, start_response)
+  File "/Users/onedayin20902/personal/agent/aws-hands-on-labs/spikes/m0-moto/.venv/lib/python3.13/site-packages/moto/moto_server/werkzeug_app.py", line 347, in __call__
+    return backend_app(environ, start_response)
+  File "/Users/onedayin20902/personal/agent/aws-hands-on-labs/spikes/m0-moto/.venv/lib/python3.13/site-packages/flask/app.py", line 1536, in __call__
+    return self.wsgi_app(environ, start_response)
+           ~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/onedayin20902/personal/agent/aws-hands-on-labs/spikes/m0-moto/.venv/lib/python3.13/site-packages/flask/app.py", line 1514, in wsgi_app
+    response = self.handle_exception(e)
+  File "/Users/onedayin20902/personal/agent/aws-hands-on-labs/spikes/m0-moto/.venv/lib/python3.13/site-packages/flask_cors/extension.py", line 206, in wrapped_function
+    return cors_after_request(app_any.make_response(f(*args, **kwargs)))
+                                                    ~^^^^^^^^^^^^^^^^^
+  File "/Users/onedayin20902/personal/agent/aws-hands-on-labs/spikes/m0-moto/.venv/lib/python3.13/site-packages/flask/app.py", line 1511, in wsgi_app
+    response = self.full_dispatch_request()
+  File "/Users/onedayin20902/personal/agent/aws-hands-on-labs/spikes/m0-moto/.venv/lib/python3.13/site-packages/flask/app.py", line 919, in full_dispatch_request
+    rv = self.handle_user_exception(e)
+  File "/Users/onedayin20902/personal/agent/aws-hands-on-labs/spikes/m0-moto/.venv/lib/python3.13/site-packages/flask_cors/extension.py", line 206, in wrapped_function
+    return cors_after_request(app_any.make_response(f(*args, **kwargs)))
+                                                    ~^^^^^^^^^^^^^^^^^
+  File "/Users/onedayin20902/personal/agent/aws-hands-on-labs/spikes/m0-moto/.venv/lib/python3.13/site-packages/flask/app.py", line 917, in full_dispatch_request
+    rv = self.dispatch_request()
+  File "/Users/onedayin20902/personal/agent/aws-hands-on-labs/spikes/m0-moto/.venv/lib/python3.13/site-packages/flask/app.py", line 902, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**view_args)  # type: ignore[no-any-return]
+           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^
+  File "/Users/onedayin20902/personal/agent/aws-hands-on-labs/spikes/m0-moto/.venv/lib/python3.13/site-packages/moto/core/utils.py", line 130, in __call__
+    result = self.callback(request, request.raw_url, dict(request.headers))
+  File "/Users/onedayin20902/personal/agent/aws-hands-on-labs/spikes/m0-moto/.venv/lib/python3.13/site-packages/moto/s3/responses.py", line 384, in key_dispatch
+    return cls().key_response(*args, **kwargs)
+           ~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^
+  File "/Users/onedayin20902/personal/agent/aws-hands-on-labs/spikes/m0-moto/.venv/lib/python3.13/site-packages/moto/s3/responses.py", line 1884, in key_response
+    response = self._key_response(request, full_url)
+  File "/Users/onedayin20902/personal/agent/aws-hands-on-labs/spikes/m0-moto/.venv/lib/python3.13/site-packages/moto/s3/responses.py", line 1961, in _key_response
+    return self._key_response_put(query, key_name)
+           ~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^
+  File "/Users/onedayin20902/personal/agent/aws-hands-on-labs/spikes/m0-moto/.venv/lib/python3.13/site-packages/moto/s3/responses.py", line 2222, in _key_response_put
+    self._authenticate_and_authorize_s3_action(
+    ^
+  File "/Users/onedayin20902/personal/agent/aws-hands-on-labs/spikes/m0-moto/.venv/lib/python3.13/site-packages/moto/core/authorization.py", line 80, in _authenticate_and_authorize_s3_action
+    self._authenticate_and_authorize_action(S3IAMRequest, resource)
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/onedayin20902/personal/agent/aws-hands-on-labs/spikes/m0-moto/.venv/lib/python3.13/site-packages/moto/core/authorization.py", line 53, in _authenticate_and_authorize_action
+    iam_request = iam_request_cls(
+    
+  File "/Users/onedayin20902/personal/agent/aws-hands-on-labs/spikes/m0-moto/.venv/lib/python3.13/site-packages/moto/iam/access_control.py", line 233, in __init__
+    "Credential=", ",", self._headers["Authorization"]
+                        ~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^
+  File "/Users/onedayin20902/personal/agent/aws-hands-on-labs/spikes/m0-moto/.venv/lib/python3.13/site-packages/werkzeug/datastructures/headers.py", line 651, in __getitem__
+    return self._get_key(key)
+           ~~~~~~~~~~~~~^^^^^
+  File "/Users/onedayin20902/personal/agent/aws-hands-on-labs/spikes/m0-moto/.venv/lib/python3.13/site-packages/werkzeug/datastructures/headers.py", line 662, in _get_key
+    return self.environ[f"HTTP_{key}"]  # type: ignore[no-any-return]
+           ~~~~~~~~~~~~^^^^^^^^^^^^^^^
+KeyError: 'HTTP_AUTHORIZATION'
+127.0.0.1 - - [27/Oct/2026 22:08:15] "[31m[1mPUT /lab03/alice/hostcheck HTTP/1.1[0m" 403 -
+127.0.0.1 - - [27/Oct/2026 22:08:23] "POST /moto-api/reset HTTP/1.1" 200 -
+127.0.0.1 - - [27/Oct/2026 22:08:24] "[31m[1mPOST / HTTP/1.1[0m" 403 -
+127.0.0.1 - - [27/Oct/2026 22:08:24] "[31m[1mPOST / HTTP/1.1[0m" 403 -
+127.0.0.1 - - [27/Oct/2026 22:08:24] "[31m[1mGET / HTTP/1.1[0m" 403 -
+127.0.0.1 - - [27/Oct/2026 22:08:25] "GET /moto-api/data.json HTTP/1.1" 200 -
+127.0.0.1 - - [27/Oct/2026 22:08:30] "[35m[1mPOST /moto-api/reset-auth HTTP/1.1[0m" 500 -
+Error on request:
+Traceback (most recent call last):
+  File "/Users/onedayin20902/personal/agent/aws-hands-on-labs/spikes/m0-moto/.venv/lib/python3.13/site-packages/werkzeug/serving.py", line 374, in run_wsgi
+    execute(self.server.app)
+    ~~~~~~~^^^^^^^^^^^^^^^^^
+  File "/Users/onedayin20902/personal/agent/aws-hands-on-labs/spikes/m0-moto/.venv/lib/python3.13/site-packages/werkzeug/serving.py", line 335, in execute
+    application_iter = app(environ, start_response)
+  File "/Users/onedayin20902/personal/agent/aws-hands-on-labs/spikes/m0-moto/.venv/lib/python3.13/site-packages/moto/moto_server/werkzeug_app.py", line 347, in __call__
+    return backend_app(environ, start_response)
+  File "/Users/onedayin20902/personal/agent/aws-hands-on-labs/spikes/m0-moto/.venv/lib/python3.13/site-packages/flask/app.py", line 1536, in __call__
+    return self.wsgi_app(environ, start_response)
+           ~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/onedayin20902/personal/agent/aws-hands-on-labs/spikes/m0-moto/.venv/lib/python3.13/site-packages/flask/app.py", line 1514, in wsgi_app
+    response = self.handle_exception(e)
+  File "/Users/onedayin20902/personal/agent/aws-hands-on-labs/spikes/m0-moto/.venv/lib/python3.13/site-packages/flask_cors/extension.py", line 206, in wrapped_function
+    return cors_after_request(app_any.make_response(f(*args, **kwargs)))
+                                                    ~^^^^^^^^^^^^^^^^^
+  File "/Users/onedayin20902/personal/agent/aws-hands-on-labs/spikes/m0-moto/.venv/lib/python3.13/site-packages/flask/app.py", line 1511, in wsgi_app
+    response = self.full_dispatch_request()
+  File "/Users/onedayin20902/personal/agent/aws-hands-on-labs/spikes/m0-moto/.venv/lib/python3.13/site-packages/flask/app.py", line 919, in full_dispatch_request
+    rv = self.handle_user_exception(e)
+  File "/Users/onedayin20902/personal/agent/aws-hands-on-labs/spikes/m0-moto/.venv/lib/python3.13/site-packages/flask_cors/extension.py", line 206, in wrapped_function
+    return cors_after_request(app_any.make_response(f(*args, **kwargs)))
+                                                    ~^^^^^^^^^^^^^^^^^
+  File "/Users/onedayin20902/personal/agent/aws-hands-on-labs/spikes/m0-moto/.venv/lib/python3.13/site-packages/flask/app.py", line 917, in full_dispatch_request
+    rv = self.dispatch_request()
+  File "/Users/onedayin20902/personal/agent/aws-hands-on-labs/spikes/m0-moto/.venv/lib/python3.13/site-packages/flask/app.py", line 902, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**view_args)  # type: ignore[no-any-return]
+           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^
+  File "/Users/onedayin20902/personal/agent/aws-hands-on-labs/spikes/m0-moto/.venv/lib/python3.13/site-packages/moto/core/utils.py", line 130, in __call__
+    result = self.callback(request, request.raw_url, dict(request.headers))
+  File "/Users/onedayin20902/personal/agent/aws-hands-on-labs/spikes/m0-moto/.venv/lib/python3.13/site-packages/moto/moto_api/_internal/responses.py", line 36, in reset_auth_response
+    settings.INITIAL_NO_AUTH_ACTION_COUNT = float(request.data.decode())
+                                            ~~~~~^^^^^^^^^^^^^^^^^^^^^^^
+ValueError: could not convert string to float: '{"INITIAL_NO_AUTH_ACTION_COUNT": 3}'
+127.0.0.1 - - [27/Oct/2026 22:08:30] "[31m[1mPOST / HTTP/1.1[0m" 403 -
+127.0.0.1 - - [27/Oct/2026 22:08:41] "[35m[1mPOST /moto-api/reset-auth HTTP/1.1[0m" 500 -
+Error on request:
+Traceback (most recent call last):
+  File "/Users/onedayin20902/personal/agent/aws-hands-on-labs/spikes/m0-moto/.venv/lib/python3.13/site-packages/werkzeug/serving.py", line 374, in run_wsgi
+    execute(self.server.app)
+    ~~~~~~~^^^^^^^^^^^^^^^^^
+  File "/Users/onedayin20902/personal/agent/aws-hands-on-labs/spikes/m0-moto/.venv/lib/python3.13/site-packages/werkzeug/serving.py", line 335, in execute
+    application_iter = app(environ, start_response)
+  File "/Users/onedayin20902/personal/agent/aws-hands-on-labs/spikes/m0-moto/.venv/lib/python3.13/site-packages/moto/moto_server/werkzeug_app.py", line 347, in __call__
+    return backend_app(environ, start_response)
+  File "/Users/onedayin20902/personal/agent/aws-hands-on-labs/spikes/m0-moto/.venv/lib/python3.13/site-packages/flask/app.py", line 1536, in __call__
+    return self.wsgi_app(environ, start_response)
+           ~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/onedayin20902/personal/agent/aws-hands-on-labs/spikes/m0-moto/.venv/lib/python3.13/site-packages/flask/app.py", line 1514, in wsgi_app
+    response = self.handle_exception(e)
+  File "/Users/onedayin20902/personal/agent/aws-hands-on-labs/spikes/m0-moto/.venv/lib/python3.13/site-packages/flask_cors/extension.py", line 206, in wrapped_function
+    return cors_after_request(app_any.make_response(f(*args, **kwargs)))
+                                                    ~^^^^^^^^^^^^^^^^^
+  File "/Users/onedayin20902/personal/agent/aws-hands-on-labs/spikes/m0-moto/.venv/lib/python3.13/site-packages/flask/app.py", line 1511, in wsgi_app
+    response = self.full_dispatch_request()
+  File "/Users/onedayin20902/personal/agent/aws-hands-on-labs/spikes/m0-moto/.venv/lib/python3.13/site-packages/flask/app.py", line 919, in full_dispatch_request
+    rv = self.handle_user_exception(e)
+  File "/Users/onedayin20902/personal/agent/aws-hands-on-labs/spikes/m0-moto/.venv/lib/python3.13/site-packages/flask_cors/extension.py", line 206, in wrapped_function
+    return cors_after_request(app_any.make_response(f(*args, **kwargs)))
+                                                    ~^^^^^^^^^^^^^^^^^
+  File "/Users/onedayin20902/personal/agent/aws-hands-on-labs/spikes/m0-moto/.venv/lib/python3.13/site-packages/flask/app.py", line 917, in full_dispatch_request
+    rv = self.dispatch_request()
+  File "/Users/onedayin20902/personal/agent/aws-hands-on-labs/spikes/m0-moto/.venv/lib/python3.13/site-packages/flask/app.py", line 902, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**view_args)  # type: ignore[no-any-return]
+           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^
+  File "/Users/onedayin20902/personal/agent/aws-hands-on-labs/spikes/m0-moto/.venv/lib/python3.13/site-packages/moto/core/utils.py", line 130, in __call__
+    result = self.callback(request, request.raw_url, dict(request.headers))
+  File "/Users/onedayin20902/personal/agent/aws-hands-on-labs/spikes/m0-moto/.venv/lib/python3.13/site-packages/moto/moto_api/_internal/responses.py", line 36, in reset_auth_response
+    settings.INITIAL_NO_AUTH_ACTION_COUNT = float(request.data.decode())
+                                            ~~~~~^^^^^^^^^^^^^^^^^^^^^^^
+ValueError: could not convert string to float: ''
+127.0.0.1 - - [27/Oct/2026 22:08:41] "[31m[1mPOST / HTTP/1.1[0m" 403 -
+127.0.0.1 - - [27/Oct/2026 22:08:51] "POST /moto-api/reset-auth HTTP/1.1" 200 -
+127.0.0.1 - - [27/Oct/2026 22:08:52] "POST / HTTP/1.1" 200 -
+127.0.0.1 - - [27/Oct/2026 22:08:58] "POST /moto-api/reset HTTP/1.1" 200 -
+127.0.0.1 - - [27/Oct/2026 22:08:58] "POST /moto-api/reset-auth HTTP/1.1" 200 -
+127.0.0.1 - - [27/Oct/2026 22:08:59] "POST / HTTP/1.1" 200 -
+127.0.0.1 - - [27/Oct/2026 22:08:59] "POST / HTTP/1.1" 200 -
+127.0.0.1 - - [27/Oct/2026 22:09:00] "POST / HTTP/1.1" 200 -
+127.0.0.1 - - [27/Oct/2026 22:09:00] "[31m[1mPOST / HTTP/1.1[0m" 403 -
+127.0.0.1 - - [27/Oct/2026 22:09:00] "PUT /lab03 HTTP/1.1" 200 -
+127.0.0.1 - - [27/Oct/2026 22:09:01] "POST / HTTP/1.1" 200 -
+127.0.0.1 - - [27/Oct/2026 22:09:01] "POST / HTTP/1.1" 200 -
+127.0.0.1 - - [27/Oct/2026 22:09:02] "POST / HTTP/1.1" 200 -
+127.0.0.1 - - [27/Oct/2026 22:09:02] "POST / HTTP/1.1" 200 -
+127.0.0.1 - - [27/Oct/2026 22:09:03] "PUT /lab03/alice/x HTTP/1.1" 200 -
+127.0.0.1 - - [27/Oct/2026 22:09:03] "[31m[1mPUT /lab03/bob/x HTTP/1.1[0m" 403 -
+127.0.0.1 - - [27/Oct/2026 22:09:04] "[31m[1mPOST / HTTP/1.1[0m" 403 -
+127.0.0.1 - - [27/Oct/2026 22:09:04] "[31m[1mGET /lab03/alice/x HTTP/1.1[0m" 403 -
+127.0.0.1 - - [27/Oct/2026 22:09:04] "POST / HTTP/1.1" 200 -
+127.0.0.1 - - [27/Oct/2026 22:09:05] "POST / HTTP/1.1" 200 -
+127.0.0.1 - - [27/Oct/2026 22:09:05] "POST / HTTP/1.1" 200 -
+127.0.0.1 - - [27/Oct/2026 22:09:06] "PUT /lab03/alice/y HTTP/1.1" 200 -
+127.0.0.1 - - [27/Oct/2026 22:09:06] "[31m[1mPUT /lab03/bob/y HTTP/1.1[0m" 403 -
+127.0.0.1 - - [27/Oct/2026 22:09:07] "PUT /lab03/carol/y HTTP/1.1" 200 -
+127.0.0.1 - - [27/Oct/2026 22:09:07] "POST / HTTP/1.1" 200 -
+127.0.0.1 - - [27/Oct/2026 22:09:08] "POST / HTTP/1.1" 200 -
+127.0.0.1 - - [27/Oct/2026 22:09:08] "POST / HTTP/1.1" 200 -
+127.0.0.1 - - [27/Oct/2026 22:09:08] "PUT /lab03/alice/z HTTP/1.1" 200 -
+127.0.0.1 - - [27/Oct/2026 22:09:09] "PUT /lab03/alice/z2 HTTP/1.1" 200 -
+127.0.0.1 - - [27/Oct/2026 22:09:09] "POST / HTTP/1.1" 200 -
+127.0.0.1 - - [27/Oct/2026 22:09:10] "POST / HTTP/1.1" 200 -
+127.0.0.1 - - [27/Oct/2026 22:09:10] "POST / HTTP/1.1" 200 -
+127.0.0.1 - - [27/Oct/2026 22:09:10] "[35m[1mPOST / HTTP/1.1[0m" 500 -
+Error on request:
+Traceback (most recent call last):
+  File "/Users/onedayin20902/personal/agent/aws-hands-on-labs/spikes/m0-moto/.venv/lib/python3.13/site-packages/werkzeug/serving.py", line 374, in run_wsgi
+    execute(self.server.app)
+    ~~~~~~~^^^^^^^^^^^^^^^^^
+  File "/Users/onedayin20902/personal/agent/aws-hands-on-labs/spikes/m0-moto/.venv/lib/python3.13/site-packages/werkzeug/serving.py", line 335, in execute
+    application_iter = app(environ, start_response)
+  File "/Users/onedayin20902/personal/agent/aws-hands-on-labs/spikes/m0-moto/.venv/lib/python3.13/site-packages/moto/moto_server/werkzeug_app.py", line 347, in __call__
+    return backend_app(environ, start_response)
+  File "/Users/onedayin20902/personal/agent/aws-hands-on-labs/spikes/m0-moto/.venv/lib/python3.13/site-packages/flask/app.py", line 1536, in __call__
+    return self.wsgi_app(environ, start_response)
+           ~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/onedayin20902/personal/agent/aws-hands-on-labs/spikes/m0-moto/.venv/lib/python3.13/site-packages/flask/app.py", line 1514, in wsgi_app
+    response = self.handle_exception(e)
+  File "/Users/onedayin20902/personal/agent/aws-hands-on-labs/spikes/m0-moto/.venv/lib/python3.13/site-packages/flask_cors/extension.py", line 206, in wrapped_function
+    return cors_after_request(app_any.make_response(f(*args, **kwargs)))
+                                                    ~^^^^^^^^^^^^^^^^^
+  File "/Users/onedayin20902/personal/agent/aws-hands-on-labs/spikes/m0-moto/.venv/lib/python3.13/site-packages/flask/app.py", line 1511, in wsgi_app
+    response = self.full_dispatch_request()
+  File "/Users/onedayin20902/personal/agent/aws-hands-on-labs/spikes/m0-moto/.venv/lib/python3.13/site-packages/flask/app.py", line 919, in full_dispatch_request
+    rv = self.handle_user_exception(e)
+  File "/Users/onedayin20902/personal/agent/aws-hands-on-labs/spikes/m0-moto/.venv/lib/python3.13/site-packages/flask_cors/extension.py", line 206, in wrapped_function
+    return cors_after_request(app_any.make_response(f(*args, **kwargs)))
+                                                    ~^^^^^^^^^^^^^^^^^
+  File "/Users/onedayin20902/personal/agent/aws-hands-on-labs/spikes/m0-moto/.venv/lib/python3.13/site-packages/flask/app.py", line 917, in full_dispatch_request
+    rv = self.dispatch_request()
+  File "/Users/onedayin20902/personal/agent/aws-hands-on-labs/spikes/m0-moto/.venv/lib/python3.13/site-packages/flask/app.py", line 902, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**view_args)  # type: ignore[no-any-return]
+           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^
+  File "/Users/onedayin20902/personal/agent/aws-hands-on-labs/spikes/m0-moto/.venv/lib/python3.13/site-packages/moto/core/utils.py", line 130, in __call__
+    result = self.callback(request, request.raw_url, dict(request.headers))
+  File "/Users/onedayin20902/personal/agent/aws-hands-on-labs/spikes/m0-moto/.venv/lib/python3.13/site-packages/moto/core/responses.py", line 220, in dispatch
+    return cls()._dispatch(*args, **kwargs)
+           ~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^
+  File "/Users/onedayin20902/personal/agent/aws-hands-on-labs/spikes/m0-moto/.venv/lib/python3.13/site-packages/moto/core/responses.py", line 404, in _dispatch
+    return self.call_action()
+           ~~~~~~~~~~~~~~~~^^
+  File "/Users/onedayin20902/personal/agent/aws-hands-on-labs/spikes/m0-moto/.venv/lib/python3.13/site-packages/moto/core/responses.py", line 567, in call_action
+    raise NotImplementedError(f"The {action} action has not been implemented")
+NotImplementedError: The simulate_principal_policy action has not been implemented
+127.0.0.1 - - [27/Oct/2026 22:09:11] "[35m[1mPOST / HTTP/1.1[0m" 500 -
+Error on request:
+Traceback (most recent call last):
+  File "/Users/onedayin20902/personal/agent/aws-hands-on-labs/spikes/m0-moto/.venv/lib/python3.13/site-packages/werkzeug/serving.py", line 374, in run_wsgi
+    execute(self.server.app)
+    ~~~~~~~^^^^^^^^^^^^^^^^^
+  File "/Users/onedayin20902/personal/agent/aws-hands-on-labs/spikes/m0-moto/.venv/lib/python3.13/site-packages/werkzeug/serving.py", line 335, in execute
+    application_iter = app(environ, start_response)
+  File "/Users/onedayin20902/personal/agent/aws-hands-on-labs/spikes/m0-moto/.venv/lib/python3.13/site-packages/moto/moto_server/werkzeug_app.py", line 347, in __call__
+    return backend_app(environ, start_response)
+  File "/Users/onedayin20902/personal/agent/aws-hands-on-labs/spikes/m0-moto/.venv/lib/python3.13/site-packages/flask/app.py", line 1536, in __call__
+    return self.wsgi_app(environ, start_response)
+           ~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/onedayin20902/personal/agent/aws-hands-on-labs/spikes/m0-moto/.venv/lib/python3.13/site-packages/flask/app.py", line 1514, in wsgi_app
+    response = self.handle_exception(e)
+  File "/Users/onedayin20902/personal/agent/aws-hands-on-labs/spikes/m0-moto/.venv/lib/python3.13/site-packages/flask_cors/extension.py", line 206, in wrapped_function
+    return cors_after_request(app_any.make_response(f(*args, **kwargs)))
+                                                    ~^^^^^^^^^^^^^^^^^
+  File "/Users/onedayin20902/personal/agent/aws-hands-on-labs/spikes/m0-moto/.venv/lib/python3.13/site-packages/flask/app.py", line 1511, in wsgi_app
+    response = self.full_dispatch_request()
+  File "/Users/onedayin20902/personal/agent/aws-hands-on-labs/spikes/m0-moto/.venv/lib/python3.13/site-packages/flask/app.py", line 919, in full_dispatch_request
+    rv = self.handle_user_exception(e)
+  File "/Users/onedayin20902/personal/agent/aws-hands-on-labs/spikes/m0-moto/.venv/lib/python3.13/site-packages/flask_cors/extension.py", line 206, in wrapped_function
+    return cors_after_request(app_any.make_response(f(*args, **kwargs)))
+                                                    ~^^^^^^^^^^^^^^^^^
+  File "/Users/onedayin20902/personal/agent/aws-hands-on-labs/spikes/m0-moto/.venv/lib/python3.13/site-packages/flask/app.py", line 917, in full_dispatch_request
+    rv = self.dispatch_request()
+  File "/Users/onedayin20902/personal/agent/aws-hands-on-labs/spikes/m0-moto/.venv/lib/python3.13/site-packages/flask/app.py", line 902, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**view_args)  # type: ignore[no-any-return]
+           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^
+  File "/Users/onedayin20902/personal/agent/aws-hands-on-labs/spikes/m0-moto/.venv/lib/python3.13/site-packages/moto/core/utils.py", line 130, in __call__
+    result = self.callback(request, request.raw_url, dict(request.headers))
+  File "/Users/onedayin20902/personal/agent/aws-hands-on-labs/spikes/m0-moto/.venv/lib/python3.13/site-packages/moto/core/responses.py", line 220, in dispatch
+    return cls()._dispatch(*args, **kwargs)
+           ~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^
+  File "/Users/onedayin20902/personal/agent/aws-hands-on-labs/spikes/m0-moto/.venv/lib/python3.13/site-packages/moto/core/responses.py", line 404, in _dispatch
+    return self.call_action()
+           ~~~~~~~~~~~~~~~~^^
+  File "/Users/onedayin20902/personal/agent/aws-hands-on-labs/spikes/m0-moto/.venv/lib/python3.13/site-packages/moto/core/responses.py", line 567, in call_action
+    raise NotImplementedError(f"The {action} action has not been implemented")
+NotImplementedError: The simulate_custom_policy action has not been implemented

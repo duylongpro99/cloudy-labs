@@ -1,0 +1,112 @@
+{
+    "Subnets": [
+        {
+            "AvailabilityZoneId": "use1-az1",
+            "MapCustomerOwnedIpOnLaunch": false,
+            "OwnerId": "000000000000",
+            "AssignIpv6AddressOnCreation": false,
+            "Ipv6CidrBlockAssociationSet": [],
+            "Tags": [
+                {
+                    "Key": "Name",
+                    "Value": "lab06-public-a"
+                },
+                {
+                    "Key": "lab",
+                    "Value": "06"
+                }
+            ],
+            "SubnetArn": "arn:aws:ec2:us-east-1:000000000000:subnet/subnet-d9b7ef36",
+            "EnableDns64": false,
+            "SubnetId": "subnet-d9b7ef36",
+            "State": "available",
+            "VpcId": "vpc-ed49eb99",
+            "CidrBlock": "10.0.1.0/24",
+            "AvailableIpAddressCount": 251,
+            "AvailabilityZone": "us-east-1a",
+            "DefaultForAz": false,
+            "MapPublicIpOnLaunch": true
+        },
+        {
+            "AvailabilityZoneId": "use1-az2",
+            "MapCustomerOwnedIpOnLaunch": false,
+            "OwnerId": "000000000000",
+            "AssignIpv6AddressOnCreation": false,
+            "Ipv6CidrBlockAssociationSet": [],
+            "Tags": [
+                {
+                    "Key": "Name",
+                    "Value": "lab06-public-b"
+                },
+                {
+                    "Key": "lab",
+                    "Value": "06"
+                }
+            ],
+            "SubnetArn": "arn:aws:ec2:us-east-1:000000000000:subnet/subnet-7d321525",
+            "EnableDns64": false,
+            "SubnetId": "subnet-7d321525",
+            "State": "available",
+            "VpcId": "vpc-ed49eb99",
+            "CidrBlock": "10.0.2.0/24",
+            "AvailableIpAddressCount": 251,
+            "AvailabilityZone": "us-east-1b",
+            "DefaultForAz": false,
+            "MapPublicIpOnLaunch": true
+        },
+        {
+            "AvailabilityZoneId": "use1-az1",
+            "MapCustomerOwnedIpOnLaunch": false,
+            "OwnerId": "000000000000",
+            "AssignIpv6AddressOnCreation": false,
+            "Ipv6CidrBlockAssociationSet": [],
+            "Tags": [
+                {
+                    "Key": "Name",
+                    "Value": "lab06-private-a"
+                },
+                {
+                    "Key": "lab",
+                    "Value": "06"
+                }
+            ],
+            "SubnetArn": "arn:aws:ec2:us-east-1:000000000000:subnet/subnet-c1993104",
+            "EnableDns64": false,
+            "SubnetId": "subnet-c1993104",
+            "State": "available",
+            "VpcId": "vpc-ed49eb99",
+            "CidrBlock": "10.0.11.0/24",
+            "AvailableIpAddressCount": 251,
+            "AvailabilityZone": "us-east-1a",
+            "DefaultForAz": false,
+            "MapPublicIpOnLaunch": false
+        },
+        {
+            "AvailabilityZoneId": "use1-az2",
+            "MapCustomerOwnedIpOnLaunch": false,
+            "OwnerId": "000000000000",
+            "AssignIpv6AddressOnCreation": false,
+            "Ipv6CidrBlockAssociationSet": [],
+            "Tags": [
+                {
+                    "Key": "Name",
+                    "Value": "lab06-private-b"
+                },
+                {
+                    "Key": "lab",
+                    "Value": "06"
+                }
+            ],
+            "SubnetArn": "arn:aws:ec2:us-east-1:000000000000:subnet/subnet-5c6d7f57",
+            "EnableDns64": false,
+            "SubnetId": "subnet-5c6d7f57",
+            "State": "available",
+            "VpcId": "vpc-ed49eb99",
+            "CidrBlock": "10.0.12.0/24",
+            "AvailableIpAddressCount": 251,
+            "AvailabilityZone": "us-east-1b",
+            "DefaultForAz": false,
+            "MapPublicIpOnLaunch": false
+        }
+    ]
+}

@@ -1,0 +1,128 @@
+{
+    "Subnets": [
+        {
+            "AvailabilityZoneId": "use1-az1",
+            "OwnerId": "000000000000",
+            "AssignIpv6AddressOnCreation": false,
+            "Tags": [
+                {
+                    "Key": "Name",
+                    "Value": "lab06-public-a"
+                },
+                {
+                    "Key": "lab",
+                    "Value": "06"
+                }
+            ],
+            "SubnetArn": "arn:aws:ec2:us-east-1:000000000000:subnet/subnet-f72f3066b1dcf4726",
+            "EnableDns64": false,
+            "Ipv6Native": false,
+            "PrivateDnsNameOptionsOnLaunch": {
+                "HostnameType": "ip-name",
+                "EnableResourceNameDnsARecord": false,
+                "EnableResourceNameDnsAAAARecord": false
+            },
+            "SubnetId": "subnet-f72f3066b1dcf4726",
+            "State": "available",
+            "VpcId": "vpc-f4fcfc30a9865b26b",
+            "CidrBlock": "10.0.1.0/24",
+            "AvailableIpAddressCount": 251,
+            "AvailabilityZone": "us-east-1a",
+            "DefaultForAz": false,
+            "MapPublicIpOnLaunch": true
+        },
+        {
+            "AvailabilityZoneId": "use1-az2",
+            "OwnerId": "000000000000",
+            "AssignIpv6AddressOnCreation": false,
+            "Tags": [
+                {
+                    "Key": "Name",
+                    "Value": "lab06-public-b"
+                },
+                {
+                    "Key": "lab",
+                    "Value": "06"
+                }
+            ],
+            "SubnetArn": "arn:aws:ec2:us-east-1:000000000000:subnet/subnet-d1fa55d55dea98e61",
+            "EnableDns64": false,
+            "Ipv6Native": false,
+            "PrivateDnsNameOptionsOnLaunch": {
+                "HostnameType": "ip-name",
+                "EnableResourceNameDnsARecord": false,
+                "EnableResourceNameDnsAAAARecord": false
+            },
+            "SubnetId": "subnet-d1fa55d55dea98e61",
+            "State": "available",
+            "VpcId": "vpc-f4fcfc30a9865b26b",
+            "CidrBlock": "10.0.2.0/24",
+            "AvailableIpAddressCount": 251,
+            "AvailabilityZone": "us-east-1b",
+            "DefaultForAz": false,
+            "MapPublicIpOnLaunch": true
+        },
+        {
+            "AvailabilityZoneId": "use1-az1",
+            "OwnerId": "000000000000",
+            "AssignIpv6AddressOnCreation": false,
+            "Tags": [
+                {
+                    "Key": "Name",
+                    "Value": "lab06-private-a"
+                },
+                {
+                    "Key": "lab",
+                    "Value": "06"
+                }
+            ],
+            "SubnetArn": "arn:aws:ec2:us-east-1:000000000000:subnet/subnet-6e0e9cae8bee37522",
+            "EnableDns64": false,
+            "Ipv6Native": false,
+            "PrivateDnsNameOptionsOnLaunch": {
+                "HostnameType": "ip-name",
+                "EnableResourceNameDnsARecord": false,
+                "EnableResourceNameDnsAAAARecord": false
+            },
+            "SubnetId": "subnet-6e0e9cae8bee37522",
+            "State": "available",
+            "VpcId": "vpc-f4fcfc30a9865b26b",
+            "CidrBlock": "10.0.11.0/24",
+            "AvailableIpAddressCount": 251,
+            "AvailabilityZone": "us-east-1a",
+            "DefaultForAz": false,
+            "MapPublicIpOnLaunch": false
+        },
+        {
+            "AvailabilityZoneId": "use1-az2",
+            "OwnerId": "000000000000",
+            "AssignIpv6AddressOnCreation": false,
+            "Tags": [
+                {
+                    "Key": "Name",
+                    "Value": "lab06-private-b"
+                },
+                {
+                    "Key": "lab",
+                    "Value": "06"
+                }
+            ],
+            "SubnetArn": "arn:aws:ec2:us-east-1:000000000000:subnet/subnet-88e4e7634ee4e175f",
+            "EnableDns64": false,
+            "Ipv6Native": false,
+            "PrivateDnsNameOptionsOnLaunch": {
+                "HostnameType": "ip-name",
+                "EnableResourceNameDnsARecord": false,
+                "EnableResourceNameDnsAAAARecord": false
+            },
+            "SubnetId": "subnet-88e4e7634ee4e175f",
+            "State": "available",
+            "VpcId": "vpc-f4fcfc30a9865b26b",
+            "CidrBlock": "10.0.12.0/24",
+            "AvailableIpAddressCount": 251,
+            "AvailabilityZone": "us-east-1b",
+            "DefaultForAz": false,
+            "MapPublicIpOnLaunch": false
+        }
+    ]
+}

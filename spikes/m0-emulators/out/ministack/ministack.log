@@ -1,0 +1,43 @@
+2026-10-27 14:30:50 INFO [ministack] 
+  __  __ _       _ ____  _             _
+ |  \/  (_)_ __ (_) ___|| |_ __ _  ___| | __
+ | |\/| | | '_ \| \___ \| __/ _` |/ __| |/ /
+ | |  | | | | | | |___) | || (_| | (__|   <
+ |_|  |_|_|_| |_|_|____/ \__\__,_|\___|_|\_\
+
+ Local AWS Service Emulator — Port 4566
+  Services: S3, SQS, SNS, DynamoDB, Lambda, IAM, STS, SecretsManager, CloudWatch Logs,
+           SSM, EventBridge, Kinesis, CloudWatch, SES, SES v2, ACM, WAF v2, Step Functions,
+           ECS, RDS, ElastiCache, Glue, Athena, API Gateway, Firehose, Route53,
+           Cognito, EC2, EMR, EBS, EFS, ALB/ELBv2, CloudFormation, KMS, ECR, CloudFront,
+           AppSync, Cloud Map, S3 Files, RDS Data API, CodeBuild, AppConfig, Transfer, EKS,
+           Inspector2, IoT Core, Aurora DSQL
+
+2026-10-27 14:30:50 INFO [ministack] Worker thread pool: 64 threads
+2026-10-27 14:30:50 INFO [ministack] Ready — 91 services available on port 4566.
+[2026-10-27 14:30:50 +0000] [1] [INFO] Running on http://0.0.0.0:4566 (CTRL + C to quit)
+2026-10-27 14:30:50 INFO [hypercorn.error] Running on http://0.0.0.0:4566 (CTRL + C to quit)
+2026-10-27 14:30:50 INFO [iot_mtls] IoT mTLS: MQTT listening on port 8883 (client certificate optional)
+2026-10-27 14:46:09 INFO [ministack] MiniStack shutting down...
+2026-10-27 14:46:09 INFO [transfer] SFTP: stopped
+2026-10-27 14:46:09 INFO [iot_mtls] IoT mTLS: stopped
+2026-10-27 14:46:09 INFO [ministack] 
+  __  __ _       _ ____  _             _
+ |  \/  (_)_ __ (_) ___|| |_ __ _  ___| | __
+ | |\/| | | '_ \| \___ \| __/ _` |/ __| |/ /
+ | |  | | | | | | |___) | || (_| | (__|   <
+ |_|  |_|_|_| |_|_|____/ \__\__,_|\___|_|\_\
+
+ Local AWS Service Emulator — Port 4566
+  Services: S3, SQS, SNS, DynamoDB, Lambda, IAM, STS, SecretsManager, CloudWatch Logs,
+           SSM, EventBridge, Kinesis, CloudWatch, SES, SES v2, ACM, WAF v2, Step Functions,
+           ECS, RDS, ElastiCache, Glue, Athena, API Gateway, Firehose, Route53,
+           Cognito, EC2, EMR, EBS, EFS, ALB/ELBv2, CloudFormation, KMS, ECR, CloudFront,
+           AppSync, Cloud Map, S3 Files, RDS Data API, CodeBuild, AppConfig, Transfer, EKS,
+           Inspector2, IoT Core, Aurora DSQL
+
+2026-10-27 14:46:09 INFO [ministack] Worker thread pool: 64 threads
+2026-10-27 14:46:09 INFO [ministack] Ready — 91 services available on port 4566.
+[2026-10-27 14:46:09 +0000] [1] [INFO] Running on http://0.0.0.0:4566 (CTRL + C to quit)
+2026-10-27 14:46:09 INFO [hypercorn.error] Running on http://0.0.0.0:4566 (CTRL + C to quit)
+2026-10-27 14:46:09 INFO [iot_mtls] IoT mTLS: MQTT listening on port 8883 (client certificate optional)

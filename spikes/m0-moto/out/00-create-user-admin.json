@@ -1,0 +1,9 @@
+{
+    "User": {
+        "Path": "/",
+        "UserName": "admin",
+        "UserId": "hxwdrkmldw7dfygdxag5",
+        "Arn": "arn:aws:iam::123456789012:user/admin",
+        "CreateDate": "2026-10-27T15:07:28.048308+00:00"
+    }
+}

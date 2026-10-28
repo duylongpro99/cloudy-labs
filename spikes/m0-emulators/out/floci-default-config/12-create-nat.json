@@ -1,0 +1,31 @@
+{
+    "NatGateway": {
+        "CreateTime": "2026-10-27T14:42:06.346000+00:00",
+        "NatGatewayAddresses": [
+            {
+                "AllocationId": "eipalloc-258d3b021bd428f8c",
+                "NetworkInterfaceId": "eni-a4c1b490af3849b8d",
+                "PrivateIp": "10.240.0.10",
+                "PublicIp": "54.17.139.34",
+                "AssociationId": "eipassoc-070fcb17c54a6e1bc",
+                "IsPrimary": true,
+                "Status": "succeeded"
+            }
+        ],
+        "NatGatewayId": "nat-6e8f4afa2a9ff9b4c",
+        "State": "available",
+        "SubnetId": "subnet-7545dfaa",
+        "VpcId": "vpc-5f0b6853",
+        "Tags": [
+            {
+                "Key": "Name",
+                "Value": "lab06-nat"
+            },
+            {
+                "Key": "lab",
+                "Value": "06"
+            }
+        ],
+        "ConnectivityType": "public"
+    }
+}

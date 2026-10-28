@@ -1,0 +1,13 @@
+{
+    "Policy": {
+        "PolicyName": "lab03-require-sse",
+        "PolicyId": "AT1PY8CNN4PLP1179MKRA",
+        "Arn": "arn:aws:iam::123456789012:policy/lab03-require-sse",
+        "Path": "/",
+        "DefaultVersionId": "v1",
+        "AttachmentCount": 0,
+        "IsAttachable": true,
+        "CreateDate": "2026-10-27T15:09:08.096520+00:00",
+        "UpdateDate": "2026-10-27T15:09:08.096520+00:00"
+    }
+}

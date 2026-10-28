@@ -1,0 +1,23 @@
+{
+    "NatGateways": [
+        {
+            "CreateTime": "2026-10-27T14:42:07+00:00",
+            "NatGatewayAddresses": [],
+            "NatGatewayId": "nat-4ec1bec2ddea13a0e",
+            "State": "available",
+            "SubnetId": "subnet-f72f3066b1dcf4726",
+            "VpcId": "vpc-f4fcfc30a9865b26b",
+            "Tags": [
+                {
+                    "Key": "Name",
+                    "Value": "lab06-nat"
+                },
+                {
+                    "Key": "lab",
+                    "Value": "06"
+                }
+            ],
+            "ConnectivityType": "public"
+        }
+    ]
+}

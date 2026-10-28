@@ -1,0 +1,17 @@
+{
+    "InternetGateway": {
+        "Attachments": [],
+        "InternetGatewayId": "igw-81f63847bad897491",
+        "OwnerId": "000000000000",
+        "Tags": [
+            {
+                "Key": "Name",
+                "Value": "lab06-igw"
+            },
+            {
+                "Key": "lab",
+                "Value": "06"
+            }
+        ]
+    }
+}

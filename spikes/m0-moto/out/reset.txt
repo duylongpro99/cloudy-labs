@@ -1,0 +1,22 @@
+{"status": "ok"}reset HTTP 200
+after reset, admin list-users: (InvalidClientTokenId)
+after reset, bootstrap list-users: (InvalidClientTokenId)
+after reset, bootstrap list-buckets: aws: [ERROR]: An error occurred (InvalidAccessKeyId) when calling the ListBuckets operation: The AWS Access Key Id you provided does not exist in our records.
+moto-api/data.json non-empty models: ['iam.AccountSummary']
+<!doctype html>
+<html lang=en>
+<title>500 Internal Server Error</title>
+<h1>Internal Server Error</h1>
+<p>The server encountered an internal error and was unable to complete your request. Either the server is overloaded or there is an error in the application.</p>
+ reset-auth HTTP 500
+after reset-auth, bootstrap list-users count: aws: [ERROR]: An error occurred (InvalidClientTokenId) when calling the ListUsers operation: The security token included in the request is invalid.
+reset-auth with JSON body: HTTP 500 (ValueError: expects a bare number)
+<!doctype html>
+<html lang=en>
+<title>500 Internal Server Error</title>
+<h1>Internal Server Error</h1>
+<p>The server encountered an internal error and was unable to complete your request. Either the server is overloaded or there is an error in the application.</p>
+ reset-auth body=3 HTTP 500
+after reset-auth, bootstrap list-users count: aws: [ERROR]: An error occurred (InvalidClientTokenId) when calling the ListUsers operation: The security token included in the request is invalid.
+{"status": "ok", "PREVIOUS_INITIAL_NO_AUTH_ACTION_COUNT": "3.0"} reset-auth (text/plain body "3") HTTP 200
+after reset-auth, bootstrap list-users count: 0

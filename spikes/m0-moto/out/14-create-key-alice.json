@@ -1,0 +1,9 @@
+{
+    "AccessKey": {
+        "UserName": "alice",
+        "AccessKeyId": "AKIARZPUZDIKOW53GTKK",
+        "Status": "Active",
+        "SecretAccessKey": "<redacted: fake moto key>",
+        "CreateDate": "2026-10-27T15:07:31.525318+00:00"
+    }
+}

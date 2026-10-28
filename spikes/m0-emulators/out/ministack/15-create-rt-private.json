@@ -1,0 +1,27 @@
+{
+    "RouteTable": {
+        "Associations": [],
+        "PropagatingVgws": [],
+        "RouteTableId": "rtb-12adf9c32a0de00aa",
+        "Routes": [
+            {
+                "DestinationCidrBlock": "10.0.0.0/16",
+                "GatewayId": "local",
+                "Origin": "CreateRouteTable",
+                "State": "active"
+            }
+        ],
+        "Tags": [
+            {
+                "Key": "Name",
+                "Value": "lab06-rt-private"
+            },
+            {
+                "Key": "lab",
+                "Value": "06"
+            }
+        ],
+        "VpcId": "vpc-f4fcfc30a9865b26b",
+        "OwnerId": "000000000000"
+    }
+}

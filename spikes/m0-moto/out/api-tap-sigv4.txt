@@ -1,0 +1,5 @@
+via tap put alice/tap rc=0 
+via tap put bob/tap rc=254 (AccessDenied)
+via tap admin list-users count=2
+via tap unsigned put rc=254 
+control: Host rewritten -> 403 SignatureDoesNotMatch

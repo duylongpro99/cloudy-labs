@@ -1,0 +1,33 @@
+{
+  "name": "m0-render",
+  "private": true,
+  "version": "0.0.0",
+  "type": "module",
+  "description": "M0 spike: 200-node scene built with the PRD F3.7 recipe, plus a frame-time benchmark",
+  "scripts": {
+    "dev": "vite --port 5173 --strictPort",
+    "typecheck": "tsc --noEmit",
+    "bench:chrome": "node scripts/run-chrome-bench.mjs"
+  },
+  "dependencies": {
+    "@react-spring/three": "10.1.2",
+    "@react-three/drei": "10.7.9",
+    "@react-three/fiber": "9.8.2",
+    "@react-three/postprocessing": "3.2.2",
+    "n8ao": "2.0.1",
+    "postprocessing": "6.39.5",
+    "react": "19.3.1",
+    "react-dom": "19.3.1",
+    "three": "0.186.1"
+  },
+  "devDependencies": {
+    "@types/node": "26.6.5",
+    "@types/react": "19.3.0",
+    "@types/react-dom": "19.3.0",
+    "@types/three": "0.186.0",
+    "@vitejs/plugin-react": "6.1.2",
+    "playwright-core": "1.64.1",
+    "typescript": "7.0.2",
+    "vite": "8.3.5"
+  }
+}

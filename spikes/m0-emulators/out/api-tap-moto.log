@@ -1,0 +1,7 @@
+api-tap listening on :4580 -> http://localhost:5050
+s3	?	200	upstream=18.7ms	total=21.5ms
+s3	?	403	upstream=4.5ms	total=5.8ms
+iam	ListUsers	200	upstream=2.8ms	total=3.3ms
+?	?	500	upstream=1.8ms	total=2.9ms
+?	?	500	upstream=3.6ms	total=4.9ms
+?	?	500	upstream=3.5ms	total=5.0ms
