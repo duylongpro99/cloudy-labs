@@ -1,0 +1,1 @@
+- [node_modules reads blocked](node-modules-blocked.md) — the hook blocks node_modules; use upstream source or `node -e` imports from web/
