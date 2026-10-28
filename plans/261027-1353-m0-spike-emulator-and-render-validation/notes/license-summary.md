@@ -39,6 +39,7 @@ Gói lớn nhất kéo vào là `moto[server]` (cfn-lint, sympy, networkx, Flask
 | moto | 5.2.4 | Apache-2.0 | `https://raw.githubusercontent.com/getmoto/moto/5.2.4/LICENSE` |
 | Be Vietnam Pro | bản trong `google/fonts` (2021) | OFL-1.1 | `spikes/m0-render/public/fonts/BeVietnamPro-OFL.txt`; được nhúng và phân phối kèm phần mềm, chỉ không được bán font riêng lẻ, và bản sửa đổi không được dùng tên font gốc |
 | AWS Architecture Icons | không dùng | không phân phối | Giữ quyết định F3.8: icon tự vẽ là mặc định. Spike này chỉ dùng icon SVG tự vẽ (`spikes/m0-render/src/scene/icons.ts`) |
+| AWS Architecture Icons (cập nhật 2026-10-28) | bản 07312026 (`aws-icon-pkg/`, không commit) | điều khoản phân phối chưa xác nhận | Dùng và sửa đổi (ép đùn, đổi màu) theo quyết định 2026-10-28, PRD A13. Chỉ các SVG đã chọn được chép vào `web/src/scene/aws-objects/icons/`, kèm `NOTICE.md`. Dòng trên chỉ đúng cho spike M0. Cần ý kiến pháp lý (A5) trước bản phát hành công khai |
 
 Lưu ý ngoài phạm vi lockfile:
 - Image Docker mà Floci kéo lúc chạy (`public.ecr.aws/amazonlinux/amazonlinux:2023`, `alpine/socat`) do máy người học tải trực tiếp, Cloudy Labs không phân phối lại. Nếu sau này Cloudy Labs đóng gói sẵn các image này (cài offline), cần kiểm tra lại giấy phép của chúng; Amazon Linux có nhiều gói GPL.
