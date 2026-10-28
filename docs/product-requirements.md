@@ -1,7 +1,7 @@
-# PRD: XLabs — hands-on labs for AWS với lớp kiến trúc 3D
+# PRD: Cloudy Labs — hands-on labs for AWS với lớp kiến trúc 3D
 
-- Trạng thái: **Bản nháp v0.5**. Đã chốt A1–A3 và A7–A12. A4 và A6 đã kiểm chứng qua [spike M0](../plans/reports/spike-261027-2248-m0-validation.md). A5 chờ ý kiến pháp lý
-- Cập nhật: 2026-10-27
+- Trạng thái: **Bản nháp v0.6**. Đã chốt A1–A3 và A7–A12 (A10 đổi tên thành Cloudy Labs ngày 2026-10-28). A4 và A6 đã kiểm chứng qua [spike M0](../plans/reports/spike-261027-2248-m0-validation.md). A5 chờ ý kiến pháp lý
+- Cập nhật: 2026-10-28
 - Nguồn quyết định:
   - [Báo cáo nghiên cứu emulator](../plans/reports/research-261027-1027-cloud-simulator-for-hands-on-labs.md)
   - [Brainstorm lớp 3D](../plans/reports/brainstorm-261027-1423-3d-architecture-visual-layer.md)
@@ -169,7 +169,7 @@ Chi tiết ở [báo cáo brainstorm, mục 3](../plans/reports/brainstorm-26102
 | A7 | Chat hỗ trợ cả hai định dạng API, `openai` và `anthropic`, chọn qua `LLM_API_FORMAT` |
 | A8 | Sản phẩm **sẽ được thương mại hoá và chia sẻ công khai**. Mọi phụ thuộc và asset phân phối kèm phải có giấy phép cho phép dùng thương mại |
 | A9 | Có **cả chủ đề sáng và tối** |
-| A10 | Tên sản phẩm là **XLabs**, không chứa "AWS". Khi cần nói rõ phạm vi thì chỉ dùng "AWS" như một từ mô tả, ví dụ "XLabs — hands-on labs for AWS", và không dùng logo AWS |
+| A10 | Tên sản phẩm là **Cloudy Labs**, slug `cloudy-labs` (dùng cho repo, package và thư mục). Tên cũ XLabs đã bỏ ngày 2026-10-28. Tên không chứa "AWS". Khi cần nói rõ phạm vi thì chỉ dùng "AWS" như một từ mô tả, ví dụ "Cloudy Labs — hands-on labs for AWS", và không dùng logo AWS |
 | A11 | Mã nguồn mở, giấy phép **MIT** |
 | A12 | Hình thức thương mại hoá là **bản chạy trên máy người dùng**. Không host thành dịch vụ, nên phần "Ngoài phạm vi" giữ nguyên |
 
@@ -198,4 +198,4 @@ Còn chờ kiểm chứng:
 
 Q1–Q6 đã được trả lời, xem A7–A12. Hiện không còn câu hỏi mở nào chặn M0.
 
-Ghi chú: trước bản phát hành công khai đầu tiên, nên tra cứu xem tên "XLabs" có trùng với nhãn hiệu hoặc dự án đã có hay không. Ví dụ, trên GitHub và Hugging Face đã có một tổ chức AI tên XLabs-AI.
+Ghi chú: trước bản phát hành công khai đầu tiên, nên tra cứu xem tên "Cloudy Labs" và slug `cloudy-labs` có trùng với nhãn hiệu, tên miền hoặc dự án đã có hay không.

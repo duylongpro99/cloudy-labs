@@ -11,7 +11,7 @@ dependencies: [3]
 
 ## Goal
 
-Xác nhận mọi phụ thuộc dự kiến của XLabs, kể cả phụ thuộc gián tiếp, có giấy phép cho phép phân phối thương mại cùng một sản phẩm MIT (quyết định A8, A11).
+Xác nhận mọi phụ thuộc dự kiến của Cloudy Labs, kể cả phụ thuộc gián tiếp, có giấy phép cho phép phân phối thương mại cùng một sản phẩm MIT (quyết định A8, A11).
 
 ## Files to Create / Modify
 

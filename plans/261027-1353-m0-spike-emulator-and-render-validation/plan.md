@@ -1,6 +1,6 @@
 ---
 title: "M0 Spike: kiểm chứng emulator, hiệu năng cảnh 3D và giấy phép"
-description: "Kiểm chứng bằng thực nghiệm các giả định A4, A6 và giấy phép thương mại trước khi xây XLabs, đầu ra là một báo cáo spike."
+description: "Kiểm chứng bằng thực nghiệm các giả định A4, A6 và giấy phép thương mại trước khi xây Cloudy Labs, đầu ra là một báo cáo spike."
 status: completed
 priority: P1
 effort: 14h
