@@ -1,0 +1,38 @@
+# Local emulator stack for labctl. Ports bind to 127.0.0.1 only.
+# Tags checked on Docker Hub 2026-10-28; both digests are multi-arch index digests (amd64 + arm64).
+name: cloudy-labs
+services:
+  floci:
+    image: floci/floci:2.3.0@sha256:e0b292df4dc9559b7b1bf4f51bdda4bb8e269276236438cd03cae661260ea8a9
+    user: root # Floci drives the Docker socket to run EC2 instances as containers
+    ports:
+      - "127.0.0.1:4566:4566"
+    environment:
+      FLOCI_STORAGE_MODE: memory
+      FLOCI_SERVICES_UI_ENABLED: "false"
+      # Report the subnet-allocated private IP instead of the Docker bridge IP.
+      FLOCI_SERVICES_EC2_AWS_FAITHFUL_PRIVATE_IP: "true"
+      # Amazon Linux 2023 AMIs run the image `labctl up` builds, so instances get IMDS without
+      # a per-boot package install.
+      FLOCI_SERVICES_EC2_IMAGE_CATALOG_PATH: /etc/cloudy-labs/ec2-image-catalog.yaml
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+      - ./ec2-image-catalog.yaml:/etc/cloudy-labs/ec2-image-catalog.yaml:ro
+    healthcheck:
+      # The image has bash but no curl, wget or grep.
+      test: ["CMD", "bash", "-c", "exec 3<>/dev/tcp/127.0.0.1/4566 && printf 'GET /_floci/health HTTP/1.0\\r\\n\\r\\n' >&3 && read -r line <&3 && [[ $$line == *' 200 '* ]]"]
+      interval: 2s
+      timeout: 3s
+      retries: 30
+
+  moto:
+    image: motoserver/moto:5.2.4@sha256:120b1589c6df7e35d2092935f6ff724486bb2c4189d0e36ce795baba1400ffd2
+    ports:
+      - "127.0.0.1:5050:5000" # host 5000 is taken by AirPlay on macOS
+    # No INITIAL_NO_AUTH_ACTION_COUNT here: IAM enforcement starts when `labctl start`/`reset`
+    # calls reset-auth, with the count defined once in providers/aws.py.
+    healthcheck:
+      test: ["CMD", "curl", "-sf", "-o", "/dev/null", "http://127.0.0.1:5000/moto-api/"]
+      interval: 2s
+      timeout: 3s
+      retries: 30

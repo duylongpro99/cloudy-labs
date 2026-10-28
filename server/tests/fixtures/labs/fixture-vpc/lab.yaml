@@ -1,0 +1,18 @@
+# Test fixture for the lab engine, not lab content.
+id: fixture-vpc
+provider: aws
+emulator: floci
+title: Fixture VPC
+cidrs: [10.77.0.0/16]
+tasks:
+  - id: create-vpc
+    text: Create a VPC 10.77.0.0/16 tagged lab=fixture-vpc.
+checks:
+  - id: vpc-exists
+    task: create-vpc
+    fn: checks:vpc_exists
+    args: {cidr: 10.77.0.0/16}
+    description: The tagged VPC exists with the expected CIDR.
+hints:
+  - task: create-vpc
+    text: aws ec2 create-vpc --cidr-block 10.77.0.0/16 --tag-specifications ...
