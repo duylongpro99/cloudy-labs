@@ -7,7 +7,7 @@ import { mkdirSync } from 'node:fs'
 import { resolve } from 'node:path'
 import { chromium } from 'playwright-core'
 
-const BASE = 'http://localhost:5174/'
+const BASE = 'http://127.0.0.1:5174/'
 const out = resolve(process.argv[2] ?? 'bench-results')
 const what = process.argv.slice(3).length ? process.argv.slice(3) : ['gallery', 'scene', 'interact']
 mkdirSync(out, { recursive: true })
@@ -15,7 +15,8 @@ mkdirSync(out, { recursive: true })
 const browser = await chromium.launch({ channel: 'chrome', headless: false, args: ['--window-size=1320,1000'] })
 const page = await browser.newPage({ viewport: { width: 1300, height: 960 }, deviceScaleFactor: 2 })
 const errors = []
-page.on('console', (m) => m.type() === 'error' && errors.push(m.text()))
+// The app has no favicon; Chrome's request for one is not a page error.
+page.on('console', (m) => m.type() === 'error' && !m.location().url.endsWith('/favicon.ico') && errors.push(m.text()))
 page.on('pageerror', (e) => errors.push(e.message))
 let failed = false
 
@@ -46,13 +47,13 @@ if (what.includes('scene')) {
   for (const theme of ['light', 'dark']) {
     for (const zoom of ['', '&zoom=40']) {
       const ready = () => window.__benchResult
-      await shot(`?mode=idle&post=full&theme=${theme}&dpr=2&duration=500&warmup=3000${zoom}`, ready, `scene-${theme}-full-dpr2${zoom ? '-zoom40' : ''}.png`)
+      await shot(`?view=bench&mode=idle&post=full&theme=${theme}&dpr=2&duration=500&warmup=3000${zoom}`, ready, `scene-${theme}-full-dpr2${zoom ? '-zoom40' : ''}.png`)
     }
   }
 }
 
 if (what.includes('interact')) {
-  await page.goto(`${BASE}?mode=view&theme=light`)
+  await page.goto(`${BASE}?view=bench&mode=view&theme=light`)
   await page.waitForFunction(() => window.__scene?.screenPoint('i-000'), null, { timeout: 60_000 })
   await page.waitForTimeout(2500) // entrance animation and camera framing
   for (const id of ['i-000', 'nat-subnet-0-0-pub', 'igw-1', 'rtb-0', 'key-0']) {

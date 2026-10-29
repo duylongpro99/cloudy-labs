@@ -2,7 +2,7 @@
 // Usage: node scripts/run-chrome-bench.mjs [start-index]   (dev server on :5174; results land in BENCH_RESULTS_DIR)
 import { chromium } from 'playwright-core'
 
-const BASE = 'http://localhost:5174/'
+const BASE = 'http://127.0.0.1:5174/'
 const start = Number(process.argv[2] ?? 0)
 const { SUITE } = await import('../src/bench/bench.ts')
 

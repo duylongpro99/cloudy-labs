@@ -3,8 +3,10 @@
 import type { AwsKind } from './aws-objects'
 
 export type GroupKind = 'region' | 'vpc' | 'az' | 'subnet-public' | 'subnet-private'
-export type LeafKind = 'instance' | 'nat' | 'igw' | 'route-table' | 'key-pair'
 export type AttachmentKind = Extract<AwsKind, 'security-group' | 'elastic-ip'>
+// A security group or Elastic IP attached to nothing has no host to sit on, so it is drawn as a leaf.
+export type LeafKind = 'instance' | 'nat' | 'igw' | 'route-table' | 'key-pair' | AttachmentKind
+export type EdgeKind = 'route' | 'association' | 'uses-key'
 
 export interface FixtureNode {
   id: string
@@ -16,6 +18,8 @@ export interface FixtureNode {
 export interface FixtureEdge {
   from: string
   to: string
+  kind?: EdgeKind // absent in the benchmark fixture
+  label?: string
 }
 
 // Resources drawn as a badge on another node rather than as a node of their own.

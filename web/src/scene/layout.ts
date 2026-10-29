@@ -1,5 +1,6 @@
 // Deterministic layout computed bottom-up from the containment tree (PRD F3.3):
 // leaves sit on a grid inside their subnet, and each group is sized from its children.
+// Children are ordered by (kind, id), so the layout depends on the state alone, not on the order it arrived in.
 import type { Fixture, FixtureNode, GroupKind } from './fixture'
 
 export const CELL = 2.2 // leaf footprint incl. gap
@@ -38,9 +39,17 @@ export interface Layout {
 
 const isGroup = (n: FixtureNode) => ['region', 'vpc', 'az', 'subnet-public', 'subnet-private'].includes(n.kind)
 
+const KIND_ORDER: readonly FixtureNode['kind'][] = [
+  'region', 'vpc', 'az', 'subnet-public', 'subnet-private',
+  'igw', 'nat', 'route-table', 'instance', 'key-pair', 'security-group', 'elastic-ip',
+]
+const byKindThenId = (a: FixtureNode, b: FixtureNode) =>
+  KIND_ORDER.indexOf(a.kind) - KIND_ORDER.indexOf(b.kind) || (a.id < b.id ? -1 : a.id > b.id ? 1 : 0)
+
 export function computeLayout(f: Fixture): Layout {
   const children = new Map<string, FixtureNode[]>()
   for (const n of f.nodes) if (n.parent) children.set(n.parent, [...(children.get(n.parent) ?? []), n])
+  for (const kids of children.values()) kids.sort(byKindThenId)
 
   // Pass 1 (bottom-up): size of every group.
   const size = new Map<string, { w: number; d: number }>()

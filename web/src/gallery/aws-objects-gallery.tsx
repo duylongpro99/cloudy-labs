@@ -5,7 +5,7 @@ import { CameraControls, Environment, Lightformer, Line, Text } from '@react-thr
 import { useThree } from '@react-three/fiber'
 import { useEffect, useLayoutEffect, useMemo, useRef } from 'react'
 import type { PostLevel } from '../bench/bench'
-import { AZIMUTH, POLAR, PostFx } from '../scene/architecture-scene'
+import { AZIMUTH, POLAR, PostFx } from '../scene/scene-rig'
 import type { AwsKind, AwsObjectPlacement, ThemeName } from '../scene/aws-objects'
 import { attachPosition, AwsObjectLayer, MANIFEST, MANIFEST_BY_KIND } from '../scene/aws-objects'
 import { THEMES } from '../scene/theme'

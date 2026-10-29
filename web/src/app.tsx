@@ -1,16 +1,33 @@
 import { Canvas } from '@react-three/fiber'
-import { useCallback, useMemo, useState } from 'react'
+import { useCallback, useEffect, useMemo, useState, type CSSProperties } from 'react'
 import { NeutralToneMapping } from 'three'
 import type { BenchResult } from './bench/bench'
 import { CANVAS, nextSuiteUrl, publish, readConfig, resultName, SUITE } from './bench/bench'
 import { AwsObjectsGallery, type GalleryConfig } from './gallery/aws-objects-gallery'
+import { useResourceGraph, type ConnectionState } from './graph/graph-client'
+import { graphToScene } from './graph/graph-to-scene'
 import { ArchitectureScene } from './scene/architecture-scene'
 import { GLYPH_COVERAGE, type ThemeName } from './scene/aws-objects'
+import { LiveScene } from './scene/live-scene'
+import { PropertyPanel } from './scene/property-panel'
+import { THEMES } from './scene/theme'
 
-function Stage({ post, dpr, children }: { post: string; dpr: number | [number, number]; children: React.ReactNode }) {
+function Stage({
+  post,
+  dpr,
+  style = CANVAS,
+  onPointerMissed,
+  children,
+}: {
+  post: string
+  dpr: number | [number, number]
+  style?: CSSProperties
+  onPointerMissed?: () => void
+  children: React.ReactNode
+}) {
   const postFx = post !== 'flat'
   return (
-    <div id="stage" style={CANVAS}>
+    <div id="stage" style={style}>
       <Canvas
         dpr={dpr}
         frameloop="demand"
@@ -23,6 +40,7 @@ function Stage({ post, dpr, children }: { post: string; dpr: number | [number, n
         // With a composer the ToneMapping effect owns tone mapping; flat mode tone-maps in the renderer.
         flat={postFx}
         gl={{ antialias: false, powerPreference: 'high-performance' }}
+        onPointerMissed={onPointerMissed}
         onCreated={({ gl }) => {
           if (!postFx) gl.toneMapping = NeutralToneMapping
         }}
@@ -60,7 +78,7 @@ function Gallery() {
   )
 }
 
-function Scene() {
+function Bench() {
   const cfg = useMemo(() => readConfig(), [])
   const [result, setResult] = useState<BenchResult | null>(null)
 
@@ -97,6 +115,66 @@ function Scene() {
   )
 }
 
+// Theme follows the system setting and its changes until the learner picks one by hand (F3.9).
+function useThemePreference(): [ThemeName, () => void] {
+  const query = useMemo(() => matchMedia('(prefers-color-scheme: dark)'), [])
+  const [system, setSystem] = useState<ThemeName>(query.matches ? 'dark' : 'light')
+  const [manual, setManual] = useState<ThemeName | null>(null)
+  useEffect(() => {
+    const onChange = (e: MediaQueryListEvent) => setSystem(e.matches ? 'dark' : 'light')
+    query.addEventListener('change', onChange)
+    return () => query.removeEventListener('change', onChange)
+  }, [query])
+  const theme = manual ?? system
+  return [theme, () => setManual(theme === 'light' ? 'dark' : 'light')]
+}
+
+const STATE_LABEL: Record<ConnectionState, string> = {
+  connecting: 'Đang kết nối lab-server…',
+  live: 'Đang cập nhật trực tiếp',
+  'emulator-down': 'Emulator không phản hồi (chạy labctl up)',
+  disconnected: 'Mất kết nối lab-server (chạy labctl serve), đang thử lại…',
+}
+
+// index.html gives #stage the benchmark's fixed size; the live view fills the window instead.
+const FULL_SCREEN: CSSProperties = { position: 'fixed', inset: 0, width: '100%', height: '100%' }
+
+function Live() {
+  const { graph, state, events } = useResourceGraph()
+  const scene = useMemo(() => (graph ? graphToScene(graph) : null), [graph])
+  const [theme, toggleTheme] = useThemePreference()
+  const [fitKey, setFitKey] = useState(0)
+  const [selected, setSelected] = useState<string | null>(null)
+  const close = useCallback(() => setSelected(null), [])
+  const t = THEMES[theme]
+  return (
+    <>
+      {scene && (
+        <Stage post="full" dpr={[1, 2]} style={FULL_SCREEN} onPointerMissed={close}>
+          <LiveScene scene={scene} events={events} theme={theme} fitKey={fitKey} selected={selected} onSelect={setSelected} />
+        </Stage>
+      )}
+      {scene && graph && selected && <PropertyPanel selected={selected} scene={scene} edges={graph.edges} theme={t} onClose={close} />}
+      <div id="live-panel" style={{ position: 'fixed', top: 12, left: 12, maxWidth: 520, padding: '8px 12px', borderRadius: 8, background: t.background, color: t.label, boxShadow: '0 1px 4px rgba(0,0,0,.25)' }}>
+        <div>
+          <b>Cloudy Labs</b> · <span id="connection-state" data-state={state}>{STATE_LABEL[state]}</span>
+          {graph && <> · phiên bản {graph.version} · {graph.nodes.length} tài nguyên</>}
+        </div>
+        <div style={{ marginTop: 6 }}>
+          <button id="fit-view" onClick={() => setFitKey((k) => k + 1)}>Vừa khung</button>
+          <button id="toggle-theme" onClick={toggleTheme}>Chủ đề: {theme === 'light' ? 'sáng' : 'tối'}</button>
+        </div>
+        {graph && graph.warnings.length > 0 && (
+          <ul id="graph-warnings" style={{ margin: '6px 0 0', paddingLeft: 18 }}>
+            {graph.warnings.map((w) => <li key={w}>{w}</li>)}
+          </ul>
+        )}
+      </div>
+    </>
+  )
+}
+
 export function App() {
-  return new URLSearchParams(location.search).get('view') === 'gallery' ? <Gallery /> : <Scene />
+  const view = new URLSearchParams(location.search).get('view')
+  return view === 'gallery' ? <Gallery /> : view === 'bench' ? <Bench /> : <Live />
 }
