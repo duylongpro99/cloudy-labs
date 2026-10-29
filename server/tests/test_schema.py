@@ -40,8 +40,25 @@ def test_minimal_lab_gets_defaults():
         ({"cidrs": ["10.0.0.1/16"]}, "valid IPv4 network"),
         ({"id": "Bad Id"}, "pattern"),
         ({"checks": []}, "at least 1"),
+        ({"builder": {"palette": ["vpc", "vpc"]}}, "palette lists a kind twice"),
+        ({"builder": {"palette": ["lambda"]}}, "'vpc'"),
+        ({"builder": {"tags": {"Name": "x"}}}, "Name tag comes from the builder form"),
+        ({"builder": {"tags": {"lab": "a,b"}}}, "letters, digits"),
+        ({"builder": {"tags": {"lab": "a\n"}}}, "letters, digits"),
+        ({"builder": {"surprise": 1}}, "Extra inputs"),
     ],
 )
 def test_invalid_lab(over, needle):
     with pytest.raises(ValidationError, match=needle):
         Lab.model_validate(base(**over))
+
+
+def test_builder_defaults_to_empty():
+    lab = Lab.model_validate(base())
+    assert lab.builder.palette == [] and lab.builder.tags == {}
+
+
+def test_builder_section():
+    lab = Lab.model_validate(base(builder={"palette": ["vpc", "subnet"], "tags": {"lab": "06"}}))
+    assert lab.builder.palette == ["vpc", "subnet"]
+    assert lab.builder.tags == {"lab": "06"}

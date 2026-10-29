@@ -32,8 +32,12 @@ def user_data() -> dict:
     return json.loads((DESCRIBED / "user-data.json").read_text())
 
 
+def dns_hostnames() -> dict:
+    return json.loads((DESCRIBED / "vpc-dns-hostnames.json").read_text())
+
+
 def lab_graph(now=LATER, data=None):
-    return build_graph(data or raw(), host_ports=ports(), user_data=user_data(), now=now)
+    return build_graph(data or raw(), host_ports=ports(), user_data=user_data(), dns_hostnames=dns_hostnames(), now=now)
 
 
 def by_id(g):
@@ -172,6 +176,10 @@ class FakeEc2:
             return {DESCRIBE[method]: self.data[DESCRIBE[method]]}
         return call
 
+    def describe_vpc_attribute(self, VpcId, Attribute):
+        assert Attribute == "enableDnsHostnames"
+        return {"VpcId": VpcId, "EnableDnsHostnames": {"Value": dns_hostnames()[VpcId]}}
+
     def describe_instance_attribute(self, InstanceId, Attribute):
         self.attribute_calls.append(InstanceId)
         return {"UserData": {"Value": "IyEvYmluL2Jhc2g="}}
@@ -204,3 +212,12 @@ def test_collect_reports_emulator_down_when_floci_does_not_answer():
                 clock=lambda: LATER, ports=ports)
     assert g.status == "emulator-down" and [n.kind for n in g.nodes] == ["region"]
     assert g.contains == [] and g.edges == []
+
+
+def test_builder_attributes_become_props():
+    nodes = by_id(lab_graph())
+    assert nodes["vpc-149d0439"].props["enableDnsHostnames"] is True
+    flags = {n.id: n.props["mapPublicIpOnLaunch"] for n in nodes.values() if n.kind.startswith("subnet")}
+    assert flags["subnet-83a1f79a"] is True and flags["subnet-e917cc42"] is False
+    unknown = by_id(build_graph(raw(), host_ports=ports(), now=LATER))["vpc-149d0439"]
+    assert "enableDnsHostnames" not in unknown.props  # not asked: left out, not reported as off

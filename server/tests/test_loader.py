@@ -15,7 +15,16 @@ def test_loads_fixture_and_resolves_checker(fixture_labs):
     loaded = load_lab("fixture-vpc", fixture_labs)
     assert loaded.lab.cidrs and str(loaded.lab.cidrs[0]) == "10.77.0.0/16"
     assert callable(loaded.resolve("checks:vpc_exists"))
-    assert list_labs(fixture_labs) == ["fixture-vpc"]
+    assert list_labs(fixture_labs) == ["fixture-lab-06", "fixture-vpc"]
+
+
+def test_loads_builder_fixture(fixture_labs):
+    loaded = load_lab("fixture-lab-06", fixture_labs)
+    lab = loaded.lab
+    assert lab.builder.palette == ["vpc", "subnet", "igw", "elastic-ip", "nat", "route-table"]
+    assert lab.builder.tags == {"lab": "fixture-lab-06"}
+    assert [str(c) for c in lab.cidrs] == ["10.66.0.0/16"]
+    assert len(lab.checks) == 8  # every fn resolved at load time
 
 
 def test_list_labs_missing_root(tmp_path):

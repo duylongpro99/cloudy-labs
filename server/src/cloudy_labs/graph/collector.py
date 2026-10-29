@@ -11,7 +11,7 @@ from datetime import datetime, timedelta, timezone
 from typing import Any, Callable
 
 from botocore.config import Config
-from botocore.exceptions import ClientError, EndpointConnectionError
+from botocore.exceptions import BotoCoreError, ClientError, EndpointConnectionError
 
 from ..config import REGION
 from ..providers.aws import AwsProvider
@@ -94,12 +94,14 @@ def build_graph(
     *,
     host_ports: dict[str, dict[str, int]] | None = None,
     user_data: dict[str, bool] | None = None,
+    dns_hostnames: dict[str, bool] | None = None,
     now: datetime,
     region: str = REGION,
 ) -> ResourceGraph:
     """Graph from describe responses keyed by DESCRIBE's response keys (lists, any order)."""
     host_ports = host_ports or {}
     user_data = user_data or {}
+    dns_hostnames = dns_hostnames or {}
     nodes: dict[str, Node] = {}
     contains: list[Contains] = []
     edges: dict[str, Edge] = {}
@@ -119,7 +121,8 @@ def build_graph(
 
     vpcs = raw.get("Vpcs", [])
     for v in vpcs:
-        add(v["VpcId"], "vpc", _label(v, v["VpcId"]), region, cidr=v.get("CidrBlock"), isDefault=v.get("IsDefault") or None, tags=_tags(v))
+        add(v["VpcId"], "vpc", _label(v, v["VpcId"]), region, cidr=v.get("CidrBlock"), isDefault=v.get("IsDefault") or None,
+            enableDnsHostnames=dns_hostnames.get(v["VpcId"]), tags=_tags(v))
 
     route_tables = raw.get("RouteTables", [])
     subnets = [s for s in raw.get("Subnets", []) if s.get("VpcId") in nodes]
@@ -132,7 +135,7 @@ def build_graph(
         public = _is_public(effective.get(sid))
         subnet_cidrs[sid] = s.get("CidrBlock", "")
         add(sid, "subnet-public" if public else "subnet-private", _label(s, sid), f"{s['VpcId']}/{s['AvailabilityZone']}",
-            cidr=s.get("CidrBlock"), az=s["AvailabilityZone"], tags=_tags(s))
+            cidr=s.get("CidrBlock"), az=s["AvailabilityZone"], mapPublicIpOnLaunch=s.get("MapPublicIpOnLaunch"), tags=_tags(s))
 
     for g in raw.get("InternetGateways", []):
         attached = [a["VpcId"] for a in g.get("Attachments") or [] if a.get("VpcId") in nodes]
@@ -253,6 +256,22 @@ def fetch(ec2: Any) -> dict[str, list[dict]]:
     return results
 
 
+def vpc_dns_hostnames(ec2: Any, raw: dict[str, list[dict]]) -> dict[str, bool]:
+    """enableDnsHostnames per VPC: describe_vpcs leaves it out, so one call per VPC, in parallel."""
+    def attr(vpc_id: str) -> tuple[str, bool | None]:
+        try:
+            value = ec2.describe_vpc_attribute(VpcId=vpc_id, Attribute="enableDnsHostnames")
+        except ClientError:  # deleted between the two calls: leave the prop out
+            return vpc_id, None
+        return vpc_id, (value.get("EnableDnsHostnames") or {}).get("Value")
+
+    ids = [v["VpcId"] for v in raw.get("Vpcs", [])]
+    if not ids:
+        return {}
+    with ThreadPoolExecutor(max_workers=min(len(ids), 8)) as pool:
+        return {vpc_id: value for vpc_id, value in pool.map(attr, ids) if value is not None}
+
+
 def recent_user_data(ec2: Any, raw: dict[str, list[dict]], now: datetime) -> dict[str, bool]:
     """UserData is only visible through describe_instance_attribute; ask only for fresh instances."""
     found = {}
@@ -280,10 +299,22 @@ def collect(
     try:
         raw = fetch(ec2)
         user_data = recent_user_data(ec2, raw, now)
+        dns_hostnames = vpc_dns_hostnames(ec2, raw)
     except EndpointConnectionError as e:  # connection refused: Floci is stopped or being recreated
         return emulator_down(now, reason=type(e).__name__)
     # Timeouts and other errors propagate: they can be one slow answer, and the hub decides.
     needs_ports = any(
         i.get("PublicIpAddress") == LOOPBACK_PUBLIC_IP for r in raw["Reservations"] for i in r.get("Instances") or []
     )
-    return build_graph(raw, host_ports=ports() if needs_ports else {}, user_data=user_data, now=now)
+    return build_graph(raw, host_ports=ports() if needs_ports else {}, user_data=user_data,
+                       dns_hostnames=dns_hostnames, now=now)
+
+
+def region_azs(provider: AwsProvider | None = None) -> list[str]:
+    """Availability Zones of the region as the emulator reports them; empty when it does not answer."""
+    ec2 = (provider or AwsProvider("floci")).client("ec2", direct=True, config=CLIENT_CONFIG)
+    try:
+        zones = ec2.describe_availability_zones()["AvailabilityZones"]
+    except (BotoCoreError, ClientError):
+        return []
+    return sorted(z["ZoneName"] for z in zones if z.get("State", "available") == "available")
