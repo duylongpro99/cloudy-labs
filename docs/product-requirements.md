@@ -1,7 +1,7 @@
 # PRD: Cloudy Labs — hands-on labs for AWS với lớp kiến trúc 3D
 
 - Trạng thái: **Bản nháp v0.7**. Đã chốt A1–A3 và A7–A13 (A10 đổi tên thành Cloudy Labs, A13 dùng và sửa icon AWS, cùng ngày 2026-10-28). A4 và A6 đã kiểm chứng qua [spike M0](../plans/reports/spike-261027-2248-m0-validation.md). A5 chờ ý kiến pháp lý, người dùng chấp nhận rủi ro trong lúc chờ
-- Cập nhật: 2026-10-28
+- Cập nhật: 2026-10-29
 - Nguồn quyết định:
   - [Báo cáo nghiên cứu emulator](../plans/reports/research-261027-1027-cloud-simulator-for-hands-on-labs.md)
   - [Brainstorm lớp 3D](../plans/reports/brainstorm-261027-1423-3d-architecture-visual-layer.md)
@@ -58,7 +58,7 @@ Mức ưu tiên: **P0** là bắt buộc cho lát cắt đầu (Lab 6 + 7), **P1
 ### F1. Lab engine (`labctl`): P0
 
 - F1.1 Định nghĩa lab bằng YAML, gồm các trường `id, provider, title, setup, tasks, checks, hints`. Trường mới cho lớp 3D là `target`, mô tả kiến trúc mục tiêu dùng để vẽ ghost.
-- F1.2 Các lệnh `labctl up | down | env | start <lab> | check <lab> | reset <lab> | status`.
+- F1.2 Các lệnh `labctl up | down | env | start <lab> | check <lab> | reset <lab> | status`, cộng `labctl serve` (thêm ở M2) chạy lab-server cho cảnh 3D trực tiếp.
 - F1.3 Checker là các hàm Python dùng boto3, chạy trên emulator. Mỗi check trả về `pass/fail`, kèm thông điệp và ID tài nguyên liên quan để cảnh 3D tô sáng.
 - F1.4 Interface `Provider` có `client(service)`, `env()`, `reset()`, `health()`. Mỗi provider gắn với một emulator, lab chọn emulator qua trường `emulator`. Bản đầu tiên là `AwsProvider`.
 - F1.5 Tiến độ học lưu trong SQLite cục bộ.
@@ -66,7 +66,7 @@ Mức ưu tiên: **P0** là bắt buộc cho lát cắt đầu (Lab 6 + 7), **P1
 ### F2. Resource graph và đồng bộ trạng thái: P0
 
 - F2.1 Collector gọi các API `describe/list` để chuyển trạng thái emulator thành **resource graph** gồm `nodes`, `contains` và `edges`.
-- F2.2 `api-tap` là một proxy mỏng đặt trước emulator, ghi log từng lệnh API. Khi gặp lệnh ghi, nó báo collector chụp lại trạng thái ngay. Ngoài ra collector vẫn polling chậm khoảng 5 giây làm lưới an toàn.
+- F2.2 `api-tap` là một proxy mỏng đặt trước emulator, ghi log từng lệnh API. Khi gặp lệnh ghi, nó báo collector chụp lại trạng thái ngay. Ngoài ra collector vẫn polling chậm khoảng 5 giây làm lưới an toàn. Ở M2, api-tap là một service trong compose đứng ở cổng 4566 mà CLI của người học dùng, Floci lùi sang 4567, và sự kiện ghi đi qua kênh SSE ở 4568 ([cổng](labctl.md#cổng)).
 - F2.3 Server đẩy resource graph và sự kiện tới trình duyệt qua WebSocket.
 - F2.4 Phạm vi tài nguyên trong lát cắt đầu: VPC, Subnet, AZ, Internet Gateway, NAT Gateway, Route Table và route, Security Group và rule, Key Pair, EC2 Instance.
 
