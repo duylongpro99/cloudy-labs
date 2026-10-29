@@ -6,14 +6,17 @@ import urllib.request
 from collections.abc import Callable
 from pathlib import Path
 
-from ..config import COMPOSE_PROJECT, FLOCI_PORT, HOST, MOTO_PORT
+from ..config import API_PORT, COMPOSE_PROJECT, FLOCI_PORT, HOST, MOTO_PORT, TAP_EVENTS_PORT
 from .docker import DockerError, docker, lines, require_docker
 from .orphans import Orphans, remove_orphans
 from .preflight import port_busy_message, port_free
 
 COMPOSE_FILE = Path(__file__).with_name("compose.yaml")
-SERVICES = {"floci": FLOCI_PORT, "moto": MOTO_PORT}
-HEALTH_PATHS = {"floci": "/_floci/health", "moto": "/moto-api/"}
+# Health is probed on these host ports. api-tap's /health also checks Floci behind it.
+SERVICES = {"floci": FLOCI_PORT, "moto": MOTO_PORT, "api-tap": TAP_EVENTS_PORT}
+HEALTH_PATHS = {"floci": "/_floci/health", "moto": "/moto-api/", "api-tap": "/health"}
+# Every host port the stack publishes, all on 127.0.0.1.
+HOST_PORTS = (API_PORT, FLOCI_PORT, TAP_EVENTS_PORT, MOTO_PORT)
 # Floci pulls alpine/socat without a tag the first time an app port is published, which
 # makes Docker fetch every tag (about two minutes). Having :latest locally avoids that.
 SOCAT_IMAGE = "alpine/socat:latest"
@@ -64,6 +67,11 @@ def endpoints() -> dict[str, str]:
     return {name: f"http://{HOST}:{port}" for name, port in SERVICES.items()}
 
 
+def learner_endpoints() -> dict[str, str]:
+    """Where the CLI and the checkers go: Floci through api-tap, and moto."""
+    return {"floci (via api-tap)": f"http://{HOST}:{API_PORT}", "moto": endpoints()["moto"]}
+
+
 def reachable(name: str) -> bool:
     """Whether the service answers on its host port, which is what the CLI and checkers use."""
     try:
@@ -79,7 +87,7 @@ def recreate_floci() -> Orphans:
     Floci attaches its own container to every VPC network. Restarting it reconnects those
     networks and Floci then deletes them on startup, which can leave Docker Desktop
     forwarding the host port to an endpoint that no longer exists (the container stays
-    healthy but 127.0.0.1:4566 hangs). Removing the container detaches it from every
+    healthy but its host port hangs). Removing the container detaches it from every
     network first, and the new container joins only the compose network.
     """
     compose("rm", "-s", "-f", "floci")
@@ -101,7 +109,7 @@ def up(log: Log = print) -> None:
             _report(recreate_floci(), log, "while recreating floci")
     else:
         if not states:  # our containers do not hold the ports, so something else must not either
-            for port in SERVICES.values():
+            for port in HOST_PORTS:
                 if not port_free(port, HOST):
                     raise DockerError(port_busy_message(port))
         if states.get("floci", {}).get("State") != "running":
@@ -109,7 +117,7 @@ def up(log: Log = print) -> None:
             # A stopped Floci container may still be attached to VPC networks; see recreate_floci.
             compose("rm", "-s", "-f", "floci")
             _report(remove_orphans(), log, "from an earlier run")
-        log("starting emulator stack (floci, moto)...")
+        log("starting emulator stack (floci, api-tap, moto)...")
         compose("up", "-d", "--wait")
     if not _have_image(SOCAT_IMAGE):
         log(f"pulling {SOCAT_IMAGE} (Floci needs it to publish instance ports)...")
@@ -118,7 +126,7 @@ def up(log: Log = print) -> None:
         if not _have_image(image):
             log(f"building {image} for Amazon Linux 2023 instances (once, up to a minute)...")
             docker("build", "-q", "--platform", platform, "-t", image, str(AL2023_DIR))
-    for name, url in endpoints().items():
+    for name, url in learner_endpoints().items():
         log(f"{name}: {url}")
 
 

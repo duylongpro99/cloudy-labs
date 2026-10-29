@@ -31,8 +31,14 @@ def test_env_points_at_the_lab_emulator(emulator, endpoint):
     }
 
 
-def test_default_provider_is_floci():
-    assert provider_for(None).endpoint == "http://127.0.0.1:4566"
+def test_default_provider_is_floci_through_api_tap():
+    p = provider_for(None)
+    assert (p.endpoint, p.direct_endpoint) == ("http://127.0.0.1:4566", "http://127.0.0.1:4567")
+
+
+def test_direct_client_bypasses_api_tap():
+    assert AwsProvider("floci").client("ec2", direct=True).meta.endpoint_url == "http://127.0.0.1:4567"
+    assert AwsProvider("floci").client("ec2").meta.endpoint_url == "http://127.0.0.1:4566"
 
 
 def test_client_uses_endpoint_and_optional_credentials():

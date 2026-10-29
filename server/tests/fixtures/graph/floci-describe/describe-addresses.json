@@ -1,0 +1,10 @@
+{
+    "Addresses": [
+        {
+            "AllocationId": "eipalloc-2cc57421a05781343",
+            "Domain": "vpc",
+            "Tags": [],
+            "PublicIp": "54.182.208.242"
+        }
+    ]
+}

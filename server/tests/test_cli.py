@@ -1,5 +1,6 @@
 import pytest
 
+from cloudy_labs import cli
 from cloudy_labs.cli import COMMANDS, build_parser, main
 
 
@@ -30,7 +31,6 @@ def test_unknown_lab_is_a_clean_error(capsys, tmp_path, monkeypatch):
 
 
 def test_check_exit_codes(monkeypatch, capsys):
-    from cloudy_labs import cli
     from cloudy_labs.checks import CheckResult
 
     class FakeEngine:
@@ -55,3 +55,21 @@ def test_check_exit_codes(monkeypatch, capsys):
     FakeEngine.outcome = RuntimeError("boom")
     assert main(["check", "demo"]) == 2
     assert "unexpected error: RuntimeError: boom" in capsys.readouterr().err
+
+
+def test_serve_refuses_without_the_emulator(monkeypatch, capsys):
+    monkeypatch.setattr(cli.stack, "is_running", lambda: False)
+    assert main(["serve"]) == 1
+    assert "labctl up" in capsys.readouterr().err
+
+
+def test_serve_refuses_a_busy_port_instead_of_moving(monkeypatch, capsys):
+    import socket
+
+    monkeypatch.setattr(cli.stack, "is_running", lambda: True)
+    with socket.socket() as s:
+        s.bind(("127.0.0.1", 0))
+        s.listen()
+        monkeypatch.setattr(cli, "SERVER_PORT", s.getsockname()[1])
+        assert main(["serve"]) == 1
+    assert "already in use" in capsys.readouterr().err

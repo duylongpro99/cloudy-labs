@@ -9,12 +9,15 @@ from typing import Any, Literal
 
 import boto3
 
-from ..config import ACCESS_KEY_ID, FLOCI_PORT, HOST, MOTO_PORT, REGION, SECRET_ACCESS_KEY, home
+from ..config import ACCESS_KEY_ID, API_PORT, FLOCI_PORT, HOST, MOTO_PORT, REGION, SECRET_ACCESS_KEY, home
 from ..emulator.docker import DockerError
 from ..emulator.stack import reachable, recreate_floci
 
 Emulator = Literal["floci", "moto"]
-PORTS: dict[str, int] = {"floci": FLOCI_PORT, "moto": MOTO_PORT}
+# The learner's CLI and the checkers reach Floci through api-tap, so their calls show up in the
+# 3D scene; labctl's own calls and the collector go straight to Floci.
+PORTS: dict[str, int] = {"floci": API_PORT, "moto": MOTO_PORT}
+DIRECT_PORTS: dict[str, int] = {"floci": FLOCI_PORT, "moto": MOTO_PORT}
 # After a reset, moto enforces IAM. labctl spends the unauthenticated calls it allows on
 # creating an admin user (CreateUser, PutUserPolicy, CreateAccessKey); the learner's CLI
 # and the checkers then sign as that user.
@@ -33,6 +36,7 @@ class AwsProvider:
     def __init__(self, emulator: Emulator = "floci"):
         self.emulator = emulator
         self.endpoint = f"http://{HOST}:{PORTS[emulator]}"
+        self.direct_endpoint = f"http://{HOST}:{DIRECT_PORTS[emulator]}"
 
     def credentials(self) -> Credentials:
         """The admin user on moto once a lab has started there; the emulator's fake keys otherwise."""
@@ -44,15 +48,19 @@ class AwsProvider:
                 pass  # no moto lab started yet: moto does not enforce IAM until the first reset
         return ACCESS_KEY_ID, SECRET_ACCESS_KEY
 
-    def client(self, service: str, credentials: Credentials | None = None) -> Any:
-        """`credentials` lets a checker act as another IAM user, for example one the learner created."""
+    def client(self, service: str, credentials: Credentials | None = None, *, direct: bool = False, config: Any = None) -> Any:
+        """`credentials` lets a checker act as another IAM user, for example one the learner created.
+
+        `direct` bypasses api-tap, for reads that must not count as learner activity.
+        """
         key, secret = credentials or self.credentials()
         return boto3.client(
             service,
-            endpoint_url=self.endpoint,
+            endpoint_url=self.direct_endpoint if direct else self.endpoint,
             region_name=REGION,
             aws_access_key_id=key,
             aws_secret_access_key=secret,
+            config=config,
         )
 
     def env(self) -> dict[str, str]:

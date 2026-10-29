@@ -9,7 +9,7 @@ Ghi chú cho người soạn lab (PRD NFR5). Mỗi lab chạy trên Floci (mặc
 - **CIDR trùng mạng Docker thì IP private bị đổi.** Floci tạo một Docker network cho mỗi VPC. Nếu CIDR của VPC trùng một mạng Docker có sẵn trên máy, Floci âm thầm dựng VPC trên `10.240.0.0/16`. `PrivateIpAddress` khi đó nằm ngoài subnet đã khai báo.
   - Khai báo mọi CIDR lab sẽ tạo trong trường `cidrs` của `lab.yaml`. `labctl start` sẽ cảnh báo khi có trùng.
   - Checker nên kiểm instance thuộc subnet nào qua `SubnetId`, không suy từ IP.
-- **`PublicIpAddress` là `127.0.0.1`** trên Docker Desktop. Cổng ứng dụng được public ra host trong dải 30000–30999.
+- **`PublicIpAddress` là `127.0.0.1`** trên Docker Desktop. SSH được public ngay trên container instance (`floci-aws-ec2-i-<id>`, ví dụ `2200->22`); mỗi cổng ứng dụng mà security group mở đi qua một container socat riêng (`floci-aws-ec2-fwd-i-<id>-<cổng>`) trong dải 30000–30999. Cả hai bind `0.0.0.0`, không phải `127.0.0.1`. Cảnh 3D và panel thuộc tính hiển thị các cổng host này (`127.0.0.1:<cổng>`) thay cho IP công khai.
 - **IMDS chiếm `169.254.169.254:80` bên trong instance.** Web server bind `0.0.0.0:80` sẽ lỗi `Address already in use`. UserData (ví dụ Lab 7) phải bind vào IP private lấy từ IMDS:
 
   ```bash
@@ -26,11 +26,16 @@ Ghi chú cho người soạn lab (PRD NFR5). Mỗi lab chạy trên Floci (mặc
   - AMI kiến trúc khác máy (ví dụ AMI x86_64 trên Mac Apple Silicon) chạy qua giả lập, chậm hơn khi chạy lệnh nặng.
 - **Lần đầu public cổng ứng dụng, Floci pull `alpine/socat` không kèm tag**, khiến Docker kéo về mọi tag. `labctl up` pull sẵn `alpine/socat:latest` để tránh việc này.
 
+### Cổng host
+
+- **Floci nghe ở `4567`, cả trong container (`FLOCI_PORT=4567`) lẫn trên host (`127.0.0.1:4567`)**; người học và checker vẫn dùng `4566`, nơi api-tap chuyển tiếp nguyên vẹn sang Floci ([bảng cổng](labctl.md#cổng)). Label `io.floci.owner` bằng cổng Floci nghe trong container, nên tài nguyên của stack này mang `4567` và không lẫn với một Floci mặc định khác (owner `4566`) trên cùng máy ([ghi chú kiểm](../plans/261029-1006-m2-resource-graph-collector-scene/notes/floci-port-move.md)).
+
 ### Vòng đời
 
-- **`docker compose down` để lại container EC2, network VPC và volume.** Các tài nguyên này mang label `io.floci.owner=4566`. `labctl down` và `labctl up` dọn chúng; xem [ghi chú label](../plans/261028-1104-m1-lab-engine-labctl/notes/floci-labels.md).
+- **`docker compose down` để lại container EC2, network VPC và volume.** Các tài nguyên này mang label `io.floci.owner=4567`, trừ container socat chuyển cổng ứng dụng (chỉ có `floci_emulator=floci-aws`; `labctl` nhận chúng qua id instance trong tên `floci-aws-ec2-fwd-i-<id>-<cổng>`). `labctl down` và `labctl up` dọn chúng; xem [ghi chú label](../plans/261028-1104-m1-lab-engine-labctl/notes/floci-labels.md).
+- **Nâng cấp từ stack dựng trước khi Floci đổi sang cổng 4567:** chạy `labctl down` bằng bản cũ trước khi cập nhật. Tài nguyên còn sót của stack cũ mang owner `4566`, bản mới không dọn chúng vì không phân biệt được với một Floci khác.
 - **Reset bằng cách tạo lại container Floci** (khoảng 1 giây, khoảng 5 giây khi còn instance) vì Floci giữ trạng thái trong bộ nhớ. Xoá từng tài nguyên bằng API chậm hơn nhiều (khoảng 19 giây cho Lab 6 + 7).
-- **Không restart container Floci khi đã có instance.** Floci tự gắn container của nó vào network của mỗi VPC. Khi restart, Docker gắn lại các network đó, rồi Floci xoá chúng lúc khởi động. Thỉnh thoảng (2 trên 16 lần đo) Docker Desktop khi đó chuyển tiếp cổng host vào endpoint đã mất: container vẫn healthy nhưng `127.0.0.1:4566` treo. `labctl` vì vậy xoá container rồi tạo mới thay cho restart. Nếu Floci bị restart ngoài `labctl` (ví dụ `docker restart`), chạy `labctl up`; lệnh này phát hiện cổng host không trả lời và tạo lại container.
+- **Không restart container Floci khi đã có instance.** Floci tự gắn container của nó vào network của mỗi VPC. Khi restart, Docker gắn lại các network đó, rồi Floci xoá chúng lúc khởi động. Thỉnh thoảng (2 trên 16 lần đo) Docker Desktop khi đó chuyển tiếp cổng host vào endpoint đã mất: container vẫn healthy nhưng cổng host của Floci (`127.0.0.1:4567`, và vì thế cả `4566` qua api-tap) treo. `labctl` vì vậy xoá container rồi tạo mới thay cho restart. Nếu Floci bị restart ngoài `labctl` (ví dụ `docker restart`), chạy `labctl up`; lệnh này phát hiện cổng host không trả lời và tạo lại container.
 
 ## moto
 

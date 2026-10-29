@@ -1,8 +1,11 @@
 """End-to-end lifecycle against the real emulator stack. Run with `uv run pytest -m docker`."""
 
+import json
 import shutil
 import sqlite3
+import threading
 import time
+import urllib.request
 from pathlib import Path
 
 import boto3
@@ -47,11 +50,39 @@ def fixture_labs_root():
     return Path(__file__).parent / "fixtures" / "labs"
 
 
-def ec2():
+def ec2(port: int = 4566):
     return boto3.client(
-        "ec2", endpoint_url="http://127.0.0.1:4566", region_name="us-east-1",
+        "ec2", endpoint_url=f"http://127.0.0.1:{port}", region_name="us-east-1",
         aws_access_key_id="test", aws_secret_access_key="test",
     )
+
+
+def test_api_tap_forwards_and_announces_writes(stack):
+    events = []
+    stream = urllib.request.urlopen("http://127.0.0.1:4568/events", timeout=5)
+    assert stream.readline() == b": connected\n"
+
+    def read():
+        try:
+            for line in stream:
+                if line.startswith(b"data: "):
+                    events.append((time.monotonic(), json.loads(line[6:])))
+        except (OSError, ValueError):
+            pass  # the test closed the stream
+
+    threading.Thread(target=read, daemon=True).start()
+    ec2().describe_vpcs()  # a read: no event
+    vpc = ec2().create_vpc(CidrBlock="10.78.0.0/16")["Vpc"]["VpcId"]
+    returned = time.monotonic()
+    deadline = returned + 1
+    while not events:
+        assert time.monotonic() < deadline, "no CreateVpc event on the SSE stream within 1 s"
+        time.sleep(0.01)
+    assert [e["action"] for _, e in events] == ["CreateVpc"] and events[0][1]["write"] is True
+    via_tap = ec2(4566).describe_vpcs(VpcIds=[vpc])["Vpcs"]
+    direct = ec2(4567).describe_vpcs(VpcIds=[vpc])["Vpcs"]
+    assert via_tap == direct
+    stream.close()
 
 
 def test_floci_lifecycle(stack, capsys):
