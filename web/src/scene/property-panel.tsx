@@ -21,7 +21,14 @@ function warnings(props: Record<string, unknown>): string[] {
   return out
 }
 
-export function PropertyPanel({ selected, scene, edges, theme, onClose }: { selected: string; scene: SceneGraph; edges: readonly GraphEdge[]; theme: Theme; onClose: () => void }) {
+// A builder operation offered on the selected resource, e.g. turning on DNS hostnames (F4.6).
+export interface PanelAction {
+  id: string
+  label: string
+  run: () => void
+}
+
+export function PropertyPanel({ selected, scene, edges, theme, onClose, actions = [] }: { selected: string; scene: SceneGraph; edges: readonly GraphEdge[]; theme: Theme; onClose: () => void; actions?: readonly PanelAction[] }) {
   const id = resourceId(selected)
   const current = scene.nodesById.get(id)
   // The last version seen, so a deleted resource can still be named.
@@ -86,6 +93,15 @@ export function PropertyPanel({ selected, scene, edges, theme, onClose }: { sele
           {copied ? 'Đã chép' : 'Chép'}
         </button>
       </div>
+      {current && actions.length > 0 && (
+        <div id="panel-actions" style={{ marginTop: 8, display: 'flex', flexWrap: 'wrap', gap: 6 }}>
+          {actions.map((a) => (
+            <button key={a.id} id={a.id} onClick={a.run}>
+              {a.label}
+            </button>
+          ))}
+        </div>
+      )}
       {notes.length > 0 && (
         <ul id="panel-warnings" style={{ margin: '8px 0 0', paddingLeft: 18 }}>
           {notes.map((w) => (
