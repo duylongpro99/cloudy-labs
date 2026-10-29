@@ -22,7 +22,8 @@ export interface Theme {
   fill: number
   environment: number
   groups: Record<GroupKind, GroupStyle>
-  edge: string
+  edge: string // edges without a kind (benchmark fixture)
+  edges: { routeIgw: string; routeNat: string; association: string; usesKey: string }
   pulse: string
   outline: string
 }
@@ -44,6 +45,7 @@ export const THEMES: Record<ThemeName, Theme> = {
       'subnet-private': { border: AWS_COLORS.teal, dashed: 'none', fill: '#E0F2F2', opacity: 0.6 },
     },
     edge: '#5F6B7A',
+    edges: { routeIgw: '#4D7A0E', routeNat: '#7A3FE6', association: '#5F6B7A', usesKey: '#C4362F' },
     pulse: '#FF9900',
     outline: '#0972D3',
   },
@@ -63,6 +65,7 @@ export const THEMES: Record<ThemeName, Theme> = {
       'subnet-private': { border: OBJECT_THEMES.dark['subnet-private'].plinth, dashed: 'none', fill: '#13292A', opacity: 0.65 },
     },
     edge: '#8A97A6',
+    edges: { routeIgw: '#A4CF4A', routeNat: '#B591FF', association: '#9AA6B4', usesKey: '#FF7A70' },
     pulse: '#FFB347',
     outline: '#5CB2FF',
   },

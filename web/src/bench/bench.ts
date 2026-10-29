@@ -1,6 +1,6 @@
 // Benchmark configuration, statistics and result export.
 // Same method as the M0 render spike, so results compare directly.
-// URL: ?mode=bench&post=full&theme=dark&dpr=2&run=1   (mode=view for a normal interactive scene,
+// URL: ?view=bench&mode=bench&post=full&theme=dark&dpr=2&run=1   (mode=view for a normal interactive scene,
 // mode=idle to count frames rendered while the scene stands still).
 // Add &suite=1 to walk through every configuration in SUITE, one fresh page load per run.
 import type { ThemeName } from '../scene/theme'
@@ -44,9 +44,9 @@ export function readConfig(search = location.search): BenchConfig {
 const POSTS: PostLevel[] = ['full', 'lite', 'flat']
 const THEMES: ThemeName[] = ['light', 'dark']
 export const SUITE: string[] = [
-  ...POSTS.flatMap((post) => THEMES.flatMap((theme) => [1, 2].map((dpr) => `mode=bench&post=${post}&theme=${theme}&dpr=${dpr}&run=1`))),
+  ...POSTS.flatMap((post) => THEMES.flatMap((theme) => [1, 2].map((dpr) => `view=bench&mode=bench&post=${post}&theme=${theme}&dpr=${dpr}&run=1`))),
   // Idle waits until the entrance animation and the shadow refresh that follows it have settled.
-  'mode=idle&post=full&theme=light&dpr=2&run=1&warmup=4000',
+  'view=bench&mode=idle&post=full&theme=light&dpr=2&run=1&warmup=4000',
 ]
 
 export function browserName(ua = navigator.userAgent): string {

@@ -30,6 +30,15 @@ function saveBenchResults(): Plugin {
 
 export default defineConfig({
   plugins: [react(), saveBenchResults()],
-  server: { port: 5174, strictPort: true },
+  server: {
+    host: '127.0.0.1', // loopback only (NFR7)
+    port: 5174,
+    strictPort: true,
+    // The page talks to the lab-server only, through these two paths (NFR4).
+    proxy: {
+      '/api': 'http://127.0.0.1:8730',
+      '/ws': { target: 'http://127.0.0.1:8730', ws: true },
+    },
+  },
   test: { environment: 'jsdom' },
 })

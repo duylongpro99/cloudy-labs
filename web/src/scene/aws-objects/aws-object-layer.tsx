@@ -1,11 +1,11 @@
 // Draws any number of AWS objects with two InstancedMeshes per kind (plinth and glyph),
 // so draw calls grow with the number of kinds, not the number of objects.
-// Entrance: each instance scales up from its base, staggered, updated in useFrame only while it runs.
+// Entrance and exit: each instance scales from its base, updated in useFrame only while it runs.
 import type { ThreeEvent } from '@react-three/fiber'
 import { useFrame, useThree } from '@react-three/fiber'
-import { useCallback, useEffect, useLayoutEffect, useMemo, useRef } from 'react'
+import { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState, type RefObject } from 'react'
 import { Matrix4, Quaternion, Vector3, type InstancedMesh } from 'three'
-import { ENTRANCE_MS, entranceDelays, entranceScale } from './entrance'
+import { Presence, SCALE_CURVE } from './entrance'
 import { glyphGeometry, plinthGeometry } from './geometry-cache'
 import { HighlightOverlay } from './highlight-overlay'
 import type { AwsKind } from './manifest'
@@ -32,17 +32,18 @@ export interface AwsObjectLayerProps {
   onSelect?: (id: string) => void
   // Called once every object has reached full size, e.g. to refresh a static shadow map.
   onSettled?: () => void
+  // Filled with a lookup of an object's current scale (null once it is gone), for browser checks.
+  scaleRef?: RefObject<((id: string) => number | null) | null>
 }
 
 const noRaycast = () => {}
 
-function KindBatch({ kind, items, shown, theme, coverage, animate, shadows, onHover, onSelect, onSettled }: {
+function KindBatch({ kind, items, presence, theme, coverage, shadows, onHover, onSelect, onSettled }: {
   kind: AwsKind
-  items: readonly AwsObjectPlacement[]
-  shown: ReadonlySet<string> // ids that already finished their entrance; they stay at full size
+  items: readonly AwsObjectPlacement[] // shown and exiting
+  presence: Presence<AwsObjectPlacement>
   theme: ThemeName
   coverage: number
-  animate: boolean
   shadows: boolean
   onHover?: (id: string | null) => void
   onSelect?: (id: string) => void
@@ -53,7 +54,7 @@ function KindBatch({ kind, items, shown, theme, coverage, animate, shadows, onHo
   const invalidate = useThree((s) => s.invalidate)
   const shape = plinthShape(kind)
   const palette = OBJECT_THEMES[theme][MANIFEST_BY_KIND[kind].category]
-  const anim = useRef({ start: 0, running: false })
+  const anim = useRef({ running: false })
   const settledRef = useRef(onSettled)
   settledRef.current = onSettled
 
@@ -63,21 +64,15 @@ function KindBatch({ kind, items, shown, theme, coverage, animate, shadows, onHo
     const pos = new Vector3()
     const scl = new Vector3()
     const glyphSide = shape.side * coverage
-    // Read once per item list, so ids marked shown while this list animates keep their own timing.
-    const delays = entranceDelays(
-      items.map((it) => it.id),
-      animate ? shown : new Set(items.map((it) => it.id)),
-    )
-    return (elapsedMs: number) => {
+    return (now: number) => {
       const p = plinth.current
       const g = glyph.current
       if (!p || !g) return true
       let settled = true
       items.forEach((it, i) => {
-        const delay = delays[i]
-        const t = delay === null ? 1 : (elapsedMs - delay) / ENTRANCE_MS
-        if (t < 1) settled = false
-        const k = entranceScale(t)
+        const v = presence.get(it.id, now) ?? { value: 0, done: true }
+        if (!v.done) settled = false
+        const k = Math.max(v.value, 0.001) // a zero scale makes a singular matrix
         const [x, y, z] = it.position
         p.setMatrixAt(i, m.compose(pos.set(x, y, z), q, scl.setScalar(k)))
         g.setMatrixAt(i, m.compose(pos.set(x, y + shape.height * k, z), q, scl.setScalar(glyphSide * k)))
@@ -89,11 +84,10 @@ function KindBatch({ kind, items, shown, theme, coverage, animate, shadows, onHo
       g.computeBoundingSphere()
       return settled
     }
-  }, [items, shown, animate, coverage, shape.side, shape.height])
+  }, [items, presence, coverage, shape.side, shape.height])
 
   useLayoutEffect(() => {
-    anim.current = { start: performance.now(), running: true }
-    anim.current.running = !write(0)
+    anim.current.running = !write(performance.now())
     if (!anim.current.running) settledRef.current(kind)
     invalidate()
   }, [write, invalidate, kind])
@@ -101,7 +95,7 @@ function KindBatch({ kind, items, shown, theme, coverage, animate, shadows, onHo
   useFrame(() => {
     const a = anim.current
     if (!a.running) return
-    a.running = !write(performance.now() - a.start)
+    a.running = !write(performance.now())
     if (!a.running) settledRef.current(kind)
     invalidate()
   })
@@ -158,39 +152,48 @@ export function AwsObjectLayer({
   onHover,
   onSelect,
   onSettled,
+  scaleRef,
 }: AwsObjectLayerProps) {
-  // Ids that finished their entrance. Only ids new to the layer animate when placements change;
-  // removed ids are forgotten so they animate again if they come back.
-  const shown = useRef(new Set<string>()).current
+  const presence = useRef(new Presence<AwsObjectPlacement>(SCALE_CURVE)).current
+  // Bumped when finished exits are dropped, so the batches stop drawing them.
+  const [pruned, setPruned] = useState(0)
   const byKind = useMemo(() => {
+    presence.update(placements, performance.now(), animate)
     const groups = new Map<AwsKind, AwsObjectPlacement[]>()
-    for (const p of placements) {
+    for (const p of [...placements, ...presence.exiting()]) {
       if (MANIFEST_BY_KIND[p.kind].role === 'outline-only') continue
       groups.set(p.kind, [...(groups.get(p.kind) ?? []), p])
     }
-    const present = new Set(placements.map((p) => p.id))
-    for (const id of shown) if (!present.has(id)) shown.delete(id)
     return [...groups]
-  }, [placements, shown])
+    // `pruned` only forces the regrouping.
+  }, [placements, presence, animate, pruned])
   // Only drawable placements: an outline-only id has no plinth to highlight.
   const byId = useMemo(() => new Map(byKind.flatMap(([, items]) => items.map((p) => [p.id, p] as const))), [byKind])
+  useEffect(() => {
+    if (!scaleRef) return
+    scaleRef.current = (id) => presence.get(id, performance.now())?.value ?? null
+    return () => void (scaleRef.current = null)
+  }, [scaleRef, presence])
 
-  // Kinds that reached full size since the batches last changed; a new set per batch list.
+  // Kinds that finished animating since the batches last changed; a new set per batch list.
   const settled = useMemo(() => new Set<AwsKind>(), [byKind])
   const onSettledRef = useRef(onSettled)
   onSettledRef.current = onSettled
+  const allSettled = useCallback(() => {
+    if (presence.prune(performance.now())) setPruned((n) => n + 1)
+    else onSettledRef.current?.()
+  }, [presence])
   const batchSettled = useCallback(
     (kind: AwsKind) => {
       if (settled.has(kind)) return
       settled.add(kind)
-      for (const p of byKind.find(([k]) => k === kind)?.[1] ?? []) shown.add(p.id)
-      if (settled.size === byKind.length) onSettledRef.current?.()
+      if (settled.size === byKind.length) allSettled()
     },
-    [settled, byKind, shown],
+    [settled, byKind, allSettled],
   )
   useEffect(() => {
-    if (byKind.length === 0) onSettledRef.current?.()
-  }, [byKind])
+    if (byKind.length === 0) allSettled()
+  }, [byKind, allSettled])
   const hoverTarget = hovered && hovered !== selected ? byId.get(hovered) : undefined
   const selectTarget = selected ? byId.get(selected) : undefined
 
@@ -202,10 +205,9 @@ export function AwsObjectLayer({
           key={`${kind}-${items.length}`}
           kind={kind}
           items={items}
-          shown={shown}
+          presence={presence}
           theme={theme}
           coverage={coverage}
-          animate={animate}
           shadows={shadows}
           onHover={onHover}
           onSelect={onSelect}
