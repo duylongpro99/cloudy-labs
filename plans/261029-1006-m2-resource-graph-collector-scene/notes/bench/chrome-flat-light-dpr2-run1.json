@@ -1,0 +1,34 @@
+{
+  "browser": "chrome",
+  "post": "flat",
+  "theme": "light",
+  "dpr": 2,
+  "run": 1,
+  "mode": "bench",
+  "frames": 1203,
+  "frameTimeMs": {
+    "p50": 8.3,
+    "p95": 9.3,
+    "p99": 10.1,
+    "max": 16.4
+  },
+  "avgFps": 120.26,
+  "drawCalls": {
+    "p50": 111,
+    "max": 111
+  },
+  "triangles": {
+    "p50": 203552,
+    "max": 203552
+  },
+  "canvasCss": {
+    "width": 1280,
+    "height": 800
+  },
+  "windowDevicePixelRatio": 2,
+  "userAgent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/156.0.0.0 Safari/537.36",
+  "measuredAt": "2026-10-29T08:04:28.094Z",
+  "programs": 11,
+  "rendererPixelRatio": 2,
+  "gpu": "ANGLE (Apple, ANGLE Metal Renderer: Apple M1 Pro, Unspecified Version)"
+}
