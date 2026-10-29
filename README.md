@@ -49,6 +49,10 @@ cd web && pnpm install && pnpm dev                      # terminal 2: http://127
 
 Mở `http://127.0.0.1:5174/` rồi làm lab bằng AWS CLI ở terminal khác: tài nguyên mới hiện trong cảnh sau dưới 1 giây, lệnh ghi "bay" tới tài nguyên nó tạo, bấm một khối để xem thuộc tính. Chủ đề mặc định theo hệ thống, nút "Chủ đề" chuyển tay. Chi tiết: [docs/labctl.md](docs/labctl.md#cảnh-3d-trực-tiếp).
 
+### Dựng bằng kéo-thả
+
+Mở lab trước (`uv run labctl start <lab>`); nếu lab có builder, panel trên cùng hiện bảng tài nguyên. Kéo VPC, Subnet, IGW, Elastic IP, NAT Gateway hay Route Table vào khay sáng màu trong cảnh, chọn một IGW hoặc Route Table rồi kéo chấm tròn phía trên nó để gắn hay thêm route, và dùng nút trong panel thuộc tính để bật DNS hostnames hoặc IP public. Mỗi thao tác hiện lệnh `aws ... --profile lab` để đọc và copy; lệnh chỉ chạy khi bấm Run, và cảnh chỉ đổi khi collector thấy tài nguyên trong emulator. Cần AWS CLI v2; `labctl up` ghi profile `lab` vào `~/.aws/config` (có bản sao lưu). Chi tiết: [docs/labctl.md](docs/labctl.md#builder-kéo-thả).
+
 Các trang khác: `?view=gallery` là bộ sưu tập khối AWS (thêm `&theme=dark` cho chủ đề tối), `?view=bench` là cảnh 200 node dùng để đo hiệu năng. Icon đã chọn nằm sẵn trong `web/src/scene/aws-objects/icons/`. Chỉ khi cần nhập lại icon mới phải tải gói AWS Architecture Icons vào `aws-icon-pkg/` (không commit) rồi chạy `pnpm import-icons`.
 
 ## Test
@@ -64,6 +68,9 @@ pnpm typecheck && pnpm test
 # cần `pnpm dev` đang chạy, Google Chrome:
 node scripts/check-live.mjs   # hành vi cảnh trực tiếp với WebSocket giả (không cần lab-server)
 node scripts/check-scene.mjs  # bộ sưu tập và tương tác trên cảnh bench
+node scripts/check-builder.mjs  # builder kéo-thả với lab-server giả
+# builder làm trọn fixture-lab-06 trên stack thật rồi `labctl check` (cần Docker, aws CLI, cổng 8730 trống):
+cd ../server && uv run pytest -m docker tests/test_builder_e2e_docker.py -s
 pnpm bench:chrome             # đo khung hình cảnh 200 node; tóm tắt bằng scripts/summarize-bench.mjs
 ```
 
