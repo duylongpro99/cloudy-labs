@@ -2,13 +2,23 @@
 
 Floci runs EC2 instances as sibling containers and VPCs as Docker networks, and
 `docker compose down` does not remove them. Floci labels all of them with
-`io.floci.owner=<host port>`; its own compose container has no such label.
+`io.floci.owner=<port>`, the port Floci listens on inside its container. Compose runs
+labctl's Floci on FLOCI_PORT inside and out, so the label tells its resources apart from
+those of any other Floci on the machine (which listen on the default 4566). Floci's own
+compose container has no such label.
 """
 
+import re
 from dataclasses import dataclass, field
 
 from ..config import FLOCI_PORT
 from .docker import DockerError, docker, lines
+
+# Floci publishes an instance's application ports through socat containers named
+# floci-aws-ec2-fwd-<instance-id>-<port>. They carry no io.floci label, so they are tied
+# to labctl's Floci through the instance containers it owns (floci-aws-ec2-<instance-id>).
+FORWARDER_FILTERS = ["--filter", "label=floci_emulator=floci-aws", "--filter", "name=floci-aws-ec2-fwd-"]
+INSTANCE = re.compile(r"^floci-aws-ec2-(i-[0-9a-f]+)$")
 
 
 def owner_filters(port: int = FLOCI_PORT) -> list[str]:
@@ -28,8 +38,11 @@ class Orphans:
 
 def find_orphans(port: int = FLOCI_PORT) -> Orphans:
     f = owner_filters(port)
+    owned = lines(docker("ps", "-a", *f, "--format", "{{.Names}}"))
+    prefixes = tuple(f"floci-aws-ec2-fwd-{m[1]}-" for m in map(INSTANCE.match, owned) if m)
+    forwarders = lines(docker("ps", "-a", *FORWARDER_FILTERS, "--format", "{{.Names}}")) if prefixes else []
     return Orphans(
-        containers=lines(docker("ps", "-a", *f, "--format", "{{.Names}}")),
+        containers=owned + [name for name in forwarders if name.startswith(prefixes)],
         networks=lines(docker("network", "ls", *f, "--format", "{{.Name}}")),
         volumes=lines(docker("volume", "ls", *f, "--format", "{{.Name}}")),
     )

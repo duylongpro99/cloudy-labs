@@ -1,0 +1,469 @@
+{
+  "contains": [
+    {
+      "child": "eipalloc-2cc57421a05781343",
+      "parent": "us-east-1"
+    },
+    {
+      "child": "i-fdb553d289095d128",
+      "parent": "subnet-83a1f79a"
+    },
+    {
+      "child": "igw-34ddd4cd",
+      "parent": "vpc-149d0439"
+    },
+    {
+      "child": "igw-default",
+      "parent": "vpc-default-us-east-1"
+    },
+    {
+      "child": "key-856759379e524ce96",
+      "parent": "us-east-1"
+    },
+    {
+      "child": "nat-235f142ec41b5d904",
+      "parent": "subnet-83a1f79a"
+    },
+    {
+      "child": "rtb-02888668",
+      "parent": "vpc-149d0439"
+    },
+    {
+      "child": "rtb-157470092a6fefa4a",
+      "parent": "vpc-149d0439"
+    },
+    {
+      "child": "rtb-509e5b33",
+      "parent": "vpc-149d0439"
+    },
+    {
+      "child": "rtb-default",
+      "parent": "vpc-default-us-east-1"
+    },
+    {
+      "child": "sg-b58b05ddff613fe13",
+      "parent": "vpc-149d0439"
+    },
+    {
+      "child": "sg-dbd2e6007fa2e7eef",
+      "parent": "vpc-149d0439"
+    },
+    {
+      "child": "sg-default-us-east-1",
+      "parent": "vpc-default-us-east-1"
+    },
+    {
+      "child": "subnet-44acdeb7",
+      "parent": "vpc-149d0439/us-east-1b"
+    },
+    {
+      "child": "subnet-83a1f79a",
+      "parent": "vpc-149d0439/us-east-1a"
+    },
+    {
+      "child": "subnet-b893d7ba",
+      "parent": "vpc-149d0439/us-east-1b"
+    },
+    {
+      "child": "subnet-default-us-east-1-a",
+      "parent": "vpc-default-us-east-1/us-east-1a"
+    },
+    {
+      "child": "subnet-default-us-east-1-b",
+      "parent": "vpc-default-us-east-1/us-east-1b"
+    },
+    {
+      "child": "subnet-default-us-east-1-c",
+      "parent": "vpc-default-us-east-1/us-east-1c"
+    },
+    {
+      "child": "subnet-e917cc42",
+      "parent": "vpc-149d0439/us-east-1a"
+    },
+    {
+      "child": "vpc-149d0439",
+      "parent": "us-east-1"
+    },
+    {
+      "child": "vpc-149d0439/us-east-1a",
+      "parent": "vpc-149d0439"
+    },
+    {
+      "child": "vpc-149d0439/us-east-1b",
+      "parent": "vpc-149d0439"
+    },
+    {
+      "child": "vpc-default-us-east-1",
+      "parent": "us-east-1"
+    },
+    {
+      "child": "vpc-default-us-east-1/us-east-1a",
+      "parent": "vpc-default-us-east-1"
+    },
+    {
+      "child": "vpc-default-us-east-1/us-east-1b",
+      "parent": "vpc-default-us-east-1"
+    },
+    {
+      "child": "vpc-default-us-east-1/us-east-1c",
+      "parent": "vpc-default-us-east-1"
+    }
+  ],
+  "edges": [
+    {
+      "from": "rtb-02888668",
+      "id": "association:rtb-02888668->subnet-44acdeb7",
+      "kind": "association",
+      "label": "",
+      "to": "subnet-44acdeb7"
+    },
+    {
+      "from": "rtb-02888668",
+      "id": "association:rtb-02888668->subnet-e917cc42",
+      "kind": "association",
+      "label": "",
+      "to": "subnet-e917cc42"
+    },
+    {
+      "from": "rtb-509e5b33",
+      "id": "association:rtb-509e5b33->subnet-83a1f79a",
+      "kind": "association",
+      "label": "",
+      "to": "subnet-83a1f79a"
+    },
+    {
+      "from": "rtb-509e5b33",
+      "id": "association:rtb-509e5b33->subnet-b893d7ba",
+      "kind": "association",
+      "label": "",
+      "to": "subnet-b893d7ba"
+    },
+    {
+      "from": "eipalloc-2cc57421a05781343",
+      "id": "attached:eipalloc-2cc57421a05781343->nat-235f142ec41b5d904",
+      "kind": "attached",
+      "label": "",
+      "to": "nat-235f142ec41b5d904"
+    },
+    {
+      "from": "sg-dbd2e6007fa2e7eef",
+      "id": "attached:sg-dbd2e6007fa2e7eef->i-fdb553d289095d128",
+      "kind": "attached",
+      "label": "",
+      "to": "i-fdb553d289095d128"
+    },
+    {
+      "from": "rtb-02888668",
+      "id": "route:rtb-02888668->nat-235f142ec41b5d904:0.0.0.0/0",
+      "kind": "route",
+      "label": "0.0.0.0/0",
+      "to": "nat-235f142ec41b5d904"
+    },
+    {
+      "from": "rtb-509e5b33",
+      "id": "route:rtb-509e5b33->igw-34ddd4cd:0.0.0.0/0",
+      "kind": "route",
+      "label": "0.0.0.0/0",
+      "to": "igw-34ddd4cd"
+    },
+    {
+      "from": "rtb-default",
+      "id": "route:rtb-default->igw-default:0.0.0.0/0",
+      "kind": "route",
+      "label": "0.0.0.0/0",
+      "to": "igw-default"
+    },
+    {
+      "from": "i-fdb553d289095d128",
+      "id": "uses-key:i-fdb553d289095d128->key-856759379e524ce96",
+      "kind": "uses-key",
+      "label": "",
+      "to": "key-856759379e524ce96"
+    }
+  ],
+  "emulator": "floci",
+  "nodes": [
+    {
+      "id": "eipalloc-2cc57421a05781343",
+      "kind": "elastic-ip",
+      "label": "54.182.208.242",
+      "props": {
+        "publicIp": "54.182.208.242"
+      }
+    },
+    {
+      "id": "i-fdb553d289095d128",
+      "kind": "instance",
+      "label": "lab07-web",
+      "props": {
+        "hostPorts": {
+          "22/tcp": 2200,
+          "80/tcp": 30000
+        },
+        "imageId": "ami-amazonlinux2023-arm64",
+        "instanceType": "t4g.micro",
+        "keyName": "lab07-key",
+        "privateIp": "10.240.0.11",
+        "privateIpOutOfCidr": true,
+        "state": "running",
+        "tags": {
+          "lab": "06"
+        }
+      }
+    },
+    {
+      "id": "igw-34ddd4cd",
+      "kind": "igw",
+      "label": "lab06-igw",
+      "props": {
+        "attachedVpc": "vpc-149d0439",
+        "tags": {
+          "lab": "06"
+        }
+      }
+    },
+    {
+      "id": "igw-default",
+      "kind": "igw",
+      "label": "igw-default",
+      "props": {
+        "attachedVpc": "vpc-default-us-east-1"
+      }
+    },
+    {
+      "id": "key-856759379e524ce96",
+      "kind": "key-pair",
+      "label": "lab07-key",
+      "props": {
+        "fingerprint": "01:73:43:be:df:80:1f:b7:d8:6c:7c:5a:d5:07:9e:db:ac:01:c5:b1"
+      }
+    },
+    {
+      "id": "nat-235f142ec41b5d904",
+      "kind": "nat",
+      "label": "lab06-nat",
+      "props": {
+        "publicIp": "54.182.208.242",
+        "state": "available",
+        "tags": {
+          "lab": "06"
+        }
+      }
+    },
+    {
+      "id": "rtb-02888668",
+      "kind": "route-table",
+      "label": "lab06-rt-private",
+      "props": {
+        "tags": {
+          "lab": "06"
+        }
+      }
+    },
+    {
+      "id": "rtb-157470092a6fefa4a",
+      "kind": "route-table",
+      "label": "rtb-157470092a6fefa4a",
+      "props": {
+        "main": true
+      }
+    },
+    {
+      "id": "rtb-509e5b33",
+      "kind": "route-table",
+      "label": "lab06-rt-public",
+      "props": {
+        "tags": {
+          "lab": "06"
+        }
+      }
+    },
+    {
+      "id": "rtb-default",
+      "kind": "route-table",
+      "label": "rtb-default",
+      "props": {
+        "main": true
+      }
+    },
+    {
+      "id": "sg-b58b05ddff613fe13",
+      "kind": "security-group",
+      "label": "default",
+      "props": {
+        "groupName": "default"
+      }
+    },
+    {
+      "id": "sg-dbd2e6007fa2e7eef",
+      "kind": "security-group",
+      "label": "lab07-web",
+      "props": {
+        "groupName": "lab07-web",
+        "ingress": [
+          {
+            "from": 22,
+            "protocol": "tcp",
+            "sources": [
+              "203.0.113.10/32"
+            ],
+            "to": 22
+          },
+          {
+            "from": 80,
+            "protocol": "tcp",
+            "sources": [
+              "0.0.0.0/0"
+            ],
+            "to": 80
+          }
+        ]
+      }
+    },
+    {
+      "id": "sg-default-us-east-1",
+      "kind": "security-group",
+      "label": "default",
+      "props": {
+        "groupName": "default"
+      }
+    },
+    {
+      "id": "subnet-44acdeb7",
+      "kind": "subnet-private",
+      "label": "lab06-private-b",
+      "props": {
+        "az": "us-east-1b",
+        "cidr": "10.0.12.0/24",
+        "tags": {
+          "lab": "06"
+        }
+      }
+    },
+    {
+      "id": "subnet-83a1f79a",
+      "kind": "subnet-public",
+      "label": "lab06-public-a",
+      "props": {
+        "az": "us-east-1a",
+        "cidr": "10.0.1.0/24",
+        "tags": {
+          "lab": "06"
+        }
+      }
+    },
+    {
+      "id": "subnet-b893d7ba",
+      "kind": "subnet-public",
+      "label": "lab06-public-b",
+      "props": {
+        "az": "us-east-1b",
+        "cidr": "10.0.2.0/24",
+        "tags": {
+          "lab": "06"
+        }
+      }
+    },
+    {
+      "id": "subnet-default-us-east-1-a",
+      "kind": "subnet-public",
+      "label": "subnet-default-us-east-1-a",
+      "props": {
+        "az": "us-east-1a",
+        "cidr": "172.31.0.0/20"
+      }
+    },
+    {
+      "id": "subnet-default-us-east-1-b",
+      "kind": "subnet-public",
+      "label": "subnet-default-us-east-1-b",
+      "props": {
+        "az": "us-east-1b",
+        "cidr": "172.31.16.0/20"
+      }
+    },
+    {
+      "id": "subnet-default-us-east-1-c",
+      "kind": "subnet-public",
+      "label": "subnet-default-us-east-1-c",
+      "props": {
+        "az": "us-east-1c",
+        "cidr": "172.31.32.0/20"
+      }
+    },
+    {
+      "id": "subnet-e917cc42",
+      "kind": "subnet-private",
+      "label": "lab06-private-a",
+      "props": {
+        "az": "us-east-1a",
+        "cidr": "10.0.11.0/24",
+        "tags": {
+          "lab": "06"
+        }
+      }
+    },
+    {
+      "id": "us-east-1",
+      "kind": "region",
+      "label": "us-east-1",
+      "props": {}
+    },
+    {
+      "id": "vpc-149d0439",
+      "kind": "vpc",
+      "label": "lab06-vpc",
+      "props": {
+        "cidr": "10.0.0.0/16",
+        "tags": {
+          "lab": "06"
+        }
+      }
+    },
+    {
+      "id": "vpc-149d0439/us-east-1a",
+      "kind": "az",
+      "label": "us-east-1a",
+      "props": {}
+    },
+    {
+      "id": "vpc-149d0439/us-east-1b",
+      "kind": "az",
+      "label": "us-east-1b",
+      "props": {}
+    },
+    {
+      "id": "vpc-default-us-east-1",
+      "kind": "vpc",
+      "label": "vpc-default-us-east-1",
+      "props": {
+        "cidr": "172.31.0.0/16",
+        "isDefault": true
+      }
+    },
+    {
+      "id": "vpc-default-us-east-1/us-east-1a",
+      "kind": "az",
+      "label": "us-east-1a",
+      "props": {}
+    },
+    {
+      "id": "vpc-default-us-east-1/us-east-1b",
+      "kind": "az",
+      "label": "us-east-1b",
+      "props": {}
+    },
+    {
+      "id": "vpc-default-us-east-1/us-east-1c",
+      "kind": "az",
+      "label": "us-east-1c",
+      "props": {}
+    }
+  ],
+  "status": "ok",
+  "takenAt": "2026-10-29T08:33:59.099000Z",
+  "version": 0,
+  "warnings": [
+    "i-fdb553d289095d128: IP riêng 10.240.0.11 nằm ngoài CIDR 10.0.1.0/24 của subnet-83a1f79a (Floci cấp IP từ mạng Docker)"
+  ]
+}

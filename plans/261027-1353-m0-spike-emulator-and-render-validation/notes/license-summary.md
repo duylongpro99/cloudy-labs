@@ -45,6 +45,23 @@ Lưu ý ngoài phạm vi lockfile:
 - Image Docker mà Floci kéo lúc chạy (`public.ecr.aws/amazonlinux/amazonlinux:2023`, `alpine/socat`) do máy người học tải trực tiếp, Cloudy Labs không phân phối lại. Nếu sau này Cloudy Labs đóng gói sẵn các image này (cài offline), cần kiểm tra lại giấy phép của chúng; Amazon Linux có nhiều gói GPL.
 - Kiểm tra này dựa trên metadata khai báo của gói, không quét nội dung từng file (ví dụ file vendor bên trong gói).
 
+## Bổ sung M2 (2026-10-29): lab-server và api-tap
+
+Nguồn: metadata của gói trong `server/.venv` sau `uv add` (đọc bằng `importlib.metadata`), cây phụ thuộc từ `uv tree --no-dev`. Không có gói nào thuộc nhóm "Chặn" hoặc "không rõ giấy phép".
+
+| Gói | Phiên bản | Giấy phép | Nhóm | Ghi chú |
+|---|---|---|---|---|
+| fastapi | 0.162.0 | MIT | Cho phép | |
+| starlette | 1.10.0 | BSD-3-Clause | Cho phép | gián tiếp qua fastapi |
+| uvicorn | 0.54.0 | BSD-3-Clause | Cho phép | kéo theo click (BSD-3-Clause), h11 (MIT) |
+| websockets | 17.3 | BSD-3-Clause | Cho phép | uvicorn dùng cho WebSocket |
+| httpx / httpcore | 0.28.1 / 1.0.9 | BSD-3-Clause | Cho phép | đọc luồng SSE của api-tap; kéo theo certifi (MPL-2.0, đã có ở trên), idna (BSD-3-Clause) |
+| anyio | 4.15.1 | MIT | Cho phép | gián tiếp qua starlette, httpx |
+| opentelemetry-api | 1.45.1 | Apache-2.0 | Cho phép | gián tiếp qua fastapi 0.162 |
+| annotated-doc, typing-inspection | 0.0.5, 0.4.4 | MIT | Cho phép | gián tiếp qua fastapi, pydantic |
+| httpx2 / httpcore2, truststore | 2.16.0, 0.10.5 | BSD-3-Clause, MIT | Cho phép | chỉ nhóm dev: `TestClient` của starlette 1.10 dùng httpx2 |
+| Image `python:3.12.16-slim` | ghim theo digest | PSF-2.0 (Python); Debian có gói GPL | Cho phép | chạy api-tap (chỉ thư viện chuẩn). Máy người học kéo image trực tiếp, Cloudy Labs không phân phối lại; cùng lưu ý với các image ở trên |
+
 ## Việc cần làm sau này
 
 - Sinh `THIRD_PARTY_NOTICES` từ hai file JSON trước bản phát hành đầu tiên.

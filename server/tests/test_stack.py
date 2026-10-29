@@ -16,9 +16,37 @@ def test_parse_ps_line_and_array_formats():
 
 
 def test_compose_binds_loopback_only():
-    text = COMPOSE_FILE.read_text()
-    assert '"127.0.0.1:4566:4566"' in text and '"127.0.0.1:5050:5000"' in text
-    assert "@sha256:" in text
+    services = yaml.safe_load(COMPOSE_FILE.read_text())["services"]
+    ports = {name: s["ports"] for name, s in services.items()}
+    assert ports == {
+        "api-tap": ["127.0.0.1:4566:4566", "127.0.0.1:4568:4568"],
+        "floci": ["127.0.0.1:4567:4567"],
+        "moto": ["127.0.0.1:5050:5000"],
+    }
+    assert all("@sha256:" in s["image"] for s in services.values())
+
+
+def test_floci_listens_on_its_own_port_inside_the_container():
+    # The port inside the container becomes Floci's io.floci.owner label, which cleanup filters on.
+    floci = yaml.safe_load(COMPOSE_FILE.read_text())["services"]["floci"]
+    assert floci["environment"]["FLOCI_PORT"] == "4567"
+    assert "/dev/tcp/127.0.0.1/4567" in floci["healthcheck"]["test"][-1]
+
+
+def test_api_tap_runs_the_packaged_proxy_in_front_of_floci():
+    tap = yaml.safe_load(COMPOSE_FILE.read_text())["services"]["api-tap"]
+    source, mount, _ = tap["volumes"][0].split(":")
+    assert (COMPOSE_FILE.parent / source).resolve() == (COMPOSE_FILE.parents[1] / "tap" / "api_tap.py")
+    assert mount in tap["command"]
+    assert tap["environment"]["TAP_UPSTREAM"] == "http://floci:4567"
+    assert tap["depends_on"]["floci"]["condition"] == "service_healthy"
+
+
+def test_up_refuses_ports_held_by_another_process(monkeypatch):
+    fake_stack(monkeypatch, {})
+    monkeypatch.setattr(stack, "port_free", lambda port, host: port != 4568)
+    with pytest.raises(DockerError, match="port 4568 is in use"):
+        stack.up(log=lambda line: None)
 
 
 def fake_stack(monkeypatch, states, orphan_errors=()):
@@ -72,7 +100,7 @@ def test_down_finishes_compose_down_then_reports_stuck_resources(monkeypatch):
 
 def test_up_recreates_floci_that_is_healthy_but_unreachable_from_the_host(monkeypatch):
     healthy = {"State": "running", "Health": "healthy"}
-    calls = fake_stack(monkeypatch, {"floci": healthy, "moto": healthy})
+    calls = fake_stack(monkeypatch, {"floci": healthy, "moto": healthy, "api-tap": healthy})
     monkeypatch.setattr(stack, "reachable", lambda name: False)
     stack.up(log=lambda line: None)
     assert calls == [

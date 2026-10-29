@@ -3,12 +3,15 @@
 import argparse
 import json
 import shlex
+import subprocess
 import sys
 import time
 from collections.abc import Callable
 
+from .config import HOST, SERVER_PORT, WEB_DEV_PORT
 from .emulator import stack
 from .emulator.docker import DockerError
+from .emulator.preflight import port_free
 from .engine import Engine, EngineError, result_dict
 from .labs import LabError, load_lab
 from .providers import provider_for
@@ -22,6 +25,7 @@ COMMANDS: dict[str, tuple[str, str | None, bool]] = {
     "check": ("run the lab's checks against the emulator", "required", True),
     "reset": ("reset the emulator, rerun the lab's setup and open a new attempt", "required", False),
     "status": ("show emulator health, the current lab and its latest results", "optional", True),
+    "serve": ("run the lab-server that feeds the live 3D scene (foreground, Ctrl-C to stop)", None, False),
 }
 
 
@@ -83,11 +87,14 @@ def cmd_check(args: argparse.Namespace) -> int:
 
 def cmd_status(args: argparse.Namespace) -> int:
     s = Engine.default().status(args.lab)
+    # Floci itself can be up while the proxy the learner's CLI goes through is not.
+    s["api_tap"] = stack.reachable("api-tap")
     if args.json:
         print(json.dumps(s))
         return 0
     for name, ok in s["emulators"].items():
         print(f"{name}: {'up' if ok else 'down'}")
+    print(f"api-tap: {'up' if s['api_tap'] else 'down'}")
     current = s["current_attempt"]
     print(f"current lab: {current['lab_id']} (attempt {current['id']})" if current else "current lab: none")
     if s["lab"]:
@@ -100,6 +107,29 @@ def cmd_status(args: argparse.Namespace) -> int:
     return 0
 
 
+def cmd_serve(args: argparse.Namespace) -> int:
+    if not stack.is_running():
+        print("labctl serve: the emulator stack is not running; start it with `labctl up`", file=sys.stderr)
+        return 1
+    if not port_free(SERVER_PORT, HOST):
+        try:
+            pids = subprocess.run(["lsof", "-t", "-i", f"tcp:{SERVER_PORT}", "-sTCP:LISTEN"], capture_output=True, text=True).stdout.split()
+        except FileNotFoundError:  # no lsof (minimal Linux): report the port without its owner
+            pids = []
+        owner = f" by PID {', '.join(pids)}" if pids else ""
+        print(f"labctl serve: port {SERVER_PORT} is already in use{owner}; stop that process and retry", file=sys.stderr)
+        return 1
+    import uvicorn
+
+    from .server.app import create_app
+
+    print(f"lab-server on http://{HOST}:{SERVER_PORT} (Ctrl-C to stop)", flush=True)
+    print(f"open the scene at http://{HOST}:{WEB_DEV_PORT} after `pnpm dev` in web/", flush=True)
+    # Loopback only, by design: there is deliberately no option to bind another address.
+    uvicorn.run(create_app(), host=HOST, port=SERVER_PORT, log_level="warning")
+    return 0
+
+
 HANDLERS: dict[str, Callable[[argparse.Namespace], int]] = {
     "up": cmd_up,
     "down": cmd_down,
@@ -108,6 +138,7 @@ HANDLERS: dict[str, Callable[[argparse.Namespace], int]] = {
     "check": cmd_check,
     "reset": cmd_reset,
     "status": cmd_status,
+    "serve": cmd_serve,
 }
 
 

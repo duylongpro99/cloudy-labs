@@ -1,13 +1,39 @@
 # Local emulator stack for labctl. Ports bind to 127.0.0.1 only.
-# Tags checked on Docker Hub 2026-10-28; both digests are multi-arch index digests (amd64 + arm64).
+# Tags checked on Docker Hub 2026-10-28 (python: 2026-10-29); all digests are multi-arch index
+# digests (amd64 + arm64).
+# The learner's CLI reaches Floci through api-tap on 4566; labctl and the collector use Floci's
+# own host port 4567 so their reads never show up as learner activity.
 name: cloudy-labs
 services:
+  api-tap:
+    image: python:3.12.16-slim@sha256:aa943ce411423c7582288f18707ff66eddcbaeb510502d747a72aeb34f30d159
+    command: ["python", "-u", "/app/api_tap.py"]
+    ports:
+      - "127.0.0.1:4566:4566"
+      - "127.0.0.1:4568:4568" # Server-Sent Events of write calls, for `labctl serve`
+    environment:
+      TAP_UPSTREAM: http://floci:4567
+    volumes:
+      - ../tap/api_tap.py:/app/api_tap.py:ro
+    depends_on:
+      floci:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request as u; u.urlopen('http://127.0.0.1:4568/health', timeout=2)"]
+      interval: 2s
+      timeout: 3s
+      retries: 30
+
   floci:
     image: floci/floci:2.3.0@sha256:e0b292df4dc9559b7b1bf4f51bdda4bb8e269276236438cd03cae661260ea8a9
     user: root # Floci drives the Docker socket to run EC2 instances as containers
     ports:
-      - "127.0.0.1:4566:4566"
+      - "127.0.0.1:4567:4567"
     environment:
+      # Listen on 4567 inside the container too: Floci labels the containers, networks and
+      # volumes it creates with io.floci.owner=<this port>, so a port no default Floci uses
+      # keeps `labctl reset`/`down` from removing another Floci's instances.
+      FLOCI_PORT: "4567"
       FLOCI_STORAGE_MODE: memory
       FLOCI_SERVICES_UI_ENABLED: "false"
       # Report the subnet-allocated private IP instead of the Docker bridge IP.
@@ -20,7 +46,7 @@ services:
       - ./ec2-image-catalog.yaml:/etc/cloudy-labs/ec2-image-catalog.yaml:ro
     healthcheck:
       # The image has bash but no curl, wget or grep.
-      test: ["CMD", "bash", "-c", "exec 3<>/dev/tcp/127.0.0.1/4566 && printf 'GET /_floci/health HTTP/1.0\\r\\n\\r\\n' >&3 && read -r line <&3 && [[ $$line == *' 200 '* ]]"]
+      test: ["CMD", "bash", "-c", "exec 3<>/dev/tcp/127.0.0.1/4567 && printf 'GET /_floci/health HTTP/1.0\\r\\n\\r\\n' >&3 && read -r line <&3 && [[ $$line == *' 200 '* ]]"]
       interval: 2s
       timeout: 3s
       retries: 30
