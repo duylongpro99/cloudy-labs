@@ -1,0 +1,186 @@
+{
+  "steps": [
+    {
+      "label": "create-vpc",
+      "op": "create-vpc",
+      "command": "aws ec2 create-vpc --cidr-block 10.66.0.0/16 --tag-specifications 'ResourceType=vpc,Tags=[{Key=Name,Value=lab06-vpc},{Key=lab,Value=fixture-lab-06}]' --profile lab --output json",
+      "exitCode": 0,
+      "cliMs": 495,
+      "ms": 806,
+      "phase": "done"
+    },
+    {
+      "label": "enable-dns-hostnames",
+      "op": "modify-vpc-attribute",
+      "command": "aws ec2 modify-vpc-attribute --vpc-id vpc-0adaf29e --enable-dns-hostnames '{\"Value\": true}' --profile lab --output json",
+      "exitCode": 0,
+      "cliMs": 475,
+      "ms": 814,
+      "phase": "done"
+    },
+    {
+      "label": "create-subnet public-a",
+      "op": "create-subnet",
+      "command": "aws ec2 create-subnet --vpc-id vpc-0adaf29e --cidr-block 10.66.1.0/24 --availability-zone us-east-1a --tag-specifications 'ResourceType=subnet,Tags=[{Key=Name,Value=lab06-public-a},{Key=lab,Value=fixture-lab-06}]' --profile lab --output json",
+      "exitCode": 0,
+      "cliMs": 476,
+      "ms": 804,
+      "phase": "done"
+    },
+    {
+      "label": "create-subnet public-b",
+      "op": "create-subnet",
+      "command": "aws ec2 create-subnet --vpc-id vpc-0adaf29e --cidr-block 10.66.2.0/24 --availability-zone us-east-1b --tag-specifications 'ResourceType=subnet,Tags=[{Key=Name,Value=lab06-public-b},{Key=lab,Value=fixture-lab-06}]' --profile lab --output json",
+      "exitCode": 0,
+      "cliMs": 473,
+      "ms": 811,
+      "phase": "done"
+    },
+    {
+      "label": "create-subnet private-a",
+      "op": "create-subnet",
+      "command": "aws ec2 create-subnet --vpc-id vpc-0adaf29e --cidr-block 10.66.11.0/24 --availability-zone us-east-1a --tag-specifications 'ResourceType=subnet,Tags=[{Key=Name,Value=lab06-private-a},{Key=lab,Value=fixture-lab-06}]' --profile lab --output json",
+      "exitCode": 0,
+      "cliMs": 465,
+      "ms": 809,
+      "phase": "done"
+    },
+    {
+      "label": "create-subnet private-b",
+      "op": "create-subnet",
+      "command": "aws ec2 create-subnet --vpc-id vpc-0adaf29e --cidr-block 10.66.12.0/24 --availability-zone us-east-1b --tag-specifications 'ResourceType=subnet,Tags=[{Key=Name,Value=lab06-private-b},{Key=lab,Value=fixture-lab-06}]' --profile lab --output json",
+      "exitCode": 0,
+      "cliMs": 493,
+      "ms": 806,
+      "phase": "done"
+    },
+    {
+      "label": "map-public-ip public-a",
+      "op": "modify-subnet-attribute",
+      "command": "aws ec2 modify-subnet-attribute --subnet-id subnet-cd61c591 --map-public-ip-on-launch --profile lab --output json",
+      "exitCode": 0,
+      "cliMs": 494,
+      "ms": 804,
+      "phase": "done"
+    },
+    {
+      "label": "map-public-ip public-b",
+      "op": "modify-subnet-attribute",
+      "command": "aws ec2 modify-subnet-attribute --subnet-id subnet-10a485e9 --map-public-ip-on-launch --profile lab --output json",
+      "exitCode": 0,
+      "cliMs": 517,
+      "ms": 812,
+      "phase": "done"
+    },
+    {
+      "label": "create-internet-gateway",
+      "op": "create-internet-gateway",
+      "command": "aws ec2 create-internet-gateway --tag-specifications 'ResourceType=internet-gateway,Tags=[{Key=Name,Value=lab06-igw},{Key=lab,Value=fixture-lab-06}]' --profile lab --output json",
+      "exitCode": 0,
+      "cliMs": 471,
+      "ms": 806,
+      "phase": "done"
+    },
+    {
+      "label": "attach-internet-gateway",
+      "op": "attach-internet-gateway",
+      "command": "aws ec2 attach-internet-gateway --internet-gateway-id igw-5ac2f96f --vpc-id vpc-0adaf29e --profile lab --output json",
+      "exitCode": 0,
+      "cliMs": 488,
+      "ms": 800,
+      "phase": "done"
+    },
+    {
+      "label": "allocate-address",
+      "op": "allocate-address",
+      "command": "aws ec2 allocate-address --domain vpc --tag-specifications 'ResourceType=elastic-ip,Tags=[{Key=Name,Value=lab06-eip},{Key=lab,Value=fixture-lab-06}]' --profile lab --output json",
+      "exitCode": 0,
+      "cliMs": 449,
+      "ms": 811,
+      "phase": "done"
+    },
+    {
+      "label": "create-route-table public",
+      "op": "create-route-table",
+      "command": "aws ec2 create-route-table --vpc-id vpc-0adaf29e --tag-specifications 'ResourceType=route-table,Tags=[{Key=Name,Value=lab06-rt-public},{Key=lab,Value=fixture-lab-06}]' --profile lab --output json",
+      "exitCode": 0,
+      "cliMs": 466,
+      "ms": 808,
+      "phase": "done"
+    },
+    {
+      "label": "create-route-table private",
+      "op": "create-route-table",
+      "command": "aws ec2 create-route-table --vpc-id vpc-0adaf29e --tag-specifications 'ResourceType=route-table,Tags=[{Key=Name,Value=lab06-rt-private},{Key=lab,Value=fixture-lab-06}]' --profile lab --output json",
+      "exitCode": 0,
+      "cliMs": 517,
+      "ms": 807,
+      "phase": "done"
+    },
+    {
+      "label": "route public -> igw",
+      "op": "create-route",
+      "command": "aws ec2 create-route --route-table-id rtb-bc1c0e65 --destination-cidr-block 0.0.0.0/0 --gateway-id igw-5ac2f96f --profile lab --output json",
+      "exitCode": 0,
+      "cliMs": 549,
+      "ms": 816,
+      "phase": "done"
+    },
+    {
+      "label": "associate public-a",
+      "op": "associate-route-table",
+      "command": "aws ec2 associate-route-table --route-table-id rtb-bc1c0e65 --subnet-id subnet-cd61c591 --profile lab --output json",
+      "exitCode": 0,
+      "cliMs": 503,
+      "ms": 807,
+      "phase": "done"
+    },
+    {
+      "label": "associate public-b",
+      "op": "associate-route-table",
+      "command": "aws ec2 associate-route-table --route-table-id rtb-bc1c0e65 --subnet-id subnet-10a485e9 --profile lab --output json",
+      "exitCode": 0,
+      "cliMs": 474,
+      "ms": 819,
+      "phase": "done"
+    },
+    {
+      "label": "create-nat-gateway",
+      "op": "create-nat-gateway",
+      "command": "aws ec2 create-nat-gateway --subnet-id subnet-cd61c591 --allocation-id eipalloc-88d39383a95ae7c24 --tag-specifications 'ResourceType=natgateway,Tags=[{Key=Name,Value=lab06-nat},{Key=lab,Value=fixture-lab-06}]' --profile lab --output json",
+      "exitCode": 0,
+      "cliMs": 492,
+      "ms": 810,
+      "phase": "done"
+    },
+    {
+      "label": "route private -> nat",
+      "op": "create-route",
+      "command": "aws ec2 create-route --route-table-id rtb-ba93dccf --destination-cidr-block 0.0.0.0/0 --nat-gateway-id nat-33feaba6fa83c4c81 --profile lab --output json",
+      "exitCode": 0,
+      "cliMs": 479,
+      "ms": 806,
+      "phase": "done"
+    },
+    {
+      "label": "associate private-a",
+      "op": "associate-route-table",
+      "command": "aws ec2 associate-route-table --route-table-id rtb-ba93dccf --subnet-id subnet-8e1a27f0 --profile lab --output json",
+      "exitCode": 0,
+      "cliMs": 478,
+      "ms": 809,
+      "phase": "done"
+    },
+    {
+      "label": "associate private-b",
+      "op": "associate-route-table",
+      "command": "aws ec2 associate-route-table --route-table-id rtb-ba93dccf --subnet-id subnet-69ad1e29 --profile lab --output json",
+      "exitCode": 0,
+      "cliMs": 471,
+      "ms": 811,
+      "phase": "done"
+    }
+  ],
+  "p95": 816,
+  "errors": []
+}
