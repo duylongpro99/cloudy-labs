@@ -39,6 +39,34 @@ class Hint(_Strict):
     text: str
 
 
+# Resource kinds the builder can create (PRD F4.1); a lab's palette is a subset.
+BuilderKind = Literal["vpc", "subnet", "igw", "elastic-ip", "nat", "route-table"]
+# Tags go into the CLI's shorthand syntax, where commas, brackets, braces and spaces have meaning.
+TAG_TEXT = re.compile(r"[A-Za-z0-9._:/-]{1,128}")  # used with fullmatch
+
+
+class Builder(_Strict):
+    palette: list[BuilderKind] = []
+    tags: dict[str, str] = {}  # added to every resource the builder creates, next to Name
+
+    @field_validator("palette")
+    @classmethod
+    def _unique(cls, v: list[str]) -> list[str]:
+        if len(set(v)) != len(v):
+            raise ValueError("palette lists a kind twice")
+        return v
+
+    @field_validator("tags")
+    @classmethod
+    def _no_name(cls, v: dict[str, str]) -> dict[str, str]:
+        if "Name" in v:
+            raise ValueError("the Name tag comes from the builder form, not from the lab")
+        for key, value in v.items():
+            if not TAG_TEXT.fullmatch(key) or not TAG_TEXT.fullmatch(value):
+                raise ValueError(f"tag {key}={value}: use 1-128 letters, digits and . _ : / - only")
+        return v
+
+
 class Lab(_Strict):
     id: str = Field(pattern=SLUG)
     provider: Literal["aws"]
@@ -50,6 +78,7 @@ class Lab(_Strict):
     tasks: list[Task] = Field(min_length=1)
     checks: list[Check] = Field(min_length=1)
     hints: list[Hint] = []
+    builder: Builder = Builder()  # no builder section: the web app says the lab has no builder
     target: dict[str, Any] = {}  # target architecture for the ghost layer; shape defined with the twin mode
 
     @field_validator("setup")

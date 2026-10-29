@@ -3,6 +3,7 @@
 import argparse
 import json
 import shlex
+import shutil
 import subprocess
 import sys
 import time
@@ -10,6 +11,9 @@ from collections.abc import Callable
 
 from .config import HOST, SERVER_PORT, WEB_DEV_PORT
 from .emulator import stack
+from .emulator.aws_profile import (
+    ProfileError, cli_ignores_endpoint_url, config_path, credentials_overrides, ensure_lab_profile, lab_profile_ok,
+)
 from .emulator.docker import DockerError
 from .emulator.preflight import port_free
 from .engine import Engine, EngineError, result_dict
@@ -45,7 +49,22 @@ def build_parser() -> argparse.ArgumentParser:
 
 def cmd_up(args: argparse.Namespace) -> int:
     stack.up()
+    # The builder shows and runs `aws ... --profile lab`; the profile points the CLI at the emulator.
+    try:
+        outcome = ensure_lab_profile()
+    except ProfileError as e:
+        print(f"labctl up: the emulator is up, but the builder cannot run commands: {e}", file=sys.stderr)
+        return 1
+    if outcome != "unchanged":
+        print(f"aws profile 'lab' {outcome} in {config_path()} (use it with `aws ... --profile lab`)")
+    _warn_profile_overrides("labctl up")
     return 0
+
+
+def _warn_profile_overrides(cmd: str) -> None:
+    if creds := credentials_overrides():
+        print(f"{cmd}: {creds} has a [lab] section; its keys override the emulator's fake keys for "
+              "`--profile lab`, so rename that section", file=sys.stderr)
 
 
 def cmd_down(args: argparse.Namespace) -> int:
@@ -119,6 +138,17 @@ def cmd_serve(args: argparse.Namespace) -> int:
         owner = f" by PID {', '.join(pids)}" if pids else ""
         print(f"labctl serve: port {SERVER_PORT} is already in use{owner}; stop that process and retry", file=sys.stderr)
         return 1
+    if not shutil.which("aws"):
+        print("labctl serve: the aws CLI is not on PATH, so the builder can show commands but not run them; "
+              "install AWS CLI v2 (https://docs.aws.amazon.com/cli/latest/userguide/getting-started-install.html)",
+              file=sys.stderr)
+    elif old := cli_ignores_endpoint_url():
+        print(f"labctl serve: {old} ignores endpoint_url in profiles, so `--profile lab` commands would go to "
+              "real AWS; upgrade to AWS CLI v2.13 or later", file=sys.stderr)
+    if not lab_profile_ok():
+        print(f"labctl serve: {config_path()} has no up-to-date [profile lab], so builder commands would not "
+              "reach the emulator; run `labctl up` to write it", file=sys.stderr)
+    _warn_profile_overrides("labctl serve")
     import uvicorn
 
     from .server.app import create_app

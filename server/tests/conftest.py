@@ -7,9 +7,11 @@ FIXTURE_LABS = Path(__file__).parent / "fixtures" / "labs"
 
 @pytest.fixture(autouse=True)
 def isolated_home(tmp_path, monkeypatch):
-    """Keep tests away from the real ~/.cloudy-labs (progress and moto credentials)."""
+    """Keep tests away from the real ~/.cloudy-labs (progress and moto credentials) and from the
+    learner's ~/.aws/config, which `labctl up` writes the lab profile into."""
     home = tmp_path / "home"
     monkeypatch.setenv("CLOUDY_LABS_HOME", str(home))
+    monkeypatch.setenv("AWS_CONFIG_FILE", str(tmp_path / "aws-config"))
     return home
 
 

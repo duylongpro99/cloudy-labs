@@ -335,6 +335,7 @@
       "props": {
         "az": "us-east-1b",
         "cidr": "10.0.12.0/24",
+        "mapPublicIpOnLaunch": false,
         "tags": {
           "lab": "06"
         }
@@ -347,6 +348,7 @@
       "props": {
         "az": "us-east-1a",
         "cidr": "10.0.1.0/24",
+        "mapPublicIpOnLaunch": true,
         "tags": {
           "lab": "06"
         }
@@ -359,6 +361,7 @@
       "props": {
         "az": "us-east-1b",
         "cidr": "10.0.2.0/24",
+        "mapPublicIpOnLaunch": true,
         "tags": {
           "lab": "06"
         }
@@ -370,7 +373,8 @@
       "label": "subnet-default-us-east-1-a",
       "props": {
         "az": "us-east-1a",
-        "cidr": "172.31.0.0/20"
+        "cidr": "172.31.0.0/20",
+        "mapPublicIpOnLaunch": true
       }
     },
     {
@@ -379,7 +383,8 @@
       "label": "subnet-default-us-east-1-b",
       "props": {
         "az": "us-east-1b",
-        "cidr": "172.31.16.0/20"
+        "cidr": "172.31.16.0/20",
+        "mapPublicIpOnLaunch": true
       }
     },
     {
@@ -388,7 +393,8 @@
       "label": "subnet-default-us-east-1-c",
       "props": {
         "az": "us-east-1c",
-        "cidr": "172.31.32.0/20"
+        "cidr": "172.31.32.0/20",
+        "mapPublicIpOnLaunch": true
       }
     },
     {
@@ -398,6 +404,7 @@
       "props": {
         "az": "us-east-1a",
         "cidr": "10.0.11.0/24",
+        "mapPublicIpOnLaunch": false,
         "tags": {
           "lab": "06"
         }
@@ -415,6 +422,7 @@
       "label": "lab06-vpc",
       "props": {
         "cidr": "10.0.0.0/16",
+        "enableDnsHostnames": true,
         "tags": {
           "lab": "06"
         }
@@ -438,6 +446,7 @@
       "label": "vpc-default-us-east-1",
       "props": {
         "cidr": "172.31.0.0/16",
+        "enableDnsHostnames": true,
         "isDefault": true
       }
     },

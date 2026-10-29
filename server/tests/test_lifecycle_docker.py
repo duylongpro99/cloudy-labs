@@ -32,6 +32,7 @@ def stack(tmp_path_factory, fixture_labs_root):
     mp = pytest.MonkeyPatch()
     mp.setenv("CLOUDY_LABS_HOME", str(home))
     mp.setenv("CLOUDY_LABS_LABS_DIR", str(labs))
+    mp.setenv("AWS_CONFIG_FILE", str(home / "aws-config"))  # `up` writes the lab profile here
     try:
         assert main(["up"]) == 0
         yield home
