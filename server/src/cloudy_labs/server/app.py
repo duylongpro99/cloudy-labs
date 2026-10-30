@@ -1,5 +1,5 @@
 """FastAPI app: the current graph over HTTP and live updates over a WebSocket, plus the
-builder's preview and run endpoints (PRD F4)."""
+builder's preview and run endpoints (PRD F4) and the chat's suggestions (PRD F5)."""
 
 import asyncio
 import contextlib
@@ -19,7 +19,11 @@ from starlette.middleware.trustedhost import TrustedHostMiddleware
 from ..builder.ec2_choices import choices
 from ..builder.ops import OPS, ModifyInstanceAttribute, Op, Params, catalog, display, expectation, practice_expectation
 from ..builder.runner import Runner, run_blocker
-from ..builder.validate import validate
+from ..builder.validate import attached_groups, validate
+from ..chat import provider
+from ..chat.provider import Message, ProviderError
+from ..chat.settings import LlmSettings, Missing, load_settings
+from ..chat.suggest import Complete, suggest
 from ..config import WEB_DEV_PORT, home
 from ..graph.collector import collect, region_azs
 from ..graph.schema import ResourceGraph
@@ -36,6 +40,9 @@ AZ_RETRY_S = 5.0
 # Binding to loopback does not stop DNS rebinding: a page whose own name resolves to 127.0.0.1
 # would read /api/graph same-origin. Requests must name the loopback host (any port).
 ALLOWED_HOSTS = ["127.0.0.1", "localhost"]
+CHAT_TURNS_MAX, CHAT_TURN_CHARS_MAX = 12, 8000
+CHAT_SETUP = ("set LLM_BASE_URL, LLM_API_KEY, LLM_MODEL and LLM_API_FORMAT in the environment of `labctl serve` "
+              "or in ~/.cloudy-labs/llm.env")
 
 CurrentLab = Callable[[], tuple[LoadedLab, Attempt] | None]
 _loaded: dict[str, LoadedLab] = {}
@@ -56,15 +63,53 @@ def current_lab() -> tuple[LoadedLab, Attempt] | None:
     return _loaded[attempt.lab_id], attempt
 
 
-def attached_groups(graph: ResourceGraph, instance_id: str) -> tuple[str, ...]:
-    """The security groups the instance has now: `--groups` replaces the whole list, so the
-    command must name them all. Filled in here so the browser cannot send a stale list."""
-    groups = {n.id for n in graph.nodes if n.kind == "security-group"}  # Elastic IPs are attached too
-    return tuple(e.from_ for e in graph.edges if e.kind == "attached" and e.to == instance_id and e.from_ in groups)
-
-
 def _refuse(status: int, message: str, **extra: Any) -> JSONResponse:
     return JSONResponse({"detail": message, **extra}, status_code=status)
+
+
+async def guard_request(request: Request) -> Any:
+    """The JSON body of a request that may change lab state or spend the learner's LLM tokens,
+    or the response refusing it.
+
+    A page on another site can POST text/plain to 127.0.0.1 without a CORS preflight, so every
+    such request must come from the web app and carry a JSON body.
+    """
+    if request.headers.get("origin") not in ALLOWED_ORIGINS:
+        return _refuse(403, "builder requests are accepted from the Cloudy Labs web app only")
+    if request.headers.get("content-type", "").split(";")[0].strip().lower() != "application/json":
+        return _refuse(415, "send the request as application/json")
+    try:
+        return json.loads(await request.body())
+    except ValueError:
+        return _refuse(400, "the request body is not valid JSON")
+
+
+def chat_status(settings: LlmSettings | Missing) -> dict[str, Any]:
+    """Whether the chat is on, for the web app. Never the key or the base URL."""
+    if isinstance(settings, Missing):
+        return {"enabled": False, "missing": settings.names, **({"error": settings.error} if settings.error else {})}
+    return {"enabled": True, "model": settings.model, "format": settings.api_format}
+
+
+def chat_messages(body: Any) -> list[Message] | str:
+    """The conversation the browser sent, or why it is refused."""
+    shape = 'expected {"messages": [{"role": "user" | "assistant", "content": "..."}]}'
+    if not isinstance(body, dict) or set(body) != {"messages"} or not isinstance(body["messages"], list):
+        return shape
+    turns = body["messages"]
+    if not turns or len(turns) > CHAT_TURNS_MAX:
+        return f"send between 1 and {CHAT_TURNS_MAX} messages"
+    out: list[Message] = []
+    for turn in turns:
+        if not isinstance(turn, dict) or set(turn) != {"role", "content"} or turn["role"] not in ("user", "assistant") \
+                or not isinstance(turn["content"], str):
+            return shape
+        if not turn["content"].strip() or len(turn["content"]) > CHAT_TURN_CHARS_MAX:
+            return f"each message must have between 1 and {CHAT_TURN_CHARS_MAX} characters"
+        out.append({"role": turn["role"], "content": turn["content"]})
+    if out[-1]["role"] != "user":
+        return "the last message must be the learner's"
+    return out
 
 
 def create_app(
@@ -76,6 +121,8 @@ def create_app(
     runner: Runner | None = None,
     azs: Callable[[], list[str]] = region_azs,
     blocker: Callable[[], str | None] = run_blocker,
+    llm: Callable[[], LlmSettings | Missing] = load_settings,
+    complete: Complete = provider.complete,
 ) -> FastAPI:
     hub = hub or GraphHub(collector)
     listener = TapListener(hub)
@@ -142,22 +189,14 @@ def create_app(
             "userData": info.builder.user_data,
             "runBlocker": (why := await asyncio.to_thread(blocker)),
             "canRun": why is None,
+            "chat": chat_status(llm()),
         }
 
     async def op_request(request: Request) -> tuple[Op, Params, LoadedLab] | JSONResponse:
-        """The op a builder request asks for, or the response refusing it.
-
-        A page on another site can POST text/plain to 127.0.0.1 without a CORS preflight, so
-        every builder request must come from the web app and carry a JSON body.
-        """
-        if request.headers.get("origin") not in ALLOWED_ORIGINS:
-            return _refuse(403, "builder requests are accepted from the Cloudy Labs web app only")
-        if request.headers.get("content-type", "").split(";")[0].strip().lower() != "application/json":
-            return _refuse(415, "send the request as application/json")
-        try:
-            body = json.loads(await request.body())
-        except ValueError:
-            return _refuse(400, "the request body is not valid JSON")
+        """The op a builder request asks for, or the response refusing it."""
+        body = await guard_request(request)
+        if isinstance(body, JSONResponse):
+            return body
         if not isinstance(body, dict) or set(body) != {"op", "params"} or not isinstance(body["params"], dict):
             return _refuse(422, 'expected {"op": ..., "params": {...}}')
         op = OPS.get(body["op"]) if isinstance(body["op"], str) else None
@@ -229,6 +268,35 @@ def create_app(
         hub.notify("builder")  # do not rely on api-tap alone to bring the new graph
         expect = expectation(op, params, outcome.stdout, before) if outcome.exit_code == 0 else None
         return {"command": display(argv), "argv": argv, **outcome.to_dict(), "expect": expect}
+
+    @app.post("/api/chat")
+    async def chat(request: Request) -> Any:
+        """Suggested steps for the learner's question. Suggests only: nothing runs here (F5.4)."""
+        body = await guard_request(request)
+        if isinstance(body, JSONResponse):
+            return body
+        messages = chat_messages(body)
+        if isinstance(messages, str):
+            return _refuse(422, messages)
+        try:
+            current = await asyncio.to_thread(lab)
+        except LabError as e:
+            return _refuse(409, str(e))
+        if current is None:
+            return _refuse(409, "no lab is open; run `labctl start <lab>` first")
+        graph = hub.graph
+        if graph is None or graph.status != "ok":
+            return _refuse(503, "the emulator is not answering; run `labctl up`")
+        settings = await asyncio.to_thread(llm)
+        if isinstance(settings, Missing):
+            why = settings.error or f"missing {', '.join(settings.names)}"
+            return _refuse(409, f"the chat is not set up ({why}); {CHAT_SETUP}")
+        try:
+            result = await suggest(messages, lab=current[0].lab, graph=graph, azs=await region_zones(),
+                                   choices=choices(), settings=settings, complete=complete)
+        except ProviderError as e:
+            return _refuse(502, provider.redact(str(e), settings))  # already redacted; once more costs nothing
+        return result.to_dict()
 
     @app.websocket("/ws")
     async def ws(socket: WebSocket) -> None:

@@ -65,6 +65,13 @@ class _Graph:
         return [e for e in self.edges if e.kind == kind and e.from_ == src]
 
 
+def attached_groups(graph: ResourceGraph, instance_id: str) -> tuple[str, ...]:
+    """The security groups the instance has now: `--groups` replaces the whole list, so the
+    command must name them all. Filled in by the server so the browser cannot send a stale list."""
+    groups = {n.id for n in graph.nodes if n.kind == "security-group"}  # Elastic IPs are attached too
+    return tuple(e.from_ for e in graph.edges if e.kind == "attached" and e.to == instance_id and e.from_ in groups)
+
+
 def _name(node: Node) -> str:
     return node.id if node.label == node.id else f"{node.label} ({node.id})"
 
