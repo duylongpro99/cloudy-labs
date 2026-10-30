@@ -86,12 +86,73 @@ Phía server, trình duyệt chỉ gửi `{op, params}`, không bao giờ gửi 
 
 **Profile `lab`.** `labctl up` ghi một khối `[profile lab]` vào `~/.aws/config` (hoặc file mà `AWS_CONFIG_FILE` trỏ tới): endpoint là api-tap `http://127.0.0.1:4566`, key giả `test`/`test`, region `us-east-1`. Lần đầu sửa file, nó lưu bản sao `config.cloudy-labs.bak` cạnh file gốc. Khối có dòng đánh dấu `# managed by labctl` và chỉ khối đó bị ghi lại; nếu đã có `[profile lab]` không do labctl viết thì `up` báo lỗi và không đụng vào. Ghi qua symlink thì ghi vào file đích, symlink giữ nguyên; comment nằm ngay trên section kế tiếp không bị coi là của khối lab. AWS CLI cũ hơn 2.13 bỏ qua `endpoint_url` và một section `[lab]` trong file credentials sẽ đè key giả, nên khi gặp một trong hai, lab-server khoá Run để lệnh không đi tới AWS thật. Runner bỏ mọi biến `AWS_*` (trừ `AWS_CONFIG_FILE`) khỏi môi trường của lệnh, nên lệnh chạy giống hệt khi dán vào terminal bất kỳ.
 
+## Chat gợi ý lệnh
+
+Panel "Trợ lý lệnh" ở góc dưới bên phải cảnh: bạn mô tả việc muốn làm bằng lời ("tạo subnet công khai 10.0.1.0/24 trong VPC của tôi và cho ra internet"), chat trả lời bằng các bước của builder, mỗi bước kèm lệnh `aws` đầy đủ và lý do. LLM do bạn tự cấu hình; labctl không kèm key nào.
+
+**Làm được:**
+
+- Chỉ gợi ý. Không lệnh nào chạy cho tới khi bạn bấm Run trên một bước hoặc "Run cả chuỗi". Chuỗi dừng ở bước đầu tiên bị từ chối, trả exit code khác 0, hoặc không hiện trong cảnh sau 5 giây. Mỗi lần chỉ một lệnh chạy: khi chat đang chạy một bước, bảng tài nguyên, nút Run và công tắc Luyện tập của builder tắt; khi builder đang chạy, nút Run của chat tắt.
+- LLM không viết dòng lệnh. Nó chỉ chọn op trong danh mục builder của lab đang mở kèm tham số; server dựng lệnh và kiểm theo graph hiện tại như builder. Bước có lỗi vẫn hiện, kèm danh sách lỗi, nhưng nút Run tắt.
+- Bước sau dùng id bước trước tạo thì lệnh hiện `<id từ bước n>` và có nhãn "kiểm khi chạy"; lúc Run, web thay bằng id thật rồi kiểm lại.
+- Chế độ **Luyện tập** (chung công tắc với builder): nút Chép thay cho Run, bạn tự chạy lệnh trong terminal, bước được tính là xong khi cảnh có tài nguyên đúng loại và tên; id của tài nguyên đó điền vào các bước sau.
+- Câu hỏi ngoài các op lab cho dùng (S3, VPC peering, ALB...) được trả lời với nhãn "Ngoài phạm vi" và không có bước nào.
+
+**Không làm:** chạy lệnh ngoài danh mục op, sửa tay một bước (hỏi lại, hoặc dùng builder), nhớ hội thoại sau khi tải lại trang. Hội thoại xoá khi đổi lab hay `labctl reset`; mỗi câu hỏi gửi tối đa 12 lượt gần nhất.
+
+**Cấu hình.** Đặt bốn biến trong môi trường của `labctl serve`, hoặc ghi chúng (dạng `KEY=VALUE`) vào `~/.cloudy-labs/llm.env` (`$CLOUDY_LABS_HOME/llm.env`). Biến môi trường thắng file. Server đọc lại mỗi lần hỏi, nên sửa file không cần khởi động lại; trang web chỉ cần tải lại để panel bật.
+
+| Biến | Ý nghĩa |
+|---|---|
+| `LLM_BASE_URL` | Gốc API của provider, có hoặc không có `/v1` ở cuối đều được (server bỏ `/v1` rồi tự gọi `/v1/chat/completions` hoặc `/v1/messages`). Với OpenRouter thì `/api/v1` hay `/api` đều đúng. |
+| `LLM_API_KEY` | Key của bạn. Chỉ nằm trong header của request tới provider; không trả về trình duyệt, không ghi log, lỗi có chứa key thì key bị thay bằng `***`. |
+| `LLM_MODEL` | Tên model theo provider. |
+| `LLM_API_FORMAT` | `openai` (OpenAI, OpenRouter, Ollama và endpoint OpenAI-compatible khác) hoặc `anthropic`. |
+
+```bash
+# ~/.cloudy-labs/llm.env, chọn một khối (key dưới đây là giả)
+# OpenAI
+LLM_BASE_URL=https://api.openai.com/v1
+LLM_API_KEY=sk-...
+LLM_MODEL=gpt-4.1-mini
+LLM_API_FORMAT=openai
+
+# OpenRouter
+LLM_BASE_URL=https://openrouter.ai/api/v1
+LLM_API_KEY=sk-or-...
+LLM_MODEL=openai/gpt-4.1-mini
+LLM_API_FORMAT=openai
+
+# Ollama trên máy (key bất kỳ, không được để trống)
+LLM_BASE_URL=http://localhost:11434/v1
+LLM_API_KEY=ollama
+LLM_MODEL=qwen2.5:14b
+LLM_API_FORMAT=openai
+
+# Anthropic
+LLM_BASE_URL=https://api.anthropic.com
+LLM_API_KEY=sk-ant-...
+LLM_MODEL=claude-sonnet-5-5
+LLM_API_FORMAT=anthropic
+```
+
+> **Không bao giờ commit key.** Để key trong `~/.cloudy-labs/llm.env` (ngoài repo, nên `chmod 600`) hoặc biến môi trường của shell, không ghi vào file nào trong repo.
+
+Thiếu biến thì panel hiện hướng dẫn và tên biến còn thiếu; builder vẫn dùng bình thường. Model nhỏ hay không theo đúng định dạng JSON; server gửi lại một lần kèm lỗi, vẫn sai thì chat báo model không làm theo định dạng. Provider lỗi (sai key, sai URL, quá 60 giây) thì chat hiện thông báo kèm URL đã gọi, không kèm key.
+
+| Endpoint | Việc làm |
+|---|---|
+| `POST /api/chat` | `{messages: [{role: "user" \| "assistant", content}]}`, tối đa 12 lượt, mỗi lượt tối đa 8000 ký tự, lượt cuối là `user`. Trả `{reply, refusal, steps: [{op, params, explanation, command, problems, deferred, refs, practiceExpect}]}`. Không chạy gì. Chưa `start` hoặc chat chưa cấu hình: `409`; emulator không trả lời: `503`; provider lỗi: `502`. Cùng luật Origin và JSON với `/api/run`. |
+
+`GET /api/lab` có thêm `chat`: `{enabled: true, model, format}` hoặc `{enabled: false, missing: [...], error?}`.
+
 ## Biến môi trường
 
 | Biến | Mặc định | Ý nghĩa |
 |---|---|---|
 | `CLOUDY_LABS_HOME` | `~/.cloudy-labs` | Thư mục trạng thái cục bộ; tiến độ nằm ở `progress.db` (SQLite). |
 | `CLOUDY_LABS_LABS_DIR` | `<repo>/labs` | Thư mục chứa các lab. |
+| `LLM_BASE_URL`, `LLM_API_KEY`, `LLM_MODEL`, `LLM_API_FORMAT` | không đặt (chat tắt) | Provider LLM cho chat; xem [Chat gợi ý lệnh](#chat-gợi-ý-lệnh). |
 
 Region là `us-east-1`. Với Floci, credential luôn là `test`/`test`. Với lab chạy trên moto, `start`/`reset` tạo user IAM `cloudy-labs-admin` và lưu key của nó ở `moto-credentials.json` trong `CLOUDY_LABS_HOME` (quyền `0600`); `labctl env <lab>` xuất key này, checker cũng dùng nó. Mọi key ở đây chỉ có giá trị trong emulator; không dùng credential AWS thật với `labctl`.
 
@@ -156,6 +217,12 @@ Trước khi soạn lab, đọc [emulator-differences.md](emulator-differences.m
 cd server
 uv run pytest            # test đơn vị, không cần Docker
 uv run pytest -m docker  # vòng đời đầy đủ trên stack thật; luôn gọi `down` khi xong
+```
+
+Bộ câu hỏi mẫu cho chat ([`questions.yaml`](../server/tests/fixtures/chat/questions.yaml)) gọi model thật của bạn trên `fixture-lab-06` và `fixture-lab-07`: kiểm câu trả lời theo graph, câu ngoài phạm vi phải bị từ chối, và với mỗi lab, một câu bao trọn lab phải cho ra chuỗi mà Run hết thì `labctl check` đạt. Cần provider đã cấu hình, Docker, `aws` và cổng 8730 trống; thiếu provider thì cả file bị bỏ qua. Test chỉ mang marker `llm`, nên `-m docker` không chạy nó và không tốn token của bạn.
+
+```bash
+uv run pytest -m llm tests/test_chat_live.py -v
 ```
 
 `tests/test_builder_e2e_docker.py` (cũng `-m docker`) dựng stack, mở `fixture-lab-06`, chạy lab-server, dùng Vite dev server đang chạy ở 5174 (hoặc tự bật rồi tắt), rồi để [`web/scripts/e2e-builder-lab-06.mjs`](../web/scripts/e2e-builder-lab-06.mjs) làm cả lab qua builder trong Google Chrome và chạy `labctl check`. Sau đó nó mở `fixture-lab-07` và để [`web/scripts/e2e-builder-lab-07.mjs`](../web/scripts/e2e-builder-lab-07.mjs) làm Lab 7 hai lần: một lần bằng Run, một lần ở chế độ luyện tập (chép lệnh rồi chạy bằng `bash -c`, không có `/api/run` nào), mỗi lần chờ `labctl check` đạt tới 60 giây. Cần `aws`, `node`, `pnpm` và cổng 8730 trống. Test tự trỏ `AWS_CONFIG_FILE` vào thư mục tạm, không đụng config AWS của bạn.
