@@ -1,3 +1,5 @@
+import json
+
 import pytest
 from fastapi.testclient import TestClient
 from starlette.websockets import WebSocketDisconnect
@@ -74,7 +76,7 @@ def test_listener_events_reach_browsers_and_writes_refresh(served):
 from pathlib import Path  # noqa: E402
 
 from cloudy_labs.builder.runner import RunResult, Runner  # noqa: E402
-from cloudy_labs.graph.schema import ResourceGraph  # noqa: E402
+from cloudy_labs.graph.schema import Contains, Edge, Node, ResourceGraph  # noqa: E402
 from cloudy_labs.labs import LabError, load_lab  # noqa: E402
 from cloudy_labs.progress import Attempt  # noqa: E402
 
@@ -99,7 +101,7 @@ class FakeRunner(Runner):
 @pytest.fixture
 def builder():
     """An app on the golden lab-06 graph with fixture-lab-06 open and a fake aws CLI."""
-    state = {"lab": (LAB06, Attempt(7, "fixture-lab-06", "2026-10-29T00:00:00Z")), "block": None}
+    state = {"lab": (LAB06, Attempt(7, "fixture-lab-06", "2026-10-29T00:00:00Z")), "block": None, "graph": GOLDEN}
     runner = FakeRunner(RunResult(0, '{"Vpc": {"VpcId": "vpc-new1"}}', "", 12))
 
     def lab():
@@ -107,7 +109,7 @@ def builder():
             raise state["lab"]
         return state["lab"]
 
-    app = create_app(lambda: GOLDEN, listen=False, lab=lab, runner=runner,
+    app = create_app(lambda: state["graph"], listen=False, lab=lab, runner=runner,
                      azs=lambda: ["us-east-1a", "us-east-1b"], blocker=lambda: state["block"])
     with TestClient(app, base_url="http://127.0.0.1:8730") as client:
         yield client, state, runner
@@ -290,3 +292,91 @@ def test_run_refused_while_emulator_down():
                      runner=FakeRunner(RunResult(0, "", "", 1)), azs=lambda: [], blocker=lambda: None)
     with TestClient(app, base_url="http://127.0.0.1:8730") as client:
         assert post(client, "/api/run", "create-vpc", {"name": "x", "cidr": "10.66.0.0/16"}).status_code == 503
+
+
+# --- EC2 builder (fixture-lab-07) ------------------------------------------------------------
+
+import logging  # noqa: E402
+
+LAB07 = load_lab("fixture-lab-07", FIXTURES / "labs")
+SG_WEB, SG_DEFAULT, INSTANCE = "sg-dbd2e6007fa2e7eef", "sg-b58b05ddff613fe13", "i-fdb553d289095d128"
+SG_NEW = "sg-0a1b2c3d4e5f60718"
+
+
+@pytest.fixture
+def ec2_builder(builder):
+    client, state, runner = builder
+    state["lab"] = (LAB07, Attempt(8, "fixture-lab-07", "2026-10-30T00:00:00Z"))
+    return client, state, runner
+
+
+def test_lab_info_offers_images_types_and_user_data(ec2_builder):
+    client, _, _ = ec2_builder
+    body = client.get("/api/lab").json()
+    assert body["palette"] == ["security-group", "key-pair", "instance"]
+    assert body["images"] and body["instanceTypes"] and len(body["images"]) == 1
+    assert "http.server 80" in body["userData"]
+    assert {o["name"] for o in body["ops"]} == {"create-security-group", "authorize-security-group-ingress",
+                                                "create-key-pair", "run-instances", "modify-instance-attribute"}
+
+
+def test_preview_has_a_practice_expectation(ec2_builder):
+    client, _, _ = ec2_builder
+    body = post(client, "/api/preview", "create-security-group",
+                {"name": "lab07-admin", "vpcId": VPC, "description": "SSH from my address"}).json()
+    assert body["problems"] == [] and body["practiceExpect"] == {"kind": "security-group", "label": "lab07-admin"}
+    rule = post(client, "/api/preview", "authorize-security-group-ingress",
+                {"groupId": SG_WEB, "protocol": "tcp", "port": "443", "cidr": "0.0.0.0/0"}).json()
+    assert rule["practiceExpect"] == {"node": SG_WEB, "prop": "ingress",
+                                      "includes": {"protocol": "tcp", "from": 443, "to": 443, "source": "0.0.0.0/0"}}
+
+
+def test_attaching_a_group_keeps_the_ones_the_instance_has(ec2_builder):
+    client, _, _ = ec2_builder
+    body = post(client, "/api/preview", "modify-instance-attribute", {"instanceId": INSTANCE, "groupId": SG_DEFAULT}).json()
+    assert body["problems"] == []
+    assert body["argv"][body["argv"].index("--groups"):][:3] == ["--groups", SG_WEB, SG_DEFAULT]
+    assert body["practiceExpect"] == {"edge": f"attached:{SG_DEFAULT}->{INSTANCE}"}
+
+
+def test_browser_cannot_send_the_current_groups(ec2_builder):
+    client, _, runner = ec2_builder
+    r = post(client, "/api/run", "modify-instance-attribute",
+             {"instanceId": INSTANCE, "groupId": SG_DEFAULT, "currentGroups": []})
+    assert r.status_code == 422 and "currentGroups" in r.json()["detail"]
+    r = post(client, "/api/run", "modify-instance-attribute",
+             {"instanceId": INSTANCE, "groupId": SG_DEFAULT, "current_groups": []})  # the field name, not the alias
+    assert r.status_code == 422 and "current_groups" in r.json()["detail"]
+    assert runner.calls == []
+
+
+def test_run_names_the_groups_a_fresh_collect_shows(ec2_builder):
+    """The last graph may not show a group attached a moment ago; `--groups` would drop it."""
+    client, state, runner = ec2_builder
+    newer = GOLDEN.model_copy(update={
+        "nodes": [*GOLDEN.nodes, Node(id=SG_NEW, kind="security-group", label="admin", props={"groupName": "admin"})],
+        "contains": [*GOLDEN.contains, Contains(parent=VPC, child=SG_NEW)],
+        "edges": [*GOLDEN.edges, Edge.model_validate({"id": f"attached:{SG_DEFAULT}->{INSTANCE}", "kind": "attached",
+                                                      "from": SG_DEFAULT, "to": INSTANCE})]})
+    state["graph"] = newer
+    body = post(client, "/api/run", "modify-instance-attribute", {"instanceId": INSTANCE, "groupId": SG_NEW}).json()
+    assert body["exitCode"] == 0, body
+    assert runner.calls[0][runner.calls[0].index("--groups"):][:4] == ["--groups", SG_WEB, SG_DEFAULT, SG_NEW]
+
+
+def test_a_value_the_cli_would_read_as_a_file_is_refused(ec2_builder):
+    client, _, runner = ec2_builder
+    r = post(client, "/api/run", "create-security-group",
+             {"name": "leak", "vpcId": VPC, "description": "file:///etc/passwd"})
+    assert r.status_code == 409 and [p["field"] for p in r.json()["problems"]] == ["description"]
+    assert runner.calls == []
+
+
+def test_key_material_is_never_logged(ec2_builder, caplog):
+    client, _, runner = ec2_builder
+    secret = "-----BEGIN RSA PRIVATE KEY-----\nMIIEsecret\n-----END RSA PRIVATE KEY-----"
+    runner.result = RunResult(0, json.dumps({"KeyName": "lab07-key2", "KeyMaterial": secret, "KeyPairId": "key-new"}), "", 5)
+    with caplog.at_level(logging.DEBUG):
+        body = post(client, "/api/run", "create-key-pair", {"name": "lab07-key2"}).json()
+    assert body["expect"] == {"node": "key-new"} and "MIIEsecret" in body["stdout"]  # the learner gets the key, once
+    assert "MIIEsecret" not in caplog.text

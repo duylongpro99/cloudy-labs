@@ -16,7 +16,8 @@ from fastapi.responses import JSONResponse
 from pydantic import ValidationError
 from starlette.middleware.trustedhost import TrustedHostMiddleware
 
-from ..builder.ops import OPS, Op, Params, catalog, display, expectation
+from ..builder.ec2_choices import choices
+from ..builder.ops import OPS, ModifyInstanceAttribute, Op, Params, catalog, display, expectation, practice_expectation
 from ..builder.runner import Runner, run_blocker
 from ..builder.validate import validate
 from ..config import WEB_DEV_PORT, home
@@ -53,6 +54,13 @@ def current_lab() -> tuple[LoadedLab, Attempt] | None:
     if attempt.lab_id not in _loaded:
         _loaded[attempt.lab_id] = load_lab(attempt.lab_id)
     return _loaded[attempt.lab_id], attempt
+
+
+def attached_groups(graph: ResourceGraph, instance_id: str) -> tuple[str, ...]:
+    """The security groups the instance has now: `--groups` replaces the whole list, so the
+    command must name them all. Filled in here so the browser cannot send a stale list."""
+    groups = {n.id for n in graph.nodes if n.kind == "security-group"}  # Elastic IPs are attached too
+    return tuple(e.from_ for e in graph.edges if e.kind == "attached" and e.to == instance_id and e.from_ in groups)
 
 
 def _refuse(status: int, message: str, **extra: Any) -> JSONResponse:
@@ -130,6 +138,8 @@ def create_app(
             "cidrs": [str(c) for c in info.cidrs],  # the blocks the lab plans to use, to suggest in the form
             "ops": catalog(list(info.builder.palette)),
             "azs": await region_zones(),
+            **choices(),  # images and instanceTypes this machine can run
+            "userData": info.builder.user_data,
             "runBlocker": (why := await asyncio.to_thread(blocker)),
             "canRun": why is None,
         }
@@ -153,6 +163,10 @@ def create_app(
         op = OPS.get(body["op"]) if isinstance(body["op"], str) else None
         if op is None:
             return _refuse(422, f"unknown op {body['op']!r}")
+        # Either spelling: the models accept field names as well as the camelCase aliases.
+        server_fields = {*op.server_fields, *(name for name, f in op.params.model_fields.items() if f.alias in op.server_fields)}
+        if refused := sorted(server_fields & set(body["params"])):
+            return _refuse(422, f"{op.name}: wrong parameters: {', '.join(refused)} (the server fills these in)")
         try:
             params = op.params.model_validate(body["params"])
         except ValidationError as e:
@@ -171,13 +185,22 @@ def create_app(
             return _refuse(503, "the emulator is not answering; run `labctl up`")
         return op, params, loaded
 
-    async def checked(request: Request) -> tuple[Op, Params, list[str], list[dict]] | JSONResponse:
+    async def checked(request: Request, *, fresh: bool = False) -> tuple[Op, Params, list[str], list[dict]] | JSONResponse:
+        """`fresh`: about to run, so read the instance's groups from a new collect rather than the
+        last graph, which may not show a group attached a moment ago; `--groups` would drop it."""
         parsed = await op_request(request)
         if isinstance(parsed, JSONResponse):
             return parsed
         op, params, loaded = parsed
+        graph = hub.graph
+        if isinstance(params, ModifyInstanceAttribute):
+            if fresh:
+                graph = await asyncio.to_thread(hub.collect_now)
+                if graph.status != "ok":
+                    return _refuse(503, "the emulator is not answering; run `labctl up`")
+            params = params.model_copy(update={"current_groups": attached_groups(graph, params.instance_id)})
         argv = op.argv(params, loaded.lab.builder.tags)
-        problems = validate(op.name, params, hub.graph, await region_zones())
+        problems = validate(op.name, params, graph, await region_zones(), choices())
         return op, params, argv, [asdict(p) for p in problems]
 
     @app.post("/api/preview")
@@ -185,12 +208,13 @@ def create_app(
         result = await checked(request)
         if isinstance(result, JSONResponse):
             return result
-        _, _, argv, problems = result
-        return {"command": display(argv), "argv": argv, "problems": problems}
+        op, params, argv, problems = result
+        return {"command": display(argv), "argv": argv, "problems": problems,
+                "practiceExpect": practice_expectation(op, params)}
 
     @app.post("/api/run")
     async def run(request: Request) -> Any:
-        result = await checked(request)
+        result = await checked(request, fresh=True)
         if isinstance(result, JSONResponse):
             return result
         op, params, argv, problems = result

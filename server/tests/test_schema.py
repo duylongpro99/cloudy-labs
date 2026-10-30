@@ -46,6 +46,8 @@ def test_minimal_lab_gets_defaults():
         ({"builder": {"tags": {"lab": "a,b"}}}, "letters, digits"),
         ({"builder": {"tags": {"lab": "a\n"}}}, "letters, digits"),
         ({"builder": {"surprise": 1}}, "Extra inputs"),
+        ({"builder": {"userData": "x" * (16 * 1024 + 1)}}, "at most 16384"),
+        ({"builder": {"palette": ["instance", "lambda"]}}, "'instance'"),
     ],
 )
 def test_invalid_lab(over, needle):
@@ -62,3 +64,12 @@ def test_builder_section():
     lab = Lab.model_validate(base(builder={"palette": ["vpc", "subnet"], "tags": {"lab": "06"}}))
     assert lab.builder.palette == ["vpc", "subnet"]
     assert lab.builder.tags == {"lab": "06"}
+
+
+def test_builder_user_data():
+    lab = Lab.model_validate(base(builder={"palette": ["security-group", "key-pair", "instance"],
+                                           "userData": "#!/bin/sh\necho ok\n"}))
+    assert lab.builder.palette == ["security-group", "key-pair", "instance"]
+    assert lab.builder.user_data == "#!/bin/sh\necho ok\n"
+    assert Lab.model_validate(base(builder={"userData": "é" * 8192})).builder.user_data  # 16 KB counted in bytes
+    assert Lab.model_validate(base()).builder.user_data == ""

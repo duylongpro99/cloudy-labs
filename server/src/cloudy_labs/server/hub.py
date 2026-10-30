@@ -114,6 +114,11 @@ class GraphHub:
         finally:
             self._running = False
 
+    def collect_now(self) -> ResourceGraph:
+        """A graph collected now and not published, for a caller that cannot act on a stale one.
+        Blocking: call it from a thread."""
+        return self._safe_collect()[0]
+
     def _safe_collect(self) -> tuple[ResourceGraph, bool]:
         """The graph, and whether it stands for a failure that may be transient."""
         self.collects += 1
