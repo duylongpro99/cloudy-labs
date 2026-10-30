@@ -1,0 +1,53 @@
+# Sample questions for the chat, asked of a real model by tests/test_chat_live.py.
+# Each lab has:
+#   fresh: asked right after `labctl start`, each on its own (no conversation history)
+#   build: one request covering every task; its steps run in order and `labctl check` must pass
+#   built: asked once `build` has run, so the answer must use ids from the scene
+# A question expects `ops` (each must appear among the steps) or `refusal: true` (no steps).
+fixture-lab-06:
+  fresh:
+    - question: Tạo VPC 10.66.0.0/16 tên lab06-vpc
+      ops: [create-vpc]
+    - question: Tạo VPC 10.66.0.0/16 rồi tạo một subnet 10.66.1.0/24 trong VPC đó
+      ops: [create-vpc, create-subnet]
+    - question: Create a VPC 10.66.0.0/16, then create an Internet Gateway and attach it to that VPC
+      ops: [create-vpc, create-internet-gateway, attach-internet-gateway]
+    - question: Cấp cho tôi một Elastic IP
+      ops: [allocate-address]
+    - question: Tạo một S3 bucket để lưu log
+      refusal: true
+    - question: Tạo VPC peering giữa hai VPC
+      refusal: true
+  build: >-
+    Làm hết lab: tạo VPC 10.66.0.0/16 và bật DNS hostnames; hai subnet public và hai subnet private
+    trên hai AZ, subnet public tự gán IP public; một Internet Gateway gắn vào VPC; một Elastic IP và
+    một NAT Gateway dùng nó trong một subnet public; một route table gửi 0.0.0.0/0 tới Internet
+    Gateway cho hai subnet public, và một route table gửi 0.0.0.0/0 tới NAT Gateway cho hai subnet private.
+  built:
+    - question: Thêm một subnet private 10.66.20.0/24 vào VPC của tôi
+      ops: [create-subnet]
+    - question: Tạo thêm một route table trong VPC của tôi
+      ops: [create-route-table]
+fixture-lab-07:
+  fresh:
+    - question: Tạo key pair tên lab07-key
+      ops: [create-key-pair]
+    - question: Tạo security group tên web trong VPC của lab và mở port 80 cho mọi nơi
+      ops: [create-security-group, authorize-security-group-ingress]
+    - question: Tạo security group tên admin trong VPC của lab
+      ops: [create-security-group]
+    - question: Chạy một instance t4g.micro trong subnet public với security group mặc định của VPC, không cần key pair
+      ops: [run-instances]
+    - question: Tạo một S3 bucket cho web server
+      refusal: true
+    - question: Tạo một Application Load Balancer phía trước instance
+      refusal: true
+  build: >-
+    Làm hết lab: security group tên web trong VPC của lab mở tcp 80 cho 0.0.0.0/0 và tcp 22 chỉ cho
+    203.0.113.10/32; key pair tên lab07-key; một instance trong subnet public với security group web,
+    key pair đó và UserData gợi ý của lab; rồi tạo security group tên admin và gắn thêm nó vào instance.
+  built:
+    - question: Gắn security group mặc định của VPC vào instance của tôi
+      ops: [modify-instance-attribute]
+    - question: Mở thêm port 443 cho mọi nơi ở security group web
+      ops: [authorize-security-group-ingress]

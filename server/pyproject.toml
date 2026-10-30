@@ -29,6 +29,10 @@ dev = [
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]
-# Tests marked `docker` drive the real emulator stack; run them with `pytest -m docker`.
-addopts = "-m 'not docker'"
-markers = ["docker: needs a running Docker daemon and starts the emulator stack"]
+# Tests marked `docker` drive the real emulator stack (`pytest -m docker`); `llm` ones also ask a real model
+# (`pytest -m llm`).
+addopts = "-m 'not docker and not llm'"
+markers = [
+    "docker: needs a running Docker daemon and starts the emulator stack",
+    "llm: calls the LLM provider set by LLM_BASE_URL, LLM_API_KEY, LLM_MODEL and LLM_API_FORMAT",
+]
