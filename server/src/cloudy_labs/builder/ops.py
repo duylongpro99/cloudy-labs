@@ -6,6 +6,7 @@ argv, so what they read is exactly what runs. Pure: no I/O, no graph.
 """
 
 import json
+import re
 import shlex
 from collections.abc import Callable
 from dataclasses import dataclass
@@ -81,8 +82,42 @@ class ModifySubnetAttribute(Params):
     subnet_id: str
 
 
+class CreateSecurityGroup(Named):
+    vpc_id: str
+    description: str
+
+
+class AuthorizeSecurityGroupIngress(Params):
+    group_id: str
+    protocol: str  # tcp, udp, icmp or -1 (all traffic)
+    port: str  # one port; ignored for icmp and -1
+    cidr: str
+
+
+class CreateKeyPair(Named):
+    pass
+
+
+class RunInstances(Named):
+    subnet_id: str
+    image_id: str
+    instance_type: str
+    security_group_id: str
+    key_name: str  # empty: no key pair
+    user_data: str  # empty: none
+
+
+class ModifyInstanceAttribute(Params):
+    instance_id: str
+    group_id: str  # the security group to add
+    # `--groups` replaces the whole list, so the command must name the groups already attached.
+    # The server fills this from the graph; the browser may not send it (SERVER_FIELDS).
+    current_groups: tuple[str, ...] = ()
+
+
 Tags = dict[str, str]
 SUBNET_KINDS = ("subnet-public", "subnet-private")
+PORTLESS = ("icmp", "-1")  # protocols whose rules cover every port
 
 
 @dataclass(frozen=True)
@@ -97,7 +132,8 @@ class Op:
     # connect: the edge's source kind and target kinds. attribute: the node kinds it applies to.
     source: str | None = None
     targets: tuple[str, ...] = ()
-    result_id: str | None = None  # path to the new resource's id in the JSON output
+    result_id: str | None = None  # path to the new resource's id in the JSON output; digits index lists
+    server_fields: tuple[str, ...] = ()  # params the server fills in; refused from the browser
 
     def argv(self, params: Params, tags: Tags) -> list[str]:
         return ["aws", *self.args(params, tags), "--profile", PROFILE, "--output", "json"]
@@ -123,6 +159,34 @@ def tag_spec(resource_type: str, name: str, tags: Tags) -> list[str]:
     pairs = [("Name", name), *sorted(tags.items())]
     tag_list = ",".join(f"{{Key={k},Value={v}}}" for k, v in pairs)
     return ["--tag-specifications", f"ResourceType={resource_type},Tags=[{tag_list}]"]
+
+
+def _port(value: str) -> int | str:
+    """The port as JSON wants it. Left as text when it is not a number: validate explains why,
+    and a command with problems never runs."""
+    return int(value) if re.fullmatch(r"[0-9]{1,5}", value.strip()) else value
+
+
+def ip_permissions(p: AuthorizeSecurityGroupIngress) -> str:
+    """One inbound rule as `--ip-permissions` JSON, which says exactly what the shorthand
+    `--protocol/--port/--cidr` flags leave to the CLI to guess."""
+    rule: dict[str, Any] = {"IpProtocol": p.protocol}
+    if p.protocol == "icmp":
+        rule |= {"FromPort": -1, "ToPort": -1}  # every ICMP type and code
+    elif p.protocol != "-1":
+        rule |= {"FromPort": _port(p.port), "ToPort": _port(p.port)}
+    rule["IpRanges"] = [{"CidrIp": p.cidr}]
+    return json.dumps([rule])
+
+
+def _run_instances(p: RunInstances, t: Tags) -> list[str]:
+    argv = ["ec2", "run-instances", "--image-id", p.image_id, "--instance-type", p.instance_type,
+            "--subnet-id", p.subnet_id, "--security-group-ids", p.security_group_id, "--count", "1"]
+    if p.key_name:
+        argv += ["--key-name", p.key_name]
+    if p.user_data:
+        argv += ["--user-data", p.user_data]
+    return argv + tag_spec("instance", p.name, t)
 
 
 def display(argv: list[str]) -> str:
@@ -167,6 +231,23 @@ _OPS = [
     Op("modify-subnet-attribute", ModifySubnetAttribute, "attribute",
        lambda p, t: ["ec2", "modify-subnet-attribute", "--subnet-id", p.subnet_id, "--map-public-ip-on-launch"],
        targets=SUBNET_KINDS),
+    Op("create-security-group", CreateSecurityGroup, "create",
+       lambda p, t: ["ec2", "create-security-group", "--group-name", p.name, "--description", p.description,
+                     "--vpc-id", p.vpc_id, *tag_spec("security-group", p.name, t)],
+       creates="security-group", containers=("vpc",), result_id="GroupId"),
+    Op("authorize-security-group-ingress", AuthorizeSecurityGroupIngress, "attribute",
+       lambda p, t: ["ec2", "authorize-security-group-ingress", "--group-id", p.group_id, "--ip-permissions", ip_permissions(p)],
+       targets=("security-group",)),
+    # No --query: the learner needs KeyMaterial, the private key, which AWS shows only once.
+    Op("create-key-pair", CreateKeyPair, "create",
+       lambda p, t: ["ec2", "create-key-pair", "--key-name", p.name, *tag_spec("key-pair", p.name, t)],
+       creates="key-pair", containers=("region",), result_id="KeyPairId"),
+    Op("run-instances", RunInstances, "create", _run_instances,
+       creates="instance", containers=SUBNET_KINDS, result_id="Instances.0.InstanceId"),
+    Op("modify-instance-attribute", ModifyInstanceAttribute, "connect",
+       lambda p, t: ["ec2", "modify-instance-attribute", "--instance-id", p.instance_id,
+                     "--groups", *p.current_groups, p.group_id],
+       source="security-group", targets=("instance",), server_fields=("currentGroups",)),
 ]
 OPS: dict[str, Op] = {op.name: op for op in _OPS}
 
@@ -185,8 +266,19 @@ def result_id(op: Op, stdout: str) -> str | None:
     except ValueError:
         return None
     for key in op.result_id.split("."):
-        value = value.get(key) if isinstance(value, dict) else None
+        if isinstance(value, list) and key.isdigit():
+            value = value[int(key)] if int(key) < len(value) else None
+        else:
+            value = value.get(key) if isinstance(value, dict) else None
     return value if isinstance(value, str) else None
+
+
+def ingress_rule(p: AuthorizeSecurityGroupIngress) -> dict[str, Any]:
+    """The rule as the collector writes it into a security group's `ingress`, with `source` for
+    one of its `sources`. Rules for all traffic have no ports."""
+    [rule] = json.loads(ip_permissions(p))
+    ports = {"from": rule["FromPort"], "to": rule["ToPort"]} if "FromPort" in rule else {}
+    return {"protocol": p.protocol, **ports, "source": p.cidr}
 
 
 def expectation(op: Op, params: Params, stdout: str, version: int) -> dict[str, Any]:
@@ -204,5 +296,17 @@ def expectation(op: Op, params: Params, stdout: str, version: int) -> dict[str, 
             return {"node": params.vpc_id, "prop": "enableDnsHostnames", "value": True}
         case ModifySubnetAttribute():
             return {"node": params.subnet_id, "prop": "mapPublicIpOnLaunch", "value": True}
+        case AuthorizeSecurityGroupIngress():
+            return {"node": params.group_id, "prop": "ingress", "includes": ingress_rule(params)}
+        case ModifyInstanceAttribute():
+            return {"edge": f"attached:{params.group_id}->{params.instance_id}"}
     new_id = result_id(op, stdout)
     return {"node": new_id} if new_id else {"after": version}
+
+
+def practice_expectation(op: Op, params: Params) -> dict[str, Any]:
+    """What the graph must show once the learner has run this command themselves (F4.7): nothing
+    ran here, so there is no id to wait for, only a new resource of the kind with that name."""
+    if op.creates and isinstance(params, Named):
+        return {"kind": op.creates, "label": params.name}  # "subnet" matches either subnet kind
+    return expectation(op, params, "", 0)

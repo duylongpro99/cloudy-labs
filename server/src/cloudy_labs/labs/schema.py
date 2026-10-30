@@ -40,14 +40,17 @@ class Hint(_Strict):
 
 
 # Resource kinds the builder can create (PRD F4.1); a lab's palette is a subset.
-BuilderKind = Literal["vpc", "subnet", "igw", "elastic-ip", "nat", "route-table"]
+BuilderKind = Literal["vpc", "subnet", "igw", "elastic-ip", "nat", "route-table", "security-group", "key-pair", "instance"]
 # Tags go into the CLI's shorthand syntax, where commas, brackets, braces and spaces have meaning.
 TAG_TEXT = re.compile(r"[A-Za-z0-9._:/-]{1,128}")  # used with fullmatch
+USER_DATA_MAX = 16 * 1024  # bytes; EC2's limit on UserData before base64
 
 
 class Builder(_Strict):
     palette: list[BuilderKind] = []
     tags: dict[str, str] = {}  # added to every resource the builder creates, next to Name
+    # The instance form's starting UserData; the learner may edit it.
+    user_data: str = Field("", alias="userData")
 
     @field_validator("palette")
     @classmethod
@@ -64,6 +67,13 @@ class Builder(_Strict):
         for key, value in v.items():
             if not TAG_TEXT.fullmatch(key) or not TAG_TEXT.fullmatch(value):
                 raise ValueError(f"tag {key}={value}: use 1-128 letters, digits and . _ : / - only")
+        return v
+
+    @field_validator("user_data")
+    @classmethod
+    def _user_data_size(cls, v: str) -> str:
+        if len(v.encode()) > USER_DATA_MAX:
+            raise ValueError(f"userData is {len(v.encode())} bytes; EC2 accepts at most {USER_DATA_MAX}")
         return v
 
 

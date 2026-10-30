@@ -1,7 +1,9 @@
-"""Build fixture-lab-06 through the web builder alone, then `labctl check` it.
+"""Build fixture-lab-06, then fixture-lab-07, through the web builder alone and `labctl check`
+each; Lab 7 once with Run and once in practice mode, where the copied commands run in a shell.
+Also launch a fixture-lab-07 instance through the builder API without a browser.
 
 Real stack: Floci behind api-tap, the lab-server on its fixed port, the Vite dev server, Chrome
-driven by web/scripts/e2e-builder-lab-06.mjs and the aws CLI with the `lab` profile `labctl up`
+driven by web/scripts/e2e-builder-lab-0{6,7}.mjs and the aws CLI with the `lab` profile `labctl up`
 writes. Run with `uv run pytest -m docker tests/test_builder_e2e_docker.py -s`.
 """
 
@@ -16,6 +18,7 @@ import threading
 import time
 from pathlib import Path
 
+import httpx
 import pytest
 import uvicorn
 
@@ -29,6 +32,10 @@ pytestmark = pytest.mark.docker
 ROOT = Path(__file__).resolve().parents[2]
 WEB = ROOT / "web"
 LAB = "fixture-lab-06"
+LAB07 = "fixture-lab-07"
+WEB_ANSWERS_S = 60  # UserData keeps starting the web server after the instance reports running
+API = f"http://{HOST}:{SERVER_PORT}"
+WEB_ORIGIN = {"Origin": f"http://{HOST}:{WEB_DEV_PORT}"}
 
 
 def listening(port: int) -> bool:
@@ -47,7 +54,8 @@ def lab(tmp_path_factory):
         pytest.skip("needs the aws CLI, node and pnpm on PATH")
     home = tmp_path_factory.mktemp("home")
     labs = tmp_path_factory.mktemp("labs")
-    shutil.copytree(Path(__file__).parent / "fixtures" / "labs" / LAB, labs / LAB)
+    for lab_id in (LAB, LAB07):
+        shutil.copytree(Path(__file__).parent / "fixtures" / "labs" / lab_id, labs / lab_id)
     mp = pytest.MonkeyPatch()
     mp.setenv("CLOUDY_LABS_HOME", str(home))
     mp.setenv("CLOUDY_LABS_LABS_DIR", str(labs))
@@ -110,3 +118,64 @@ def test_lab_06_built_with_the_builder_passes_its_checks(lab_server, web_dev, tm
 
     with capsys.disabled():
         assert main(["check", LAB]) == 0
+
+
+@pytest.mark.parametrize("mode", ["run", "practice"])
+def test_lab_07_built_with_the_builder_passes_its_checks(lab_server, web_dev, mode, tmp_path, capsys):
+    assert main(["start", LAB07]) == 0  # a fresh network, and no key pair or instance of an earlier run
+    out = Path(os.environ.get("BUILDER_E2E_OUT") or tmp_path)
+    result = subprocess.run(["node", "scripts/e2e-builder-lab-07.mjs", mode, str(out)], cwd=WEB, env=run_env(), timeout=900)
+    assert result.returncode == 0, "the builder run failed; see its PASS/FAIL lines above"
+
+    steps = json.loads((out / f"e2e-builder-lab-07-{mode}.json").read_text())["steps"]
+    assert len(steps) == 7 and all(s["exitCode"] == 0 for s in steps)
+    assert "KeyMaterial" not in (out / f"e2e-builder-lab-07-{mode}.json").read_text()
+
+    deadline = time.monotonic() + WEB_ANSWERS_S
+    while main(["check", LAB07]) != 0:
+        assert time.monotonic() < deadline, f"{LAB07} checks still fail after {WEB_ANSWERS_S}s"
+        time.sleep(5)
+    capsys.readouterr()
+    with capsys.disabled():
+        assert main(["check", LAB07]) == 0
+
+
+def _node(graph: dict, kind: str, label: str) -> str:
+    return next(n["id"] for n in graph["nodes"] if n["kind"] == kind and n["label"] == label)
+
+
+def _wait_for(client: httpx.Client, node: str, seconds: float, kind: str | None = None) -> dict:
+    """The graph once a node with this id or label (and kind, when given) shows up."""
+    deadline = time.monotonic() + seconds
+    while True:
+        graph = client.get("/api/graph").json()
+        if any(node in (n["id"], n["label"]) and kind in (None, n["kind"]) for n in graph["nodes"]):
+            return graph
+        assert time.monotonic() < deadline, f"{node} did not reach the graph within {seconds}s"
+        time.sleep(0.2)
+
+
+def _run(client: httpx.Client, op: str, params: dict) -> dict:
+    body = client.post("/api/run", json={"op": op, "params": params}, headers=WEB_ORIGIN).json()
+    assert body.get("exitCode") == 0, body
+    return body
+
+
+def test_run_instances_through_the_api_reaches_the_graph(lab_server):
+    """Runs after the Lab 6 test: `labctl start` wipes the emulator for Lab 7's own network."""
+    assert main(["start", LAB07]) == 0
+    with httpx.Client(base_url=API, timeout=120) as client:
+        info = client.get("/api/lab").json()
+        assert info["id"] == LAB07 and info["canRun"], info
+        # The network `start` built; the subnet is public once its route to the gateway is collected too.
+        graph = _wait_for(client, "lab07-public", 15, kind="subnet-public")
+        vpc, subnet = _node(graph, "vpc", "lab07-vpc"), _node(graph, "subnet-public", "lab07-public")
+        sg = _run(client, "create-security-group", {"name": "lab07-web", "vpcId": vpc, "description": "web"})["expect"]["node"]
+        _wait_for(client, sg, 5)
+        launched = _run(client, "run-instances", {
+            "name": "lab07-web", "subnetId": subnet, "imageId": info["images"][0], "instanceType": info["instanceTypes"][0],
+            "securityGroupId": sg, "keyName": "", "userData": info["userData"]})
+        instance = launched["expect"]["node"]
+        assert instance.startswith("i-")
+        graph = _wait_for(client, instance, 5)
+        assert f"attached:{sg}->{instance}" in {e["id"] for e in graph["edges"]}

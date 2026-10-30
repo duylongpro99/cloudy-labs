@@ -1,0 +1,60 @@
+# Test fixture for the M4 builder, modelled on the Lab 7 steps of spikes/m0-emulators/lab-06-07.sh.
+# Not lab content: the real Lab 7 replaces it once it is written. `labctl start` wipes the
+# emulator, so setup rebuilds the part of Lab 6 that Lab 7 runs in: a VPC with one public subnet.
+id: fixture-lab-07
+provider: aws
+emulator: floci
+title: Fixture Lab 7 (EC2 web server in a VPC)
+cidrs: [10.67.0.0/16]
+setup: [checks:setup_network]
+builder:
+  palette: [security-group, key-pair, instance]
+  tags: {lab: fixture-lab-07}
+  userData: |
+    #!/bin/sh
+    mkdir -p /srv/www
+    echo "<h1>Cloudy Labs Lab 7 web server</h1>" > /srv/www/index.html
+    # Floci binds an IMDS proxy on 169.254.169.254:80 inside the instance, so 0.0.0.0:80 is taken;
+    # bind every address of the instance instead. Floci's host-port forwarder reaches it on its
+    # Docker network address, not the VPC private IP; on AWS this is the private IP alone.
+    cd /srv/www
+    for IP in $(ip -4 -o addr show scope global | awk '$2 != "lo" {sub(/\/.*/, "", $4); print $4}'); do
+      nohup python3 -m http.server 80 --bind "$IP" >>/var/log/web.log 2>&1 &
+    done
+tasks:
+  - id: security-group
+    text: Create a security group named web in the lab VPC that opens port 80 to everyone and port 22 only to one address (/32).
+  - id: key-pair
+    text: Create a key pair and keep its .pem file.
+  - id: instance
+    text: Launch an instance in the public subnet with the web security group, the key pair and UserData that starts a web server.
+  - id: extra-sg
+    text: Create a second security group named admin and attach it to the instance as well.
+checks:
+  - id: sg-web-80
+    task: security-group
+    fn: checks:sg_web_80
+    description: A security group in the VPC opens tcp 80 to 0.0.0.0/0.
+  - id: ssh-not-open-to-world
+    task: security-group
+    fn: checks:ssh_not_open_to_world
+    description: No security group in the VPC opens port 22 to 0.0.0.0/0.
+  - id: key-pair-exists
+    task: key-pair
+    fn: checks:key_pair_exists
+    description: At least one key pair exists.
+  - id: instance-running
+    task: instance
+    fn: checks:instance_running
+    description: A running instance in the public subnet has a key pair and a security group that opens port 80.
+  - id: web-server-answers
+    task: instance
+    fn: checks:web_server_answers
+    description: The instance's web server answers HTTP through its host port.
+  - id: instance-has-two-sgs
+    task: extra-sg
+    fn: checks:instance_has_two_sgs
+    description: An instance has at least two security groups.
+hints:
+  - task: instance
+    text: The instance reports running before its UserData has finished; give the web server a minute.

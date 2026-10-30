@@ -2,6 +2,7 @@ from pathlib import Path
 
 import pytest
 
+from cloudy_labs.builder.ec2_choices import choices
 from cloudy_labs.builder.ops import OPS
 from cloudy_labs.builder.validate import validate
 from cloudy_labs.graph.schema import ResourceGraph
@@ -149,3 +150,119 @@ def test_attribute_ops_need_the_right_node():
     assert problems("modify-vpc-attribute", vpcId=VPC) == []
     assert problems("modify-subnet-attribute", subnetId=PUB_A) == []
     assert problems("modify-subnet-attribute", subnetId=VPC)[0][0] == "subnetId"
+
+
+SG_WEB, SG_DEFAULT, INSTANCE, KEY = "sg-dbd2e6007fa2e7eef", "sg-b58b05ddff613fe13", "i-fdb553d289095d128", "key-856759379e524ce96"
+ARM = choices("arm64")
+
+
+def fields(found: list[tuple[str, str]]) -> list[str]:
+    return [f for f, _ in found]
+
+
+def test_choices_follow_the_host_architecture():
+    assert choices("arm64") == choices("aarch64") == {"images": ["ami-amazonlinux2023-arm64"], "instanceTypes": ["t4g.micro", "t4g.small"]}
+    assert choices("x86_64") == choices("AMD64") == {"images": ["ami-amazonlinux2023"], "instanceTypes": ["t3.micro", "t3.small"]}
+
+
+def sg(**over) -> list[tuple[str, str]]:
+    return problems("create-security-group", **({"name": "web", "vpcId": VPC, "description": "Lab web server"} | over))
+
+
+def test_create_security_group_rules():
+    assert sg() == []
+    assert fields(sg(vpcId=PUB_A)) == ["vpcId"]
+    assert "may not start with sg-" in sg(name="sg-web")[0][1]
+    assert "already has a security group named lab07-web (sg-dbd2e6007fa2e7eef)" in sg(name="lab07-web")[0][1]
+    assert sg(name="lab07-web", vpcId="vpc-default-us-east-1") == []  # the name is free in another VPC
+    assert "AWS requires a description" in sg(description="  ")[0][1]
+    assert fields(sg(description="Máy chủ web")) == ["description"]
+    assert fields(sg(description="x" * 256)) == ["description"]
+    assert fields(sg(description="web\nserver")) == ["description"]  # AWS refuses line breaks and quotes
+    assert fields(sg(description='say "hi"')) == ["description"]
+    assert sg(description="SSH from 203.0.113.10/32 (admin) #1") == []
+
+
+@pytest.mark.parametrize("field", ["description", "userData"])
+@pytest.mark.parametrize("value", ["file:///etc/passwd", "fileb://key.pem", "  FILE://x"])
+def test_values_the_cli_would_read_as_files_are_refused(field, value):
+    """The aws CLI reads file://path and fileb://path into any parameter: the server's own files."""
+    found = sg(description=value) if field == "description" else run(userData=value)
+    assert field in fields(found) and any("file://" in m for _, m in found), found
+
+
+def ingress(**over) -> list[tuple[str, str]]:
+    return problems("authorize-security-group-ingress", **({"groupId": SG_WEB, "protocol": "tcp", "port": "443", "cidr": "0.0.0.0/0"} | over))
+
+
+def test_ingress_rule_is_valid():
+    assert ingress() == []
+    assert ingress(protocol="udp", port="53", cidr="10.0.0.0/16") == []
+    assert ingress(protocol="icmp", port="", cidr="10.0.0.0/16") == []
+    assert ingress(port="22", cidr="198.51.100.7/32") == []
+    assert ingress(protocol="udp", port="22") == []  # not SSH
+
+
+@pytest.mark.parametrize(
+    "over, field, needle",
+    [
+        ({"port": "http"}, "port", "http is not a port number"),
+        ({"port": ""}, "port", "(none) is not a port number"),
+        ({"port": "-5"}, "port", "not a port number"),
+        ({"port": "65536"}, "port", "ports go from 0 to 65535"),
+        ({"port": "²"}, "port", "is not a port number"),  # str.isdigit() takes it, int() does not
+        ({"protocol": "ssh"}, "protocol", "choose tcp, udp, icmp, or -1"),
+        ({"cidr": "0.0.0.0"}, "cidr", "no prefix length"),
+        ({"cidr": "::/0"}, "cidr", "IPv6"),
+        ({"port": "22"}, "cidr", "open SSH (port 22) to the whole Internet"),
+        ({"protocol": "-1", "port": ""}, "cidr", "all traffic, including SSH on port 22,"),
+        ({"port": "80"}, "cidr", "already allows this (tcp 80 from 0.0.0.0/0)"),
+        ({"port": "22", "cidr": "203.0.113.10/32"}, "cidr", "already allows this"),
+        ({"groupId": INSTANCE}, "groupId", "this needs a security group"),
+    ],
+)
+def test_ingress_problems(over, field, needle):
+    found = ingress(**over)
+    assert len(found) == 1 and found[0][0] == field and needle in found[0][1], found
+
+
+def test_key_pair_names_are_unique():
+    assert problems("create-key-pair", name="lab07-key-2") == []
+    assert "a key pair named lab07-key already exists" in problems("create-key-pair", name="lab07-key")[0][1]
+    assert fields(problems("create-key-pair", name="my key")) == ["name"]
+
+
+def run(**over) -> list[tuple[str, str]]:
+    params = {"name": "web-2", "subnetId": PUB_A, "imageId": "ami-amazonlinux2023-arm64", "instanceType": "t4g.micro",
+              "securityGroupId": SG_WEB, "keyName": "lab07-key", "userData": "#!/bin/sh\n"} | over
+    p = OPS["run-instances"].params.model_validate(params)
+    return [(x.field, x.message) for x in validate("run-instances", p, GOLDEN, AZS, ARM)]
+
+
+def test_run_instances_rules():
+    assert run() == []
+    assert run(keyName="", userData="") == []
+    assert run(subnetId=PRI_A) == []  # later labs may need a private instance
+    assert "belongs to vpc-149d0439 but subnet-default-us-east-1-a is in vpc-default-us-east-1" in run(subnetId="subnet-default-us-east-1-a")[0][1]
+    assert "create one in this VPC first" in run(securityGroupId="")[0][1]
+    assert "no key pair named nope" in run(keyName="nope")[0][1]
+    assert "choose ami-amazonlinux2023-arm64" in run(imageId="ami-amazonlinux2023")[0][1]
+    assert "choose one of t4g.micro, t4g.small" in run(instanceType="t3.micro")[0][1]
+    assert fields(run(userData="x" * 16384)) == []
+    assert "16,385 bytes" in run(userData="x" * 16385)[0][1]
+    assert fields(run(subnetId=VPC)) == ["subnetId"]
+
+
+def attach(g: ResourceGraph = GOLDEN, **over) -> list[tuple[str, str]]:
+    return problems("modify-instance-attribute", g, **({"instanceId": INSTANCE, "groupId": SG_DEFAULT} | over))
+
+
+def test_attach_security_group_rules():
+    assert attach() == []
+    assert "lab07-web (sg-dbd2e6007fa2e7eef) is already attached to lab07-web (i-fdb553d289095d128)" in attach(groupId=SG_WEB)[0][1]
+    assert "an instance can only use security groups of its own VPC" in attach(groupId="sg-default-us-east-1")[0][1]
+    assert fields(attach(instanceId=KEY)) == ["instanceId"]
+    stopping = GOLDEN.model_copy(update={"nodes": [
+        n.model_copy(update={"props": n.props | {"state": "shutting-down"}}) if n.id == INSTANCE else n for n in GOLDEN.nodes]})
+    assert "is shutting-down" in attach(stopping)[0][1]
+    assert "already has 5 security groups" in attach(currentGroups=("sg-1",) * 5)[0][1]

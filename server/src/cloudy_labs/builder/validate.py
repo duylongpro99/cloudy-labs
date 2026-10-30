@@ -1,7 +1,8 @@
 """Check a builder op against the current resource graph before it runs (PRD F4.3).
 
 Pure: reads only the graph the collector produced (props `cidr`, `attachedVpc`, `state`,
-edges `route`, `association`, `attached`) and the region's AZs, never the emulator. Messages
+`groupName`, `ingress`, edges `route`, `association`, `attached`), the region's AZs and the
+AMIs and instance types on offer, never the emulator. Messages
 are written for the learner: what is wrong and why, not just "invalid". M5's chat reuses this.
 """
 
@@ -10,14 +11,27 @@ from dataclasses import dataclass
 from ipaddress import IPv4Network, ip_network
 
 from ..graph.schema import Node, ResourceGraph
+from ..labs.schema import USER_DATA_MAX
+from .ec2_choices import Choices, choices as host_choices
 from .ops import (
-    OPS, SUBNET_KINDS, AttachInternetGateway, CreateNatGateway, CreateRoute, CreateSubnet, CreateVpc,
-    AssociateRouteTable, ModifySubnetAttribute, ModifyVpcAttribute, Named, Params, CreateRouteTable,
+    OPS, PORTLESS, SUBNET_KINDS, AttachInternetGateway, AuthorizeSecurityGroupIngress, CreateKeyPair, CreateNatGateway,
+    CreateRoute, CreateSecurityGroup, CreateSubnet, CreateVpc, AssociateRouteTable, ModifyInstanceAttribute,
+    ModifySubnetAttribute, ModifyVpcAttribute, Named, Params, CreateRouteTable, RunInstances,
 )
 
 MIN_PREFIX, MAX_PREFIX = 16, 28  # AWS's limits for VPC and subnet blocks
 # Name tags go into the CLI's shorthand syntax, where commas, brackets and spaces have meaning.
 NAME = re.compile(r"[A-Za-z0-9._-]{1,64}")  # used with fullmatch: `$` would let a trailing newline in
+PROTOCOLS = ("tcp", "udp", "icmp", "-1")
+SSH_PORT, WORLD = 22, "0.0.0.0/0"
+DESCRIPTION_MAX = 255
+# The characters AWS accepts in a security group description (VPC groups).
+DESCRIPTION = re.compile(rf"[A-Za-z0-9 ._\-:/()#,@\[\]+=&;{{}}!$*]{{1,{DESCRIPTION_MAX}}}")
+PORT = re.compile(r"[0-9]{1,5}")  # str.isdigit() also takes digits like ², which int() refuses
+# The aws CLI replaces a value with this prefix by the contents of that file, whatever the parameter.
+FILE_PREFIXES = ("file://", "fileb://")
+MAX_GROUPS_PER_INSTANCE = 5  # AWS's default quota of security groups per network interface
+GONE_INSTANCE_STATES = ("terminated", "shutting-down")
 
 
 @dataclass(frozen=True)
@@ -100,13 +114,19 @@ def _node(g: _Graph, field: str, node_id: str, kinds: tuple[str, ...], what: str
     return node
 
 
-def validate(op_name: str, params: Params, graph: ResourceGraph, azs: list[str]) -> list[Problem]:
-    """Problems with running `op_name` with `params` now. Empty means it may run."""
+def validate(op_name: str, params: Params, graph: ResourceGraph, azs: list[str],
+             choices: Choices | None = None) -> list[Problem]:
+    """Problems with running `op_name` with `params` now. Empty means it may run.
+    `choices`: the AMIs and instance types on offer; this host's when None."""
     op = OPS[op_name]
     if not isinstance(params, op.params):
         raise TypeError(f"{op_name} takes {op.params.__name__}, not {type(params).__name__}")
     g = _Graph(graph)
     problems: list[Problem] = []
+    for field, value in params.model_dump(by_alias=True).items():
+        if isinstance(value, str) and value.lstrip().lower().startswith(FILE_PREFIXES):
+            problems.append(Problem(field, "a value may not start with file:// or fileb://: the aws CLI would read "
+                                           "that file from this machine instead of using the text"))
 
     if isinstance(params, Named) and not NAME.fullmatch(params.name):
         problems.append(Problem("name", "give it a Name tag of 1–64 letters, digits, dots, dashes or underscores "
@@ -196,7 +216,105 @@ def validate(op_name: str, params: Params, graph: ResourceGraph, azs: list[str])
         case ModifySubnetAttribute():
             _node(g, "subnetId", params.subnet_id, SUBNET_KINDS, "subnet", problems)
 
+        case CreateSecurityGroup():
+            vpc = _node(g, "vpcId", params.vpc_id, ("vpc",), "VPC (a security group belongs to one VPC)", problems)
+            if params.name.startswith("sg-"):
+                problems.append(Problem("name", "a security group name may not start with sg-: AWS keeps that prefix "
+                                                "for group ids, so the name could be mistaken for one"))
+            elif vpc and (same := next((n for n in g.nodes.values() if n.kind == "security-group"
+                                        and g.vpc_of(n.id) == vpc.id and n.props.get("groupName") == params.name), None)):
+                problems.append(Problem("name", f"{_name(vpc)} already has a security group named {params.name} "
+                                                f"({same.id}); names are unique within a VPC"))
+            if not params.description.strip():
+                problems.append(Problem("description", "describe what the group is for, for example Lab web server; "
+                                                       "AWS requires a description"))
+            elif not DESCRIPTION.fullmatch(params.description):
+                problems.append(Problem("description", f"use up to {DESCRIPTION_MAX} letters, digits, spaces and ._-:/()#,@[]+=&;{{}}!$* "
+                                                       "(no accents or emoji)"))
+
+        case AuthorizeSecurityGroupIngress():
+            _ingress(g, params, problems)
+
+        case CreateKeyPair():
+            if any(n.kind == "key-pair" and n.label == params.name for n in g.nodes.values()):
+                problems.append(Problem("name", f"a key pair named {params.name} already exists; key pair names are "
+                                                "unique in a region, so choose another"))
+
+        case RunInstances():
+            _run_instances(g, params, choices or host_choices(), problems)
+
+        case ModifyInstanceAttribute():
+            instance = _node(g, "instanceId", params.instance_id, ("instance",), "instance", problems)
+            group = _node(g, "groupId", params.group_id, ("security-group",), "security group", problems)
+            if instance and instance.props.get("state") in GONE_INSTANCE_STATES:
+                problems.append(Problem("instanceId", f"{_name(instance)} is {instance.props['state']}; "
+                                                      "it can no longer take security groups"))
+            if instance and group:
+                if g.vpc_of(group.id) != g.vpc_of(instance.id):
+                    problems.append(Problem("groupId", f"{_name(group)} belongs to {g.vpc_of(group.id)} but {_name(instance)} "
+                                                       f"runs in {g.vpc_of(instance.id)}; an instance can only use "
+                                                       "security groups of its own VPC"))
+                elif any(e.to == instance.id for e in g.edges_from("attached", group.id)):
+                    problems.append(Problem("groupId", f"{_name(group)} is already attached to {_name(instance)}"))
+                elif len(params.current_groups) >= MAX_GROUPS_PER_INSTANCE:
+                    problems.append(Problem("groupId", f"{_name(instance)} already has {len(params.current_groups)} "
+                                                       f"security groups, the most AWS allows by default; put the "
+                                                       "rule in one of them instead"))
+
     return problems
+
+
+def _ingress(g: _Graph, params: AuthorizeSecurityGroupIngress, problems: list[Problem]) -> None:
+    group = _node(g, "groupId", params.group_id, ("security-group",), "security group", problems)
+    protocol, port = params.protocol, None
+    if protocol not in PROTOCOLS:
+        problems.append(Problem("protocol", f"{protocol or '(none)'} is not a protocol a rule can use; choose tcp, udp, "
+                                            "icmp, or -1 for all traffic"))
+        return
+    if protocol not in PORTLESS:
+        if not PORT.fullmatch(params.port.strip()):
+            problems.append(Problem("port", f"{params.port or '(none)'} is not a port number; "
+                                            "enter one number, for example 80 for HTTP or 22 for SSH"))
+        elif not 0 <= (port := int(params.port)) <= 65535:
+            problems.append(Problem("port", f"{port} is not a port: ports go from 0 to 65535"))
+            port = None
+    block = _cidr("cidr", params.cidr, problems, limits=False)
+    if block is None:
+        return
+    if str(block) == WORLD and (protocol == "-1" or (protocol == "tcp" and port == SSH_PORT)):
+        what = "all traffic, including SSH on port 22," if protocol == "-1" else "SSH (port 22)"
+        problems.append(Problem("cidr", f"this would open {what} to the whole Internet: bots scan for open port 22 "
+                                        "and try passwords and stolen keys within minutes. Allow only your own address, "
+                                        "for example 203.0.113.10/32 (look up your public IP and add /32)"))
+    if group:
+        portless = protocol in PORTLESS
+        for rule in group.props.get("ingress") or []:
+            same_ports = portless or (rule.get("from") == port and rule.get("to") == port)
+            if rule.get("protocol") == protocol and same_ports and str(block) in rule.get("sources", []):
+                problems.append(Problem("cidr", f"{_name(group)} already allows this ({protocol}"
+                                                f"{'' if portless else f' {port}'} from {block})"))
+                break
+
+
+def _run_instances(g: _Graph, params: RunInstances, offer: Choices, problems: list[Problem]) -> None:
+    subnet = _node(g, "subnetId", params.subnet_id, SUBNET_KINDS, "subnet", problems)
+    group = _node(g, "securityGroupId", params.security_group_id, ("security-group",),
+                  "security group (create one in this VPC first)", problems)
+    if subnet and group and g.vpc_of(group.id) != g.vpc_of(subnet.id):
+        problems.append(Problem("securityGroupId", f"{_name(group)} belongs to {g.vpc_of(group.id)} but {_name(subnet)} "
+                                                   f"is in {g.vpc_of(subnet.id)}; an instance can only use security "
+                                                   "groups of the VPC it runs in"))
+    if params.key_name and not any(n.kind == "key-pair" and n.label == params.key_name for n in g.nodes.values()):
+        problems.append(Problem("keyName", f"there is no key pair named {params.key_name}; create it first, "
+                                           "or launch without one"))
+    if params.image_id not in offer["images"]:
+        problems.append(Problem("imageId", f"{params.image_id or '(none)'} is not offered here; choose "
+                                           f"{', '.join(offer['images'])}, which matches this machine and starts fast"))
+    if params.instance_type not in offer["instanceTypes"]:
+        problems.append(Problem("instanceType", f"{params.instance_type or '(none)'} is not offered here; choose one of "
+                                                f"{', '.join(offer['instanceTypes'])}"))
+    if (size := len(params.user_data.encode())) > USER_DATA_MAX:
+        problems.append(Problem("userData", f"UserData is {size:,} bytes; EC2 accepts at most {USER_DATA_MAX:,}"))
 
 
 def _subnet_fits(g: _Graph, vpc: Node, block: IPv4Network, problems: list[Problem]) -> None:
