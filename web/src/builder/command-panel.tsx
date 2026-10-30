@@ -62,7 +62,7 @@ function download(name: string, text: string) {
   setTimeout(() => URL.revokeObjectURL(url), 60_000) // some browsers start reading the blob after click() returns
 }
 
-export function CommandPanel({ state, canRun, runBlocker, practice, events, theme, onRun, onPractice, onRetry }: {
+export function CommandPanel({ state, canRun, runBlocker, practice, events, theme, onRun, onPractice, onRetry, chatBusy = false }: {
   state: Open
   canRun: boolean
   runBlocker: string | null
@@ -72,6 +72,7 @@ export function CommandPanel({ state, canRun, runBlocker, practice, events, them
   onRun: () => void
   onPractice: () => void
   onRetry: () => void
+  chatBusy?: boolean
 }) {
   const preview = state.preview
   const command = preview?.command ?? ''
@@ -109,11 +110,12 @@ export function CommandPanel({ state, canRun, runBlocker, practice, events, them
             Sửa và chạy lại
           </button>
         ) : (
-          <button id="run-command" disabled={state.phase !== 'form' || !preview || stale || blocked || !canRun} onClick={onRun}>
+          <button id="run-command" disabled={state.phase !== 'form' || !preview || stale || blocked || !canRun || chatBusy} onClick={onRun}>
             Run
           </button>
         )}
       </div>
+      {chatBusy && !practice && <p id="chat-busy-note" style={{ margin: '6px 0 0', fontSize: 12 }}>Trợ lý lệnh đang chạy một bước; chờ nó xong rồi Run.</p>}
       {!canRun && !practice && (
         <p style={{ margin: '6px 0 0', fontSize: 12 }}>
           Nút Run tắt: {runBlocker ?? 'máy chạy lab-server không chạy được lệnh'}. Chép lệnh để xem, nhưng sửa điều trên trước khi chạy.

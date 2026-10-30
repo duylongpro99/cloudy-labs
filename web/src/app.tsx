@@ -7,7 +7,10 @@ import { BuilderPanel } from './builder/builder-panel'
 import { kindLabel } from './builder/drop-targets'
 import { DragGhost, Palette } from './builder/palette'
 import { useLab } from './builder/use-lab'
+import { usePractice } from './builder/use-practice'
 import { useSceneBuilder } from './builder/use-scene-builder'
+import { ChatPanel } from './chat/chat-panel'
+import { stepBusy, useChat } from './chat/use-chat'
 import { AwsObjectsGallery, type GalleryConfig } from './gallery/aws-objects-gallery'
 import { useResourceGraph, type ConnectionState } from './graph/graph-client'
 import { graphToScene } from './graph/graph-to-scene'
@@ -157,6 +160,9 @@ function Live() {
   const bs = builder.state
   const gesture = bs.phase === 'dragging' || bs.phase === 'connecting' ? bs : null
   const working = bs.phase === 'running' || bs.phase === 'waiting'
+  const [practice, setPractice] = usePractice()
+  const chat = useChat(graph, lab, practice)
+  const chatWorking = stepBusy(chat.state)
   return (
     <>
       {scene && (
@@ -173,10 +179,13 @@ function Live() {
         </Stage>
       )}
       {scene && graph && selected && (
-        <PropertyPanel selected={selected} scene={scene} edges={graph.edges} theme={t} onClose={close} actions={lab ? builder.actionsFor(selected) : []} />
+        <PropertyPanel selected={selected} scene={scene} edges={graph.edges} theme={t} onClose={close} actions={lab && !chatWorking ? builder.actionsFor(selected) : []} />
       )}
       {lab && 'draft' in bs && (
-        <BuilderPanel state={bs} graph={graph} lab={lab} events={events} theme={t} dispatch={builder.dispatch} onRun={builder.run} />
+        <BuilderPanel state={bs} graph={graph} lab={lab} events={events} theme={t} dispatch={builder.dispatch} onRun={builder.run} chatBusy={chatWorking} />
+      )}
+      {lab && (
+        <ChatPanel chat={chat} lab={lab} practice={practice} onPractice={setPractice} builderBusy={working} theme={t} />
       )}
       {gesture && (
         <DragGhost
@@ -207,7 +216,7 @@ function Live() {
             <div>
               Lab <b>{lab.title}</b> · lần làm {lab.attempt}
             </div>
-            <Palette lab={lab} disabled={working || graph?.status !== 'ok'} onStart={builder.startDrag} />
+            <Palette lab={lab} disabled={working || chatWorking || graph?.status !== 'ok'} onStart={builder.startDrag} />
             {bs.phase === 'idle' && bs.notice && (
               <p id="builder-notice" role="status" style={{ margin: '6px 0 0' }}>
                 {bs.notice}

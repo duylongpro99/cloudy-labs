@@ -22,12 +22,12 @@ const preview: api.Preview = { command: 'aws ec2 create-route ...', argv: ['aws'
 const events: ApiEvent[] = [{ service: 'ec2', action: 'DescribeVpcs', seq: 3, write: false }]
 
 let seen: BuilderState
-function Harness({ graph, evs = events }: { graph: ResourceGraph; evs?: ApiEvent[] }) {
+function Harness({ graph, evs = events, chatBusy = false }: { graph: ResourceGraph; evs?: ApiEvent[]; chatBusy?: boolean }) {
   const b = useBuilder(graph)
   seen = b.state
   if (b.state.phase === 'idle') b.dispatch({ type: 'open', draft })
   return 'draft' in b.state ? (
-    <BuilderPanel state={b.state} graph={graph} lab={LAB} events={evs} theme={THEMES.light} dispatch={b.dispatch} onRun={b.run} />
+    <BuilderPanel state={b.state} graph={graph} lab={LAB} events={evs} theme={THEMES.light} dispatch={b.dispatch} onRun={b.run} chatBusy={chatBusy} />
   ) : null
 }
 
@@ -45,6 +45,18 @@ describe('practice mode', () => {
     host.remove()
     vi.useRealTimers()
     vi.restoreAllMocks()
+  })
+
+  it('turns Run and the practice toggle off while the chat runs a step', async () => {
+    localStorage.setItem('cloudy-labs:practice', '0')
+    vi.spyOn(api, 'previewOp').mockResolvedValue(preview)
+    act(() => root.render(<Harness graph={golden()} chatBusy />))
+    await act(async () => vi.advanceTimersByTimeAsync(PREVIEW_DEBOUNCE_MS + 1))
+    expect((host.querySelector('#run-command') as HTMLButtonElement).disabled).toBe(true)
+    expect((host.querySelector('#practice-toggle') as HTMLInputElement).disabled).toBe(true)
+    expect(host.querySelector('#chat-busy-note')).not.toBeNull()
+    act(() => root.render(<Harness graph={golden()} />))
+    expect((host.querySelector('#run-command') as HTMLButtonElement).disabled).toBe(false)
   })
 
   it('hands the command to the terminal and never calls runOp', async () => {

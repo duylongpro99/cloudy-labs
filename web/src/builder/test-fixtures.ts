@@ -42,6 +42,7 @@ export const LAB: LabInfo = {
   userData: '#!/bin/bash\npython3 -m http.server 80 --bind 10.67.1.10\n',
   canRun: true,
   runBlocker: null,
+  chat: { enabled: true, model: 'test-model', format: 'openai' },
 }
 
 export const LAB07: LabInfo = { ...LAB, id: 'fixture-lab-07', title: 'Fixture lab 7', palette: ['security-group', 'key-pair', 'instance'], tags: { lab: 'fixture-lab-07' }, cidrs: ['10.67.0.0/16'] }

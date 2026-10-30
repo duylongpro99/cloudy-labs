@@ -1,13 +1,13 @@
 // The builder's side panel: the open op's form above its command, output and status.
-import { useState } from 'react'
 import type { ApiEvent, ResourceGraph } from '../graph/types'
 import type { Theme } from '../scene/theme'
 import type { LabInfo } from './builder-api'
 import { BuildForm } from './build-form'
 import { CommandPanel } from './command-panel'
 import type { BuilderAction, BuilderState } from './use-builder'
+import { usePractice } from './use-practice'
 
-const OP_TITLE: Record<string, string> = {
+export const OP_TITLE: Record<string, string> = {
   'create-vpc': 'Tạo VPC',
   'create-subnet': 'Tạo subnet',
   'create-internet-gateway': 'Tạo Internet Gateway',
@@ -28,26 +28,7 @@ const OP_TITLE: Record<string, string> = {
 
 type Open = Exclude<BuilderState, { phase: 'idle' | 'dragging' | 'connecting' }>
 
-const PRACTICE_KEY = 'cloudy-labs:practice'
-
-// A per-browser convenience: storage may be missing or throw (private windows, blocked site data).
-function savedPractice(): boolean {
-  try {
-    return localStorage.getItem(PRACTICE_KEY) === '1'
-  } catch {
-    return false
-  }
-}
-
-function savePractice(on: boolean) {
-  try {
-    localStorage.setItem(PRACTICE_KEY, on ? '1' : '0')
-  } catch {
-    // the toggle still works for this page
-  }
-}
-
-export function BuilderPanel({ state, graph, lab, events, theme, dispatch, onRun }: {
+export function BuilderPanel({ state, graph, lab, events, theme, dispatch, onRun, chatBusy = false }: {
   state: Open
   graph: ResourceGraph | null
   lab: LabInfo
@@ -55,13 +36,13 @@ export function BuilderPanel({ state, graph, lab, events, theme, dispatch, onRun
   theme: Theme
   dispatch: (a: BuilderAction) => void
   onRun: () => void
+  chatBusy?: boolean // the chat is running a step: one command at a time
 }) {
   const { draft } = state
   const busy = state.phase === 'running' || state.phase === 'waiting'
-  const [practice, setPractice] = useState(savedPractice)
+  const [practice, setPractice] = usePractice()
   const toggle = (on: boolean) => {
     setPractice(on)
-    savePractice(on)
     if (!on && state.phase === 'practicing') dispatch({ type: 'open', draft }) // back to the same form
   }
   return (
@@ -87,7 +68,7 @@ export function BuilderPanel({ state, graph, lab, events, theme, dispatch, onRun
       <div style={{ display: 'flex', alignItems: 'baseline', gap: 8, marginBottom: 8 }}>
         <b style={{ flex: 1 }}>{OP_TITLE[draft.op.name] ?? draft.op.name}</b>
         <label style={{ fontSize: 12 }} title="Builder dựng lệnh nhưng không chạy; bạn tự chạy lệnh trong terminal">
-          <input id="practice-toggle" type="checkbox" checked={practice} disabled={busy} onChange={(e) => toggle(e.target.checked)} /> Luyện tập
+          <input id="practice-toggle" type="checkbox" checked={practice} disabled={busy || chatBusy} onChange={(e) => toggle(e.target.checked)} /> Luyện tập
         </label>
         <button id="close-builder" onClick={() => dispatch({ type: 'cancel' })} disabled={busy} aria-label="Đóng">
           ×
@@ -111,6 +92,7 @@ export function BuilderPanel({ state, graph, lab, events, theme, dispatch, onRun
           events={events}
           theme={theme}
           onRun={onRun}
+          chatBusy={chatBusy}
           onPractice={() => dispatch({ type: 'practice', since: events.at(-1)?.seq ?? 0, known: graph?.nodes.map((n) => n.id) ?? [] })}
           onRetry={() => dispatch({ type: 'open', draft })}
         />
