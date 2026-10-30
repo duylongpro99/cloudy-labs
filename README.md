@@ -53,6 +53,10 @@ Mở `http://127.0.0.1:5174/` rồi làm lab bằng AWS CLI ở terminal khác: 
 
 Mở lab trước (`uv run labctl start <lab>`); nếu lab có builder, panel trên cùng hiện bảng tài nguyên. Kéo VPC, Subnet, IGW, Elastic IP, NAT Gateway hay Route Table vào khay sáng màu trong cảnh, chọn một IGW hoặc Route Table rồi kéo chấm tròn phía trên nó để gắn hay thêm route, và dùng nút trong panel thuộc tính để bật DNS hostnames hoặc IP public. Mỗi thao tác hiện lệnh `aws ... --profile lab` để đọc và copy; lệnh chỉ chạy khi bấm Run, và cảnh chỉ đổi khi collector thấy tài nguyên trong emulator. Cần AWS CLI v2; `labctl up` ghi profile `lab` vào `~/.aws/config` (có bản sao lưu). Chi tiết: [docs/labctl.md](docs/labctl.md#builder-kéo-thả).
 
+### Hỏi chat để có lệnh
+
+Panel "Trợ lý lệnh" ở góc dưới bên phải: mô tả việc muốn làm bằng lời, chat trả về các bước của builder kèm lệnh `aws` và lý do, rồi bạn bấm Run từng bước, "Run cả chuỗi", hoặc Chép ở chế độ luyện tập. Không gì tự chạy. Cần LLM của bạn: đặt `LLM_BASE_URL`, `LLM_API_KEY`, `LLM_MODEL`, `LLM_API_FORMAT` (`openai` hoặc `anthropic`) trong môi trường của `labctl serve` hoặc trong `~/.cloudy-labs/llm.env`; không commit key. Chi tiết: [docs/labctl.md](docs/labctl.md#chat-gợi-ý-lệnh).
+
 Các trang khác: `?view=gallery` là bộ sưu tập khối AWS (thêm `&theme=dark` cho chủ đề tối), `?view=bench` là cảnh 200 node dùng để đo hiệu năng. Icon đã chọn nằm sẵn trong `web/src/scene/aws-objects/icons/`. Chỉ khi cần nhập lại icon mới phải tải gói AWS Architecture Icons vào `aws-icon-pkg/` (không commit) rồi chạy `pnpm import-icons`.
 
 ## Test
