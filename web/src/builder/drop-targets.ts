@@ -16,6 +16,9 @@ export const KIND_LABEL: Record<string, string> = {
   'elastic-ip': 'Elastic IP',
   nat: 'NAT Gateway',
   'route-table': 'Route Table',
+  'security-group': 'Security Group',
+  'key-pair': 'Key Pair',
+  instance: 'EC2 Instance',
 }
 
 export const kindLabel = (kind: string) => KIND_LABEL[kind] ?? kind

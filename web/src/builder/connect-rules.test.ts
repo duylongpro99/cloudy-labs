@@ -50,3 +50,18 @@ describe('connectOp', () => {
     expect(!pending.ok && pending.reason).toContain('đang pending')
   })
 })
+
+describe('security group → instance', () => {
+  it('becomes modify-instance-attribute', () => {
+    const r = connectOp(OPS, node(g, 'sg-b58b05ddff613fe13'), node(g, 'i-fdb553d289095d128'), g.edges)
+    expect(r.ok && r.op.name).toBe('modify-instance-attribute')
+    expect(r.ok && r.params).toEqual({ instanceId: 'i-fdb553d289095d128', groupId: 'sg-b58b05ddff613fe13' })
+  })
+
+  it('refuses a group the instance already has, and other kinds', () => {
+    const again = connectOp(OPS, node(g, 'sg-dbd2e6007fa2e7eef'), node(g, 'i-fdb553d289095d128'), g.edges)
+    expect(!again.ok && again.reason).toContain('lab07-web đã gắn vào lab07-web')
+    const toSubnet = connectOp(OPS, node(g, 'sg-b58b05ddff613fe13'), node(g, 'subnet-83a1f79a'), g.edges)
+    expect(!toSubnet.ok && toSubnet.reason).toContain('chỉ nối tới EC2 Instance')
+  })
+})

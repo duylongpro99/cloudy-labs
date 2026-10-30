@@ -89,11 +89,36 @@ export function createDraft(op: OpSpec, tray: { id: string; kind: string; label:
       params.vpcId = vpc ?? ''
       locked.push('vpcId')
       break
+    case 'create-security-group':
+      params.vpcId = vpc ?? ''
+      params.description = 'Lab web server'
+      locked.push('vpcId')
+      break
+    case 'run-instances':
+      params.subnetId = tray.id
+      params.imageId = lab.images[0] ?? ''
+      params.instanceType = lab.instanceTypes[0] ?? ''
+      params.securityGroupId = (vpc ? groupsIn(graph, vpc) : [])[0]?.id ?? ''
+      params.keyName = graph.nodes.find((n) => n.kind === 'key-pair')?.label ?? ''
+      params.userData = lab.userData
+      locked.push('subnetId')
+      break
   }
   return { op, params, locked, rev: 0 }
 }
 
-// Connect and attribute ops: every id comes from the gesture; only a route's destination is free.
+// The security groups of a VPC, the learner's own before the default one.
+export const groupsIn = (graph: ResourceGraph, vpc: string): GraphNode[] =>
+  graph.nodes
+    .filter((n) => n.kind === 'security-group' && vpcOf(graph, n.id) === vpc)
+    .sort((a, b) => Number(a.props.groupName === 'default') - Number(b.props.groupName === 'default'))
+
+// Fields of a connect or attribute op the learner still fills in; every other id comes from the gesture.
+const FREE_FIELDS = new Set(['destination', 'protocol', 'port', 'cidr'])
+
 export function fixedDraft(op: OpSpec, params: Params): Draft {
-  return { op, params, locked: Object.keys(params).filter((k) => k !== 'destination'), rev: 0 }
+  return { op, params, locked: Object.keys(params).filter((k) => !FREE_FIELDS.has(k)), rev: 0 }
 }
+
+// A new inbound rule for a security group, suggesting the web server's rule.
+export const ingressDraft = (op: OpSpec, groupId: string): Draft => fixedDraft(op, { groupId, protocol: 'tcp', port: '80', cidr: '0.0.0.0/0' })

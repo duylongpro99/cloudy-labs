@@ -1,12 +1,12 @@
 import { describe, expect, it } from 'vitest'
 import { BuilderError, type Preview, type RunOutcome } from './builder-api'
 import { fixedDraft } from './form-model'
-import { IDLE, WAIT_MS, expectMet, previewCurrent, reduce, type BuilderAction, type BuilderState } from './use-builder'
+import { IDLE, WAIT_MS, expectMet, practiceMet, previewCurrent, reduce, type BuilderAction, type BuilderState } from './use-builder'
 import { golden, op } from './test-fixtures'
 
 const g = golden()
 const draft = fixedDraft(op('create-route'), { routeTableId: 'rtb-1', targetId: 'igw-1', destination: '0.0.0.0/0' })
-const preview: Preview = { command: 'aws ec2 create-route ...', argv: ['aws'], problems: [] }
+const preview: Preview = { command: 'aws ec2 create-route ...', argv: ['aws'], problems: [], practiceExpect: { edge: 'route:rtb-1->igw-1:0.0.0.0/0' } }
 const outcome = (o: Partial<RunOutcome> = {}): RunOutcome => ({
   command: preview.command, exitCode: 0, stdout: '{}', stderr: '', durationMs: 120,
   expect: { edge: 'route:rtb-1->igw-1:0.0.0.0/0' }, ...o,
@@ -25,6 +25,37 @@ describe('expectMet', () => {
     // When the server could not read an id it only asks for a newer graph than the one before the run.
     expect(expectMet({ after: g.version }, g)).toBe(false)
     expect(expectMet({ after: g.version }, { ...g, version: g.version + 1 })).toBe(true)
+  })
+
+  it('finds a security group rule among the group\'s rules', () => {
+    const sg = 'sg-dbd2e6007fa2e7eef'
+    expect(expectMet({ node: sg, prop: 'ingress', includes: { protocol: 'tcp', from: 80, to: 80, source: '0.0.0.0/0' } }, g)).toBe(true)
+    expect(expectMet({ node: sg, prop: 'ingress', includes: { protocol: 'tcp', from: 22, to: 22, source: '0.0.0.0/0' } }, g)).toBe(false)
+    expect(expectMet({ node: sg, prop: 'ingress', includes: { protocol: 'tcp', from: 443, to: 443, source: '0.0.0.0/0' } }, g)).toBe(false)
+    expect(expectMet({ node: 'sg-b58b05ddff613fe13', prop: 'ingress', includes: { protocol: '-1', source: '10.0.0.0/8' } }, g)).toBe(false)
+  })
+})
+
+describe('practiceMet', () => {
+  it('waits for a resource of that kind with the name the learner typed', () => {
+    expect(practiceMet({ kind: 'vpc', label: 'lab06-vpc' }, g)).toBe(true)
+    expect(practiceMet({ kind: 'security-group', label: 'lab07-web' }, g)).toBe(true)
+    const subnet = g.nodes.find((n) => n.kind === 'subnet-public')!
+    expect(practiceMet({ kind: 'subnet', label: subnet.label }, g)).toBe(true)
+    expect(practiceMet({ kind: 'vpc', label: subnet.label }, g)).toBe(false)
+    expect(practiceMet({ kind: 'security-group', label: 'not-typed-yet' }, g)).toBe(false)
+  })
+
+  it('does not count a resource of that name that existed when the command was copied', () => {
+    const vpc = g.nodes.find((n) => n.kind === 'vpc' && n.label === 'lab06-vpc')!
+    expect(practiceMet({ kind: 'vpc', label: 'lab06-vpc' }, g, [vpc.id])).toBe(false)
+    const again = { ...g, nodes: [...g.nodes, { ...vpc, id: 'vpc-new' }] }
+    expect(practiceMet({ kind: 'vpc', label: 'lab06-vpc' }, again, [vpc.id])).toBe(true)
+  })
+
+  it('reads edges and props like a run does', () => {
+    expect(practiceMet({ edge: 'route:rtb-1->igw-1:0.0.0.0/0' }, g)).toBe(false)
+    expect(practiceMet({ edge: 'route:rtb-1->igw-1:0.0.0.0/0' }, withEdge)).toBe(true)
   })
 })
 
@@ -114,5 +145,24 @@ describe('builder state', () => {
     const problems = [{ field: 'destination', message: 'already has a route' }]
     const s = run(...ready(), { type: 'run' }, { type: 'refused', error: new BuilderError('Lệnh chưa chạy', 409, problems) })
     expect(s).toMatchObject({ phase: 'failed', outcome: null, preview: { problems } })
+  })
+
+  it('practices: copies the command, then waits for the graph with no timeout', () => {
+    let s = run(...ready(), { type: 'practice', since: 7, known: [] })
+    expect(s).toMatchObject({ phase: 'practicing', since: 7 })
+    expect(reduce(s, { type: 'graph', graph: g }).phase).toBe('practicing')
+    expect(reduce(s, { type: 'tick', now: Date.now() + 60 * WAIT_MS }).phase).toBe('practicing')
+    expect(reduce(s, { type: 'run' }).phase).toBe('practicing')
+    s = reduce(s, { type: 'graph', graph: withEdge })
+    expect(s).toMatchObject({ phase: 'done', outcome: null })
+  })
+
+  it('does not practice a stale or refused command, and lets Esc or the toggle leave practice', () => {
+    expect(run({ type: 'open', draft }, { type: 'practice', since: 0, known: [] }).phase).toBe('form')
+    const bad = { ...preview, problems: [{ field: 'destination', message: 'no' }] }
+    expect(run({ type: 'open', draft }, { type: 'previewed', rev: 0, preview: bad, error: null }, { type: 'practice', since: 0, known: [] }).phase).toBe('form')
+    const practicing = run(...ready(), { type: 'practice', since: 0, known: [] })
+    expect(reduce(practicing, { type: 'cancel' })).toEqual(IDLE)
+    expect(reduce(practicing, { type: 'open', draft })).toMatchObject({ phase: 'form', draft })
   })
 })

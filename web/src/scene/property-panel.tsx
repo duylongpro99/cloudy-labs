@@ -5,8 +5,21 @@ import { resourceId, type SceneGraph } from '../graph/graph-to-scene'
 import type { GraphEdge, GraphNode } from '../graph/types'
 import type { Theme } from './theme'
 
-// Props shown as warnings rather than as rows of the table.
-const WARNING_PROPS = new Set(['privateIpOutOfCidr', 'note', 'hostPorts'])
+// Props shown as warnings or as their own list rather than as rows of the table.
+const WARNING_PROPS = new Set(['privateIpOutOfCidr', 'note', 'hostPorts', 'ingress'])
+
+interface IngressRule {
+  protocol: string
+  from?: number | null // the collector sends null for protocols without ports
+  to?: number | null
+  sources?: string[]
+}
+
+// "tcp 80 ← 0.0.0.0/0"; "-1" is every protocol and port.
+export function ruleText(r: IngressRule): string {
+  const ports = r.protocol === '-1' ? 'mọi giao thức' : r.from == null ? r.protocol : `${r.protocol} ${r.from === r.to ? r.from : `${r.from}-${r.to}`}`
+  return `${ports} ← ${(r.sources ?? []).join(', ')}`
+}
 
 const formatValue = (v: unknown) => (typeof v === 'object' && v !== null ? JSON.stringify(v) : String(v))
 
@@ -50,6 +63,7 @@ export function PropertyPanel({ selected, scene, edges, theme, onClose, actions 
   const incoming = edges.filter((e) => e.to === id)
   const props = node ? Object.entries(node.props).filter(([k]) => !WARNING_PROPS.has(k)) : []
   const notes = node ? warnings(node.props) : []
+  const rules = node?.kind === 'security-group' ? ((node.props.ingress as IngressRule[] | undefined) ?? []) : null
   const muted: CSSProperties = { opacity: 0.7 }
 
   return (
@@ -108,6 +122,20 @@ export function PropertyPanel({ selected, scene, edges, theme, onClose, actions 
             <li key={w}>{w}</li>
           ))}
         </ul>
+      )}
+      {rules && (
+        <div id="panel-ingress" style={{ marginTop: 8 }}>
+          <div style={muted}>Rule inbound</div>
+          {rules.length === 0 ? (
+            <div>chưa có: mọi kết nối vào đều bị chặn</div>
+          ) : (
+            <ul style={{ margin: 0, paddingLeft: 18 }}>
+              {rules.map((r, i) => (
+                <li key={i}>{ruleText(r)}</li>
+              ))}
+            </ul>
+          )}
+        </div>
       )}
       {props.length > 0 && (
         <table style={{ marginTop: 8, borderCollapse: 'collapse', width: '100%' }}>

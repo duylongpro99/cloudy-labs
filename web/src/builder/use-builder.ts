@@ -1,11 +1,13 @@
 // The builder's state machine (PRD F4.2–F4.6):
 //   idle → dragging | connecting → form → running → waiting → done
 //                                     ↘ failed (refused, command error, or the scene never showed it)
+//                                     ↘ practicing → done (practice mode, F4.7: the learner runs the copied
+//                                       command in a terminal; the builder never runs it)
 // Nothing changes in the scene on drop or on Run: the panel waits until the collector's next
 // graph shows the expected resource or edge (F4.5), and gives up after WAIT_MS.
 import { useCallback, useEffect, useReducer, useRef } from 'react'
 import type { ResourceGraph } from '../graph/types'
-import { BuilderError, previewOp, runOp, type Expect, type OpSpec, type Preview, type RunOutcome } from './builder-api'
+import { BuilderError, previewOp, runOp, type Expect, type IngressRule, type OpSpec, type PracticeExpect, type Preview, type RunOutcome } from './builder-api'
 import type { Draft } from './form-model'
 
 export const PREVIEW_DEBOUNCE_MS = 200
@@ -18,7 +20,9 @@ export type BuilderState =
   | { phase: 'form'; draft: Draft; preview: Preview | null; previewRev: number | null; error: string | null } // previewRev: the draft rev the preview was built from
   | { phase: 'running'; draft: Draft; preview: Preview }
   | { phase: 'waiting'; draft: Draft; preview: Preview; outcome: RunOutcome; since: number }
-  | { phase: 'done'; draft: Draft; preview: Preview; outcome: RunOutcome }
+  // since: the last api-event seq when the command was copied; known: the node ids the graph had then
+  | { phase: 'practicing'; draft: Draft; preview: Preview; since: number; known: string[] }
+  | { phase: 'done'; draft: Draft; preview: Preview; outcome: RunOutcome | null } // null outcome: run in the learner's terminal
   | { phase: 'failed'; draft: Draft; preview: Preview | null; outcome: RunOutcome | null; message: string }
 
 export type BuilderAction =
@@ -30,6 +34,7 @@ export type BuilderAction =
   | { type: 'edit'; field: string; value: string }
   | { type: 'previewed'; rev: number; preview: Preview | null; error: string | null }
   | { type: 'run' }
+  | { type: 'practice'; since: number; known: string[] }
   | { type: 'ran'; outcome: RunOutcome; graph: ResourceGraph | null; now: number }
   | { type: 'refused'; error: BuilderError }
   | { type: 'graph'; graph: ResourceGraph }
@@ -44,7 +49,21 @@ export function expectMet(expect: Expect, graph: ResourceGraph): boolean {
   if ('edge' in expect) return graph.edges.some((e) => e.id === expect.edge)
   const node = graph.nodes.find((n) => n.id === expect.node)
   if (!node) return false
-  return expect.prop === undefined || node.props[expect.prop] === expect.value
+  if (expect.prop === undefined) return true
+  const value = node.props[expect.prop]
+  if (!expect.includes) return value === expect.value
+  const { source, ...rule } = expect.includes
+  const same = (r: IngressRule) => r.sources?.includes(source) && Object.entries(rule).every(([k, v]) => r[k as keyof typeof rule] === v)
+  return Array.isArray(value) && (value as IngressRule[]).some(same)
+}
+
+// Practice mode cannot know the new resource's id, so it waits for one of that kind with the
+// Name the learner typed; other expectations (edges, props) name ids already in the scene.
+export function practiceMet(expect: PracticeExpect, graph: ResourceGraph, known: readonly string[] = []): boolean {
+  if (!('kind' in expect)) return expectMet(expect, graph)
+  const kinds = expect.kind === 'subnet' ? ['subnet-public', 'subnet-private'] : [expect.kind]
+  // A resource of that name made before the copy is not the learner's run of this command.
+  return graph.nodes.some((n) => kinds.includes(n.kind) && n.label === expect.label && !known.includes(n.id))
 }
 
 export const busy = (s: BuilderState) => s.phase === 'running' || s.phase === 'waiting'
@@ -82,6 +101,9 @@ export function reduce(s: BuilderState, a: BuilderAction): BuilderState {
     case 'run':
       if (s.phase !== 'form' || !s.preview || !runnable(s)) return s
       return { phase: 'running', draft: s.draft, preview: s.preview }
+    case 'practice':
+      if (s.phase !== 'form' || !s.preview || !runnable(s)) return s
+      return { phase: 'practicing', draft: s.draft, preview: s.preview, since: a.since, known: a.known }
     case 'ran': {
       if (s.phase !== 'running') return s
       const { draft, preview } = s
@@ -97,6 +119,9 @@ export function reduce(s: BuilderState, a: BuilderAction): BuilderState {
       if (s.phase !== 'running') return s
       return { phase: 'failed', draft: s.draft, preview: { ...s.preview, problems: a.error.problems }, outcome: null, message: a.error.message }
     case 'graph':
+      if (s.phase === 'practicing') {
+        return practiceMet(s.preview.practiceExpect, a.graph, s.known) ? { phase: 'done', draft: s.draft, preview: s.preview, outcome: null } : s
+      }
       if (s.phase !== 'waiting' || !s.outcome.expect || !expectMet(s.outcome.expect, a.graph)) return s
       return { phase: 'done', draft: s.draft, preview: s.preview, outcome: s.outcome }
     case 'tick':
