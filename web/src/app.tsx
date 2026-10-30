@@ -176,7 +176,7 @@ function Live() {
         <PropertyPanel selected={selected} scene={scene} edges={graph.edges} theme={t} onClose={close} actions={lab ? builder.actionsFor(selected) : []} />
       )}
       {lab && 'draft' in bs && (
-        <BuilderPanel state={bs} graph={graph} lab={lab} theme={t} dispatch={builder.dispatch} onRun={builder.run} />
+        <BuilderPanel state={bs} graph={graph} lab={lab} events={events} theme={t} dispatch={builder.dispatch} onRun={builder.run} />
       )}
       {gesture && (
         <DragGhost

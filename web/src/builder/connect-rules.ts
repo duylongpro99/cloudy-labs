@@ -1,7 +1,7 @@
 // Which edge a learner may draw between two objects, and the op it becomes (PRD F4.6).
 // The pairs come from the server's connect ops (`source`, `targets`); the extra conditions
 // here only explain early what the server's validation would refuse anyway.
-import type { GraphNode } from '../graph/types'
+import type { GraphEdge, GraphNode } from '../graph/types'
 import type { OpSpec, Params } from './builder-api'
 import { kindLabel } from './drop-targets'
 
@@ -11,7 +11,7 @@ export const connectOpsFrom = (ops: readonly OpSpec[], kind: string) => ops.filt
 
 export type ConnectCheck = { ok: true; op: OpSpec; params: Params } | { ok: false; reason: string }
 
-export function connectOp(ops: readonly OpSpec[], source: GraphNode, target: GraphNode): ConnectCheck {
+export function connectOp(ops: readonly OpSpec[], source: GraphNode, target: GraphNode, edges: readonly GraphEdge[] = []): ConnectCheck {
   const candidates = connectOpsFrom(ops, source.kind)
   if (candidates.length === 0) return { ok: false, reason: `${kindLabel(source.kind)} không có cạnh nào để nối` }
   const op = candidates.find((o) => (o.targets ?? []).includes(target.kind))
@@ -30,6 +30,11 @@ export function connectOp(ops: readonly OpSpec[], source: GraphNode, target: Gra
       return { ok: true, op, params: { routeTableId: source.id, targetId: target.id, destination: DEFAULT_DESTINATION } }
     case 'associate-route-table':
       return { ok: true, op, params: { routeTableId: source.id, subnetId: target.id } }
+    case 'modify-instance-attribute':
+      if (edges.some((e) => e.kind === 'attached' && e.from === source.id && e.to === target.id)) {
+        return { ok: false, reason: `${source.label} đã gắn vào ${target.label}` }
+      }
+      return { ok: true, op, params: { instanceId: target.id, groupId: source.id } }
   }
   return { ok: false, reason: `${op.name}: chưa hỗ trợ trong builder` }
 }

@@ -3,13 +3,13 @@
 // the attribute buttons of the property panel.
 import { useCallback, useEffect, useMemo, useRef } from 'react'
 import { resourceId, type SceneGraph } from '../graph/graph-to-scene'
-import type { GraphNode, ResourceGraph } from '../graph/types'
+import type { GraphEdge, GraphNode, ResourceGraph } from '../graph/types'
 import type { PanelAction } from '../scene/property-panel'
 import type { BuilderPointer, SceneBuilder } from '../scene/live-scene'
 import type { LabInfo } from './builder-api'
 import { connectOp, connectOpsFrom, type ConnectCheck } from './connect-rules'
 import { acceptsDrop, createOpFor, dropTarget, kindLabel } from './drop-targets'
-import { createDraft, fixedDraft, SUBNET_KINDS } from './form-model'
+import { createDraft, fixedDraft, ingressDraft, SUBNET_KINDS } from './form-model'
 import { busy, useBuilder, type Builder } from './use-builder'
 
 export interface SceneBuilderApi extends Builder {
@@ -19,13 +19,13 @@ export interface SceneBuilderApi extends Builder {
 }
 
 // The first object or tray under the pointer that the edge may end on; otherwise why the nearest cannot.
-function connectTarget(lab: LabInfo, nodes: Map<string, GraphNode>, source: GraphNode, p: BuilderPointer): (ConnectCheck & { target: string | null }) {
+function connectTarget(lab: LabInfo, nodes: Map<string, GraphNode>, edges: readonly GraphEdge[], source: GraphNode, p: BuilderPointer): (ConnectCheck & { target: string | null }) {
   const candidates = [p.object, ...p.trays.map((t) => t.node.id)].filter((id): id is string => !!id && id !== source.id)
   let first: ConnectCheck | null = null
   for (const id of candidates) {
     const node = nodes.get(id)
     if (!node) continue
-    const check = connectOp(lab.ops, source, node)
+    const check = connectOp(lab.ops, source, node, edges)
     if (check.ok) return { ...check, target: id }
     first ??= check
   }
@@ -60,7 +60,7 @@ export function useSceneBuilder(graph: ResourceGraph | null, scene: SceneGraph |
     } else if (s.phase === 'connecting') {
       const source = sc.nodesById.get(s.source)
       if (!source) return dispatch({ type: 'drop', draft: null, reason: `${s.source} không còn trong cảnh` })
-      const check = connectTarget(l, sc.nodesById, source, p)
+      const check = connectTarget(l, sc.nodesById, g.edges, source, p)
       if (!end) return dispatch({ type: 'hover', hover: check.target, reason: check.ok ? null : check.reason })
       if (!check.ok) return dispatch({ type: 'drop', draft: null, reason: `Đã huỷ nối: ${check.reason}` })
       dispatch({ type: 'drop', draft: fixedDraft(check.op, check.params), reason: null })
@@ -108,6 +108,10 @@ export function useSceneBuilder(graph: ResourceGraph | null, scene: SceneGraph |
     const publicIp = find('modify-subnet-attribute')
     if (SUBNET_KINDS.has(node.kind) && publicIp && node.props.mapPublicIpOnLaunch !== true) {
       out.push({ id: 'action-public-ip', label: 'Tự gán IP public', run: () => dispatch({ type: 'open', draft: fixedDraft(publicIp, { subnetId: node.id }) }) })
+    }
+    const ingress = find('authorize-security-group-ingress')
+    if (node.kind === 'security-group' && ingress) {
+      out.push({ id: 'action-add-ingress', label: 'Thêm rule inbound', run: () => dispatch({ type: 'open', draft: ingressDraft(ingress, node.id) }) })
     }
     return out
   }, [scene, ops, dispatch])

@@ -29,6 +29,9 @@ export interface LabInfo {
   cidrs: string[] // the blocks the lab plans to use
   ops: OpSpec[]
   azs: string[]
+  images: string[] // AMIs this machine runs natively
+  instanceTypes: string[]
+  userData: string // the lab's suggested UserData script
   canRun: boolean
   runBlocker: string | null // why Run is off, from the server
 }
@@ -44,11 +47,28 @@ export interface Preview {
   command: string
   argv: string[]
   problems: Problem[]
+  practiceExpect: PracticeExpect // what the graph shows once the learner runs the command themselves (F4.7)
+}
+
+// A security group rule as the collector shows it in `props.ingress`.
+export interface IngressRule {
+  protocol: string
+  from?: number
+  to?: number
+  sources: string[]
 }
 
 // What the next graph must show for a run to count as seen by the collector (F4.5).
 // `after`: the output named no id, so any graph newer than this version counts.
-export type Expect = { node: string; prop?: string; value?: unknown } | { edge: string } | { after: number }
+// `includes`: `props[prop]` is a list holding a rule like this one; `source` is looked up in `sources`.
+export type Expect =
+  | { node: string; prop?: string; value?: unknown; includes?: { protocol: string; from?: number; to?: number; source: string } }
+  | { edge: string }
+  | { after: number }
+
+// Practice mode has no output to read an id from: a create counts once a resource of that kind
+// with that Name shows up ("subnet" matches either subnet kind).
+export type PracticeExpect = Expect | { kind: string; label: string }
 
 export interface RunOutcome {
   command: string

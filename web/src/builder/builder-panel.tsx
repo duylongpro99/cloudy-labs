@@ -1,5 +1,6 @@
 // The builder's side panel: the open op's form above its command, output and status.
-import type { ResourceGraph } from '../graph/types'
+import { useState } from 'react'
+import type { ApiEvent, ResourceGraph } from '../graph/types'
 import type { Theme } from '../scene/theme'
 import type { LabInfo } from './builder-api'
 import { BuildForm } from './build-form'
@@ -18,20 +19,51 @@ const OP_TITLE: Record<string, string> = {
   'associate-route-table': 'Gắn Route Table vào subnet',
   'modify-vpc-attribute': 'Bật DNS hostnames cho VPC',
   'modify-subnet-attribute': 'Tự gán IP public trong subnet',
+  'create-security-group': 'Tạo Security Group',
+  'authorize-security-group-ingress': 'Thêm rule inbound',
+  'create-key-pair': 'Tạo Key Pair',
+  'run-instances': 'Chạy EC2 Instance',
+  'modify-instance-attribute': 'Gắn Security Group vào instance',
 }
 
 type Open = Exclude<BuilderState, { phase: 'idle' | 'dragging' | 'connecting' }>
 
-export function BuilderPanel({ state, graph, lab, theme, dispatch, onRun }: {
+const PRACTICE_KEY = 'cloudy-labs:practice'
+
+// A per-browser convenience: storage may be missing or throw (private windows, blocked site data).
+function savedPractice(): boolean {
+  try {
+    return localStorage.getItem(PRACTICE_KEY) === '1'
+  } catch {
+    return false
+  }
+}
+
+function savePractice(on: boolean) {
+  try {
+    localStorage.setItem(PRACTICE_KEY, on ? '1' : '0')
+  } catch {
+    // the toggle still works for this page
+  }
+}
+
+export function BuilderPanel({ state, graph, lab, events, theme, dispatch, onRun }: {
   state: Open
   graph: ResourceGraph | null
   lab: LabInfo
+  events: ApiEvent[]
   theme: Theme
   dispatch: (a: BuilderAction) => void
   onRun: () => void
 }) {
   const { draft } = state
   const busy = state.phase === 'running' || state.phase === 'waiting'
+  const [practice, setPractice] = useState(savedPractice)
+  const toggle = (on: boolean) => {
+    setPractice(on)
+    savePractice(on)
+    if (!on && state.phase === 'practicing') dispatch({ type: 'open', draft }) // back to the same form
+  }
   return (
     <aside
       id="builder-panel"
@@ -54,6 +86,9 @@ export function BuilderPanel({ state, graph, lab, theme, dispatch, onRun }: {
     >
       <div style={{ display: 'flex', alignItems: 'baseline', gap: 8, marginBottom: 8 }}>
         <b style={{ flex: 1 }}>{OP_TITLE[draft.op.name] ?? draft.op.name}</b>
+        <label style={{ fontSize: 12 }} title="Builder dựng lệnh nhưng không chạy; bạn tự chạy lệnh trong terminal">
+          <input id="practice-toggle" type="checkbox" checked={practice} disabled={busy} onChange={(e) => toggle(e.target.checked)} /> Luyện tập
+        </label>
         <button id="close-builder" onClick={() => dispatch({ type: 'cancel' })} disabled={busy} aria-label="Đóng">
           ×
         </button>
@@ -68,7 +103,17 @@ export function BuilderPanel({ state, graph, lab, theme, dispatch, onRun }: {
         onEdit={(field, value) => dispatch({ type: 'edit', field, value })}
       />
       <div style={{ marginTop: 10 }}>
-        <CommandPanel state={state} canRun={lab.canRun} runBlocker={lab.runBlocker} theme={theme} onRun={onRun} onRetry={() => dispatch({ type: 'open', draft })} />
+        <CommandPanel
+          state={state}
+          canRun={lab.canRun}
+          runBlocker={lab.runBlocker}
+          practice={practice}
+          events={events}
+          theme={theme}
+          onRun={onRun}
+          onPractice={() => dispatch({ type: 'practice', since: events.at(-1)?.seq ?? 0, known: graph?.nodes.map((n) => n.id) ?? [] })}
+          onRetry={() => dispatch({ type: 'open', draft })}
+        />
       </div>
     </aside>
   )
