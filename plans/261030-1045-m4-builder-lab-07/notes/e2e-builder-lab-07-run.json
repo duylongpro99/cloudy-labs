@@ -1,0 +1,104 @@
+{
+  "mode": "run",
+  "steps": [
+    {
+      "label": "create-security-group web",
+      "op": "create-security-group",
+      "command": "aws ec2 create-security-group --group-name web --description 'Lab web server' --vpc-id vpc-986724f0 --tag-specifications 'ResourceType=security-group,Tags=[{Key=Name,Value=web},{Key=lab,Value=fixture-lab-07}]' --profile lab --output json",
+      "exitCode": 0,
+      "cliMs": 497,
+      "ms": 817,
+      "phase": "done",
+      "expect": {
+        "node": "sg-a50bfa8c4575af70c"
+      }
+    },
+    {
+      "label": "ingress web tcp 80 world",
+      "op": "authorize-security-group-ingress",
+      "command": "aws ec2 authorize-security-group-ingress --group-id sg-a50bfa8c4575af70c --ip-permissions '[{\"IpProtocol\": \"tcp\", \"FromPort\": 80, \"ToPort\": 80, \"IpRanges\": [{\"CidrIp\": \"0.0.0.0/0\"}]}]' --profile lab --output json",
+      "exitCode": 0,
+      "cliMs": 469,
+      "ms": 816,
+      "phase": "done",
+      "expect": {
+        "node": "sg-a50bfa8c4575af70c",
+        "prop": "ingress",
+        "includes": {
+          "protocol": "tcp",
+          "from": 80,
+          "to": 80,
+          "source": "0.0.0.0/0"
+        }
+      }
+    },
+    {
+      "label": "ingress web tcp 22 /32",
+      "op": "authorize-security-group-ingress",
+      "command": "aws ec2 authorize-security-group-ingress --group-id sg-a50bfa8c4575af70c --ip-permissions '[{\"IpProtocol\": \"tcp\", \"FromPort\": 22, \"ToPort\": 22, \"IpRanges\": [{\"CidrIp\": \"203.0.113.10/32\"}]}]' --profile lab --output json",
+      "exitCode": 0,
+      "cliMs": 452,
+      "ms": 817,
+      "phase": "done",
+      "expect": {
+        "node": "sg-a50bfa8c4575af70c",
+        "prop": "ingress",
+        "includes": {
+          "protocol": "tcp",
+          "from": 22,
+          "to": 22,
+          "source": "203.0.113.10/32"
+        }
+      }
+    },
+    {
+      "label": "create-key-pair",
+      "op": "create-key-pair",
+      "command": "aws ec2 create-key-pair --key-name lab07-key --tag-specifications 'ResourceType=key-pair,Tags=[{Key=Name,Value=lab07-key},{Key=lab,Value=fixture-lab-07}]' --profile lab --output json",
+      "exitCode": 0,
+      "cliMs": 795,
+      "ms": 1321,
+      "phase": "done",
+      "expect": {
+        "node": "key-f03d789d19e5b5478"
+      }
+    },
+    {
+      "label": "run-instances",
+      "op": "run-instances",
+      "command": "aws ec2 run-instances --image-id ami-amazonlinux2023-arm64 --instance-type t4g.micro --subnet-id subnet-246593fd --security-group-ids sg-a50bfa8c4575af70c --count 1 --key-name lab07-key --user-data '#!/bin/sh\nmkdir -p /srv/www\necho \"<h1>Cloudy Labs Lab 7 web server</h1>\" > /srv/www/index.html\n# Floci binds an IMDS proxy on 169.254.169.254:80 inside the instance, so 0.0.0.0:80 is taken;\n# bind every address of the instance instead. Floci'\"'\"'s host-port forwarder reaches it on its\n# Docker network address, not the VPC private IP; on AWS this is the private IP alone.\ncd /srv/www\nfor IP in $(ip -4 -o addr show scope global | awk '\"'\"'$2 != \"lo\" {sub(/\\/.*/, \"\", $4); print $4}'\"'\"'); do\n  nohup python3 -m http.server 80 --bind \"$IP\" >>/var/log/web.log 2>&1 &\ndone\n' --tag-specifications 'ResourceType=instance,Tags=[{Key=Name,Value=lab07-web},{Key=lab,Value=fixture-lab-07}]' --profile lab --output json",
+      "exitCode": 0,
+      "cliMs": 498,
+      "ms": 817,
+      "phase": "done",
+      "expect": {
+        "node": "i-9f11d26f633085d52"
+      }
+    },
+    {
+      "label": "create-security-group admin",
+      "op": "create-security-group",
+      "command": "aws ec2 create-security-group --group-name admin --description 'Lab admin access' --vpc-id vpc-986724f0 --tag-specifications 'ResourceType=security-group,Tags=[{Key=Name,Value=admin},{Key=lab,Value=fixture-lab-07}]' --profile lab --output json",
+      "exitCode": 0,
+      "cliMs": 486,
+      "ms": 818,
+      "phase": "done",
+      "expect": {
+        "node": "sg-f8dab193d5b296f4c"
+      }
+    },
+    {
+      "label": "attach admin to instance",
+      "op": "modify-instance-attribute",
+      "command": "aws ec2 modify-instance-attribute --instance-id i-9f11d26f633085d52 --groups sg-a50bfa8c4575af70c sg-f8dab193d5b296f4c --profile lab --output json",
+      "exitCode": 0,
+      "cliMs": 463,
+      "ms": 809,
+      "phase": "done",
+      "expect": {
+        "edge": "attached:sg-f8dab193d5b296f4c->i-9f11d26f633085d52"
+      }
+    }
+  ],
+  "errors": []
+}
