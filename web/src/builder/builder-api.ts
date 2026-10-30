@@ -34,7 +34,11 @@ export interface LabInfo {
   userData: string // the lab's suggested UserData script
   canRun: boolean
   runBlocker: string | null // why Run is off, from the server
+  chat: ChatStatus
 }
+
+// Whether the lab-server can reach an LLM for the chat (PRD F5); never the key or the URL.
+export type ChatStatus = { enabled: true; model: string; format: string } | { enabled: false; missing: string[]; error?: string }
 
 export type Params = Record<string, string>
 
@@ -90,7 +94,7 @@ export class BuilderError extends Error {
 }
 
 // What each refusal means for the learner; the server's own detail follows when it has one.
-const STATUS_TEXT: Record<number, string> = {
+export const STATUS_TEXT: Record<number, string> = {
   400: 'Yêu cầu hỏng',
   403: 'lab-server chỉ nhận lệnh từ web app Cloudy Labs',
   409: 'Lệnh chưa chạy',
@@ -99,12 +103,12 @@ const STATUS_TEXT: Record<number, string> = {
   503: 'Chưa chạy được lệnh',
 }
 
-export function errorMessage(status: number, detail: unknown): string {
-  const head = STATUS_TEXT[status] ?? `lab-server trả lỗi ${status}`
+export function errorMessage(status: number, detail: unknown, text: Record<number, string> = STATUS_TEXT): string {
+  const head = text[status] ?? `lab-server trả lỗi ${status}`
   return typeof detail === 'string' && detail ? `${head}: ${detail}` : head
 }
 
-async function request<T>(path: string, init?: RequestInit, fetcher: typeof fetch = fetch): Promise<T> {
+export async function request<T>(path: string, init?: RequestInit, fetcher: typeof fetch = fetch, text = STATUS_TEXT): Promise<T> {
   let res: Response
   try {
     res = await fetcher(path, init)
@@ -112,7 +116,7 @@ async function request<T>(path: string, init?: RequestInit, fetcher: typeof fetc
     throw new BuilderError('Không kết nối được lab-server (chạy labctl serve)', 0)
   }
   const body = (await res.json().catch(() => null)) as Record<string, unknown> | null
-  if (!res.ok) throw new BuilderError(errorMessage(res.status, body?.detail), res.status, (body?.problems as Problem[] | undefined) ?? [])
+  if (!res.ok) throw new BuilderError(errorMessage(res.status, body?.detail, text), res.status, (body?.problems as Problem[] | undefined) ?? [])
   return body as T
 }
 
