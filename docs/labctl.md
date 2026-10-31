@@ -58,7 +58,7 @@ Sau đó làm lab bằng AWS CLI như bình thường (`eval "$(uv run labctl en
 
 - api-tap chuyển tiếp nguyên vẹn mọi request (giữ chữ ký SigV4). Gặp lệnh ghi (`Create*`, `Run*`, `Delete*`…), nó phát một sự kiện trên kênh SSE; không ai nghe thì sự kiện bị bỏ. api-tap nằm trong compose, nên CLI vẫn chạy khi `serve` tắt.
 - `serve` nghe kênh đó, gom các sự kiện gần nhau (150 ms) rồi cho collector đọc lại Floci thành resource graph ([`schema.py`](../server/src/cloudy_labs/graph/schema.py)). Ngoài ra nó đọc lại mỗi 5 giây làm lưới an toàn. Graph chỉ được gửi khi nội dung đổi, kèm số phiên bản tăng dần.
-- WebSocket `/ws` gửi hai loại tin: `graph` (toàn bộ graph) và `api-event` (`service`, `action`, `write`). `GET /api/graph` trả graph gần nhất. `/ws` chỉ nhận origin của Vite dev server.
+- WebSocket `/ws` gửi ba loại tin: `graph` (toàn bộ graph), `api-event` (`service`, `action`, `write`) và `twin` (kết quả check và ghost của lab đang mở, xem [Twin và ghost](#twin-và-ghost)). `GET /api/graph` trả graph gần nhất. `/ws` chỉ nhận origin của Vite dev server.
 - Floci từ chối kết nối (đã `down`, đang tạo lại) thì graph có `status: "emulator-down"` ngay và web báo trạng thái đó; Floci lên lại thì cảnh tự về trạng thái mới, không cần tải lại trang. Lỗi có thể chỉ thoáng qua (timeout) phải lặp lại 2 lần liền mới chuyển sang `emulator-down`, để một lệnh đọc chậm không xoá cảnh. `labctl reset` tạo lại Floci trong khoảng 1,5 s và cổng chỉ đóng chừng 0,5 s, ngắn hơn chu kỳ poll 5 s, nên cảnh thường đi thẳng về Region trống mà không kịp hiện `emulator-down`. Tắt `serve` khi web đang mở thì web báo mất kết nối và tự nối lại khi `serve` chạy lại.
 - Độ trễ từ lúc lệnh CLI trả về tới khi WebSocket nhận graph mới: p95 khoảng 0,3 giây trên máy phát triển (`uv run pytest -m docker tests/test_latency_docker.py -s` in số đo).
 
@@ -146,6 +146,19 @@ Thiếu biến thì panel hiện hướng dẫn và tên biến còn thiếu; bu
 
 `GET /api/lab` có thêm `chat`: `{enabled: true, model, format}` hoặc `{enabled: false, missing: [...], error?}`.
 
+## Twin và ghost
+
+Khi có lab đang làm và lab khai báo `target`, cảnh vẽ kiến trúc mục tiêu dưới dạng **ghost**: node mờ, viền nét đứt, nhãn có chữ "mục tiêu". Bạn làm lab ở đâu cũng được (terminal, SDK, builder, chat). Khi các check của một node đạt, ghost của node đó biến mất và tài nguyên thật được đánh dấu đạt. Không cần gõ `labctl check`.
+
+- **Check tự chạy.** `serve` chạy toàn bộ check của lab mỗi khi graph đổi. Khi còn check chưa đạt, hoặc vừa có attempt mới, nó chạy lại ở mỗi nhịp poll 5 giây. Nhờ vậy những check không làm graph đổi, ví dụ web server trên instance đã trả lời, vẫn được cập nhật. Khi mọi check đã đạt và graph đứng yên thì không chạy nữa. Emulator không trả lời thì mọi check hiện "Đang chờ" và không chạy. Nếu một request của check bị timeout hoặc mất kết nối giữa chừng, lượt đó giữ nguyên kết quả trước, không ghi progress, và nhịp poll sau chạy lại.
+- **Progress.** Lượt chạy tự động chỉ ghi vào `progress.db` khi kết quả khác lượt trước trong cùng attempt. `labctl check` vẫn luôn ghi như trước.
+- **Panel "Kiểm tra"** nằm trong panel trên cùng, gom check theo task với ba trạng thái Đạt / Chưa đạt / Đang chờ, kèm message mới nhất. Panel gập được về dòng tóm tắt "N/M đạt". Bấm một check thì tô sáng các tài nguyên check đó trả về trong `resource_ids`, cùng các ghost đang chờ check đó; các khay khác mờ đi. Bấm lại hoặc nhấn Esc thì bỏ chọn.
+- **Công tắc "Mục tiêu: hiện/ẩn"** ẩn hoặc hiện ghost (nhớ theo trình duyệt). Ghost bật mặc định, kể cả khi dùng builder và chat. Ghost không nhận thao tác của builder.
+- **`labctl reset`** khi trang đang mở: cảnh về chỉ còn ghost, mọi check về chưa đạt, không cần tải lại trang. Ngay sau reset có thể thoáng thấy trạng thái của attempt cũ; nhịp poll kế tiếp sửa lại.
+- Lab không có `target` thì panel vẫn liệt kê check, nhưng cảnh không có ghost.
+
+Tin `twin` trên `/ws` có dạng `{lab, attempt, checks: [{id, task, description, status, message, resourceIds}], ghosts: [{id, kind, label, parent, checks}], bound: {<id node mục tiêu>: <id tài nguyên thật>}}`. `status` là `passed`, `failed` hoặc `pending`. Id của ghost có tiền tố `ghost:`. Browser mới kết nối nhận `graph` trước rồi tới `twin`. Schema: [`twin.py`](../server/src/cloudy_labs/twin.py).
+
 ## Biến môi trường
 
 | Biến | Mặc định | Ý nghĩa |
@@ -186,10 +199,32 @@ checks:
 hints:
   - task: create-vpc
     text: aws ec2 create-vpc --cidr-block 10.77.0.0/16 --tag-specifications ...
-target: {}               # kiến trúc mục tiêu cho lớp ghost 3D, định nghĩa sau
+target:                  # kiến trúc mục tiêu, vẽ thành ghost (tuỳ chọn)
+  nodes:
+    - {id: vpc, kind: vpc, label: VPC 10.77.0.0/16, checks: [vpc-exists]}
 ```
 
 Trường lạ, `id` trùng, check hoặc hint trỏ tới task không có, hay `fn` sai dạng `module:function` đều làm lab không nạp được. Mọi hàm được tham chiếu phải tồn tại ngay lúc nạp.
+
+**`target`** liệt kê các node của kiến trúc mục tiêu ([Twin và ghost](#twin-và-ghost)). Mỗi node có:
+
+- `id`: slug, không trùng.
+- `kind`: một trong `vpc`, `az`, `subnet-public`, `subnet-private`, `igw`, `nat`, `route-table`, `security-group`, `key-pair`, `instance`, `elastic-ip`.
+- `label`: nhãn hiện trong cảnh.
+- `parent` (tuỳ chọn): id của một node khác. Bỏ trống nghĩa là node nằm trong region.
+- `checks`: các check xác nhận node đó.
+
+Node lồng nhau giống collector: subnet nằm trong `az`, `az` nằm trong `vpc`, NAT và instance nằm trong subnet, IGW, route table và security group nằm trong VPC, key pair và Elastic IP nằm trong region. Lồng sai chỗ, parent không có, check không có, node (trừ `az`) không có check nào, hay `az` có check đều làm lab không nạp được, và lỗi nói rõ node nào sai. Chỉ có ghost cho node, không có ghost cho cạnh (route, association, key của instance).
+
+Ghost gắn với tài nguyên thật **qua check**, không qua tên hay tag. Quy tắc nằm ở `bind_target` trong [`twin.py`](../server/src/cloudy_labs/twin.py):
+
+- Node được xét theo thứ tự khai báo trong `target`.
+- Một node chỉ gắn khi **mọi** check nó khai báo đều đạt. Nó gắn vào id đầu tiên trong `resource_ids` của các check đó thoả ba điều kiện: graph có id đó với đúng `kind` của node; chưa node nào trước nó lấy id đó; và tài nguyên nằm trong tài nguyên mà parent của node đã gắn. Vì vậy chỉ khai báo những check thật sự xác nhận node. Một check phụ chưa đạt sẽ giữ ghost lại.
+- Node chỉ bị buộc vào parent khi parent đã gắn trước nó. Muốn node con theo parent mà người học tự chọn (ví dụ NAT nằm trong subnet public nào cũng được), hãy khai báo node con **trước** parent.
+- `az` không có check. Nó gắn vào AZ thật mà các node con đã gắn của nó cùng nằm trong. AZ thứ nhất của `target` ứng với AZ thật xếp đầu theo bảng chữ cái.
+- Hai node cùng `kind` dùng chung một check lấy hai id khác nhau, nên check phải trả đủ id của mọi tài nguyên nó xác nhận, kể cả tài nguyên đi kèm (ví dụ allocation id của Elastic IP gắn với NAT).
+
+Phần hạ tầng do `setup` dựng sẵn cũng phải có một check trả id của nó (ví dụ `network-ready` của `fixture-lab-07` trả id của VPC, subnet public và IGW). Không có check đó thì ghost của các node này không bao giờ mất. Ví dụ đầy đủ: [`fixture-lab-06/lab.yaml`](../server/tests/fixtures/labs/fixture-lab-06/lab.yaml), [`fixture-lab-07/lab.yaml`](../server/tests/fixtures/labs/fixture-lab-07/lab.yaml).
 
 `checks.py`: mỗi checker nhận `ctx` và các `args`, trả về `CheckResult`. `ctx.client(service)` là client boto3 đã trỏ vào emulator của lab. `resource_ids` là các tài nguyên cảnh 3D sẽ tô sáng.
 
@@ -226,6 +261,8 @@ uv run pytest -m llm tests/test_chat_live.py -v
 ```
 
 `tests/test_builder_e2e_docker.py` (cũng `-m docker`) dựng stack, mở `fixture-lab-06`, chạy lab-server, dùng Vite dev server đang chạy ở 5174 (hoặc tự bật rồi tắt), rồi để [`web/scripts/e2e-builder-lab-06.mjs`](../web/scripts/e2e-builder-lab-06.mjs) làm cả lab qua builder trong Google Chrome và chạy `labctl check`. Sau đó nó mở `fixture-lab-07` và để [`web/scripts/e2e-builder-lab-07.mjs`](../web/scripts/e2e-builder-lab-07.mjs) làm Lab 7 hai lần: một lần bằng Run, một lần ở chế độ luyện tập (chép lệnh rồi chạy bằng `bash -c`, không có `/api/run` nào), mỗi lần chờ `labctl check` đạt tới 60 giây. Cần `aws`, `node`, `pnpm` và cổng 8730 trống. Test tự trỏ `AWS_CONFIG_FILE` vào thư mục tạm, không đụng config AWS của bạn.
+
+`tests/test_twin_docker.py` (cũng `-m docker`) làm `fixture-lab-06` bằng `aws --profile lab` và boto3, rồi `fixture-lab-07` bằng CLI, trong khi nghe `/ws` của một lab-server chạy trong test. Nó kiểm ghost mất đúng lúc, `labctl check` đạt và reset trả về đủ ghost. Chạy với `-s` để in độ trễ graph, độ trễ ghost và thời gian một lượt check. Cần `aws`.
 
 `-m docker` còn so `ec2-image-catalog.yaml` với catalog nhúng trong image Floci đang ghim ở `compose.yaml`, nên quên sinh lại catalog sau khi đổi phiên bản Floci sẽ làm test trượt. Test đơn vị chỉ bắt được trường hợp tag Floci trong `compose.yaml` khác tag ghi ở đầu catalog.
 
