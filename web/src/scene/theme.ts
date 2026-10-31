@@ -26,6 +26,11 @@ export interface Theme {
   edges: { routeIgw: string; routeNat: string; association: string; usesKey: string }
   pulse: string
   outline: string
+  // Ghosts of the lab's target architecture (PRD F6.2): kind colours kept, faded, dashed, labelled.
+  ghost: { trayOpacity: number; borderOpacity: number; label: string }
+  achieved: string // the mark on a real resource that reached its target node
+  failed: string // a check that does not pass yet
+  checkHighlight: string // outlines what the selected check looks at
 }
 
 export const THEMES: Record<ThemeName, Theme> = {
@@ -48,6 +53,10 @@ export const THEMES: Record<ThemeName, Theme> = {
     edges: { routeIgw: '#4D7A0E', routeNat: '#7A3FE6', association: '#5F6B7A', usesKey: '#C4362F' },
     pulse: '#FF9900',
     outline: '#0972D3',
+    ghost: { trayOpacity: 0.35, borderOpacity: 0.75, label: '#5F6B7A' },
+    achieved: '#1D8102',
+    failed: '#D91515',
+    checkHighlight: '#EC7211',
   },
   dark: {
     background: '#0F141A',
@@ -68,5 +77,9 @@ export const THEMES: Record<ThemeName, Theme> = {
     edges: { routeIgw: '#A4CF4A', routeNat: '#B591FF', association: '#9AA6B4', usesKey: '#FF7A70' },
     pulse: '#FFB347',
     outline: '#5CB2FF',
+    ghost: { trayOpacity: 0.4, borderOpacity: 0.8, label: '#9AA6B4' },
+    achieved: '#7FD14A',
+    failed: '#FF7A80',
+    checkHighlight: '#FFB347',
   },
 }

@@ -3,14 +3,18 @@
 // (fitKey changes); later graph updates keep the view the learner chose.
 // With a builder attached, it also follows palette drags and edge drags (PRD F4.2, F4.6); what
 // the learner builds appears only when a later graph contains it (F4.5).
+// The scene may hold ghosts of the lab's target (F6.2): they are drawn, but API particles, pointer
+// hits and drop targets only ever see real resources.
 import { CameraControls } from '@react-three/drei'
 import { useFrame, useThree } from '@react-three/fiber'
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { Vector3 } from 'three'
 import type { Vec3 } from '../builder/drop-targets'
 import { resourceId, type SceneGraph } from '../graph/graph-to-scene'
+import { withoutGhosts } from '../graph/merge-twin'
 import type { ApiEvent } from '../graph/types'
 import { ApiFlyLayer } from './api-fly-layer'
+import { CheckHighlight } from './check-highlight'
 import { AwsObjectLayer, type ThemeName } from './aws-objects'
 import { ConnectHandle, ConnectLine, HANDLE_RISE } from './connect-line'
 import { DropHighlight } from './drop-highlight'
@@ -46,13 +50,19 @@ export interface LiveSceneProps {
   selected: string | null
   onSelect: (id: string | null) => void
   builder?: SceneBuilder
+  highlighted?: ReadonlySet<string> // what the selected check looks at; empty: nothing selected
 }
 
-export function LiveScene({ scene, events, theme: themeName, fitKey, selected, onSelect, builder }: LiveSceneProps) {
+const NONE: ReadonlySet<string> = new Set()
+
+export function LiveScene({ scene, events, theme: themeName, fitKey, selected, onSelect, builder, highlighted = NONE }: LiveSceneProps) {
   const theme = THEMES[themeName]
   const layout = useMemo(() => computeLayout(scene), [scene])
   const placements = useMemo(() => scenePlacements(scene, layout), [scene, layout])
   const anchors = useMemo(() => edgeAnchors(placements), [placements])
+  const achievedBadges = useMemo(() => placements.filter((p) => p.achieved), [placements])
+  const real = useMemo(() => withoutGhosts(scene), [scene])
+  const realGroups = useMemo(() => layout.groups.filter((g) => !g.node.ghost), [layout.groups])
   const [hovered, setHovered] = useState<string | null>(null)
   // Read by the pointer probe in the same event, before the state update lands.
   const hoveredRef = useRef<string | null>(null)
@@ -165,13 +175,14 @@ export function LiveScene({ scene, events, theme: themeName, fitKey, selected, o
         onSettled={refreshShadows}
         scaleRef={scaleRef}
       />
-      <LabelLayer leaves={layout.leaves} theme={theme} />
+      <LabelLayer leaves={layout.leaves} badges={achievedBadges} theme={theme} />
+      <CheckHighlight highlighted={highlighted} scene={scene} groups={layout.groups} placements={placements} theme={theme} />
       <EdgeLayer edges={scene.edges} anchors={anchors} theme={theme} />
-      <ApiFlyLayer events={events} scene={scene} anchors={anchors} theme={theme} countRef={flying} />
+      <ApiFlyLayer events={events} scene={real} anchors={anchors} theme={theme} countRef={flying} />
       {builder && mode !== null && (
         <>
-          <PointerProbe groups={layout.groups} onMove={onMove} onEnd={onEnd} />
-          <DropHighlight groups={layout.groups} accepts={builder.accepts} target={builder.target} theme={theme} />
+          <PointerProbe groups={realGroups} onMove={onMove} onEnd={onEnd} />
+          <DropHighlight groups={realGroups} accepts={builder.accepts} target={builder.target} theme={theme} />
         </>
       )}
       {builder && handleAt && (

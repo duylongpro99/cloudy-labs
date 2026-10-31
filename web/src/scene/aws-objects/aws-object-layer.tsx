@@ -1,6 +1,7 @@
 // Draws any number of AWS objects with two InstancedMeshes per kind (plinth and glyph),
 // so draw calls grow with the number of kinds, not the number of objects.
 // Entrance and exit: each instance scales from its base, updated in useFrame only while it runs.
+// Ghosts (PRD F6.2) get batches of their own: translucent, shadowless and not pickable.
 import type { ThreeEvent } from '@react-three/fiber'
 import { useFrame, useThree } from '@react-three/fiber'
 import { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState, type RefObject } from 'react'
@@ -17,6 +18,8 @@ export interface AwsObjectPlacement {
   id: string
   kind: AwsKind
   position: Vec3 // centre of the object's base
+  ghost?: boolean
+  achieved?: boolean // a bound badge, which has no label of its own to carry the mark
 }
 
 export interface AwsObjectLayerProps {
@@ -37,9 +40,11 @@ export interface AwsObjectLayerProps {
 }
 
 const noRaycast = () => {}
+export const GHOST_OPACITY = 0.3
 
-function KindBatch({ kind, items, presence, theme, coverage, shadows, onHover, onSelect, onSettled }: {
+function KindBatch({ kind, ghost, items, presence, theme, coverage, shadows, onHover, onSelect, onSettled }: {
   kind: AwsKind
+  ghost: boolean
   items: readonly AwsObjectPlacement[] // shown and exiting
   presence: Presence<AwsObjectPlacement>
   theme: ThemeName
@@ -47,8 +52,9 @@ function KindBatch({ kind, items, presence, theme, coverage, shadows, onHover, o
   shadows: boolean
   onHover?: (id: string | null) => void
   onSelect?: (id: string) => void
-  onSettled: (kind: AwsKind) => void
+  onSettled: (batch: string) => void
 }) {
+  const batch = ghost ? `${kind}:ghost` : kind
   const plinth = useRef<InstancedMesh>(null)
   const glyph = useRef<InstancedMesh>(null)
   const invalidate = useThree((s) => s.invalidate)
@@ -88,19 +94,19 @@ function KindBatch({ kind, items, presence, theme, coverage, shadows, onHover, o
 
   useLayoutEffect(() => {
     anim.current.running = !write(performance.now())
-    if (!anim.current.running) settledRef.current(kind)
+    if (!anim.current.running) settledRef.current(batch)
     invalidate()
-  }, [write, invalidate, kind])
+  }, [write, invalidate, batch])
 
   useFrame(() => {
     const a = anim.current
     if (!a.running) return
     a.running = !write(performance.now())
-    if (!a.running) settledRef.current(kind)
+    if (!a.running) settledRef.current(batch)
     invalidate()
   })
 
-  const handlers = onHover || onSelect
+  const handlers = !ghost && (onHover || onSelect)
     ? {
         onPointerMove: (e: ThreeEvent<PointerEvent>) => {
           e.stopPropagation()
@@ -119,26 +125,29 @@ function KindBatch({ kind, items, presence, theme, coverage, shadows, onHover, o
       <instancedMesh
         ref={plinth}
         args={[plinthGeometry(kind), undefined, items.length]}
-        castShadow={shadows}
-        receiveShadow={shadows}
-        userData={{ awsKind: kind, part: 'plinth' }}
+        castShadow={shadows && !ghost}
+        receiveShadow={shadows && !ghost}
+        raycast={ghost ? noRaycast : undefined}
+        userData={{ awsKind: kind, part: 'plinth', ghost }}
         {...handlers}
       >
-        <meshStandardMaterial color={palette.plinth} roughness={0.75} metalness={0} />
+        <meshStandardMaterial color={palette.plinth} roughness={0.75} metalness={0} {...material(ghost)} />
       </instancedMesh>
       {/* The glyph is not raycast: a pick passes through it to the plinth underneath. */}
       <instancedMesh
         ref={glyph}
         args={[glyphGeometry(kind), undefined, items.length]}
-        castShadow={shadows}
+        castShadow={shadows && !ghost}
         raycast={noRaycast}
-        userData={{ awsKind: kind, part: 'glyph' }}
+        userData={{ awsKind: kind, part: 'glyph', ghost }}
       >
-        <meshStandardMaterial color={palette.glyph} roughness={0.55} metalness={0} />
+        <meshStandardMaterial color={palette.glyph} roughness={0.55} metalness={0} {...material(ghost)} />
       </instancedMesh>
     </>
   )
 }
+
+const material = (ghost: boolean) => (ghost ? { transparent: true, opacity: GHOST_OPACITY, depthWrite: false } : {})
 
 export function AwsObjectLayer({
   placements,
@@ -159,10 +168,11 @@ export function AwsObjectLayer({
   const [pruned, setPruned] = useState(0)
   const byKind = useMemo(() => {
     presence.update(placements, performance.now(), animate)
-    const groups = new Map<AwsKind, AwsObjectPlacement[]>()
+    const groups = new Map<string, AwsObjectPlacement[]>()
     for (const p of [...placements, ...presence.exiting()]) {
       if (MANIFEST_BY_KIND[p.kind].role === 'outline-only') continue
-      groups.set(p.kind, [...(groups.get(p.kind) ?? []), p])
+      const batch = p.ghost ? `${p.kind}:ghost` : p.kind
+      groups.set(batch, [...(groups.get(batch) ?? []), p])
     }
     return [...groups]
     // `pruned` only forces the regrouping.
@@ -176,7 +186,7 @@ export function AwsObjectLayer({
   }, [scaleRef, presence])
 
   // Kinds that finished animating since the batches last changed; a new set per batch list.
-  const settled = useMemo(() => new Set<AwsKind>(), [byKind])
+  const settled = useMemo(() => new Set<string>(), [byKind])
   const onSettledRef = useRef(onSettled)
   onSettledRef.current = onSettled
   const allSettled = useCallback(() => {
@@ -184,9 +194,9 @@ export function AwsObjectLayer({
     else onSettledRef.current?.()
   }, [presence])
   const batchSettled = useCallback(
-    (kind: AwsKind) => {
-      if (settled.has(kind)) return
-      settled.add(kind)
+    (batch: string) => {
+      if (settled.has(batch)) return
+      settled.add(batch)
       if (settled.size === byKind.length) allSettled()
     },
     [settled, byKind, allSettled],
@@ -199,11 +209,12 @@ export function AwsObjectLayer({
 
   return (
     <group>
-      {byKind.map(([kind, items]) => (
+      {byKind.map(([batch, items]) => (
         // Remount when the count changes: an InstancedMesh's capacity is fixed at creation.
         <KindBatch
-          key={`${kind}-${items.length}`}
-          kind={kind}
+          key={`${batch}-${items.length}`}
+          kind={items[0].kind}
+          ghost={!!items[0].ghost}
           items={items}
           presence={presence}
           theme={theme}
