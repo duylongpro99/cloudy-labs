@@ -42,8 +42,10 @@ def lab(fixture_labs, monkeypatch):
     return loaded, asked
 
 
-def ec2_with(groups=(DEFAULT_SG, WEB_SG), instances=(), keys=({"KeyName": "lab07-key", "KeyPairId": "key-1"},), vpcs=(VPC,)):
+def ec2_with(groups=(DEFAULT_SG, WEB_SG), instances=(), keys=({"KeyName": "lab07-key", "KeyPairId": "key-1"},), vpcs=(VPC,),
+             igws=({"InternetGatewayId": "igw-1"},)):
     ec2 = MagicMock()
+    ec2.describe_internet_gateways.return_value = {"InternetGateways": list(igws)}
     ec2.describe_vpcs.return_value = {"Vpcs": list(vpcs)}
     ec2.describe_security_groups.return_value = {"SecurityGroups": list(groups)}
     ec2.describe_key_pairs.return_value = {"KeyPairs": list(keys)}
@@ -60,14 +62,21 @@ def test_everything_done_passes(lab):
     loaded, asked = lab
     got = results(loaded, ec2_with(groups=(DEFAULT_SG, WEB_SG, ADMIN_SG), instances=[instance(groups=("sg-web", "sg-admin"))]))
     assert {k: r.passed for k, r in got.items()} == dict.fromkeys(
-        ["sg-web-80", "ssh-not-open-to-world", "key-pair-exists", "instance-running", "web-server-answers", "instance-has-two-sgs"], True)
+        ["network-ready", "sg-web-80", "ssh-not-open-to-world", "key-pair-exists", "instance-running", "web-server-answers", "instance-has-two-sgs"], True)
     assert asked == ["http://127.0.0.1:30000/"]
     assert got["instance-running"].resource_ids == ["i-1"]
+    assert got["network-ready"].resource_ids == ["vpc-1", "subnet-pub", "igw-1"]
+
+
+def test_network_without_an_attached_igw_is_not_ready(lab):
+    got = results(lab[0], ec2_with(igws=()))
+    assert not got["network-ready"].passed and "labctl reset fixture-lab-07" in got["network-ready"].message
+    assert got["network-ready"].resource_ids == ["vpc-1"]
 
 
 def test_fresh_network_fails_every_check_with_guidance(lab):
     got = results(lab[0], ec2_with(groups=(DEFAULT_SG,), keys=()))
-    assert not any(r.passed for r in got.values())
+    assert [k for k, r in got.items() if r.passed] == ["network-ready"]
     assert "create the web group first" in got["ssh-not-open-to-world"].message
     assert "no key pair" in got["key-pair-exists"].message
     assert "no running instance" in got["web-server-answers"].message

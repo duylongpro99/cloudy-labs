@@ -82,6 +82,23 @@ def test_write_during_collect_gets_exactly_one_more_collect():
     assert run(main()) == 2
 
 
+def test_a_poll_during_a_collect_still_reaches_the_watchers():
+    async def main():
+        collector = FakeCollector(delay=0.2)
+        hub = GraphHub(collector, poll=60)
+        await hub.start()
+        calls: list[str] = []
+        hub.watch(calls.append)
+        write = asyncio.create_task(hub.refresh("tap"))
+        await asyncio.sleep(0.05)
+        await hub.refresh("poll")  # arrives mid-collect, graph unchanged
+        await write
+        await hub.stop()
+        return calls
+
+    assert run(main()) == ["poll"]
+
+
 def test_only_changed_graphs_are_published_and_versioned():
     async def main():
         collector = FakeCollector()
@@ -208,3 +225,32 @@ def test_burst_of_api_events_skips_events_but_keeps_the_browser():
 
     kept, got = run(main())
     assert kept and len(got) == 64 and got[0]["type"] == "graph" and got[-1]["seq"] == 62
+
+
+def test_watchers_hear_new_graphs_and_quiet_polls():
+    async def main():
+        collector = FakeCollector()
+        hub = GraphHub(collector, debounce=0.01, poll=60)
+        await hub.start()
+        heard: list[str] = []
+        hub.watch(heard.append)
+        await hub.refresh("tap")  # nothing changed, not a poll
+        await hub.refresh("poll")
+        collector.vpcs = ["vpc-1"]
+        await hub.refresh("poll")
+        await hub.stop()
+        return heard
+
+    assert run(main()) == ["poll", "graph"]
+
+
+def test_new_browser_gets_the_graph_then_the_twin():
+    async def main():
+        hub = GraphHub(FakeCollector(), poll=60)
+        await hub.start()
+        hub.set_twin({"type": "twin", "twin": {"lab": None}})
+        messages = drain(hub.subscribe())
+        await hub.stop()
+        return messages
+
+    assert [m["type"] for m in run(main())] == ["graph", "twin"]

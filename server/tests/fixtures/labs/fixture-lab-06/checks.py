@@ -120,10 +120,10 @@ def nat_in_public_subnet(ctx: CheckContext) -> CheckResult:
         return CheckResult(False, f"no NAT Gateway in {vpc['VpcId']}")
     public = set(_associated(_tables_to(ctx, vpc["VpcId"], "igw-")))
     for n in nats:
-        has_eip = any(a.get("AllocationId") for a in n.get("NatGatewayAddresses") or [])
-        if has_eip and n["SubnetId"] in public:
+        eips = [a["AllocationId"] for a in n.get("NatGatewayAddresses") or [] if a.get("AllocationId")]
+        if eips and n["SubnetId"] in public:
             return CheckResult(True, f"{n['NatGatewayId']} has an Elastic IP and sits in public subnet {n['SubnetId']}",
-                               [n["NatGatewayId"], n["SubnetId"]])
+                               [n["NatGatewayId"], n["SubnetId"], *eips])
     ids = [n["NatGatewayId"] for n in nats]
     return CheckResult(False, "a NAT Gateway needs an Elastic IP and a public subnet (routed to the Internet Gateway)", ids)
 

@@ -82,6 +82,20 @@ def _public_subnets(ctx: CheckContext, vpc_id: str) -> set[str]:
     }
 
 
+def network_ready(ctx: CheckContext) -> CheckResult:
+    vpc = _vpc(ctx)
+    if vpc is None:
+        return _no_vpc()
+    ec2 = ctx.client("ec2")
+    igws = ec2.describe_internet_gateways(Filters=[{"Name": "attachment.vpc-id", "Values": [vpc["VpcId"]]}])["InternetGateways"]
+    public = sorted(_public_subnets(ctx, vpc["VpcId"]))
+    if not igws or not public:
+        return CheckResult(False, f"{vpc['VpcId']} has no public subnet routed to an attached Internet Gateway; "
+                                  f"run `labctl reset {LAB}` to rebuild the network", [vpc["VpcId"]])
+    return CheckResult(True, f"{vpc['VpcId']} has public subnet {public[0]} behind {igws[0]['InternetGatewayId']}",
+                       [vpc["VpcId"], *public, igws[0]["InternetGatewayId"]])
+
+
 def sg_web_80(ctx: CheckContext) -> CheckResult:
     vpc = _vpc(ctx)
     if vpc is None:

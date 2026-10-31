@@ -19,6 +19,14 @@ Kind = Literal[
 # association: route table -> subnet. attached: SG/EIP -> what it is attached to.
 # uses-key: instance -> key pair.
 EdgeKind = Literal["route", "association", "attached", "uses-key"]
+# Kinds the collector may place directly under each kind: a lab's target nests the same way.
+# An attached IGW sits in its VPC; one not attached yet sits in the region.
+PARENT_KINDS: dict[str, set[str]] = {
+    "vpc": {"region"}, "key-pair": {"region"}, "elastic-ip": {"region"}, "igw": {"region", "vpc"},
+    "az": {"vpc"}, "route-table": {"vpc"}, "security-group": {"vpc"},
+    "subnet-public": {"az"}, "subnet-private": {"az"},
+    "nat": {"subnet-public", "subnet-private"}, "instance": {"subnet-public", "subnet-private"},
+}
 Status = Literal["ok", "emulator-down"]
 
 

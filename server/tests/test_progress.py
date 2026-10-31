@@ -39,3 +39,18 @@ def test_completed_stays_true_after_a_new_attempt(tmp_path):
     p.start_attempt("lab-a")
     assert p.lab_summary() == {"lab-a": True}
     assert p.latest_results("lab-a") == []
+
+
+def test_record_if_changed_skips_repeats_within_an_attempt(tmp_path):
+    p = Progress(tmp_path / "p.db")
+    a = p.start_attempt("lab-a")
+    first = [CheckResult(False, "no vpc", [], "vpc"), CheckResult(True, "ok", ["sg-1"], "sg")]
+    assert p.record_if_changed(a.id, first) is True
+    assert p.record_if_changed(a.id, list(first)) is False
+    later = [CheckResult(True, "vpc ok", ["vpc-1"], "vpc"), first[1]]
+    assert p.record_if_changed(a.id, later) is True
+    assert p.latest_results("lab-a") == later
+    b = p.start_attempt("lab-a")  # a reset: same results, but the new attempt has none yet
+    assert p.record_if_changed(b.id, later) is True
+    runs = p.db.execute("SELECT COUNT(DISTINCT ran_at) FROM check_runs").fetchone()[0]
+    assert runs == 3

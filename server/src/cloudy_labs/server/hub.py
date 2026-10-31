@@ -21,6 +21,7 @@ DOWN_AFTER = 2
 CLIENT_QUEUE = 64  # messages buffered per browser before it counts as too slow and is dropped
 
 Message = dict[str, Any]
+Watcher = Callable[[str], None]
 
 
 class GraphHub:
@@ -35,6 +36,8 @@ class GraphHub:
         self._collect = collect
         self._debounce, self._poll, self._down_poll = debounce, poll, down_poll
         self.graph: ResourceGraph | None = None
+        self.twin: Message | None = None  # the latest {"type": "twin"}, sent to each new browser after the graph
+        self._watchers: list[Watcher] = []
         self.collects = 0
         self._hash: str | None = None
         self._clients: set[asyncio.Queue] = set()
@@ -42,6 +45,7 @@ class GraphHub:
         self._debounces: set[asyncio.Task] = set()
         self._running = False
         self._dirty = False
+        self._polled = False  # a poll asked for a refresh still to come
         self._failures = 0  # possibly transient failed collects in a row
         self._poller: asyncio.Task | None = None
 
@@ -65,6 +69,8 @@ class GraphHub:
         queue: asyncio.Queue = asyncio.Queue(CLIENT_QUEUE)
         if self.graph is not None:
             queue.put_nowait(self._graph_message())
+        if self.twin is not None:
+            queue.put_nowait(self.twin)
         self._clients.add(queue)
         return queue
 
@@ -80,6 +86,14 @@ class GraphHub:
                     continue  # cosmetic: a burst of writes may outrun the socket; skip it, keep the browser
                 log.warning("dropping a browser that stopped reading")
                 self._close(queue)
+
+    def set_twin(self, message: Message) -> None:
+        self.twin = message
+        self.broadcast(message)
+
+    def watch(self, watcher: Watcher) -> None:
+        """Call `watcher("graph")` after each new graph and `watcher("poll")` after a poll that found none."""
+        self._watchers.append(watcher)
 
     def _close(self, queue: asyncio.Queue) -> None:
         self.unsubscribe(queue)
@@ -104,13 +118,18 @@ class GraphHub:
     async def refresh(self, reason: str = "") -> None:
         """Collect and publish; if asked again while collecting, collect exactly once more after."""
         self._dirty = True
+        self._polled = self._polled or reason == "poll"  # a poll during a collect is the next one's
         if self._running:
             return
         self._running = True
         try:
             while self._dirty:
                 self._dirty = False
-                self._publish(*await asyncio.to_thread(self._safe_collect))
+                polled, self._polled = self._polled, False
+                changed = self._publish(*await asyncio.to_thread(self._safe_collect))
+                if changed or polled:
+                    for watcher in self._watchers:
+                        watcher("graph" if changed else "poll")
         finally:
             self._running = False
 
@@ -128,20 +147,22 @@ class GraphHub:
             log.warning("collect failed: %s: %s", type(e).__name__, e)
             return emulator_down(datetime.now(timezone.utc), reason=type(e).__name__), True
 
-    def _publish(self, graph: ResourceGraph, transient: bool = False) -> None:
+    def _publish(self, graph: ResourceGraph, transient: bool = False) -> bool:
+        """Whether the graph changed."""
         if not transient:
             self._failures = 0
         else:
             self._failures += 1
             if self.graph is not None and self.graph.status == "ok" and self._failures < DOWN_AFTER:
-                return  # keep the last good graph; the poll loop retries soon
+                return False  # keep the last good graph; the poll loop retries soon
         digest = graph.content_hash()
         if digest == self._hash:
-            return
+            return False
         version = self.graph.version + 1 if self.graph else 1
         self._hash = digest
         self.graph = graph.model_copy(update={"version": version})
         self.broadcast(self._graph_message())
+        return True
 
     def _graph_message(self) -> Message:
         return {"type": "graph", "graph": self.graph.to_dict()}

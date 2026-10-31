@@ -31,6 +31,7 @@ from ..labs import LabError, LoadedLab, load_lab
 from ..progress import Attempt, Progress
 from .hub import GraphHub
 from .tap_listener import TapListener
+from .twin_runner import ChecksRunner, TwinRunner, run_lab_checks
 
 # Only the web app may read lab state over the socket; tools without an Origin (CLI) are fine.
 # Without this, any page open in the learner's browser could connect to ws://127.0.0.1.
@@ -123,9 +124,11 @@ def create_app(
     blocker: Callable[[], str | None] = run_blocker,
     llm: Callable[[], LlmSettings | Missing] = load_settings,
     complete: Complete = provider.complete,
+    checks_runner: ChecksRunner = run_lab_checks,
 ) -> FastAPI:
     hub = hub or GraphHub(collector)
     listener = TapListener(hub)
+    twin = TwinRunner(hub, lab, checks=checks_runner)
     runner = runner or Runner()
     zones: list[str] = []  # read once per server run, the first time the emulator answers
     zones_retry_at = 0.0  # while it does not, ask again at most every AZ_RETRY_S, not on every preview
@@ -140,6 +143,8 @@ def create_app(
     @asynccontextmanager
     async def lifespan(app: FastAPI):
         await hub.start()
+        hub.watch(twin.trigger)
+        await twin.run("start")  # browsers that connect from here on get a twin right after the graph
         task = asyncio.create_task(listener.run()) if listen else None
         try:
             yield
@@ -148,11 +153,12 @@ def create_app(
                 task.cancel()
                 with contextlib.suppress(asyncio.CancelledError):
                     await task
-            await hub.stop()
+            await hub.stop()  # first, so no refresh triggers a twin turn after the runner stopped
+            await twin.stop()
 
     app = FastAPI(title="Cloudy Labs lab-server", lifespan=lifespan)
     app.add_middleware(TrustedHostMiddleware, allowed_hosts=ALLOWED_HOSTS)
-    app.state.hub, app.state.listener = hub, listener
+    app.state.hub, app.state.listener, app.state.twin = hub, listener, twin
 
     @app.get("/api/health")
     def health() -> dict:
