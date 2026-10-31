@@ -79,16 +79,25 @@ class Progress:
                 [(attempt_id, r.check_id, r.passed, r.message, json.dumps(r.resource_ids), ran_at) for r in results],
             )
 
+    def record_if_changed(self, attempt_id: int, results: list[CheckResult]) -> bool:
+        """Record a run only when it differs from the attempt's last one, so the lab-server's
+        automatic runs do not fill the history with repeats. Whether it recorded."""
+        if self._results(attempt_id) == results:
+            return False
+        self.record_checks(attempt_id, results)
+        return True
+
     def latest_results(self, lab_id: str) -> list[CheckResult]:
         """Results of the last check run in the lab's latest attempt."""
         attempt = self.latest_attempt(lab_id)
-        if attempt is None:
-            return []
+        return self._results(attempt.id) if attempt else []
+
+    def _results(self, attempt_id: int) -> list[CheckResult]:
         rows = self.db.execute(
             """SELECT * FROM check_runs WHERE attempt_id = ?
                AND ran_at = (SELECT MAX(ran_at) FROM check_runs WHERE attempt_id = ?)
                ORDER BY rowid""",
-            (attempt.id, attempt.id),
+            (attempt_id, attempt_id),
         ).fetchall()
         return [
             CheckResult(bool(r["passed"]), r["message"], json.loads(r["resource_ids_json"]), r["check_id"])

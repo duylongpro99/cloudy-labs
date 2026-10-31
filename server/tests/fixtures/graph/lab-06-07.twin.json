@@ -1,0 +1,147 @@
+{
+  "attempt": 3,
+  "bound": {
+    "az-1": "vpc-149d0439/us-east-1a",
+    "az-2": "vpc-149d0439/us-east-1b",
+    "igw": "igw-34ddd4cd",
+    "private-1": "subnet-e917cc42",
+    "private-2": "subnet-44acdeb7",
+    "vpc": "vpc-149d0439"
+  },
+  "checks": [
+    {
+      "description": "The tagged VPC exists with the expected CIDR.",
+      "id": "vpc-exists",
+      "message": "ok",
+      "resourceIds": [
+        "vpc-149d0439"
+      ],
+      "status": "passed",
+      "task": "vpc"
+    },
+    {
+      "description": "The VPC has DNS hostnames enabled.",
+      "id": "vpc-dns-hostnames",
+      "message": "ok",
+      "resourceIds": [
+        "vpc-149d0439"
+      ],
+      "status": "passed",
+      "task": "vpc"
+    },
+    {
+      "description": "Two public and two private subnets, each pair across two AZs.",
+      "id": "subnets-two-azs",
+      "message": "ok",
+      "resourceIds": [
+        "subnet-b893d7ba",
+        "subnet-83a1f79a",
+        "subnet-44acdeb7",
+        "subnet-e917cc42"
+      ],
+      "status": "passed",
+      "task": "subnets"
+    },
+    {
+      "description": "Public subnets map a public IP on launch.",
+      "id": "public-ip-on-launch",
+      "message": "no",
+      "resourceIds": [],
+      "status": "failed",
+      "task": "subnets"
+    },
+    {
+      "description": "An Internet Gateway is attached to the VPC.",
+      "id": "igw-attached",
+      "message": "ok",
+      "resourceIds": [
+        "igw-34ddd4cd"
+      ],
+      "status": "passed",
+      "task": "internet-gateway"
+    },
+    {
+      "description": "A NAT Gateway with an Elastic IP sits in a public subnet.",
+      "id": "nat-in-public-subnet",
+      "message": "no",
+      "resourceIds": [],
+      "status": "failed",
+      "task": "nat-gateway"
+    },
+    {
+      "description": "A route table sends 0.0.0.0/0 to the Internet Gateway and serves both public subnets.",
+      "id": "public-route-table",
+      "message": "no",
+      "resourceIds": [],
+      "status": "failed",
+      "task": "routing"
+    },
+    {
+      "description": "A route table sends 0.0.0.0/0 to the NAT Gateway and serves both private subnets.",
+      "id": "private-route-table",
+      "message": "no",
+      "resourceIds": [],
+      "status": "failed",
+      "task": "routing"
+    }
+  ],
+  "ghosts": [
+    {
+      "checks": [
+        "nat-in-public-subnet"
+      ],
+      "id": "ghost:nat",
+      "kind": "nat",
+      "label": "NAT Gateway",
+      "parent": "ghost:public-1"
+    },
+    {
+      "checks": [
+        "subnets-two-azs",
+        "public-ip-on-launch"
+      ],
+      "id": "ghost:public-1",
+      "kind": "subnet-public",
+      "label": "Public 1",
+      "parent": "vpc-149d0439/us-east-1a"
+    },
+    {
+      "checks": [
+        "subnets-two-azs",
+        "public-ip-on-launch"
+      ],
+      "id": "ghost:public-2",
+      "kind": "subnet-public",
+      "label": "Public 2",
+      "parent": "vpc-149d0439/us-east-1b"
+    },
+    {
+      "checks": [
+        "nat-in-public-subnet"
+      ],
+      "id": "ghost:eip",
+      "kind": "elastic-ip",
+      "label": "Elastic IP của NAT",
+      "parent": "us-east-1"
+    },
+    {
+      "checks": [
+        "public-route-table"
+      ],
+      "id": "ghost:rt-public",
+      "kind": "route-table",
+      "label": "Route table public",
+      "parent": "vpc-149d0439"
+    },
+    {
+      "checks": [
+        "private-route-table"
+      ],
+      "id": "ghost:rt-private",
+      "kind": "route-table",
+      "label": "Route table private",
+      "parent": "vpc-149d0439"
+    }
+  ],
+  "lab": "fixture-lab-06"
+}

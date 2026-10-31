@@ -22,6 +22,8 @@ builder:
       nohup python3 -m http.server 80 --bind "$IP" >>/var/log/web.log 2>&1 &
     done
 tasks:
+  - id: network
+    text: The VPC, public subnet and Internet Gateway from Lab 6 are ready (`labctl start` builds them).
   - id: security-group
     text: Create a security group named web in the lab VPC that opens port 80 to everyone and port 22 only to one address (/32).
   - id: key-pair
@@ -31,6 +33,11 @@ tasks:
   - id: extra-sg
     text: Create a second security group named admin and attach it to the instance as well.
 checks:
+  # Reports the network setup built, so the scene can mark it reached like the learner's work.
+  - id: network-ready
+    task: network
+    fn: checks:network_ready
+    description: The lab VPC has a public subnet routed to an attached Internet Gateway.
   - id: sg-web-80
     task: security-group
     fn: checks:sg_web_80
@@ -58,3 +65,13 @@ checks:
 hints:
   - task: instance
     text: The instance reports running before its UserData has finished; give the web server a minute.
+target:
+  nodes:
+    - {id: vpc, kind: vpc, label: VPC 10.67.0.0/16, checks: [network-ready]}
+    - {id: igw, kind: igw, parent: vpc, label: Internet Gateway, checks: [network-ready]}
+    - {id: az, kind: az, parent: vpc, label: AZ}
+    - {id: public, kind: subnet-public, parent: az, label: Public subnet, checks: [network-ready]}
+    - {id: sg-web, kind: security-group, parent: vpc, label: SG web, checks: [sg-web-80]}
+    - {id: sg-admin, kind: security-group, parent: vpc, label: SG admin, checks: [instance-has-two-sgs]}
+    - {id: key, kind: key-pair, label: Key pair, checks: [key-pair-exists]}
+    - {id: web, kind: instance, parent: public, label: Web server, checks: [instance-running, web-server-answers]}

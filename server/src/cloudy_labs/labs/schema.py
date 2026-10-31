@@ -6,6 +6,8 @@ from typing import Any, Literal
 
 from pydantic import BaseModel, ConfigDict, Field, field_validator, model_validator
 
+from ..graph.schema import PARENT_KINDS
+
 SLUG = r"^[a-z0-9][a-z0-9-]*$"
 FN_REF = re.compile(r"^[A-Za-z_][A-Za-z0-9_]*:[A-Za-z_][A-Za-z0-9_]*$")
 
@@ -77,6 +79,58 @@ class Builder(_Strict):
         return v
 
 
+TargetKind = Literal[
+    "vpc", "az", "subnet-public", "subnet-private", "igw", "nat",
+    "route-table", "security-group", "key-pair", "instance", "elastic-ip",
+]
+
+
+class TargetNode(_Strict):
+    """One resource of the architecture the lab builds, drawn as a ghost until its checks pass."""
+    id: str = Field(pattern=SLUG)
+    kind: TargetKind
+    label: str
+    parent: str | None = None  # another target node; none means the region
+    checks: list[str] = []  # the node is reached once all of these pass; their resource ids find it
+
+
+class Target(_Strict):
+    nodes: list[TargetNode] = []
+
+    def check_references(self, check_ids: set[str]) -> None:
+        by_id: dict[str, TargetNode] = {}
+        for n in self.nodes:
+            if n.id in by_id:
+                raise ValueError(f"duplicate target node id: {n.id}")
+            by_id[n.id] = n
+        for n in self.nodes:
+            parent_kind = "region"
+            if n.parent is not None:
+                if n.parent not in by_id:
+                    raise ValueError(f"target node {n.id!r} has unknown parent {n.parent!r}")
+                parent_kind = by_id[n.parent].kind
+            if parent_kind not in PARENT_KINDS[n.kind]:
+                where = "the region" if n.parent is None else f"a {parent_kind} ({n.parent!r})"
+                raise ValueError(f"target node {n.id!r}: a {n.kind} cannot sit in {where}; "
+                                 f"it goes in {' or '.join(sorted(PARENT_KINDS[n.kind]))}")
+            unknown = [c for c in n.checks if c not in check_ids]
+            if unknown:
+                raise ValueError(f"target node {n.id!r} refers to unknown check {', '.join(map(repr, unknown))}")
+            if n.kind == "az" and n.checks:
+                raise ValueError(f"target node {n.id!r}: an az has no checks; it is reached through its subnets")
+            if n.kind != "az" and not n.checks:
+                raise ValueError(f"target node {n.id!r} needs at least one check")
+        # Parent kinds only ever go up the region > vpc > az > subnet > nat/instance ladder, so a
+        # cycle cannot pass the kind rule above; walking every chain is the plain proof anyway.
+        for n in self.nodes:
+            seen, cur = set(), n
+            while cur.parent is not None:
+                if cur.id in seen:
+                    raise ValueError(f"target nodes form a cycle through {cur.id!r}")
+                seen.add(cur.id)
+                cur = by_id[cur.parent]
+
+
 class Lab(_Strict):
     id: str = Field(pattern=SLUG)
     provider: Literal["aws"]
@@ -89,7 +143,7 @@ class Lab(_Strict):
     checks: list[Check] = Field(min_length=1)
     hints: list[Hint] = []
     builder: Builder = Builder()  # no builder section: the web app says the lab has no builder
-    target: dict[str, Any] = {}  # target architecture for the ghost layer; shape defined with the twin mode
+    target: Target = Target()  # the architecture the 3D scene shows as ghosts (PRD F6.2)
 
     @field_validator("setup")
     @classmethod
@@ -114,4 +168,5 @@ class Lab(_Strict):
         for h in self.hints:
             if h.task not in known:
                 raise ValueError(f"hint refers to unknown task {h.task!r}")
+        self.target.check_references(set(check_ids))
         return self

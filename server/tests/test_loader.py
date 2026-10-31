@@ -33,7 +33,8 @@ def test_loads_lab_07_fixture(fixture_labs):
     assert lab.builder.palette == ["security-group", "key-pair", "instance"]
     assert lab.setup == ["checks:setup_network"] and callable(loaded.resolve("checks:setup_network"))
     assert '--bind "$IP"' in lab.builder.user_data and lab.builder.user_data.startswith("#!/bin/sh\n")
-    assert len(lab.checks) == 6
+    assert len(lab.checks) == 7 and lab.checks[0].id == "network-ready"
+    assert [n.id for n in lab.target.nodes][:3] == ["vpc", "igw", "az"]
 
 
 def test_list_labs_missing_root(tmp_path):

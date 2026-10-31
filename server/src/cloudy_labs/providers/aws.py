@@ -48,13 +48,15 @@ class AwsProvider:
                 pass  # no moto lab started yet: moto does not enforce IAM until the first reset
         return ACCESS_KEY_ID, SECRET_ACCESS_KEY
 
-    def client(self, service: str, credentials: Credentials | None = None, *, direct: bool = False, config: Any = None) -> Any:
+    def client(self, service: str, credentials: Credentials | None = None, *, direct: bool = False, config: Any = None,
+               session: boto3.session.Session | None = None) -> Any:
         """`credentials` lets a checker act as another IAM user, for example one the learner created.
 
-        `direct` bypasses api-tap, for reads that must not count as learner activity.
+        `direct` bypasses api-tap, for reads that must not count as learner activity. `session` is
+        for a caller off the main thread, since boto3 sessions (the default one too) are not thread-safe.
         """
         key, secret = credentials or self.credentials()
-        return boto3.client(
+        return (session or boto3).client(
             service,
             endpoint_url=self.direct_endpoint if direct else self.endpoint,
             region_name=REGION,

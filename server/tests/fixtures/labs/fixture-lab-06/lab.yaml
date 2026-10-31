@@ -56,3 +56,19 @@ checks:
 hints:
   - task: subnets
     text: A subnet is public when its route table sends 0.0.0.0/0 to an Internet Gateway.
+target:
+  nodes:
+    - {id: vpc, kind: vpc, label: VPC 10.66.0.0/16, checks: [vpc-exists, vpc-dns-hostnames]}
+    - {id: igw, kind: igw, parent: vpc, label: Internet Gateway, checks: [igw-attached]}
+    - {id: az-1, kind: az, parent: vpc, label: AZ thứ nhất}
+    - {id: az-2, kind: az, parent: vpc, label: AZ thứ hai}
+    # The NAT comes before the subnets: a node is held to its parent only when the parent bound
+    # first, so declared here the NAT binds in whichever public subnet the learner chose.
+    - {id: nat, kind: nat, parent: public-1, label: NAT Gateway, checks: [nat-in-public-subnet]}
+    - {id: public-1, kind: subnet-public, parent: az-1, label: Public 1, checks: [subnets-two-azs, public-ip-on-launch]}
+    - {id: public-2, kind: subnet-public, parent: az-2, label: Public 2, checks: [subnets-two-azs, public-ip-on-launch]}
+    - {id: private-1, kind: subnet-private, parent: az-1, label: Private 1, checks: [subnets-two-azs]}
+    - {id: private-2, kind: subnet-private, parent: az-2, label: Private 2, checks: [subnets-two-azs]}
+    - {id: eip, kind: elastic-ip, label: Elastic IP của NAT, checks: [nat-in-public-subnet]}
+    - {id: rt-public, kind: route-table, parent: vpc, label: Route table public, checks: [public-route-table]}
+    - {id: rt-private, kind: route-table, parent: vpc, label: Route table private, checks: [private-route-table]}

@@ -19,6 +19,10 @@ def served():
         yield client, app.state.hub, collector
 
 
+NO_CHECKS = lambda loaded: []  # noqa: E731  the twin runner must not reach a real emulator from these tests
+NO_LAB_TWIN = {"type": "twin", "twin": {"lab": None, "attempt": None, "checks": [], "ghosts": [], "bound": {}}}
+
+
 def test_foreign_host_is_refused(served):
     client, _, _ = served
     assert client.get("/api/graph", headers={"Host": "attacker.example:8730"}).status_code == 400
@@ -36,6 +40,7 @@ def test_websocket_gets_current_graph_then_updates(served):
     client, hub, collector = served
     with client.websocket_connect(WS, headers={"Origin": "http://127.0.0.1:5174"}) as ws:
         assert ws.receive_json()["graph"]["version"] == 1
+        assert ws.receive_json() == NO_LAB_TWIN  # no lab open; a twin that does not change is not sent again
         collector.vpcs = ["vpc-1"]
         client.portal.call(hub.refresh)
         message = ws.receive_json()
@@ -62,7 +67,7 @@ def test_websocket_from_another_origin_is_refused(served, origin):
 def test_listener_events_reach_browsers_and_writes_refresh(served):
     client, hub, collector = served
     with client.websocket_connect(WS) as ws:
-        ws.receive_json()
+        ws.receive_json(), ws.receive_json()  # graph, twin
         collector.vpcs = ["vpc-2"]
         listener = client.app.state.listener
         client.portal.call(lambda: listener.handle({"seq": 1, "service": "ec2", "action": "CreateVpc", "write": True}))
@@ -109,7 +114,7 @@ def builder():
             raise state["lab"]
         return state["lab"]
 
-    app = create_app(lambda: state["graph"], listen=False, lab=lab, runner=runner,
+    app = create_app(lambda: state["graph"], listen=False, lab=lab, runner=runner, checks_runner=NO_CHECKS,
                      azs=lambda: ["us-east-1a", "us-east-1b"], blocker=lambda: state["block"])
     with TestClient(app, base_url="http://127.0.0.1:8730") as client:
         yield client, state, runner
@@ -128,6 +133,17 @@ def test_lab_info(builder):
     assert body["azs"] == ["us-east-1a", "us-east-1b"] and body["canRun"] is True and body["runBlocker"] is None
     assert {o["name"] for o in body["ops"]} >= {"create-vpc", "create-route", "modify-subnet-attribute"}
     assert [t["id"] for t in body["tasks"]][0] == "vpc"
+
+
+def test_websocket_gets_the_graph_then_the_twin_of_the_open_lab(builder):
+    client, _, _ = builder
+    with client.websocket_connect(WS, headers=ORIGIN) as ws:
+        assert ws.receive_json()["type"] == "graph"
+        twin = ws.receive_json()["twin"]
+    assert twin["lab"] == "fixture-lab-06" and twin["attempt"] == 7
+    assert [c["id"] for c in twin["checks"]] == [c.id for c in LAB06.lab.checks]
+    assert {c["status"] for c in twin["checks"]} == {"pending"}  # NO_CHECKS reports none of them
+    assert twin["bound"] == {} and len(twin["ghosts"]) == len(LAB06.lab.target.nodes)
 
 
 def test_lab_info_without_attempt(builder):
@@ -251,7 +267,7 @@ def test_run_refused_while_another_runs(builder):
 
 
 def test_subnet_refused_when_azs_are_unknown():
-    app = create_app(lambda: GOLDEN, listen=False, lab=lambda: (LAB06, Attempt(1, "fixture-lab-06", "")),
+    app = create_app(lambda: GOLDEN, listen=False, lab=lambda: (LAB06, Attempt(1, "fixture-lab-06", "")), checks_runner=NO_CHECKS,
                      runner=(runner := FakeRunner(RunResult(0, "", "", 1))), azs=lambda: [], blocker=lambda: None)
     params = {"name": "x", "vpcId": VPC, "cidr": "10.0.9.0/24", "az": "file:///etc/hosts"}
     with TestClient(app, base_url="http://127.0.0.1:8730") as client:
@@ -288,7 +304,7 @@ def test_op_outside_the_palette(builder):
 
 def test_run_refused_while_emulator_down():
     down = GOLDEN.model_copy(update={"status": "down"})
-    app = create_app(lambda: down, listen=False, lab=lambda: (LAB06, Attempt(1, "fixture-lab-06", "")),
+    app = create_app(lambda: down, listen=False, lab=lambda: (LAB06, Attempt(1, "fixture-lab-06", "")), checks_runner=NO_CHECKS,
                      runner=FakeRunner(RunResult(0, "", "", 1)), azs=lambda: [], blocker=lambda: None)
     with TestClient(app, base_url="http://127.0.0.1:8730") as client:
         assert post(client, "/api/run", "create-vpc", {"name": "x", "cidr": "10.66.0.0/16"}).status_code == 503
@@ -407,7 +423,7 @@ def chat(builder):
             raise state["answer"]
         return state["answer"]
 
-    app = create_app(lambda: state["graph"], listen=False, lab=lambda: state["lab"], runner=runner,
+    app = create_app(lambda: state["graph"], listen=False, lab=lambda: state["lab"], runner=runner, checks_runner=NO_CHECKS,
                      azs=lambda: ["us-east-1a", "us-east-1b"], blocker=lambda: None,
                      llm=lambda: state["llm"], complete=complete)
     with TestClient(app, base_url="http://127.0.0.1:8730") as c:

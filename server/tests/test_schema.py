@@ -16,6 +16,10 @@ def base(**over):
     return data
 
 
+def target(*nodes):
+    return {"target": {"nodes": list(nodes)}}
+
+
 def test_minimal_lab_gets_defaults():
     lab = Lab.model_validate(base(cidrs=["10.0.0.0/16"]))
     assert lab.emulator == "floci"
@@ -48,6 +52,19 @@ def test_minimal_lab_gets_defaults():
         ({"builder": {"surprise": 1}}, "Extra inputs"),
         ({"builder": {"userData": "x" * (16 * 1024 + 1)}}, "at most 16384"),
         ({"builder": {"palette": ["instance", "lambda"]}}, "'instance'"),
+        (target({"id": "vpc", "kind": "vpc", "label": "v", "checks": ["c1"]}, {"id": "vpc", "kind": "igw", "label": "i", "checks": ["c1"]}),
+         "duplicate target node id: vpc"),
+        (target({"id": "s", "kind": "subnet-public", "parent": "nope", "label": "s", "checks": ["c1"]}), "unknown parent 'nope'"),
+        (target({"id": "s", "kind": "subnet-public", "label": "s", "checks": ["c1"]}), "cannot sit in the region"),
+        (target({"id": "vpc", "kind": "vpc", "label": "v", "checks": ["c1"]},
+                {"id": "s", "kind": "subnet-public", "parent": "vpc", "label": "s", "checks": ["c1"]}), "it goes in az"),
+        (target({"id": "vpc", "kind": "vpc", "label": "v", "checks": ["c1", "c9"]}), "'vpc' refers to unknown check 'c9'"),
+        (target({"id": "vpc", "kind": "vpc", "label": "v"}), "'vpc' needs at least one check"),
+        (target({"id": "vpc", "kind": "vpc", "label": "v", "checks": ["c1"]},
+                {"id": "a", "kind": "az", "parent": "vpc", "label": "a", "checks": ["c1"]}), "an az has no checks"),
+        (target({"id": "r", "kind": "region", "label": "r", "checks": ["c1"]}), "'vpc'"),
+        (target({"id": "Bad", "kind": "vpc", "label": "v", "checks": ["c1"]}), "pattern"),
+        ({"target": {"nodes": [], "edges": []}}, "Extra inputs"),
     ],
 )
 def test_invalid_lab(over, needle):
@@ -73,3 +90,16 @@ def test_builder_user_data():
     assert lab.builder.user_data == "#!/bin/sh\necho ok\n"
     assert Lab.model_validate(base(builder={"userData": "é" * 8192})).builder.user_data  # 16 KB counted in bytes
     assert Lab.model_validate(base()).builder.user_data == ""
+
+
+def test_target_nests_like_the_collector():
+    lab = Lab.model_validate(base(**target(
+        {"id": "vpc", "kind": "vpc", "label": "VPC", "checks": ["c1"]},
+        {"id": "igw", "kind": "igw", "parent": "vpc", "label": "IGW", "checks": ["c1"]},
+        {"id": "az-1", "kind": "az", "parent": "vpc", "label": "AZ"},
+        {"id": "nat", "kind": "nat", "parent": "public", "label": "NAT", "checks": ["c1"]},  # parent declared later is fine
+        {"id": "public", "kind": "subnet-public", "parent": "az-1", "label": "Public", "checks": ["c1"]},
+        {"id": "key", "kind": "key-pair", "label": "Key", "checks": ["c1"]},
+    )))
+    assert [(n.id, n.parent) for n in lab.target.nodes][:2] == [("vpc", None), ("igw", "vpc")]
+    assert Lab.model_validate(base()).target.nodes == []
