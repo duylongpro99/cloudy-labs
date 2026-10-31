@@ -14,9 +14,14 @@ import { stepBusy, useChat } from './chat/use-chat'
 import { AwsObjectsGallery, type GalleryConfig } from './gallery/aws-objects-gallery'
 import { useResourceGraph, type ConnectionState } from './graph/graph-client'
 import { graphToScene } from './graph/graph-to-scene'
+import { mergeTwin } from './graph/merge-twin'
 import { ArchitectureScene } from './scene/architecture-scene'
 import { GLYPH_COVERAGE, type ThemeName } from './scene/aws-objects'
 import { LiveScene } from './scene/live-scene'
+import { useGhostToggle } from './scene/use-ghost-toggle'
+import { CheckPanel } from './twin/check-panel'
+import { highlightFor } from './twin/highlight'
+import { useCheckSelection } from './twin/use-check-selection'
 import { PropertyPanel } from './scene/property-panel'
 import { THEMES } from './scene/theme'
 
@@ -148,14 +153,19 @@ const STATE_LABEL: Record<ConnectionState, string> = {
 const FULL_SCREEN: CSSProperties = { position: 'fixed', inset: 0, width: '100%', height: '100%' }
 
 function Live() {
-  const { graph, state, events } = useResourceGraph()
+  const { graph, state, events, twin } = useResourceGraph()
   const scene = useMemo(() => (graph ? graphToScene(graph) : null), [graph])
+  const [showGhosts, setShowGhosts] = useGhostToggle()
+  // The builder, the panels and the chat work on real resources; only the 3D scene gets the ghosts.
+  const shown = useMemo(() => scene && mergeTwin(scene, twin, showGhosts).scene, [scene, twin, showGhosts])
+  const [check, selectCheck] = useCheckSelection(twin)
+  const highlighted = useMemo(() => (check && shown ? highlightFor(check, twin, shown) : undefined), [check, twin, shown])
   const [theme, toggleTheme] = useThemePreference()
   const [fitKey, setFitKey] = useState(0)
   const [selected, setSelected] = useState<string | null>(null)
   const close = useCallback(() => setSelected(null), [])
   const t = THEMES[theme]
-  const { lab, error: labError, loaded } = useLab()
+  const { lab, error: labError, loaded } = useLab(twin?.lab ? `${twin.lab}#${twin.attempt}` : null)
   const builder = useSceneBuilder(graph, scene, lab, selected)
   const bs = builder.state
   const gesture = bs.phase === 'dragging' || bs.phase === 'connecting' ? bs : null
@@ -165,16 +175,17 @@ function Live() {
   const chatWorking = stepBusy(chat.state)
   return (
     <>
-      {scene && (
+      {shown && (
         <Stage post="full" dpr={[1, 2]} style={FULL_SCREEN} onPointerMissed={close}>
           <LiveScene
-            scene={scene}
+            scene={shown}
             events={events}
             theme={theme}
             fitKey={fitKey}
             selected={selected}
             onSelect={setSelected}
             builder={lab && graph?.status === 'ok' ? builder.scene : undefined}
+            highlighted={highlighted}
           />
         </Stage>
       )}
@@ -210,6 +221,11 @@ function Live() {
         <div style={{ marginTop: 6 }}>
           <button id="fit-view" onClick={() => setFitKey((k) => k + 1)}>Vừa khung</button>
           <button id="toggle-theme" onClick={toggleTheme}>Chủ đề: {theme === 'light' ? 'sáng' : 'tối'}</button>
+          {twin && twin.ghosts.length + Object.keys(twin.bound).length > 0 && (
+            <button id="toggle-ghosts" aria-pressed={showGhosts} onClick={() => setShowGhosts(!showGhosts)}>
+              Mục tiêu: {showGhosts ? 'hiện' : 'ẩn'}
+            </button>
+          )}
         </div>
         {lab ? (
           <div id="builder-lab" style={{ marginTop: 8 }}>
@@ -230,6 +246,8 @@ function Live() {
             </p>
           )
         )}
+        {/* With no lab open, the line above already says to run labctl start. */}
+        {twin?.lab && <CheckPanel twin={twin} lab={lab} selected={check} onSelect={selectCheck} theme={t} />}
         {graph && graph.warnings.length > 0 && (
           <ul id="graph-warnings" style={{ margin: '6px 0 0', paddingLeft: 18 }}>
             {graph.warnings.map((w) => <li key={w}>{w}</li>)}

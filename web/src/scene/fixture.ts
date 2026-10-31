@@ -13,6 +13,8 @@ export interface FixtureNode {
   label: string
   kind: GroupKind | LeafKind
   parent: string | null
+  ghost?: boolean // part of the lab's target architecture not built yet (PRD F6.2)
+  achieved?: boolean // a real resource a target node is bound to
 }
 
 export interface FixtureEdge {
@@ -27,6 +29,7 @@ export interface FixtureAttachment {
   id: string
   kind: AttachmentKind
   host: string
+  achieved?: boolean // like FixtureNode.achieved, for a bound security group or Elastic IP
 }
 
 export interface Fixture {

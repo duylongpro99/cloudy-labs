@@ -6,7 +6,8 @@ import { useThree } from '@react-three/fiber'
 import { useLayoutEffect, useMemo, useRef, useState } from 'react'
 import type { BenchConfig, BenchResult } from '../bench/bench'
 import { graphToScene } from '../graph/graph-to-scene'
-import { syntheticGraph } from '../graph/synthetic-graph'
+import { mergeTwin } from '../graph/merge-twin'
+import { syntheticGraph, syntheticTwin } from '../graph/synthetic-graph'
 import { BenchRunner } from '../bench/bench-runner'
 import { AwsObjectLayer } from './aws-objects'
 import { EdgeLayer } from './edge-layer'
@@ -19,7 +20,11 @@ import { TrayLayer } from './tray-layer'
 
 export function ArchitectureScene({ cfg, onDone }: { cfg: BenchConfig; onDone: (r: BenchResult) => void }) {
   const theme = THEMES[cfg.theme]
-  const fixture = useMemo(() => graphToScene(syntheticGraph(42)), [])
+  const fixture = useMemo(() => {
+    const graph = syntheticGraph(42)
+    const scene = graphToScene(graph)
+    return cfg.ghosts ? mergeTwin(scene, syntheticTwin(graph, cfg.ghosts), true).scene : scene
+  }, [cfg.ghosts])
   const layout = useMemo(() => computeLayout(fixture), [fixture])
   const placements = useMemo(() => scenePlacements(fixture, layout), [fixture, layout])
   const anchors = useMemo(() => edgeAnchors(placements), [placements])

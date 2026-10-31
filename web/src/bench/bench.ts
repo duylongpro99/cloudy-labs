@@ -2,6 +2,7 @@
 // Same method as the M0 render spike, so results compare directly.
 // URL: ?view=bench&mode=bench&post=full&theme=dark&dpr=2&run=1   (mode=view for a normal interactive scene,
 // mode=idle to count frames rendered while the scene stands still).
+// Add &ghosts=20 to draw that many target ghosts over the graph (twin mode).
 // Add &suite=1 to walk through every configuration in SUITE, one fresh page load per run.
 import type { ThemeName } from '../scene/theme'
 
@@ -18,6 +19,7 @@ export interface BenchConfig {
   warmupMs: number
   suiteIndex: number | null
   zoom: number | null // optional camera zoom override, used for close-up screenshots
+  ghosts: number
 }
 
 export const CANVAS = { width: 1280, height: 800 } // fixed CSS size so every run pushes the same pixels
@@ -38,6 +40,7 @@ export function readConfig(search = location.search): BenchConfig {
     warmupMs: Number(q.get('warmup') ?? 2_000),
     suiteIndex: q.has('suite') ? Number(q.get('i') ?? 0) : null,
     zoom: q.has('zoom') ? Number(q.get('zoom')) : null,
+    ghosts: Math.max(0, Math.floor(Number(q.get('ghosts') ?? 0)) || 0),
   }
 }
 
@@ -47,6 +50,8 @@ export const SUITE: string[] = [
   ...POSTS.flatMap((post) => THEMES.flatMap((theme) => [1, 2].map((dpr) => `view=bench&mode=bench&post=${post}&theme=${theme}&dpr=${dpr}&run=1`))),
   // Idle waits until the entrance animation and the shadow refresh that follows it have settled.
   'view=bench&mode=idle&post=full&theme=light&dpr=2&run=1&warmup=4000',
+  // The same scene with about 20 ghosts of a lab target over it.
+  'view=bench&mode=bench&post=full&theme=light&dpr=2&run=1&ghosts=20',
 ]
 
 export function browserName(ua = navigator.userAgent): string {
@@ -78,6 +83,7 @@ export function summarize(cfg: BenchConfig, samples: FrameSample[], extra: Recor
     dpr: cfg.dpr,
     run: cfg.run,
     mode: cfg.mode,
+    ghosts: cfg.ghosts,
     frames: samples.length,
     frameTimeMs: dts.length ? { p50: round(pct(dts, 0.5)), p95: round(pct(dts, 0.95)), p99: round(pct(dts, 0.99)), max: round(dts[dts.length - 1]) } : null,
     avgFps: total ? round((samples.length * 1000) / total) : 0,
@@ -94,7 +100,8 @@ export function summarize(cfg: BenchConfig, samples: FrameSample[], extra: Recor
 export type BenchResult = ReturnType<typeof summarize>
 
 export function resultName(r: BenchResult) {
-  return r.mode === 'idle' ? `${r.browser}-idle-run${r.run}` : `${r.browser}-${r.post}-${r.theme}-dpr${r.dpr}-run${r.run}`
+  const ghosts = r.ghosts ? `-ghosts${r.ghosts}` : ''
+  return r.mode === 'idle' ? `${r.browser}-idle-run${r.run}` : `${r.browser}-${r.post}-${r.theme}-dpr${r.dpr}${ghosts}-run${r.run}`
 }
 
 // Saves through the dev-server endpoint (see vite.config.ts); the page also offers a download.

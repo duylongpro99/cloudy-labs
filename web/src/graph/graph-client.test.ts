@@ -106,6 +106,19 @@ describe('connectGraph', () => {
     expect(FakeSocket.all).toHaveLength(1)
   })
 
+  it('passes twin messages through and ignores a malformed one', () => {
+    const err = vi.spyOn(console, 'error').mockImplementation(() => {})
+    const onTwin = vi.fn()
+    connectGraph('ws://x/ws', { ...handlers, onTwin }, FakeSocket as unknown as typeof WebSocket)
+    const s = FakeSocket.all[0]
+    const twin = { lab: 'lab-a', attempt: 2, checks: [], ghosts: [], bound: {} }
+    s.send({ type: 'twin', twin })
+    s.send({ type: 'twin', twin: { ...twin, checks: [{ id: 'c', status: 'unknown' }] } })
+    expect(onTwin.mock.calls).toEqual([[twin]])
+    expect(err).toHaveBeenCalledTimes(1)
+    err.mockRestore()
+  })
+
   it('ignores a malformed graph', () => {
     const err = vi.spyOn(console, 'error').mockImplementation(() => {})
     connect()

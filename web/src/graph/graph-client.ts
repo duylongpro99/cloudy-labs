@@ -1,13 +1,14 @@
 // Live resource graph from the lab-server WebSocket (/ws, proxied by Vite in development).
 // The scene depends on this graph only (NFR4): it never talks to the emulator directly.
 import { useEffect, useState } from 'react'
-import { parseGraph, type ApiEvent, type ResourceGraph, type ServerMessage } from './types'
+import { parseGraph, parseTwin, type ApiEvent, type ResourceGraph, type ServerMessage, type TwinState } from './types'
 
 export type ConnectionState = 'connecting' | 'live' | 'emulator-down' | 'disconnected'
 
 export interface GraphConnectionHandlers {
   onGraph: (g: ResourceGraph) => void
   onApiEvent: (e: ApiEvent) => void
+  onTwin?: (t: TwinState) => void
   onOpenChange: (open: boolean) => void
 }
 
@@ -40,6 +41,7 @@ export function connectGraph(url: string, h: GraphConnectionHandlers, Ws: typeof
       try {
         msg = JSON.parse(String(m.data)) as ServerMessage
         if (msg.type === 'graph') msg = { ...msg, graph: parseGraph(msg.graph) }
+        else if (msg.type === 'twin') msg = { ...msg, twin: parseTwin(msg.twin) }
       } catch (err) {
         console.error('[graph] bad message', err)
         return
@@ -48,6 +50,8 @@ export function connectGraph(url: string, h: GraphConnectionHandlers, Ws: typeof
         if (msg.graph.version <= version) return
         version = msg.graph.version
         h.onGraph(msg.graph)
+      } else if (msg.type === 'twin') {
+        h.onTwin?.(msg.twin)
       } else if (msg.type === 'api-event') {
         h.onApiEvent({ service: msg.service, action: msg.action, seq: msg.seq, write: !!msg.write })
       }
@@ -78,22 +82,25 @@ export interface ResourceGraphState {
   state: ConnectionState
   // Most recent API calls, oldest first; consumers track the last seq they handled.
   events: ApiEvent[]
+  twin: TwinState | null // the server sends one right after the graph, then on every change
 }
 
 export function useResourceGraph(url = wsUrl()): ResourceGraphState {
   const [graph, setGraph] = useState<ResourceGraph | null>(null)
   const [open, setOpen] = useState<boolean | null>(null) // null until the first connection attempt settles
   const [events, setEvents] = useState<ApiEvent[]>([])
+  const [twin, setTwin] = useState<TwinState | null>(null)
   useEffect(
     () =>
       connectGraph(url, {
         onGraph: setGraph,
         onApiEvent: (e) => setEvents((es) => [...es.slice(-(MAX_EVENTS - 1)), e]),
+        onTwin: setTwin,
         onOpenChange: setOpen,
       }),
     [url],
   )
   const state: ConnectionState =
     open === null ? 'connecting' : !open ? 'disconnected' : graph?.status === 'emulator-down' ? 'emulator-down' : graph ? 'live' : 'connecting'
-  return { graph, state, events }
+  return { graph, state, events, twin }
 }
