@@ -1,30 +1,11 @@
 // The builder's side panel: the open op's form above its command, output and status.
 import type { ApiEvent, ResourceGraph } from '../graph/types'
 import type { Theme } from '../scene/theme'
-import type { LabInfo } from './builder-api'
+import { opTitle, type LabInfo } from './builder-api'
 import { BuildForm } from './build-form'
 import { CommandPanel } from './command-panel'
 import type { BuilderAction, BuilderState } from './use-builder'
 import { usePractice } from './use-practice'
-
-export const OP_TITLE: Record<string, string> = {
-  'create-vpc': 'Tạo VPC',
-  'create-subnet': 'Tạo subnet',
-  'create-internet-gateway': 'Tạo Internet Gateway',
-  'attach-internet-gateway': 'Gắn Internet Gateway vào VPC',
-  'allocate-address': 'Cấp Elastic IP',
-  'create-nat-gateway': 'Tạo NAT Gateway',
-  'create-route-table': 'Tạo Route Table',
-  'create-route': 'Thêm route',
-  'associate-route-table': 'Gắn Route Table vào subnet',
-  'modify-vpc-attribute': 'Bật DNS hostnames cho VPC',
-  'modify-subnet-attribute': 'Tự gán IP public trong subnet',
-  'create-security-group': 'Tạo Security Group',
-  'authorize-security-group-ingress': 'Thêm rule inbound',
-  'create-key-pair': 'Tạo Key Pair',
-  'run-instances': 'Chạy EC2 Instance',
-  'modify-instance-attribute': 'Gắn Security Group vào instance',
-}
 
 type Open = Exclude<BuilderState, { phase: 'idle' | 'dragging' | 'connecting' }>
 
@@ -66,7 +47,7 @@ export function BuilderPanel({ state, graph, lab, events, theme, dispatch, onRun
       }}
     >
       <div style={{ display: 'flex', alignItems: 'baseline', gap: 8, marginBottom: 8 }}>
-        <b style={{ flex: 1 }}>{OP_TITLE[draft.op.name] ?? draft.op.name}</b>
+        <b style={{ flex: 1 }}>{opTitle(lab.ops, draft.op.name)}</b>
         <label style={{ fontSize: 12 }} title="Builder dựng lệnh nhưng không chạy; bạn tự chạy lệnh trong terminal">
           <input id="practice-toggle" type="checkbox" checked={practice} disabled={busy || chatBusy} onChange={(e) => toggle(e.target.checked)} /> Luyện tập
         </label>

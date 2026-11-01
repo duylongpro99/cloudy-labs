@@ -5,7 +5,7 @@ import { Billboard, Text } from '@react-three/drei'
 import { useFrame } from '@react-three/fiber'
 import { memo, useRef } from 'react'
 import type { Group } from 'three'
-import { objectHeight, type AwsKind, type AwsObjectPlacement } from './aws-objects'
+import { objectHeight, type AwsObjectPlacement } from './aws-objects'
 import type { LaidOutLeaf } from './layout'
 import type { Theme } from './theme'
 import { AchievedMark, FONT } from './tray-layer'
@@ -26,7 +26,7 @@ export const LabelLayer = memo(function LabelLayer({ leaves, badges = [], theme 
   return (
     <group ref={labels}>
       {leaves.map((l) => (
-        <Billboard key={l.node.id} position={[l.x, l.y + objectHeight(l.node.kind as AwsKind) + 0.45, l.z]}>
+        <Billboard key={l.node.id} position={[l.x, l.y + objectHeight(l.node.kind) + 0.45, l.z]}>
           <Text
             font={FONT}
             fontSize={0.36}

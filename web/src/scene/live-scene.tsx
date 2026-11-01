@@ -15,6 +15,8 @@ import { withoutGhosts } from '../graph/merge-twin'
 import type { ApiEvent } from '../graph/types'
 import { ApiFlyLayer } from './api-fly-layer'
 import { CheckHighlight } from './check-highlight'
+import { ReachabilityLayer } from '../reachability/reachability-layer'
+import type { ReachHop } from '../reachability/reachability-api'
 import { AwsObjectLayer, type ThemeName } from './aws-objects'
 import { ConnectHandle, ConnectLine, HANDLE_RISE } from './connect-line'
 import { DropHighlight } from './drop-highlight'
@@ -49,13 +51,15 @@ export interface LiveSceneProps {
   fitKey: number
   selected: string | null
   onSelect: (id: string | null) => void
+  onMenu?: (id: string, x: number, y: number) => void // right-click on an object
   builder?: SceneBuilder
   highlighted?: ReadonlySet<string> // what the selected check looks at; empty: nothing selected
+  path?: readonly ReachHop[] // the hops of the reachability result shown in the panel
 }
 
 const NONE: ReadonlySet<string> = new Set()
 
-export function LiveScene({ scene, events, theme: themeName, fitKey, selected, onSelect, builder, highlighted = NONE }: LiveSceneProps) {
+export function LiveScene({ scene, events, theme: themeName, fitKey, selected, onSelect, onMenu, builder, highlighted = NONE, path }: LiveSceneProps) {
   const theme = THEMES[themeName]
   const layout = useMemo(() => computeLayout(scene), [scene])
   const placements = useMemo(() => scenePlacements(scene, layout), [scene, layout])
@@ -172,12 +176,14 @@ export function LiveScene({ scene, events, theme: themeName, fitKey, selected, o
         outlineColor={theme.outline}
         onHover={onHover}
         onSelect={onSelect}
+        onMenu={onMenu}
         onSettled={refreshShadows}
         scaleRef={scaleRef}
       />
       <LabelLayer leaves={layout.leaves} badges={achievedBadges} theme={theme} />
       <CheckHighlight highlighted={highlighted} scene={scene} groups={layout.groups} placements={placements} theme={theme} />
       <EdgeLayer edges={scene.edges} anchors={anchors} theme={theme} />
+      {path && <ReachabilityLayer hops={path} anchors={anchors} theme={theme} />}
       <ApiFlyLayer events={events} scene={real} anchors={anchors} theme={theme} countRef={flying} />
       {builder && mode !== null && (
         <>

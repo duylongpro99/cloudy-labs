@@ -1,27 +1,13 @@
 // Where a resource dragged from the palette may be dropped (PRD F4.2). The table itself comes
 // from the server's op catalogue (`containers` of each create op), so both sides agree.
+import { kindLabel } from '../registry/registry'
 import { TRAY_H, type LaidOutGroup } from '../scene/layout'
 import type { OpSpec } from './builder-api'
 
 export type Vec3 = readonly [number, number, number]
 
-export const KIND_LABEL: Record<string, string> = {
-  region: 'Region',
-  vpc: 'VPC',
-  az: 'Availability Zone',
-  subnet: 'Subnet',
-  'subnet-public': 'subnet công khai',
-  'subnet-private': 'subnet riêng tư',
-  igw: 'Internet Gateway',
-  'elastic-ip': 'Elastic IP',
-  nat: 'NAT Gateway',
-  'route-table': 'Route Table',
-  'security-group': 'Security Group',
-  'key-pair': 'Key Pair',
-  instance: 'EC2 Instance',
-}
-
-export const kindLabel = (kind: string) => KIND_LABEL[kind] ?? kind
+// Labels come from the registry; re-exported for the builder's callers.
+export { kindLabel }
 
 // Trays whose top face the ray crosses inside the tray's outline, deepest first.
 export function traysUnder(groups: readonly LaidOutGroup[], origin: Vec3, dir: Vec3): LaidOutGroup[] {

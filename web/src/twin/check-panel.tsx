@@ -1,12 +1,13 @@
 // The lab's checks, grouped by task in the lab's order (PRD F6.3). Each shows whether it passed
 // against the emulator's current state; pressing one lights up what it looks at in the scene,
 // pressing it again (or Esc) lets go.
+import { useState } from 'react'
 import type { LabInfo } from '../builder/builder-api'
 import type { CheckStatus, TwinCheck, TwinState } from '../graph/types'
 import type { Theme } from '../scene/theme'
 
-export const STATUS_TEXT: Record<CheckStatus, string> = { passed: 'Đạt', failed: 'Chưa đạt', pending: 'Đang chờ' }
-const STATUS_MARK: Record<CheckStatus, string> = { passed: '✓', failed: '✗', pending: '…' }
+export const STATUS_TEXT: Record<CheckStatus, string> = { passed: 'Đạt', failed: 'Chưa đạt', pending: 'Đang chờ', info: 'Đã phân tích' }
+const STATUS_MARK: Record<CheckStatus, string> = { passed: '✓', failed: '✗', pending: '…', info: 'i' }
 
 export interface TaskGroup {
   id: string
@@ -24,6 +25,24 @@ export function groupByTask(checks: readonly TwinCheck[], tasks: LabInfo['tasks'
   return [...groups.values()].filter((g) => g.checks.length > 0)
 }
 
+// The task's hints stay hidden until the learner asks, so trying first is the default.
+function HintToggle({ hints, task }: { hints: string[]; task: string }) {
+  const [open, setOpen] = useState(false)
+  return (
+    <>
+      {' '}
+      <button className="hint-toggle" data-task={task} aria-expanded={open} onClick={() => setOpen(!open)} style={{ fontSize: 11 }}>
+        Gợi ý
+      </button>
+      {open && (
+        <ul className="hints" style={{ margin: '2px 0 0', paddingLeft: 18 }}>
+          {hints.map((h, i) => <li key={i}>{h}</li>)}
+        </ul>
+      )}
+    </>
+  )
+}
+
 export function CheckPanel({ twin, lab, selected, onSelect, theme }: {
   twin: TwinState
   lab: LabInfo | null
@@ -31,18 +50,23 @@ export function CheckPanel({ twin, lab, selected, onSelect, theme }: {
   onSelect: (checkId: string | null) => void
   theme: Theme
 }) {
-  const passed = twin.checks.filter((c) => c.status === 'passed').length
-  const colour: Record<CheckStatus, string> = { passed: theme.achieved, failed: theme.failed, pending: theme.ghost.label }
+  // An info check (a configuration analysis, not graded) is listed but not counted.
+  const graded = twin.checks.filter((c) => c.status !== 'info')
+  const passed = graded.filter((c) => c.status === 'passed').length
+  const colour: Record<CheckStatus, string> = { passed: theme.achieved, failed: theme.failed, pending: theme.ghost.label, info: theme.ghost.label }
   return (
     // Folds away to the summary line, since the open list covers part of the scene on a small window.
     <details id="check-panel" open aria-label="Kiểm tra" style={{ marginTop: 8 }}>
       <summary style={{ cursor: 'pointer' }}>
-        <b>Kiểm tra</b> · <span id="check-summary">{passed}/{twin.checks.length} đạt</span>
+        <b>Kiểm tra</b> · <span id="check-summary">{passed}/{graded.length} đạt</span>
       </summary>
       <div style={{ maxHeight: '40vh', overflow: 'auto' }}>
         {groupByTask(twin.checks, lab?.tasks).map((g) => (
           <div key={g.id} className="check-task" data-task={g.id} style={{ marginTop: 6 }}>
-            <div style={{ fontSize: 12, opacity: 0.85 }}>{g.text}</div>
+            <div style={{ fontSize: 12, opacity: 0.85 }}>
+              {g.text}
+              {(lab?.hints[g.id]?.length ?? 0) > 0 && <HintToggle hints={lab!.hints[g.id]} task={g.id} />}
+            </div>
             <ul style={{ listStyle: 'none', margin: 0, padding: 0 }}>
               {g.checks.map((c) => {
                 const on = selected === c.id

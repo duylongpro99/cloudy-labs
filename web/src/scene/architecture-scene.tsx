@@ -21,10 +21,10 @@ import { TrayLayer } from './tray-layer'
 export function ArchitectureScene({ cfg, onDone }: { cfg: BenchConfig; onDone: (r: BenchResult) => void }) {
   const theme = THEMES[cfg.theme]
   const fixture = useMemo(() => {
-    const graph = syntheticGraph(42)
+    const graph = syntheticGraph(42, cfg.mixed)
     const scene = graphToScene(graph)
     return cfg.ghosts ? mergeTwin(scene, syntheticTwin(graph, cfg.ghosts), true).scene : scene
-  }, [cfg.ghosts])
+  }, [cfg.ghosts, cfg.mixed])
   const layout = useMemo(() => computeLayout(fixture), [fixture])
   const placements = useMemo(() => scenePlacements(fixture, layout), [fixture, layout])
   const anchors = useMemo(() => edgeAnchors(placements), [placements])

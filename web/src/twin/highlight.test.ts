@@ -46,8 +46,8 @@ describe('highlightFor', () => {
 
   it('keeps the trays that hold a lit object, so only the others are dimmed', () => {
     const kept = withContainers(highlightFor('nat-in-public-subnet', twin, scene), scene)
-    // ghost NAT -> ghost public subnet -> real az -> VPC -> region; the ghost EIP sits in the region.
-    expect(kept).toEqual(new Set(['ghost:nat', 'ghost:eip', 'ghost:public-1', 'vpc-149d0439/us-east-1a', 'vpc-149d0439', 'us-east-1']))
+    // ghost NAT -> ghost public subnet -> real az -> VPC -> region -> account; the ghost EIP sits in the region.
+    expect(kept).toEqual(new Set(['ghost:nat', 'ghost:eip', 'ghost:public-1', 'vpc-149d0439/ap-southeast-2a', 'vpc-149d0439', 'ap-southeast-2', '000000000000']))
   })
 })
 

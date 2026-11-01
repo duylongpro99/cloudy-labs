@@ -1,27 +1,13 @@
 // Which node an API call "flies" to (PRD F3.6): the node of the kind the action names that the
 // next graph added, else one whose props changed, else one it removed. null means the region tray.
-import type { AwsKind } from '../scene/aws-objects'
+// Which kinds an action names comes from the registry (`view.actions`).
+import { actionKinds } from '../registry/registry'
 import type { SceneGraph } from './graph-to-scene'
 
-// The first noun the action name contains wins.
-const ACTION_KINDS: [string, AwsKind[]][] = [
-  ['Vpc', ['vpc']],
-  ['Subnet', ['subnet-public', 'subnet-private']],
-  ['InternetGateway', ['igw']],
-  ['NatGateway', ['nat']],
-  ['Route', ['route-table']],
-  ['SecurityGroup', ['security-group']],
-  ['Address', ['elastic-ip']],
-  ['KeyPair', ['key-pair']],
-  ['Instance', ['instance']],
-]
+export { actionKinds }
 
-export function actionKinds(action: string): AwsKind[] {
-  return ACTION_KINDS.find(([noun]) => action.includes(noun))?.[1] ?? []
-}
-
-export function flyTarget(action: string, before: SceneGraph, after: SceneGraph): string | null {
-  const kinds = new Set<string>(actionKinds(action))
+export function flyTarget(action: string, before: SceneGraph, after: SceneGraph, service?: string): string | null {
+  const kinds = new Set<string>(actionKinds(action, service))
   const of = (g: SceneGraph) => [...g.nodesById.values()].filter((n) => kinds.has(n.kind))
   const was = new Map(of(before).map((n) => [n.id, n]))
   const now = of(after)

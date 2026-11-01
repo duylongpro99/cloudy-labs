@@ -20,8 +20,15 @@ describe('graphToScene with the lab 6 + 7 golden graph', () => {
 
   it('draws every resource', () => {
     expect(new Set(placements.map((p) => p.id))).toEqual(
-      new Set(graph.nodes.filter((n) => n.kind !== 'az').map((n) => n.id)),
+      // AZs are drawn as tray badges and the empty global group is left out.
+      new Set(graph.nodes.filter((n) => n.kind !== 'az' && n.kind !== 'global').map((n) => n.id)),
     )
+  })
+
+  it('roots the scene at the account, with the region inside it', () => {
+    expect(scene.nodes.filter((n) => n.parent === null).map((n) => n.kind)).toEqual(['account'])
+    expect(parentOf.get('ap-southeast-2')).toBe('000000000000')
+    expect(parentOf.has('global')).toBe(false)
   })
 
   it('puts the instance in the subnet the graph says', () => {
@@ -43,7 +50,7 @@ describe('graphToScene with the lab 6 + 7 golden graph', () => {
       ]),
     )
     // The default security groups are attached to nothing, so they stand on their own in their VPC.
-    expect(parentOf.get('sg-default-us-east-1')).toBe('vpc-default-us-east-1')
+    expect(parentOf.get('sg-default-ap-southeast-2')).toBe('vpc-default-ap-southeast-2')
   })
 
   it('keeps route, association and uses-key edges with their kind', () => {
@@ -61,19 +68,42 @@ describe('graphToScene with the lab 6 + 7 golden graph', () => {
 })
 
 describe('graphToScene edge cases', () => {
-  const region = { id: 'us-east-1', kind: 'region' as const, label: 'us-east-1', props: {} }
-  const base: ResourceGraph = { version: 1, takenAt: '', emulator: 'floci', status: 'ok', nodes: [region], contains: [], edges: [], warnings: [] }
+  const account = { id: '000000000000', kind: 'account' as const, label: '000000000000', props: {} }
+  const region = { id: 'ap-southeast-2', kind: 'region' as const, label: 'ap-southeast-2', props: {} }
+  const global = { id: 'global', kind: 'global' as const, label: 'Toàn cục', props: {} }
+  const base: ResourceGraph = {
+    version: 1, takenAt: '', emulator: 'floci', status: 'ok', nodes: [account, region, global],
+    contains: [{ parent: account.id, child: region.id }, { parent: account.id, child: global.id }], edges: [], warnings: [],
+  }
 
-  it('shows the region alone when the emulator is down', () => {
+  it('shows the account and its regions alone when the emulator is down', () => {
     const g = golden()
     const scene = graphToScene({ ...g, status: 'emulator-down' })
-    expect(scene.nodes).toEqual([{ id: 'us-east-1', label: 'us-east-1', kind: 'region', parent: null }])
+    expect(scene.nodes).toEqual([
+      { id: '000000000000', label: '000000000000', kind: 'account', parent: null },
+      { id: 'ap-southeast-2', label: 'ap-southeast-2', kind: 'region', parent: '000000000000' },
+    ])
     expect(scene.edges).toEqual([])
   })
 
-  it('an empty graph is just the region tray', () => {
+  it('an empty graph is the account tray holding the region tray', () => {
     const scene = graphToScene(base)
-    expect(computeLayout(scene).groups).toHaveLength(1)
+    expect(computeLayout(scene).groups.map((g) => g.kind)).toEqual(['account', 'region'])
+  })
+
+  it('lays regions side by side and draws the global group once it holds something', () => {
+    const eu = { id: 'eu-west-1', kind: 'region' as const, label: 'eu-west-1', props: {} }
+    const user = { id: 'user-1', kind: 'mystery-user', label: 'u', props: {} }
+    const scene = graphToScene({
+      ...base,
+      nodes: [...base.nodes, eu, user],
+      contains: [...base.contains, { parent: account.id, child: eu.id }, { parent: global.id, child: user.id }],
+    })
+    const groups = computeLayout(scene).groups
+    const at = (id: string) => groups.find((g) => g.node.id === id)!
+    expect(at('ap-southeast-2').z).toBe(at('eu-west-1').z)
+    expect(at('eu-west-1').x).toBeGreaterThan(at('ap-southeast-2').x)
+    expect(at('global').x).toBeGreaterThan(at('eu-west-1').x)
   })
 
   it('gives a security group shared by two instances one badge per instance', () => {
@@ -84,9 +114,10 @@ describe('graphToScene edge cases', () => {
     const sg = { id: 'sg-1', kind: 'security-group' as const, label: 'web', props: {} }
     const scene = graphToScene({
       ...base,
-      nodes: [region, vpc, az, subnet, i('i-1'), i('i-2'), sg],
+      nodes: [account, region, vpc, az, subnet, i('i-1'), i('i-2'), sg],
       contains: [
-        { parent: 'us-east-1', child: 'vpc-1' },
+        { parent: account.id, child: region.id },
+        { parent: 'ap-southeast-2', child: 'vpc-1' },
         { parent: 'vpc-1', child: 'vpc-1/a' },
         { parent: 'vpc-1/a', child: 'subnet-1' },
         { parent: 'subnet-1', child: 'i-1' },
@@ -105,10 +136,28 @@ describe('graphToScene edge cases', () => {
 })
 
 describe('parseGraph', () => {
-  it('rejects a graph with an unknown kind', () => {
+  it('accepts kinds and edge kinds this build does not know and draws them as fallbacks', () => {
     const g = JSON.parse(readFileSync(GOLDEN, 'utf8'))
-    g.nodes[0].kind = 'lambda'
-    expect(() => parseGraph(g)).toThrow(/unknown kind lambda/)
+    const region = g.nodes.find((n: { kind: string }) => n.kind === 'region').id
+    g.nodes.push({ id: 'thing-1', kind: 'mystery-thing', label: '', props: {} })
+    g.contains.push({ parent: region, child: 'thing-1' })
+    g.edges.push({ id: 'weird:1', kind: 'weird-link', from: 'thing-1', to: region })
+    const scene = graphToScene(parseGraph(g))
+    expect(scene.nodes.find((n) => n.id === 'thing-1')).toMatchObject({ kind: 'mystery-thing', label: 'mystery-thing · thing-1', parent: region })
+    expect(scene.edges.find((e) => e.from === 'thing-1')).toMatchObject({ kind: 'weird-link' })
+    expect(() => scenePlacements(scene, computeLayout(scene))).not.toThrow()
+  })
+
+  it('rejects a containment that names a missing node', () => {
+    const g = JSON.parse(readFileSync(GOLDEN, 'utf8'))
+    g.contains.push({ parent: 'nope', child: g.nodes[0].id })
+    expect(() => parseGraph(g)).toThrow(/not in the graph/)
+  })
+
+  it('rejects a node without a string kind', () => {
+    const g = JSON.parse(readFileSync(GOLDEN, 'utf8'))
+    g.nodes[0].kind = 7
+    expect(() => parseGraph(g)).toThrow(/"kind"/)
   })
 
   it('rejects something that is not a graph', () => {

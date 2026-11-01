@@ -1,17 +1,12 @@
 // Synthetic, seeded resource tree for the benchmark: exactly 200 nodes and 60 edges.
 // This is a performance fixture, not learner-facing data.
-import type { AwsKind } from './aws-objects'
-
-export type GroupKind = 'region' | 'vpc' | 'az' | 'subnet-public' | 'subnet-private'
-export type AttachmentKind = Extract<AwsKind, 'security-group' | 'elastic-ip'>
-// A security group or Elastic IP attached to nothing has no host to sit on, so it is drawn as a leaf.
-export type LeafKind = 'instance' | 'nat' | 'igw' | 'route-table' | 'key-pair' | AttachmentKind
-export type EdgeKind = 'route' | 'association' | 'uses-key'
+// Kinds are registry kind names (src/registry/registry.ts); a kind the registry does not list
+// is still drawn, as a fallback object.
 
 export interface FixtureNode {
   id: string
   label: string
-  kind: GroupKind | LeafKind
+  kind: string
   parent: string | null
   ghost?: boolean // part of the lab's target architecture not built yet (PRD F6.2)
   achieved?: boolean // a real resource a target node is bound to
@@ -20,14 +15,15 @@ export interface FixtureNode {
 export interface FixtureEdge {
   from: string
   to: string
-  kind?: EdgeKind // absent in the benchmark fixture
+  kind?: string // absent in the benchmark fixture
   label?: string
 }
 
-// Resources drawn as a badge on another node rather than as a node of their own.
+// Resources drawn as a badge on another node rather than as a node of their own. One attached to
+// nothing has no host to sit on, so it is drawn as a leaf instead.
 export interface FixtureAttachment {
   id: string
-  kind: AttachmentKind
+  kind: string
   host: string
   achieved?: boolean // like FixtureNode.achieved, for a bound security group or Elastic IP
 }
@@ -60,7 +56,8 @@ export function buildFixture(seed = 42): Fixture {
   const attachments: FixtureAttachment[] = []
   const add = (n: FixtureNode) => (nodes.push(n), n.id)
 
-  const region = add({ id: 'region', label: 'Vùng us-east-1', kind: 'region', parent: null })
+  const account = add({ id: 'account', label: '000000000000', kind: 'account', parent: null })
+  const region = add({ id: 'region', label: 'Vùng ap-southeast-2', kind: 'region', parent: account })
   add({ id: 'key-0', label: 'Cặp khoá lab', kind: 'key-pair', parent: region })
   const subnets: { id: string; vpc: string; public: boolean; az: number }[] = []
   const igws: string[] = []
@@ -70,7 +67,7 @@ export function buildFixture(seed = 42): Fixture {
     igws.push(add({ id: `igw-${v}`, label: `Cổng Internet ${v + 1}`, kind: 'igw', parent: vpc }))
     add({ id: `rtb-${v}`, label: `Bảng định tuyến ${v + 1}`, kind: 'route-table', parent: vpc })
     for (let z = 0; z < 3; z++) {
-      const az = add({ id: `az-${v}-${z}`, label: `us-east-1${'abc'[z]}`, kind: 'az', parent: vpc })
+      const az = add({ id: `az-${v}-${z}`, label: `ap-southeast-2${'abc'[z]}`, kind: 'az', parent: vpc })
       for (const isPublic of [true, false]) {
         const id = add({
           id: `subnet-${v}-${z}-${isPublic ? 'pub' : 'pri'}`,

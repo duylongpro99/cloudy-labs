@@ -68,6 +68,7 @@ export function ApiFlyLayer({
       pending.current = pending.current.filter((q) => q !== p)
       clearTimeout(p.timer)
       const { scene, anchors } = latest.current
+      // Events do not say their region: an unknown target lands on the first region tray.
       const region = scene.nodes.find((n) => n.kind === 'region')
       // A removed target is no longer in the anchors, but it is still shrinking where it was.
       const to = (target && (anchors.get(target) ?? p.beforeAnchors.get(target))) || (region && anchors.get(region.id))
@@ -98,7 +99,7 @@ export function ApiFlyLayer({
 
   useEffect(() => {
     latest.current = { scene, anchors }
-    for (const p of pending.current) if (p.before !== scene) launch(p, flyTarget(p.event.action, p.before, scene))
+    for (const p of pending.current) if (p.before !== scene) launch(p, flyTarget(p.event.action, p.before, scene, p.event.service))
   }, [scene, anchors, launch])
 
   useEffect(() => () => pending.current.forEach((p) => clearTimeout(p.timer)), [])

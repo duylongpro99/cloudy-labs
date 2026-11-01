@@ -9,13 +9,14 @@ import type { BuilderPointer, SceneBuilder } from '../scene/live-scene'
 import type { LabInfo } from './builder-api'
 import { connectOp, connectOpsFrom, type ConnectCheck } from './connect-rules'
 import { acceptsDrop, createOpFor, dropTarget, kindLabel } from './drop-targets'
-import { createDraft, fixedDraft, ingressDraft, SUBNET_KINDS } from './form-model'
+import { createDraft, fixedDraft, ingressDraft, opsOn, SUBNET_KINDS, targetDraft } from './form-model'
 import { busy, useBuilder, type Builder } from './use-builder'
 
 export interface SceneBuilderApi extends Builder {
   scene: SceneBuilder
   startDrag: (kind: string) => void
   actionsFor: (selected: string) => PanelAction[]
+  deletesFor: (id: string) => PanelAction[]
 }
 
 // The first object or tray under the pointer that the edge may end on; otherwise why the nearest cannot.
@@ -113,8 +114,18 @@ export function useSceneBuilder(graph: ResourceGraph | null, scene: SceneGraph |
     if (node.kind === 'security-group' && ingress) {
       out.push({ id: 'action-add-ingress', label: 'Thêm rule inbound', run: () => dispatch({ type: 'open', draft: ingressDraft(ingress, node.id) }) })
     }
+    for (const op of opsOn(ops, node.kind, ['attribute', 'modify'])) {
+      out.push({ id: `action-${op.name}`, label: op.title ?? op.name, run: () => dispatch({ type: 'open', draft: targetDraft(op, node) }) })
+    }
     return out
   }, [scene, ops, dispatch])
 
-  return { ...builder, scene: sceneBuilder, startDrag, actionsFor }
+  // Right-click on a node: the delete ops for its kind. Protected resources never reach the scene.
+  const deletesFor = useMemo(() => (id: string): PanelAction[] => {
+    const node = scene?.nodesById.get(resourceId(id))
+    if (!node || busy(state)) return []
+    return opsOn(ops, node.kind, ['delete']).map((op) => ({ id: `delete-${op.name}`, label: op.title ?? op.name, run: () => dispatch({ type: 'open', draft: targetDraft(op, node) }) }))
+  }, [scene, ops, state, dispatch])
+
+  return { ...builder, scene: sceneBuilder, startDrag, actionsFor, deletesFor }
 }

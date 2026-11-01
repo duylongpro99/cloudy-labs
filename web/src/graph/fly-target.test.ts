@@ -3,7 +3,8 @@ import { actionKinds, flyLabel, flyTarget } from './fly-target'
 import { graphToScene } from './graph-to-scene'
 import type { GraphNode, ResourceGraph } from './types'
 
-const region: GraphNode = { id: 'us-east-1', kind: 'region', label: 'us-east-1', props: {} }
+const account: GraphNode = { id: '000000000000', kind: 'account', label: '000000000000', props: {} }
+const region: GraphNode = { id: 'ap-southeast-2', kind: 'region', label: 'ap-southeast-2', props: {} }
 const vpc = (id: string, props: Record<string, unknown> = {}): GraphNode => ({ id, kind: 'vpc', label: id, props })
 const scene = (...nodes: GraphNode[]) => {
   const g: ResourceGraph = {
@@ -11,8 +12,8 @@ const scene = (...nodes: GraphNode[]) => {
     takenAt: '',
     emulator: 'floci',
     status: 'ok',
-    nodes: [region, ...nodes],
-    contains: nodes.map((n) => ({ parent: region.id, child: n.id })),
+    nodes: [account, region, ...nodes],
+    contains: [{ parent: account.id, child: region.id }, ...nodes.map((n) => ({ parent: region.id, child: n.id }))],
     edges: [],
     warnings: [],
   }
@@ -23,7 +24,7 @@ describe('flyTarget', () => {
   it('maps actions to the kinds they touch', () => {
     expect(actionKinds('CreateVpc')).toEqual(['vpc'])
     expect(actionKinds('RunInstances')).toEqual(['instance'])
-    expect(actionKinds('AssociateRouteTable')).toEqual(['route-table'])
+    expect(actionKinds('AssociateRouteTable', 'ec2')).toEqual(['route-table'])
     expect(actionKinds('AuthorizeSecurityGroupIngress')).toEqual(['security-group'])
     expect(actionKinds('DescribeRegions')).toEqual([])
   })

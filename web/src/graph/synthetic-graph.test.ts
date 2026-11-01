@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest'
 import { buildFixture, TOTAL_EDGES, TOTAL_NODES } from '../scene/fixture'
 import { graphToScene } from './graph-to-scene'
-import { syntheticGraph } from './synthetic-graph'
+import { mixedKinds, syntheticGraph } from './synthetic-graph'
 import { parseGraph } from './types'
 
 describe('syntheticGraph', () => {
@@ -17,5 +17,15 @@ describe('syntheticGraph', () => {
 
   it('is the same for the same seed', () => {
     expect(syntheticGraph(7)).toEqual(syntheticGraph(7))
+  })
+
+  it('mixed swaps instances for every RDS, S3, Lambda and IAM block kind at the same size', () => {
+    const mixed = syntheticGraph(42, true)
+    const kinds = new Set(mixed.nodes.map((n) => n.kind))
+    expect(mixedKinds().length).toBeGreaterThan(10)
+    for (const k of mixedKinds()) expect(kinds.has(k)).toBe(true)
+    expect(kinds.has('instance')).toBe(true)
+    const scene = graphToScene(parseGraph(mixed))
+    expect(scene.nodes).toHaveLength(TOTAL_NODES)
   })
 })

@@ -1,7 +1,8 @@
 // Turns the laid-out fixture into object placements: blocks for leaves, badges on trays,
 // and attachment badges on their host blocks.
-import type { AwsKind, AwsObjectPlacement } from './aws-objects'
-import { attachPosition, MANIFEST_BY_KIND, objectHeight, trayBadgePosition, type Vec3 } from './aws-objects'
+import { kindView } from '../registry/registry'
+import type { AwsObjectPlacement } from './aws-objects'
+import { attachPosition, objectHeight, trayBadgePosition, type Vec3 } from './aws-objects'
 import type { Fixture } from './fixture'
 import type { Layout } from './layout'
 import { TRAY_H } from './layout'
@@ -9,12 +10,12 @@ import { TRAY_H } from './layout'
 export function scenePlacements(fixture: Fixture, layout: Layout): AwsObjectPlacement[] {
   const out: AwsObjectPlacement[] = []
   for (const g of layout.groups) {
-    if (MANIFEST_BY_KIND[g.kind].role !== 'tray-badge') continue
+    if (kindView(g.kind).role !== 'tray-badge') continue
     out.push({ id: g.node.id, kind: g.kind, position: trayBadgePosition(g, g.y + TRAY_H), ...(g.node.ghost && { ghost: true }) })
   }
   const hosts = new Map<string, AwsObjectPlacement>()
   for (const l of layout.leaves) {
-    const p: AwsObjectPlacement = { id: l.node.id, kind: l.node.kind as AwsKind, position: [l.x, l.y, l.z], ...(l.node.ghost && { ghost: true }) }
+    const p: AwsObjectPlacement = { id: l.node.id, kind: l.node.kind, position: [l.x, l.y, l.z], ...(l.node.ghost && { ghost: true }) }
     hosts.set(p.id, p)
     out.push(p)
   }
@@ -32,7 +33,7 @@ export function scenePlacements(fixture: Fixture, layout: Layout): AwsObjectPlac
 // Where an edge meets each object: the centre of its top face. Groups are reached through their tray badge.
 export interface EdgeAnchor {
   at: Vec3
-  kind: AwsKind
+  kind: string
 }
 
 export function edgeAnchors(placements: readonly AwsObjectPlacement[]): Map<string, EdgeAnchor> {

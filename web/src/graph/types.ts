@@ -1,13 +1,14 @@
 // Resource graph as the lab-server sends it. Mirrors server/src/cloudy_labs/graph/schema.py;
 // graph-to-scene.test.ts reads the server's golden graph so the two cannot drift apart.
-import { REQUIRED_KINDS, type AwsKind } from '../scene/aws-objects'
+// Kinds and edge kinds are registry names; one this build does not know still parses and is drawn
+// as a fallback object or a reference edge.
 
-export type GraphEdgeKind = 'route' | 'association' | 'attached' | 'uses-key'
+export type GraphEdgeKind = string
 export type GraphStatus = 'ok' | 'emulator-down'
 
 export interface GraphNode {
   id: string
-  kind: AwsKind
+  kind: string
   label: string
   props: Record<string, unknown>
 }
@@ -46,7 +47,8 @@ export interface ApiEvent {
 
 // Twin mode (PRD F6): the open lab's checks and the parts of its target architecture not built
 // yet. Mirrors TwinState in server/src/cloudy_labs/twin.py; merge-twin.test.ts reads the golden twin.
-export type CheckStatus = 'passed' | 'failed' | 'pending' // pending: not run against the current state
+// pending: not run against the current state; info: a configuration analysis shown, not graded
+export type CheckStatus = 'passed' | 'failed' | 'pending' | 'info'
 
 export interface TwinCheck {
   id: string
@@ -59,7 +61,7 @@ export interface TwinCheck {
 
 export interface TwinGhost {
   id: string // "ghost:" + target node id
-  kind: AwsKind
+  kind: string
   label: string
   parent: string // a ghost id, or the id of the real resource its parent is bound to
   checks: string[]
@@ -78,10 +80,11 @@ export type ServerMessage =
   | { type: 'twin'; twin: TwinState }
   | ({ type: 'api-event' } & ApiEvent)
 
-const CHECK_STATUSES: readonly CheckStatus[] = ['passed', 'failed', 'pending']
-const EDGE_KINDS: readonly GraphEdgeKind[] = ['route', 'association', 'attached', 'uses-key']
+const CHECK_STATUSES: readonly CheckStatus[] = ['passed', 'failed', 'pending', 'info']
+const isString = (v: unknown): v is string => typeof v === 'string'
 
-// Minimal shape check: enough to fail loudly on a schema mismatch instead of drawing garbage.
+// Structure check: enough to fail loudly on a schema mismatch instead of drawing garbage.
+// Any kind or edge kind is accepted; only a malformed graph is refused.
 export function parseGraph(json: unknown): ResourceGraph {
   const g = json as Partial<ResourceGraph> | null
   if (!g || typeof g !== 'object') throw new Error('graph: not an object')
@@ -90,11 +93,16 @@ export function parseGraph(json: unknown): ResourceGraph {
   }
   if (typeof g.version !== 'number') throw new Error('graph: missing "version"')
   if (g.status !== 'ok' && g.status !== 'emulator-down') throw new Error(`graph: unknown status ${String(g.status)}`)
+  const ids = new Set<string>()
   for (const n of g.nodes!) {
-    if (!REQUIRED_KINDS.includes(n.kind)) throw new Error(`graph: node ${n.id} has unknown kind ${n.kind}`)
+    if (!n || !isString(n.id) || !isString(n.kind)) throw new Error('graph: a node without a string "id" and "kind"')
+    ids.add(n.id)
+  }
+  for (const c of g.contains!) {
+    if (!c || !ids.has(c.parent) || !ids.has(c.child)) throw new Error(`graph: contains ${c?.parent} > ${c?.child} names a node that is not in the graph`)
   }
   for (const e of g.edges!) {
-    if (!EDGE_KINDS.includes(e.kind)) throw new Error(`graph: edge ${e.id} has unknown kind ${e.kind}`)
+    if (!e || !isString(e.id) || !isString(e.kind) || !isString(e.from) || !isString(e.to)) throw new Error('graph: an edge without string "id", "kind", "from" and "to"')
   }
   return g as ResourceGraph
 }
@@ -108,7 +116,7 @@ export function parseTwin(json: unknown): TwinState {
     if (!CHECK_STATUSES.includes(c.status)) throw new Error(`twin: check ${c.id} has unknown status ${c.status}`)
   }
   for (const g of t.ghosts) {
-    if (!REQUIRED_KINDS.includes(g.kind) || g.kind === 'region') throw new Error(`twin: ghost ${g.id} has unknown kind ${g.kind}`)
+    if (!g || !isString(g.id) || !isString(g.kind) || !isString(g.parent)) throw new Error('twin: a ghost without string "id", "kind" and "parent"')
   }
   return t as TwinState
 }

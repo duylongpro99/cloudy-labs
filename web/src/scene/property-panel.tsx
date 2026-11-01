@@ -94,7 +94,7 @@ export function PropertyPanel({ selected, scene, edges, theme, onClose, actions 
       </div>
       {node && <div style={muted}>{node.kind}</div>}
       {!current && (
-        <p id="panel-deleted" style={{ color: theme.edges.usesKey, fontWeight: 600 }}>
+        <p id="panel-deleted" style={{ color: theme.edges.reference, fontWeight: 600 }}>
           Tài nguyên đã bị xoá
         </p>
       )}

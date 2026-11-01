@@ -54,8 +54,30 @@ export function suggestName(graph: ResourceGraph, lab: LabInfo, kind: string): s
   for (let i = 1; ; i++) if (!names.has(`${prefix}-${i}`)) return `${prefix}-${i}`
 }
 
+// How a field that takes a node is filled: the node's id, or its label (a name).
+export const refValue = (node: { id: string; label: string }, by: 'id' | 'label' = 'id'): string => (by === 'label' ? node.label : node.id)
+
+export const refByOf = (op: OpSpec, field: string): 'id' | 'label' => op.fields?.find((f) => f.name === field)?.refBy ?? 'id'
+
+// A generated op's form values: each field it shows, from the op's defaults or empty.
+export function fieldValues(op: OpSpec): Params {
+  const out: Params = {}
+  for (const f of op.fields ?? []) if (!f.advanced || op.defaults?.[f.name] !== undefined) out[f.name] = op.defaults?.[f.name] ?? ''
+  return out
+}
+
 // The form after dropping a create op on a tray.
 export function createDraft(op: OpSpec, tray: { id: string; kind: string; label: string }, graph: ResourceGraph, lab: LabInfo): Draft {
+  if (op.generated) {
+    const params = fieldValues(op)
+    const locked: string[] = []
+    if (op.nameField && op.nameField in params) params[op.nameField] = suggestName(graph, lab, op.creates ?? 'resource')
+    if (op.container) {
+      params[op.container.param] = refValue(tray, op.container.by)
+      locked.push(op.container.param)
+    }
+    return { op, params, locked, rev: 0 }
+  }
   const params: Params = { name: suggestName(graph, lab, op.creates ?? 'resource') }
   const locked: string[] = []
   const vpc = vpcOf(graph, tray.id)
@@ -116,9 +138,22 @@ export const groupsIn = (graph: ResourceGraph, vpc: string): GraphNode[] =>
 // Fields of a connect or attribute op the learner still fills in; every other id comes from the gesture.
 const FREE_FIELDS = new Set(['destination', 'protocol', 'port', 'cidr'])
 
+// A generated op's own `free` fields stay editable instead.
 export function fixedDraft(op: OpSpec, params: Params): Draft {
+  if (op.generated) {
+    const free = new Set(op.fields?.filter((f) => f.free).map((f) => f.name))
+    return { op, params: { ...fieldValues(op), ...params }, locked: Object.keys(params).filter((k) => !free.has(k)), rev: 0 }
+  }
   return { op, params, locked: Object.keys(params).filter((k) => !FREE_FIELDS.has(k)), rev: 0 }
 }
+
+// The form of a modify, attribute or delete op aimed at one node.
+export const targetDraft = (op: OpSpec, node: { id: string; label: string }): Draft =>
+  fixedDraft(op, op.targetParam ? { [op.targetParam]: refValue(node, refByOf(op, op.targetParam)) } : {})
+
+// The generated ops that act on a node of `kind`, by gesture.
+export const opsOn = (ops: readonly OpSpec[], kind: string, gestures: readonly OpSpec['gesture'][]): OpSpec[] =>
+  ops.filter((o) => o.generated && gestures.includes(o.gesture) && !!o.targetParam && (o.targets ?? []).includes(kind))
 
 // A new inbound rule for a security group, suggesting the web server's rule.
 export const ingressDraft = (op: OpSpec, groupId: string): Draft => fixedDraft(op, { groupId, protocol: 'tcp', port: '80', cidr: '0.0.0.0/0' })

@@ -1,7 +1,9 @@
 // Deterministic layout computed bottom-up from the containment tree (PRD F3.3):
 // leaves sit on a grid inside their subnet, and each group is sized from its children.
-// Children are ordered by (kind, id), so the layout depends on the state alone, not on the order it arrived in.
-import type { Fixture, FixtureNode, GroupKind } from './fixture'
+// Children are ordered by (kind order, id), so the layout depends on the state alone, not on the order it arrived in.
+// A node is a group when its kind's registry view says so or when it holds children.
+import { kindView } from '../registry/registry'
+import type { Fixture, FixtureNode } from './fixture'
 
 export const CELL = 2.2 // leaf footprint incl. gap
 export const TRAY_H = 0.16 // tray thickness
@@ -19,7 +21,7 @@ export interface Box {
 
 export interface LaidOutGroup extends Box {
   node: FixtureNode
-  kind: GroupKind
+  kind: string
   level: number
   y: number
 }
@@ -37,19 +39,14 @@ export interface Layout {
   bounds: Box
 }
 
-const isGroup = (n: FixtureNode) => ['region', 'vpc', 'az', 'subnet-public', 'subnet-private'].includes(n.kind)
-
-const KIND_ORDER: readonly FixtureNode['kind'][] = [
-  'region', 'vpc', 'az', 'subnet-public', 'subnet-private',
-  'igw', 'nat', 'route-table', 'instance', 'key-pair', 'security-group', 'elastic-ip',
-]
 const byKindThenId = (a: FixtureNode, b: FixtureNode) =>
-  KIND_ORDER.indexOf(a.kind) - KIND_ORDER.indexOf(b.kind) || (a.id < b.id ? -1 : a.id > b.id ? 1 : 0)
+  kindView(a.kind).order - kindView(b.kind).order || (a.kind < b.kind ? -1 : a.kind > b.kind ? 1 : 0) || (a.id < b.id ? -1 : a.id > b.id ? 1 : 0)
 
 export function computeLayout(f: Fixture): Layout {
   const children = new Map<string, FixtureNode[]>()
   for (const n of f.nodes) if (n.parent) children.set(n.parent, [...(children.get(n.parent) ?? []), n])
   for (const kids of children.values()) kids.sort(byKindThenId)
+  const isGroup = (n: FixtureNode) => kindView(n.kind).group || children.has(n.id)
 
   // Pass 1 (bottom-up): size of every group.
   const size = new Map<string, { w: number; d: number }>()
@@ -62,8 +59,8 @@ export function computeLayout(f: Fixture): Layout {
     const leafW = leaves.length ? cols * CELL : 0
     const leafD = leaves.length ? rows * CELL : 0
     const sub = groups.map(measure)
-    // AZ stacks subnets front-to-back; everything else lays groups left-to-right.
-    const stack = n.kind === 'az'
+    // A stacking group (an AZ) puts its child groups front-to-back; the others lay them left-to-right.
+    const stack = kindView(n.kind).stack
     const gW = stack ? Math.max(0, ...sub.map((s) => s.w)) : sub.reduce((a, s) => a + s.w, 0) + GAP * Math.max(0, sub.length - 1)
     const gD = stack ? sub.reduce((a, s) => a + s.d, 0) + GAP * Math.max(0, sub.length - 1) : Math.max(0, ...sub.map((s) => s.d))
     const w = Math.max(leafW, gW) + PAD * 2
@@ -81,7 +78,7 @@ export function computeLayout(f: Fixture): Layout {
   const place = (n: FixtureNode, x: number, z: number, level: number) => {
     const { w, d } = size.get(n.id)!
     const y = level * LEVEL_RISE
-    groups.push({ node: n, kind: n.kind as GroupKind, level, x, z, w, d, y })
+    groups.push({ node: n, kind: n.kind, level, x, z, w, d, y })
     const kids = children.get(n.id) ?? []
     const leafKids = kids.filter((k) => !isGroup(k))
     const cols = Math.max(1, Math.ceil(Math.sqrt(leafKids.length)))
@@ -99,7 +96,7 @@ export function computeLayout(f: Fixture): Layout {
     for (const g of kids.filter(isGroup)) {
       const s = size.get(g.id)!
       place(g, cx, cz, level + 1)
-      if (n.kind === 'az') cz += s.d + GAP
+      if (kindView(n.kind).stack) cz += s.d + GAP
       else cx += s.w + GAP
     }
   }

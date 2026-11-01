@@ -2,8 +2,7 @@
 // its command, why it is there and what the server found wrong with it. Nothing runs until the
 // learner presses Run on a step or "Run cả chuỗi"; in practice mode the command is copied instead.
 import { useState, type CSSProperties } from 'react'
-import type { LabInfo, Problem } from '../builder/builder-api'
-import { OP_TITLE } from '../builder/builder-panel'
+import { opTitle, type LabInfo, type Problem } from '../builder/builder-api'
 import type { Theme } from '../scene/theme'
 import { CHAT_TURN_CHARS_MAX, type ChatReply, type ChatStep } from './chat-api'
 import { runnable, stepBusy, type Chat, type StepRun } from './use-chat'
@@ -33,8 +32,9 @@ function Problems({ problems, color }: { problems: Problem[]; color: string }) {
   )
 }
 
-function Step({ n, step, run, practice, canRun, locked, warn, onRun }: {
+function Step({ n, title, step, run, practice, canRun, locked, warn, onRun }: {
   n: number
+  title: string
   step: ChatStep
   run: StepRun | null // null: a step of an earlier answer, shown but no longer run from here
   practice: boolean
@@ -49,7 +49,7 @@ function Step({ n, step, run, practice, canRun, locked, warn, onRun }: {
   return (
     <li className="chat-step" data-status={run?.status ?? 'past'} style={{ margin: '8px 0 0' }}>
       <div>
-        <b>Bước {n}:</b> {OP_TITLE[step.op] ?? step.op}
+        <b>Bước {n}:</b> {title}
         {step.deferred && run?.status !== 'done' && (
           <span className="step-deferred" title="Bước này dùng id bước trước tạo; lab-server kiểm nó khi chạy" style={{ marginLeft: 6, fontSize: 11, opacity: 0.75 }}>
             kiểm khi chạy
@@ -73,8 +73,9 @@ function Step({ n, step, run, practice, canRun, locked, warn, onRun }: {
   )
 }
 
-function Answer({ reply, runs, practice, canRun, locked, warn, onRun }: {
+function Answer({ reply, ops, runs, practice, canRun, locked, warn, onRun }: {
   reply: ChatReply
+  ops: LabInfo['ops']
   runs: StepRun[] | null // null: an earlier answer
   practice: boolean
   canRun: boolean
@@ -93,7 +94,7 @@ function Answer({ reply, runs, practice, canRun, locked, warn, onRun }: {
       {reply.steps.length > 0 && (
         <ol style={{ margin: 0, paddingLeft: 0, listStyle: 'none' }}>
           {reply.steps.map((step, i) => (
-            <Step key={i} n={i + 1} step={step} run={runs?.[i] ?? null} practice={practice} canRun={canRun} locked={locked} warn={warn} onRun={() => onRun(i)} />
+            <Step key={i} n={i + 1} title={opTitle(ops, step.op)} step={step} run={runs?.[i] ?? null} practice={practice} canRun={canRun} locked={locked} warn={warn} onRun={() => onRun(i)} />
           ))}
         </ol>
       )}
@@ -135,7 +136,7 @@ export function ChatPanel({ chat, lab, practice, onPractice, builderBusy, theme 
   const [open, setOpen] = useState(true)
   const [text, setText] = useState('')
   const { state } = chat
-  const warn = theme.edges.usesKey
+  const warn = theme.edges.reference
   const latest = state.turns.length - 1
   const busy = stepBusy(state)
   const runs = state.runs
@@ -198,6 +199,7 @@ export function ChatPanel({ chat, lab, practice, onPractice, builderBusy, theme 
                 <div key={i} style={{ marginTop: 8 }}>
                   <Answer
                     reply={t.reply}
+                    ops={lab.ops}
                     runs={i === latest ? runs : null}
                     practice={practice}
                     canRun={lab.canRun}

@@ -20,9 +20,16 @@ export function mergeTwin(scene: SceneGraph, twin: TwinState | null, showGhosts:
   const nodes: FixtureNode[] = scene.nodes.map((n) => (achieved.has(n.id) ? { ...n, achieved: true } : n))
   const attachments: FixtureAttachment[] = scene.attachments.map((a) => (achieved.has(resourceId(a.id)) ? { ...a, achieved: true } : a))
   if (showGhosts) {
-    const region = scene.nodes.find((n) => n.parent === null)!.id
+    const root = scene.nodes.find((n) => n.parent === null)!.id
+    const region = scene.nodes.find((n) => n.kind === 'region')?.id ?? root
     const known = new Set([...real, ...twin.ghosts.map((g) => g.id)])
     for (const g of twin.ghosts) {
+      // The global group is left out of the scene while empty; a ghost of a global kind brings it back.
+      const hidden = scene.nodesById.get(g.parent)
+      if (!known.has(g.parent) && hidden?.kind === 'global') {
+        nodes.push({ id: hidden.id, label: hidden.label, kind: 'global', parent: root })
+        known.add(hidden.id)
+      }
       // A real parent can vanish between the graph and the twin that follows it (a delete).
       const parent = known.has(g.parent) ? g.parent : region
       nodes.push({ id: g.id, label: g.label, kind: g.kind as FixtureNode['kind'], parent, ghost: true })

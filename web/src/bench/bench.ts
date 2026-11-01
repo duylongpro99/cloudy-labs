@@ -20,6 +20,7 @@ export interface BenchConfig {
   suiteIndex: number | null
   zoom: number | null // optional camera zoom override, used for close-up screenshots
   ghosts: number
+  mixed: boolean // most instances become RDS, S3, Lambda and IAM kinds (see syntheticGraph)
 }
 
 export const CANVAS = { width: 1280, height: 800 } // fixed CSS size so every run pushes the same pixels
@@ -41,6 +42,7 @@ export function readConfig(search = location.search): BenchConfig {
     suiteIndex: q.has('suite') ? Number(q.get('i') ?? 0) : null,
     zoom: q.has('zoom') ? Number(q.get('zoom')) : null,
     ghosts: Math.max(0, Math.floor(Number(q.get('ghosts') ?? 0)) || 0),
+    mixed: q.get('kinds') === 'mixed',
   }
 }
 
@@ -52,6 +54,8 @@ export const SUITE: string[] = [
   'view=bench&mode=idle&post=full&theme=light&dpr=2&run=1&warmup=4000',
   // The same scene with about 20 ghosts of a lab target over it.
   'view=bench&mode=bench&post=full&theme=light&dpr=2&run=1&ghosts=20',
+  // The same node count with the RDS, S3, Lambda and IAM kinds in place of most instances.
+  ...THEMES.map((theme) => `view=bench&mode=bench&post=full&theme=${theme}&dpr=2&run=1&kinds=mixed`),
 ]
 
 export function browserName(ua = navigator.userAgent): string {
@@ -84,6 +88,7 @@ export function summarize(cfg: BenchConfig, samples: FrameSample[], extra: Recor
     run: cfg.run,
     mode: cfg.mode,
     ghosts: cfg.ghosts,
+    mixed: cfg.mixed,
     frames: samples.length,
     frameTimeMs: dts.length ? { p50: round(pct(dts, 0.5)), p95: round(pct(dts, 0.95)), p99: round(pct(dts, 0.99)), max: round(dts[dts.length - 1]) } : null,
     avgFps: total ? round((samples.length * 1000) / total) : 0,
@@ -101,7 +106,8 @@ export type BenchResult = ReturnType<typeof summarize>
 
 export function resultName(r: BenchResult) {
   const ghosts = r.ghosts ? `-ghosts${r.ghosts}` : ''
-  return r.mode === 'idle' ? `${r.browser}-idle-run${r.run}` : `${r.browser}-${r.post}-${r.theme}-dpr${r.dpr}${ghosts}-run${r.run}`
+  const mixed = r.mixed ? '-mixed' : ''
+  return r.mode === 'idle' ? `${r.browser}-idle-run${r.run}` : `${r.browser}-${r.post}-${r.theme}-dpr${r.dpr}${ghosts}${mixed}-run${r.run}`
 }
 
 // Saves through the dev-server endpoint (see vite.config.ts); the page also offers a download.

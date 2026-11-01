@@ -1,18 +1,21 @@
-// Prints a markdown table of triangle counts for every manifest icon at several curveSegments values,
+// Prints a markdown table of triangle counts for every registry icon (src/registry/registry.json) at several curveSegments values,
 // plus any extra candidate SVGs given on the command line (e.g. alternatives inside aws-icon-pkg/).
 // Usage: node scripts/glyph-stats.mjs [candidate.svg ...]
-import { readFileSync } from 'node:fs'
+import { existsSync, readFileSync } from 'node:fs'
 import { basename, resolve } from 'node:path'
 import { JSDOM } from 'jsdom'
 
 globalThis.DOMParser = new JSDOM('').window.DOMParser
-const { MANIFEST } = await import('../src/scene/aws-objects/manifest.ts')
+const registry = JSON.parse(readFileSync(resolve(import.meta.dirname, '../src/registry/registry.json'), 'utf8'))
 const { svgToGeometry, triangleCount, GLYPH_TRIANGLE_BUDGET } = await import('../src/scene/aws-objects/svg-to-geometry.ts')
 
 const SEGMENTS = [2, 3, 4, 6]
 const iconDir = resolve(import.meta.dirname, '../src/scene/aws-objects/icons')
 const rows = [
-  ...MANIFEST.filter((e) => e.file).map((e) => ({ name: e.kind, file: resolve(iconDir, e.file), chosen: e.curveSegments ?? 4 })),
+  ...registry.kinds
+    .filter((k) => k.icon && existsSync(resolve(iconDir, k.icon)))
+    .map((k) => ({ name: k.kind, file: resolve(iconDir, k.icon), chosen: k.curveSegments ?? 4 })),
+  { name: '(node dự phòng)', file: resolve(iconDir, 'generic-resource.svg'), chosen: 4 },
   ...process.argv.slice(2).map((f) => ({ name: `ứng viên: ${basename(f)}`, file: resolve(f), chosen: null })),
 ]
 
