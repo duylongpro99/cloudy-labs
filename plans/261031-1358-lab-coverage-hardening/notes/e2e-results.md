@@ -43,4 +43,30 @@ Giới hạn của builder gặp lúc làm: op ingress SG chỉ nhận CIDR, ch�
 
 Lần chạy bằng chat còn tìm ra một lỗi code, đã sửa: sau khi tạo secret, prop `lastChanged` của node secret là `datetime` của botocore, nên `/api/chat` trả 500 ở câu kế tiếp (`json.dumps` không ghi được `datetime`). Prompt giờ ghi `datetime` dạng ISO, giống `/ws`.
 
-Còn mở: validate không kiểm `DBClusterIdentifier` của `create-db-instance` có trỏ tới cluster có thật hoặc tới một bước trước hay không, nên chuỗi thiếu `create-db-cluster` chỉ lộ ra lúc chạy.
+Đã sửa sau (2026-11-01): `DBClusterIdentifier` của `create-db-instance` giờ là tham chiếu tới một `db-cluster`. Validate của chat từ chối instance trỏ tới cluster không có trong cảnh và không do bước nào trước đó tạo, nên chuỗi thiếu `create-db-cluster` bị chặn trước khi chạy.
+
+## Lab-020: VPC ba AZ với NAT theo từng AZ (2026-11-01)
+
+Nội dung lab nằm ở `labs/lab-020/content/lab.md` (gitignored). File người dùng đặt ở `labs/lab-020/lab020.md` không bị ignore, nên đã được chuyển vào `content/`. Lab này dùng để kiểm lại M3 (VPC qua builder) và M6 (twin) bằng một lab labaws thật.
+
+Phần bước làm trên console của trang không tạo NAT Gateway, nhưng sơ đồ kiến trúc, bảng đặt tên và phần kiểm tra của trang đều yêu cầu mỗi AZ một NAT và route `0.0.0.0/0` của app subnet đi tới NAT cùng AZ. `lab.yaml` vì vậy có task `zonal-nat` và chấm route theo từng AZ. Trên Floci, NAT không tốn phí.
+
+| Bước | Lệnh | Kết quả |
+|---|---|---|
+| Coverage | `uv run labctl coverage lab-020 --accept` | `ready-with-caveats`. Hai dòng nhắc "subnet group" bị gắn nhầm với dax/memorydb, đã đánh dấu bỏ qua. Danh sách caveat có cả apigatewayv2, dynamodb, eks và elb, do phần lý thuyết của trang nhắc tới các dịch vụ đó; bài lab không dùng chúng. |
+| Lần 1: builder | 38 lệnh `/api/run`: VPC, DNS hostnames, 9 subnet, IGW, route table public, 3 Elastic IP và 3 NAT, 3 route table app, route table data, DB subnet group | `labctl check lab-020` 14/14. Twin: 26/26 node của target gắn vào tài nguyên thật, 0 ghost, mỗi node đúng AZ. |
+| Reset | `labctl reset lab-020` | Chỉ còn VPC mặc định và subnet group `default`; không còn NAT hay Elastic IP. |
+| Lần 2: terminal | Chỉ dùng AWS CLI, cố ý cho route table app-b đi qua NAT của AZ a, rồi `replace-route` sang NAT b | Lúc sai: 13/14, `app-route-b` FAIL và báo subnet AZ b ra ngoài qua NAT ở AZ a. Sau khi sửa: 14/14. Twin 26/26, 0 ghost. |
+| Lần 3: chat | 7 câu tiếng Việt viết lại từ task của `lab.yaml` qua `/api/chat` (model `ds/deepseek-v4-pro`), mỗi chuỗi chạy qua `/api/run` | 14/14. 6 câu đạt ngay. Câu route table app cần hỏi lại một lần: model ghi tham chiếu thành chuỗi `"{ref:1}"` thay vì object, validate chặn cả ba `create-route`. 8 prompt gửi đi trùng trang lab ở 8 cụm 8 từ: tên tài nguyên kèm CIDR, danh sách ba AZ của Sydney và một cụm mô tả route table data trong câu hỏi; không có đoạn văn nào của trang. |
+| Rò nội dung | `uv run python scripts/check-content-leak.py` | exit 0. Lần đầu báo một cụm ở task VPC của `lab.yaml` (tên VPC kèm CIDR), đã viết lại. Các idiom AWS trùng trang (route mặc định, tên AZ, filter CLI tìm IGW theo VPC) được ghi hash trong `labs/lab-020/leak-review.json`. |
+
+Lần đầu soạn target, twin gắn sai: `App b` vào subnet data của AZ a, NAT a vào NAT của AZ b. Nguyên nhân là mỗi node subnet liệt kê check chung cho cả chín subnet, và NAT được khai báo trước subnet. Bản cuối dùng check riêng cho từng AZ (`nat-a/b/c`, `app-route-a/b/c`) và khai báo NAT sau subnet.
+
+### Đối chiếu với phần kiểm tra của lab
+
+| Lab kiểm | Trên Floci 2.3.0 |
+|---|---|
+| 9 subnet, 3 AZ ID (`apse2-az1/2/3`), 251 IP trống mỗi subnet | Khớp. Subnet báo `AvailabilityZoneId`. |
+| Route table app riêng cho từng AZ, route data chỉ có `local` | Khớp. Route table mới chỉ có route `local`. |
+| DB subnet group trải 3 AZ | Khớp. |
+| Egress đi qua NAT cùng AZ | Chấm tĩnh trên route table. Floci không chuyển gói tin thật qua NAT. |
