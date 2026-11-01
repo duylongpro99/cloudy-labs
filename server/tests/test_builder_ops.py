@@ -176,6 +176,16 @@ def test_ingress_from_a_security_group():
     assert expectation(op, p, '{"Return": true}', 3)["includes"] == {"protocol": "tcp", "from": 3306, "to": 3306, "source": "sg-2"}
 
 
+def test_only_the_ingress_rule_takes_a_source_group():
+    from cloudy_labs.builder.catalog import catalog as full_catalog
+
+    fields = {o["name"]: {f["name"]: f["required"] for f in o["fields"]}
+              for o in full_catalog(["vpc", "subnet", "security-group"])}
+    assert fields["authorize-security-group-ingress"]["sourceGroupId"] is False
+    for op in ("create-vpc", "create-subnet"):
+        assert fields[op]["cidr"] is True and "sourceGroupId" not in fields[op]
+
+
 def test_failover_is_offered_on_an_aurora_cluster():
     from cloudy_labs.builder.catalog import catalog as full_catalog
     from cloudy_labs.builder.catalog import op_named, prepare

@@ -29,8 +29,7 @@
       note: "Create a VPC. cidr: an IPv4 block between /16 and /28, e.g. 10.0.0.0/16."
       fields:
         - {name: "name", label: "Name (tag)"}
-        - {name: "cidr", label: "CIDR nguồn", placeholder: "10.0.1.0/24", free: true, required: false}
-        - {name: "sourceGroupId", label: "Hoặc Security Group nguồn", ref: "security-group", required: false}
+        - {name: "cidr", label: "CIDR", placeholder: "10.0.1.0/24", free: true}
     - id: modify-vpc-attribute
       api: ModifyVpcAttribute
       gesture: attribute
@@ -80,8 +79,7 @@
       fields:
         - {name: "name", label: "Name (tag)"}
         - {name: "vpcId", label: "VPC", ref: "vpc"}
-        - {name: "cidr", label: "CIDR nguồn", placeholder: "10.0.1.0/24", free: true, required: false}
-        - {name: "sourceGroupId", label: "Hoặc Security Group nguồn", ref: "security-group", required: false}
+        - {name: "cidr", label: "CIDR", placeholder: "10.0.1.0/24", free: true}
         - {name: "az", label: "Availability Zone", source: "azs"}
     - id: modify-subnet-attribute
       api: ModifySubnetAttribute
