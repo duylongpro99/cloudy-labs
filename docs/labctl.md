@@ -254,7 +254,7 @@ Node lồng nhau giống collector: subnet nằm trong `az`, `az` nằm trong `v
 Ghost gắn với tài nguyên thật **qua check**, không qua tên hay tag. Quy tắc nằm ở `bind_target` trong [`twin.py`](../server/src/cloudy_labs/twin.py):
 
 - Node được xét theo thứ tự khai báo trong `target`.
-- Một node chỉ gắn khi **mọi** check nó khai báo đều đạt. Nó gắn vào id đầu tiên trong `resource_ids` của các check đó thoả ba điều kiện: graph có id đó với đúng `kind` của node; chưa node nào trước nó lấy id đó; và tài nguyên nằm trong tài nguyên mà parent của node đã gắn. Vì vậy chỉ khai báo những check thật sự xác nhận node. Một check phụ chưa đạt sẽ giữ ghost lại.
+- Một node chỉ gắn khi **mọi** check nó khai báo đều đạt. Nó gắn vào id đứng đầu theo thứ tự tên (không theo thứ tự trong `resource_ids`) trong số id mà các check đó trả về và thoả ba điều kiện: graph có id đó với đúng `kind` của node; chưa node nào trước nó lấy id đó; và tài nguyên nằm trong tài nguyên mà parent của node đã gắn. Vì vậy chỉ khai báo những check thật sự xác nhận node. Một check phụ chưa đạt sẽ giữ ghost lại.
 - Node chỉ bị buộc vào parent khi parent đã gắn trước nó. Muốn node con theo parent mà người học tự chọn (ví dụ NAT nằm trong subnet public nào cũng được), hãy khai báo node con **trước** parent.
 - `az` không có check. Nó gắn vào AZ thật mà các node con đã gắn của nó cùng nằm trong. AZ thứ nhất của `target` ứng với AZ thật xếp đầu theo bảng chữ cái.
 - Hai node cùng `kind` dùng chung một check lấy hai id khác nhau, nên check phải trả đủ id của mọi tài nguyên nó xác nhận, kể cả tài nguyên đi kèm (ví dụ allocation id của Elastic IP gắn với NAT).

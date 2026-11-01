@@ -1,0 +1,82 @@
+# Lab 62: a payment service's log group, a metric filter that counts its error lines, and an alarm
+# that notifies an SNS topic when errors pile up. The lab page is personal content and stays in
+# content/ (gitignored); this file holds only our tasks, checks and target. Resources are found by name.
+id: lab-62-tao-cloudwatch-logs-metric-filter-tu-application-log
+provider: aws
+emulator: floci
+region: ap-southeast-2
+title: Lab 62 (CloudWatch Logs metric filter and alarm on application errors)
+builder:
+  palette: [log-group, cloudwatch-alarm, sns-topic]  # the metric filter is an op of the log group
+tasks:
+  - id: log-group
+    text: >-
+      Create the log group /aws/app/lab62-payment-service, kept for 1 or 3 days, with the log stream
+      payment-api-node-01 in it.
+  - id: sample-logs
+    text: >-
+      Write a few application log lines to payment-api-node-01: some INFO and WARN lines and some
+      ERROR or CRITICAL lines, one of them naming an exception.
+  - id: metric-filter
+    text: >-
+      Add the metric filter lab62-extract-app-errors to the log group. It matches a line holding ERROR,
+      CRITICAL or Exception and counts 1 per match into the metric ApplicationErrorCount of the namespace
+      MyApp/Production, in Count units, reporting 0 when nothing matches.
+  - id: alarm
+    text: >-
+      Create the alarm lab62-critical-app-errors-alarm on ApplicationErrorCount: the sum over one
+      minute, above 2, one datapoint out of one, notifying an SNS topic when it goes into alarm.
+  - id: error-burst
+    text: Write a burst of error lines to the stream so the count passes 2 within a minute and the alarm fires.
+checks:
+  - id: log-group-retention
+    task: log-group
+    fn: checks:log_group_retention
+    args: {days: [1, 3]}
+    description: The log group /aws/app/lab62-payment-service keeps its events for 1 or 3 days.
+  - id: log-stream
+    task: log-group
+    fn: checks:log_stream_exists
+    description: The log group holds the stream payment-api-node-01.
+  - id: sample-events
+    task: sample-logs
+    fn: checks:stream_has_events
+    description: payment-api-node-01 holds log events, error lines among them.
+  - id: filter-pattern
+    task: metric-filter
+    fn: checks:filter_pattern
+    description: lab62-extract-app-errors matches ERROR, CRITICAL and Exception lines, and not INFO or WARN ones.
+  - id: filter-metric
+    task: metric-filter
+    fn: checks:filter_metric
+    description: The filter counts 1 per match into MyApp/Production ApplicationErrorCount, in Count, with 0 as default.
+  - id: alarm-settings
+    task: alarm
+    fn: checks:alarm_settings
+    args: {threshold: 2}
+    description: The alarm sums ApplicationErrorCount over 60 s and fires above 2 on one datapoint out of one.
+  - id: alarm-notifies
+    task: alarm
+    fn: checks:alarm_notifies
+    description: The alarm notifies an existing SNS topic when it goes into alarm.
+  - id: alarm-fired
+    task: error-burst
+    fn: checks:alarm_fired
+    args: {threshold: 2}
+    description: The alarm is in ALARM, or ApplicationErrorCount has passed 2 within one minute.
+hints:
+  - task: sample-logs
+    text: >-
+      aws logs put-log-events takes each event's timestamp in milliseconds since the epoch; use the
+      current time (date +%s000), since CloudWatch refuses events far in the past and a metric filter
+      only counts events as they arrive.
+  - task: error-burst
+    text: >-
+      The alarm looks at whole minutes, so send the error lines in one put-log-events call. The emulator
+      evaluates alarms about once a minute; aws cloudwatch describe-alarms shows the state.
+target:
+  nodes:
+    - {id: log-group, kind: log-group, label: Log group, checks: [log-group-retention, log-stream, sample-events]}
+    - {id: filter, kind: metric-filter, label: Metric filter, checks: [filter-pattern, filter-metric]}
+    - {id: topic, kind: sns-topic, label: SNS topic, checks: [alarm-notifies]}
+    - {id: alarm, kind: cloudwatch-alarm, label: Error alarm, checks: [alarm-settings, alarm-fired]}

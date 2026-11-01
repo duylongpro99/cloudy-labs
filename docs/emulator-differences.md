@@ -63,7 +63,7 @@ Lab cần một trong các API dưới đây ra `blocked` trong `labctl coverage
 
 Mỗi điểm dưới đây cũng là một caveat trên kind tương ứng trong registry; mã caveat nằm trong ngoặc.
 
-- **CloudWatch không có metric `AWS/*`** (`no-service-metrics`). Alarm trên CPU EC2 hay lỗi Lambda không bao giờ đổi trạng thái. Đẩy số bằng `put-metric-data`, khi đó Floci đánh giá alarm sau khoảng một phút. Hoặc đổi trạng thái bằng `set-alarm-state`. Dashboard nằm theo region, không global (`floci-regional-dashboards`).
+- **CloudWatch không có metric `AWS/*`** (`no-service-metrics`). Alarm trên CPU EC2 hay lỗi Lambda không bao giờ đổi trạng thái. Đẩy số bằng `put-metric-data`, khi đó Floci đánh giá alarm sau khoảng một phút. Hoặc đổi trạng thái bằng `set-alarm-state`. Dashboard nằm theo region, không global (`floci-regional-dashboards`). Metric filter của CloudWatch Logs thì có tạo datapoint, nên alarm trên metric đó chạy như trên AWS. Floci không có `DescribeAlarmHistory`; check của lab xác nhận alarm đã kêu bằng chính metric (một phút có tổng vượt ngưỡng).
 - **Floci tự tạo log group `/aws/rds/instance/<id>/error`** cho mọi DB instance (`floci-rds-log-groups`).
 - **EventBridge nhận log group làm target nhưng không ghi event vào đó** (`floci-no-logs-target`). Floci giao event mà không assume `RoleArn` của target, rule hay schedule (`floci-target-role-not-assumed`). Scheduler chạy đúng giờ, không có jitter (`floci-schedule-no-jitter`).
 - **AWS Backup chỉ mô phỏng.** Job xong sau vài giây và có recovery point, nhưng không chép dữ liệu (`floci-backup-simulated`). Plan không tự chạy theo lịch (`floci-backup-plan-no-schedule`). Selection bỏ `ListOfTags` (`floci-selection-tags-dropped`). Vault lock không được thực thi.

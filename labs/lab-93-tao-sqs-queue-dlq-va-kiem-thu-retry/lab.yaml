@@ -1,0 +1,67 @@
+# Lab 93: an SQS work queue with a dead-letter queue, a message that fails until SQS moves it there,
+# and a redrive back once the bug is fixed. The lab page is personal content and stays in content/
+# (gitignored); this file holds only our tasks, checks and target. Queues are found by name.
+id: lab-93-tao-sqs-queue-dlq-va-kiem-thu-retry
+provider: aws
+emulator: floci
+region: ap-southeast-2
+title: Lab 93 (SQS queue with a dead-letter queue and redrive)
+builder:
+  palette: [sqs-queue]
+tasks:
+  - id: dlq
+    text: >-
+      Create the standard queue lab93-orders-dlq first, with a 30 second visibility timeout and the
+      longest retention SQS allows (14 days), so failed orders wait long enough to be studied.
+  - id: main-queue
+    text: >-
+      Create the standard queue lab93-orders-main-queue with a 30 second visibility timeout and 4 days
+      of retention, and give it a redrive policy that sends a message to lab93-orders-dlq after 3 receives.
+  - id: poison-message
+    text: >-
+      Send an order to the main queue, then receive it three times without deleting it, waiting out the
+      visibility timeout between receives, until SQS moves it to the dead-letter queue.
+  - id: redrive
+    text: Start a redrive on lab93-orders-dlq that returns its messages to their source queue.
+checks:
+  - id: dlq-settings
+    task: dlq
+    fn: checks:queue_settings
+    args: {name: lab93-orders-dlq, visibility: 30, retention: 1209600}
+    description: lab93-orders-dlq is a standard queue with a 30 s visibility timeout and 14 days of retention.
+  - id: main-queue-settings
+    task: main-queue
+    fn: checks:queue_settings
+    args: {name: lab93-orders-main-queue, visibility: 30, retention: 345600}
+    description: lab93-orders-main-queue is a standard queue with a 30 s visibility timeout and 4 days of retention.
+  - id: main-queue-redrive-policy
+    task: main-queue
+    fn: checks:redrive_policy
+    args: {max_receives: 3}
+    description: The main queue sends a message to lab93-orders-dlq after 3 receives.
+  - id: message-dead-lettered
+    task: poison-message
+    fn: checks:message_dead_lettered
+    description: A message reached lab93-orders-dlq, whether it still waits there or was redriven since.
+  - id: message-redriven
+    task: redrive
+    fn: checks:message_redriven
+    description: A redrive moved the dead-letter queue's messages back to the main queue.
+hints:
+  - task: poison-message
+    text: >-
+      Each receive counts, deleted or not, and a received message stays hidden for the visibility
+      timeout. From the terminal, aws sqs receive-message with --visibility-timeout 0 hands the message
+      back at once, so three receives in a row reach the limit; the fourth receive finds the main
+      queue empty because SQS has moved the message.
+  - task: redrive
+    text: >-
+      The console's "Start DLQ redrive" is the StartMessageMoveTask API: give it the dead-letter queue's
+      ARN as the source and no destination to send messages back where they came from. aws sqs
+      list-message-move-tasks shows how it went.
+target:
+  nodes:
+    # The dead-letter queue binds first: its checks name only it, while the main queue's name both
+    # queues, and a node takes the first id in name order that no earlier node took.
+    - {id: dlq, kind: sqs-queue, label: Dead-letter queue, checks: [dlq-settings, message-dead-lettered]}
+    - {id: main, kind: sqs-queue, label: Main queue, checks: [main-queue-settings, main-queue-redrive-policy, message-redriven]}
