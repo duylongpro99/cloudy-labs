@@ -8,3 +8,6 @@ aws-icon-pkg/
 server/.venv/
 __pycache__/
 .pytest_cache/
+
+# Lab content pasted from course sites: personal use only, never committed
+labs/*/content/

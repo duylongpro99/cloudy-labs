@@ -1,7 +1,7 @@
 # PRD: Cloudy Labs — hands-on labs for AWS với lớp kiến trúc 3D
 
 - Trạng thái: **Bản nháp v0.7**. Đã chốt A1–A3 và A7–A13 (A10 đổi tên thành Cloudy Labs, A13 dùng và sửa icon AWS, cùng ngày 2026-10-28). A4 và A6 đã kiểm chứng qua [spike M0](../plans/reports/spike-261027-2248-m0-validation.md). A5 chờ ý kiến pháp lý, người dùng chấp nhận rủi ro trong lúc chờ
-- Cập nhật: 2026-10-29
+- Cập nhật: 2026-10-31
 - Nguồn quyết định:
   - [Báo cáo nghiên cứu emulator](../plans/reports/research-261027-1027-cloud-simulator-for-hands-on-labs.md)
   - [Brainstorm lớp 3D](../plans/reports/brainstorm-261027-1423-3d-architecture-visual-layer.md)
@@ -38,7 +38,7 @@ Sản phẩm là một phòng lab AWS chạy hoàn toàn trên máy cá nhân. �
 ## 5. Ngoài phạm vi
 
 - Viết emulator mới, hoặc tự viết bộ đánh giá IAM policy.
-- Giả lập lưu lượng mạng hay data plane của VPC, và mọi hoạt ảnh luồng dữ liệu không có thật.
+- Giả lập traffic thật. Nền tảng chỉ phân tích reachability tĩnh từ cấu hình, giống VPC Reachability Analyzer, và luôn ghi rõ là kết quả phân tích (F6.5). Không có hoạt ảnh luồng dữ liệu.
 - Nhiều người dùng, đăng nhập, hay triển khai lên cloud.
 - GCP. Kiến trúc chỉ chừa sẵn interface `Provider` cho nó.
 - Mô hình 3D tả thực hoặc pipeline asset (Blender/glTF). Hình khối được dựng bằng code; icon SVG được ép đùn thành khối lúc chạy (F3.8).
@@ -68,7 +68,7 @@ Mức ưu tiên: **P0** là bắt buộc cho lát cắt đầu (Lab 6 + 7), **P1
 - F2.1 Collector gọi các API `describe/list` để chuyển trạng thái emulator thành **resource graph** gồm `nodes`, `contains` và `edges`.
 - F2.2 `api-tap` là một proxy mỏng đặt trước emulator, ghi log từng lệnh API. Khi gặp lệnh ghi, nó báo collector chụp lại trạng thái ngay. Ngoài ra collector vẫn polling chậm khoảng 5 giây làm lưới an toàn. Ở M2, api-tap là một service trong compose đứng ở cổng 4566 mà CLI của người học dùng, Floci lùi sang 4567, và sự kiện ghi đi qua kênh SSE ở 4568 ([cổng](labctl.md#cổng)).
 - F2.3 Server đẩy resource graph và sự kiện tới trình duyệt qua WebSocket.
-- F2.4 Phạm vi tài nguyên trong lát cắt đầu: VPC, Subnet, AZ, Internet Gateway, NAT Gateway, Route Table và route, Security Group và rule, Key Pair, EC2 Instance.
+- F2.4 Phạm vi tài nguyên trong lát cắt đầu: VPC, Subnet, AZ, Internet Gateway, NAT Gateway, Route Table và route, Security Group và rule, Key Pair, EC2 Instance. Phạm vi hiện tại do registry quyết định; xem [coverage.md](coverage.md).
 
 ### F3. Cảnh 3D theo phong cách sơ đồ AWS: P0
 
@@ -126,11 +126,14 @@ Mức ưu tiên: **P0** là bắt buộc cho lát cắt đầu (Lab 6 + 7), **P1
 - F6.2 Trường `target` của lab được vẽ thành ghost (mờ). Khi check liên quan qua, ghost chuyển sang đặc.
 - F6.3 Panel check hiển thị trạng thái từng check. Bấm vào một check sẽ tô sáng các node liên quan.
 - F6.4 `labctl reset` đưa cảnh về trạng thái sạch.
+- F6.5 Phân tích reachability tĩnh: người học hỏi "A có tới được B ở cổng P không" và nhận đường đi qua route table, security group, NACL, gateway, kèm chặng chặn và lý do. Kết quả luôn được ghi là "phân tích cấu hình, không phải traffic thật". Checker dùng được `ctx.reachable(...)` để chấm.
 
-### F7. Mở rộng bộ lab: P2
+### F7. Phủ danh mục lab: P2
 
-- F7.1 Thêm palette và các kiểu hiển thị cho IAM (Lab 1–3, 8), S3 (Lab 4–5), DynamoDB (Lab 9), Lambda, SQS và CloudWatch (Lab 10), và CloudFormation (Lab 11).
-- F7.2 Lab 3 dùng moto để có lỗi `AccessDenied` thật. Lớp 3D phải hiển thị được cả hai backend.
+- F7.1 Mỗi loại tài nguyên là một mục trong registry YAML ([`registry/`](../server/src/cloudy_labs/registry/)): cách list, enrich, cạnh, kiểu hiển thị, op builder và trạng thái trên Floci. Collector, builder, chat và web đều đọc registry, nên thêm một loại tài nguyên không cần sửa code collector hay frontend ([Thêm một loại tài nguyên](labctl.md#thêm-một-loại-tài-nguyên)).
+- F7.2 `labctl coverage` cho biết một lab hay cả danh mục labaws.site chạy được tới đâu: `blocked` khi Floci thiếu service hoặc API, `gap` khi nền tảng còn thiếu, `ready-with-caveats` kèm caveat lấy từ registry, hoặc `ready`. Ma trận theo kind nằm ở [coverage.md](coverage.md). Lab bị `blocked` không được giả lập bằng dữ liệu giả.
+- F7.3 Lab cần lỗi IAM thật (`AccessDenied`) chạy trên moto qua `emulator: moto`. Lớp 3D hiển thị được cả hai backend.
+- F7.4 Nội dung bài lab tải từ labaws.site chỉ nằm trong `labs/<lab>/content/` trên máy người học. Nó không bao giờ vào git và không vào prompt chat.
 
 ## 8. Yêu cầu phi chức năng
 
