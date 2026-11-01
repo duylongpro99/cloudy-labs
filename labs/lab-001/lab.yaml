@@ -1,0 +1,98 @@
+# Lab 001: RDS, Aurora or a self-managed database. The lab page itself is personal content and
+# stays in content/ (gitignored); this file holds only our tasks, checks and target.
+# Setup builds the network the lab starts from: a VPC with two private subnets and an app SG.
+id: lab-001
+provider: aws
+emulator: floci
+region: ap-southeast-2
+title: Lab 001 (RDS MySQL and Aurora MySQL in private subnets)
+cidrs: [10.1.0.0/16]
+setup: [checks:setup_network]
+builder:
+  palette: [db-subnet-group, security-group, db-instance, db-cluster, secretsmanager-secret]
+  tags: {lab: lab-001}
+tasks:
+  - id: network
+    text: The lab VPC lab-001-vpc (10.1.0.0/16), two private subnets in two AZs and the app security group lab-001-sg-app are ready (`labctl start` builds them).
+  - id: db-subnet-group
+    text: Group the two private subnets into a DB subnet group named lab-001-dbsubnet-group.
+  - id: db-security-group
+    text: Create the security group lab-001-sg-database in the lab VPC; let MySQL (tcp 3306) in only from lab-001-sg-app or the VPC range, never from the internet.
+  - id: rds-mysql
+    text: Launch the MySQL instance lab-001-rds-mysql-standard (db.t4g.micro, 20 GiB gp3 that may grow to 100 GiB, one AZ, not public) in the DB subnet group with the database security group.
+  - id: aurora
+    text: Create the Aurora MySQL cluster lab-001-aurora-cluster in the DB subnet group, then add a writer and a reader instance (db.t4g.medium).
+  - id: credentials
+    text: Keep the database credentials in Secrets Manager as lab-001-db-credentials.
+  - id: failover
+    text: Fail the Aurora cluster over and see a reader take the writer role.
+checks:
+  - id: network-ready
+    task: network
+    fn: checks:network_ready
+    description: The lab VPC has two subnets in two AZs and the app security group.
+  - id: subnet-group-two-azs
+    task: db-subnet-group
+    fn: checks:subnet_group_two_azs
+    description: The DB subnet group sits in the lab VPC and spans at least two AZs.
+  - id: subnet-group-private
+    task: db-subnet-group
+    fn: checks:subnet_group_private
+    description: No subnet of the DB subnet group routes 0.0.0.0/0 to an Internet Gateway.
+  - id: db-sg-mysql-from-app
+    task: db-security-group
+    fn: checks:db_sg_mysql_from_app
+    description: The database security group lets tcp 3306 in from the app security group or from inside the VPC.
+  - id: db-sg-not-open-to-world
+    task: db-security-group
+    fn: checks:db_sg_not_open_to_world
+    description: The database security group lets nothing in from 0.0.0.0/0 or ::/0.
+  - id: rds-mysql-available
+    task: rds-mysql
+    fn: checks:rds_mysql_available
+    args: {instance_class: db.t4g.micro}
+    description: The MySQL instance is available with the expected engine and class.
+  - id: rds-mysql-private
+    task: rds-mysql
+    fn: checks:rds_mysql_private
+    description: The MySQL instance is single-AZ, not public, in the DB subnet group and behind the database security group.
+  - id: rds-mysql-storage-autoscaling
+    task: rds-mysql
+    fn: checks:rds_mysql_storage_autoscaling
+    args: {allocated: 20, max_allocated: 100}
+    description: The MySQL instance starts at 20 GiB and may grow to 100 GiB.
+  - id: rds-mysql-gp3
+    task: rds-mysql
+    fn: checks:rds_mysql_gp3
+    description: The MySQL instance uses gp3 storage (not graded on Floci, which always reports gp2).
+  - id: aurora-cluster
+    task: aurora
+    fn: checks:aurora_cluster
+    description: The Aurora MySQL cluster is available in the DB subnet group.
+  - id: aurora-writer-reader
+    task: aurora
+    fn: checks:aurora_writer_reader
+    description: The cluster has one writer and at least one reader, all available.
+  - id: credentials-secret
+    task: credentials
+    fn: checks:credentials_secret
+    description: The secret lab-001-db-credentials exists (its value is never read).
+  - id: aurora-failed-over
+    task: failover
+    fn: checks:aurora_failed_over
+    description: The writer is no longer the cluster's first instance.
+target:
+  nodes:
+    - {id: vpc, kind: vpc, label: VPC 10.1.0.0/16, checks: [network-ready]}
+    - {id: az-a, kind: az, parent: vpc, label: AZ a}
+    - {id: az-b, kind: az, parent: vpc, label: AZ b}
+    - {id: private-a, kind: subnet-private, parent: az-a, label: Private a, checks: [network-ready]}
+    - {id: private-b, kind: subnet-private, parent: az-b, label: Private b, checks: [network-ready]}
+    - {id: sg-app, kind: security-group, parent: vpc, label: SG app, checks: [network-ready]}
+    - {id: sg-db, kind: security-group, parent: vpc, label: SG database, checks: [db-sg-mysql-from-app, db-sg-not-open-to-world]}
+    - {id: dbsg, kind: db-subnet-group, parent: vpc, label: DB subnet group, checks: [subnet-group-two-azs, subnet-group-private]}
+    - {id: rds, kind: db-instance, parent: dbsg, label: RDS MySQL, checks: [rds-mysql-available, rds-mysql-private, rds-mysql-storage-autoscaling]}
+    - {id: aurora, kind: db-cluster, parent: dbsg, label: Aurora MySQL cluster, checks: [aurora-cluster]}
+    - {id: aurora-1, kind: db-instance, parent: aurora, label: Aurora instance 1, checks: [aurora-writer-reader]}
+    - {id: aurora-2, kind: db-instance, parent: aurora, label: Aurora instance 2, checks: [aurora-writer-reader]}
+    - {id: secret, kind: secretsmanager-secret, label: DB credentials, checks: [credentials-secret]}
