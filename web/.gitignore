@@ -1,3 +1,5 @@
 node_modules
 dist
 bench-results
+bench-results-*/
+*.tsbuildinfo

@@ -28,7 +28,6 @@ The chat run did not happen because no LLM provider is configured.
 
 ## Open
 - ~~The SG ingress op in the builder takes a CIDR, not a source SG. There is also no failover op, so the lab needs the terminal for those two steps.~~ Resolved the same day: the ingress op takes a source SG and the registry has `failover-db-cluster`; lab-001 passes 12/12 through the builder alone.
-- The catalog CSV is not re-scraped (user decision).
-- The researcher's catalog CSV labels lab-001 as a CIDR lab, but the site's lab-001 is RDS. The CSV may need a re-scrape.
+- The researcher's catalog CSV labels lab-001 as a CIDR lab, but the site's lab-001 is RDS. The CSV is not re-scraped (user decision).
 
 > Historical work record — not durable authority. Prefer docs/specs/ADRs for current decisions.
