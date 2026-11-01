@@ -32,7 +32,7 @@ const graph = (version: number): ResourceGraph => ({
   takenAt: '2026-10-29T00:00:00Z',
   emulator: 'floci',
   status: 'ok',
-  nodes: [{ id: 'us-east-1', kind: 'region', label: 'us-east-1', props: {} }],
+  nodes: [{ id: 'ap-southeast-2', kind: 'region', label: 'ap-southeast-2', props: {} }],
   contains: [],
   edges: [],
   warnings: [],

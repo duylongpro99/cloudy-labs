@@ -26,9 +26,10 @@ const WITH_PENDING: TwinState = {
 }
 
 // The panel as the app uses it: the selection lives in useCheckSelection.
+const HINTS = { vpc: ['Dùng --cidr-block', 'Gắn tag lab'] }
 function Harness({ twin }: { twin: TwinState }) {
   const [selected, select] = useCheckSelection(twin)
-  return <CheckPanel twin={twin} lab={{ ...LAB, tasks: TASKS }} selected={selected} onSelect={select} theme={THEMES.light} />
+  return <CheckPanel twin={twin} lab={{ ...LAB, tasks: TASKS, hints: HINTS }} selected={selected} onSelect={select} theme={THEMES.light} />
 }
 
 describe('CheckPanel', () => {
@@ -52,6 +53,14 @@ describe('CheckPanel', () => {
     expect([...host.querySelectorAll('.check-task')].map((t) => t.getAttribute('data-task'))).toEqual(TASKS.map((t) => t.id))
     expect(host.querySelector('.check-task[data-task="routing"]')!.textContent).toContain('Task routing')
     expect(host.querySelector('#check-summary')!.textContent).toBe('4/8 đạt')
+  })
+
+  it('keeps hints hidden until the learner asks, and only where the task has some', () => {
+    render(TWIN)
+    expect([...host.querySelectorAll('.hint-toggle')].map((b) => b.getAttribute('data-task'))).toEqual(['vpc'])
+    expect(host.querySelector('.hints')).toBeNull()
+    act(() => host.querySelector<HTMLButtonElement>('.hint-toggle')!.click())
+    expect([...host.querySelectorAll('.hints li')].map((li) => li.textContent)).toEqual(HINTS.vpc)
   })
 
   it('shows each of the three states with the latest message', () => {

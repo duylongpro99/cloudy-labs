@@ -5,7 +5,7 @@ import { LAB, LAB07, golden, op } from './test-fixtures'
 
 const g = golden()
 const empty: ResourceGraph = { ...g, nodes: g.nodes.filter((n) => n.kind === 'region'), contains: [], edges: [] }
-const region = { id: 'us-east-1', kind: 'region', label: 'us-east-1' }
+const region = { id: 'ap-southeast-2', kind: 'region', label: 'ap-southeast-2' }
 
 describe('nextFreeSubnet', () => {
   it('takes the first /24 no subnet overlaps', () => {
@@ -33,14 +33,14 @@ describe('createDraft', () => {
   })
 
   it('locks the VPC and the AZ of a subnet dropped on an AZ', () => {
-    const d = createDraft(op('create-subnet'), { id: 'vpc-149d0439/us-east-1b', kind: 'az', label: 'us-east-1b' }, g, LAB)
-    expect(d.params).toEqual({ name: 'lab-06-subnet-1', vpcId: 'vpc-149d0439', cidr: '10.0.0.0/24', az: 'us-east-1b' })
+    const d = createDraft(op('create-subnet'), { id: 'vpc-149d0439/ap-southeast-2b', kind: 'az', label: 'ap-southeast-2b' }, g, LAB)
+    expect(d.params).toEqual({ name: 'lab-06-subnet-1', vpcId: 'vpc-149d0439', cidr: '10.0.0.0/24', az: 'ap-southeast-2b' })
     expect(d.locked.sort()).toEqual(['az', 'vpcId'])
   })
 
   it('picks an AZ without a subnet for a subnet dropped on the VPC', () => {
     const d = createDraft(op('create-subnet'), { id: 'vpc-149d0439', kind: 'vpc', label: 'lab06-vpc' }, g, LAB)
-    expect(d.params.az).toBe('us-east-1c')
+    expect(d.params.az).toBe('ap-southeast-2c')
     expect(d.locked).toEqual(['vpcId'])
   })
 

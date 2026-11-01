@@ -1,11 +1,14 @@
 // Configuration edges as raised Bezier curves (one merged draw call per edge style),
 // plus instanced pulse particles travelling along them.
-// Styles: route is solid and coloured by its target (internet gateway or NAT) with its CIDR as a label,
-// association is a thin dash, uses-key is dotted; edges without a kind keep the plain benchmark style.
+// Drawn by the edge kind's registry style: route is solid and coloured by its target (internet gateway
+// or NAT) with its label, association is a thin dash, reference is dotted, replica a long dash.
+// An edge kind the registry does not list draws as a reference; edges without a kind keep the plain
+// benchmark style.
 import { Billboard, Line, Text } from '@react-three/drei'
 import { useFrame } from '@react-three/fiber'
 import { memo, useMemo, useRef } from 'react'
 import { type Group, InstancedMesh, Object3D, QuadraticBezierCurve3, Vector3 } from 'three'
+import { edgeStyleOf } from '../registry/registry'
 import type { FixtureEdge } from './fixture'
 import { LABEL_MIN_ZOOM } from './label-layer'
 import type { EdgeAnchor } from './object-placements'
@@ -23,15 +26,16 @@ interface EdgeStyle {
 
 function edgeStyle(e: FixtureEdge, target: EdgeAnchor, theme: Theme): EdgeStyle {
   const c = theme.edges
-  switch (e.kind) {
+  if (!e.kind) return { color: theme.edge, width: 1.6 }
+  switch (edgeStyleOf(e.kind)) {
     case 'route':
       return { color: target.kind === 'igw' ? c.routeIgw : target.kind === 'nat' ? c.routeNat : theme.edge, width: 2.2 }
     case 'association':
       return { color: c.association, width: 1, dash: { dashSize: 0.35, gapSize: 0.25 } }
-    case 'uses-key':
-      return { color: c.usesKey, width: 1.4, dash: { dashSize: 0.08, gapSize: 0.2 } }
-    default:
-      return { color: theme.edge, width: 1.6 }
+    case 'replica':
+      return { color: c.replica, width: 1.6, dash: { dashSize: 0.6, gapSize: 0.3 } }
+    default: // reference; attach edges never reach the scene as lines
+      return { color: c.reference, width: 1.4, dash: { dashSize: 0.08, gapSize: 0.2 } }
   }
 }
 
@@ -63,7 +67,7 @@ export const EdgeLayer = memo(function EdgeLayer({ edges, anchors, theme }: { ed
   }, [curves])
 
   const labels = useMemo(
-    () => curves.filter((c) => c.edge.kind === 'route' && c.edge.label).map((c) => ({ id: `${c.edge.from}>${c.edge.to}:${c.edge.label}`, text: c.edge.label!, at: c.curve.getPoint(0.5) })),
+    () => curves.filter((c) => c.edge.kind && edgeStyleOf(c.edge.kind) === 'route' && c.edge.label).map((c) => ({ id: `${c.edge.from}>${c.edge.to}:${c.edge.label}`, text: c.edge.label!, at: c.curve.getPoint(0.5) })),
     [curves],
   )
 

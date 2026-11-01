@@ -9,11 +9,12 @@ import { memo, useLayoutEffect, useMemo, useRef, useState } from 'react'
 import type { Mesh, MeshStandardMaterial } from 'three'
 import type { Line2 } from 'three/examples/jsm/lines/Line2.js'
 import type { LineMaterial } from 'three/examples/jsm/lines/LineMaterial.js'
-import { MANIFEST_BY_KIND, TRAY_LABEL_FROM_NEAR_EDGE, TRAY_LABEL_INSET, TRAY_LABEL_SHIFT } from './aws-objects'
+import { kindView } from '../registry/registry'
+import { TRAY_LABEL_FROM_NEAR_EDGE, TRAY_LABEL_INSET, TRAY_LABEL_SHIFT } from './aws-objects'
 import { FADE_CURVE, Presence } from './aws-objects/entrance'
 import type { LaidOutGroup } from './layout'
 import { TRAY_H } from './layout'
-import type { Theme } from './theme'
+import { groupStyle, type Theme } from './theme'
 
 export const FONT = '/fonts/BeVietnamPro-Medium.woff'
 
@@ -51,7 +52,7 @@ export function AchievedMark({ theme, size = ACHIEVED_SIZE, ...props }: { theme:
 
 function Tray({ g, theme, register }: { g: LaidOutGroup; theme: Theme; register: (id: string, fade: Fade) => () => void }) {
   const ghost = !!g.node.ghost
-  const base = theme.groups[g.kind]
+  const base = groupStyle(theme, g.kind)
   const style = ghost ? { ...base, dashed: 'dash' as const, opacity: base.opacity * theme.ghost.trayOpacity } : base
   const borderOpacity = ghost ? theme.ghost.borderOpacity : 1
   const mesh = useRef<Mesh>(null)
@@ -80,8 +81,9 @@ function Tray({ g, theme, register }: { g: LaidOutGroup; theme: Theme; register:
   )
   // Line2 has no dash-dot pattern; a long dash with a short gap stands in for it.
   const dash = style.dashed === 'dash' ? { dashSize: 0.5, gapSize: 0.35 } : { dashSize: 1.4, gapSize: 0.3 }
-  const fontSize = g.kind === 'region' || g.kind === 'vpc' ? 0.75 : 0.55
-  const markX = g.x + TRAY_LABEL_INSET + (MANIFEST_BY_KIND[g.kind].role === 'tray-badge' ? TRAY_LABEL_SHIFT : 0)
+  const outer = g.level <= 1 // region and the VPCs in it
+  const fontSize = outer ? 0.75 : 0.55
+  const markX = g.x + TRAY_LABEL_INSET + (kindView(g.kind).role === 'tray-badge' ? TRAY_LABEL_SHIFT : 0)
   const labelX = markX + (g.node.achieved ? fontSize * 1.3 : 0)
   const labelZ = g.z + g.d - TRAY_LABEL_FROM_NEAR_EDGE
   const label = fitLabel(ghost ? `${g.node.label} · mục tiêu` : g.node.label, g.x + g.w - labelX - TRAY_LABEL_INSET, fontSize)
@@ -103,7 +105,7 @@ function Tray({ g, theme, register }: { g: LaidOutGroup; theme: Theme; register:
         points={corners}
         transparent
         color={style.border}
-        lineWidth={g.kind === 'region' || g.kind === 'vpc' ? 2.4 : 1.8}
+        lineWidth={outer ? 2.4 : 1.8}
         dashed={style.dashed !== 'none'}
         {...(style.dashed !== 'none' ? dash : {})}
         renderOrder={g.level + 0.5}

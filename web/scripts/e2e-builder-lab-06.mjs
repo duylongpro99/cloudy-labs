@@ -12,12 +12,12 @@ import { chromium } from 'playwright-core'
 const BASE = 'http://127.0.0.1:5174/'
 const out = resolve(process.argv[2] ?? '../plans/261029-1525-m3-builder-lab-06/notes')
 mkdirSync(out, { recursive: true })
-const REGION = 'us-east-1'
+const REGION = 'ap-southeast-2'
 const DONE_MS = 15_000 // the panel gives up after 5 s and says so; this only bounds a hung page
 const NAT_READY_MS = 120_000
 
 const browser = await chromium.launch({ channel: 'chrome', headless: false, args: ['--window-size=1320,1000'] })
-const page = await browser.newPage({ viewport: { width: 1300, height: 960 } })
+const page = await browser.newPage({ viewport: { width: 1600, height: 1000 } })
 const errors = []
 page.on('console', (m) => m.type() === 'error' && !m.location().url.endsWith('/favicon.ico') && errors.push(m.text()))
 page.on('pageerror', (e) => errors.push(e.message))
@@ -50,12 +50,14 @@ const visible = (sel) => page.locator(sel).isVisible().catch(() => false)
 async function closePanels() {
   if (await visible('#close-builder')) await page.click('#close-builder')
   if (await visible('#close-panel')) await page.click('#close-panel')
+  // the check panel sits over the left of the canvas, where the region tray has its free drop point
+  await page.evaluate(() => document.getElementById('check-panel')?.removeAttribute('open'))
   await page.click('#fit-view')
   await page.waitForTimeout(700)
 }
 
 async function onCanvas(p, what) {
-  const hit = await page.evaluate(({ x, y }) => document.elementFromPoint(x, y)?.tagName ?? null, p)
+  const hit = await page.evaluate(({ x, y }) => { const e = document.elementFromPoint(x, y); return e ? e.tagName + (e.id ? "#" + e.id : "") + (e.className && typeof e.className === "string" ? "." + e.className.split(" ")[0] : "") + (e.tagName === "CANVAS" ? "" : " " + (e.textContent || "").slice(0, 40)) : null }, p)
   if (hit !== 'CANVAS') fail(`${what} at (${Math.round(p.x)}, ${Math.round(p.y)}) is covered or off-screen (${hit})`)
   return p
 }

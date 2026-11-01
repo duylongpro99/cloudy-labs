@@ -4,6 +4,7 @@
 import type { GraphEdge, GraphNode } from '../graph/types'
 import type { OpSpec, Params } from './builder-api'
 import { kindLabel } from './drop-targets'
+import { refByOf, refValue } from './form-model'
 
 export const DEFAULT_DESTINATION = '0.0.0.0/0'
 
@@ -35,6 +36,9 @@ export function connectOp(ops: readonly OpSpec[], source: GraphNode, target: Gra
         return { ok: false, reason: `${source.label} đã gắn vào ${target.label}` }
       }
       return { ok: true, op, params: { instanceId: target.id, groupId: source.id } }
+  }
+  if (op.generated && op.sourceParam && op.targetParam) {
+    return { ok: true, op, params: { [op.sourceParam]: refValue(source, refByOf(op, op.sourceParam)), [op.targetParam]: refValue(target, refByOf(op, op.targetParam)) } }
   }
   return { ok: false, reason: `${op.name}: chưa hỗ trợ trong builder` }
 }

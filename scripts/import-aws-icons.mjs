@@ -1,33 +1,43 @@
-// Copies the AWS icons listed in the web app's manifest from the downloaded icon package
+// Copies the AWS icons the resource registry names from the downloaded icon package
 // (aws-icon-pkg/, not committed) into web/src/scene/aws-objects/icons/, and writes NOTICE.md.
-// Exits non-zero, naming every missing file, if the package does not contain an entry.
+// The registry comes from `uv run python -m cloudy_labs.registry export`, so no lab-server is needed.
+// Exits non-zero, naming every missing file and its kind, if an icon cannot be found.
 // Usage: node scripts/import-aws-icons.mjs [path-to-aws-icon-pkg]
+import { execFileSync } from 'node:child_process'
 import { copyFileSync, existsSync, writeFileSync } from 'node:fs'
 import { dirname, join, resolve } from 'node:path'
-import { fileURLToPath, pathToFileURL } from 'node:url'
+import { fileURLToPath } from 'node:url'
+
+// The AWS Architecture Icons release the `source` paths in the registry point into.
+const ICON_PACKAGE_RELEASE = '07312026'
+// Self-drawn artwork for kinds the web app has no icon for; not a registry kind.
+const FALLBACK = { icon: 'generic-resource.svg', kind: '(node dự phòng)' }
 
 const root = resolve(dirname(fileURLToPath(import.meta.url)), '..')
 const pkgDir = resolve(process.argv[2] ?? join(root, 'aws-icon-pkg'))
 const outDir = join(root, 'web/src/scene/aws-objects/icons')
-const { MANIFEST, ICON_PACKAGE_RELEASE } = await import(pathToFileURL(join(root, 'web/src/scene/aws-objects/manifest.ts')).href)
+const registry = JSON.parse(
+  execFileSync('uv', ['run', 'python', '-m', 'cloudy_labs.registry', 'export'], { cwd: join(root, 'server'), encoding: 'utf8' }),
+)
+const kinds = registry.kinds.filter((k) => k.icon)
 
-const fromPackage = MANIFEST.filter((e) => e.source)
-const missing = fromPackage.filter((e) => !existsSync(join(pkgDir, e.source)))
+const fromPackage = kinds.filter((k) => k.source)
+const missing = fromPackage.filter((k) => !existsSync(join(pkgDir, k.source)))
 if (missing.length) {
-  for (const e of missing) console.error(`missing in ${pkgDir}: ${e.source} (kind ${e.kind})`)
+  for (const k of missing) console.error(`missing in ${pkgDir}: ${k.source} (kind ${k.kind})`)
   process.exit(1)
 }
-for (const e of fromPackage) copyFileSync(join(pkgDir, e.source), join(outDir, e.file))
+for (const k of fromPackage) copyFileSync(join(pkgDir, k.source), join(outDir, k.icon))
 
-const selfDrawn = MANIFEST.filter((e) => e.file && !e.source)
-const absentSelfDrawn = selfDrawn.filter((e) => !existsSync(join(outDir, e.file)))
+const selfDrawn = [...kinds.filter((k) => !k.source), FALLBACK]
+const absentSelfDrawn = selfDrawn.filter((k) => !existsSync(join(outDir, k.icon)))
 if (absentSelfDrawn.length) {
-  for (const e of absentSelfDrawn) console.error(`self-drawn icon not found: ${e.file} (kind ${e.kind})`)
+  for (const k of absentSelfDrawn) console.error(`self-drawn icon not found: ${join(outDir, k.icon)} (kind ${k.kind})`)
   process.exit(1)
 }
 
-const rows = fromPackage.map((e) => `| \`${e.file}\` | ${e.kind} | \`${e.source}\` |`).join('\n')
-const own = selfDrawn.map((e) => `| \`${e.file}\` | ${e.kind} |`).join('\n')
+const rows = fromPackage.map((k) => `| \`${k.icon}\` | ${k.kind} | \`${k.source}\` |`).join('\n')
+const own = selfDrawn.map((k) => `| \`${k.icon}\` | ${k.kind} |`).join('\n')
 writeFileSync(
   join(outDir, 'NOTICE.md'),
   `# Nguồn icon

@@ -28,9 +28,9 @@ describe('mergeTwin', () => {
     const { scene: merged, achieved } = mergeTwin(scene, t, true)
     const ghosts = merged.nodes.filter((n) => n.ghost)
     expect(ghosts.map((n) => n.id)).toEqual(t.ghosts.map((g) => g.id))
-    expect(parentOf(merged, 'ghost:public-1')).toBe(`${VPC}/us-east-1a`) // a ghost subnet in a real az
+    expect(parentOf(merged, 'ghost:public-1')).toBe(`${VPC}/ap-southeast-2a`) // a ghost subnet in a real az
     expect(parentOf(merged, 'ghost:nat')).toBe('ghost:public-1') // a ghost in a ghost
-    expect(parentOf(merged, 'ghost:eip')).toBe('us-east-1')
+    expect(parentOf(merged, 'ghost:eip')).toBe('ap-southeast-2')
     expect(achieved).toEqual(new Set(Object.values(t.bound)))
     expect(merged.nodes.find((n) => n.id === VPC)?.achieved).toBe(true)
     expect(merged.nodes.filter((n) => !n.ghost)).toHaveLength(scene.nodes.length)
@@ -61,9 +61,18 @@ describe('mergeTwin', () => {
   it('hangs a ghost on the region when its real parent is gone', () => {
     const t = twin({ ghosts: [{ id: 'ghost:sg', kind: 'security-group', label: 'web', parent: 'vpc-deleted', checks: ['c'] }], bound: { vpc: 'vpc-deleted' } })
     const { scene: merged, achieved } = mergeTwin(scene, t, true)
-    expect(parentOf(merged, 'ghost:sg')).toBe('us-east-1')
+    expect(parentOf(merged, 'ghost:sg')).toBe('ap-southeast-2')
     expect(achieved.size).toBe(0)
     expect(() => computeLayout(merged)).not.toThrow()
+  })
+
+  it('brings back the hidden global group for a ghost of a global kind', () => {
+    expect(scene.nodes.some((n) => n.id === 'global')).toBe(false)
+    const t = twin({ ghosts: [{ id: 'ghost:user', kind: 'mystery-user', label: 'dev', parent: 'global', checks: ['c'] }] })
+    const { scene: merged } = mergeTwin(scene, t, true)
+    expect(parentOf(merged, 'global')).toBe('000000000000')
+    expect(parentOf(merged, 'ghost:user')).toBe('global')
+    expect(() => scenePlacements(merged, computeLayout(merged))).not.toThrow()
   })
 
   it('places ghosts as objects of their own, flagged so they are drawn faded and never picked', () => {

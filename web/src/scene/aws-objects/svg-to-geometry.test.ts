@@ -1,10 +1,11 @@
 import { Raycaster, Mesh, Vector3, type BufferGeometry } from 'three'
 import { describe, expect, it } from 'vitest'
 import { iconSvg } from './geometry-cache'
-import { MANIFEST } from './manifest'
+import { kindView, registryData } from '../../registry/registry'
 import { GLYPH_DEFAULTS, GLYPH_TRIANGLE_BUDGET, svgToGeometry, triangleCount } from './svg-to-geometry'
 
-const withIcons = MANIFEST.filter((e) => e.file)
+// Every kind with artwork, plus the fallback glyph an unknown kind is drawn with.
+const withIcons = [...registryData().kinds.filter((k) => k.icon).map((k) => kindView(k.kind)), kindView('not-a-registry-kind')]
 
 // True when a ray dropped straight down at (x, z) hits the glyph.
 function solidAt(g: BufferGeometry, x: number, z: number) {
@@ -14,7 +15,7 @@ function solidAt(g: BufferGeometry, x: number, z: number) {
 
 describe('svgToGeometry', () => {
   it.each(withIcons.map((e) => [e.kind, e] as const))('%s: normalised, flat, within budget', (_, e) => {
-    const g = svgToGeometry(iconSvg(e.kind), { curveSegments: e.curveSegments })
+    const g = svgToGeometry(iconSvg(e.kind), { curveSegments: e.curveSegments ?? undefined })
     const { min, max } = g.boundingBox!
     expect(Math.max(max.x - min.x, max.z - min.z)).toBeCloseTo(1, 3)
     expect(min.y).toBeCloseTo(0, 6)
@@ -26,7 +27,7 @@ describe('svgToGeometry', () => {
   })
 
   it.each(withIcons.map((e) => [e.kind, e] as const))('%s: triangles face outward and caps face up/down', (_, e) => {
-    const g = svgToGeometry(iconSvg(e.kind), { curveSegments: e.curveSegments })
+    const g = svgToGeometry(iconSvg(e.kind), { curveSegments: e.curveSegments ?? undefined })
     const pos = g.getAttribute('position')
     const nrm = g.getAttribute('normal')
     const [a, b, c, n, ab, ac] = Array.from({ length: 6 }, () => new Vector3())

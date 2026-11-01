@@ -4,6 +4,7 @@ import { NeutralToneMapping } from 'three'
 import type { BenchResult } from './bench/bench'
 import { CANVAS, nextSuiteUrl, publish, readConfig, resultName, SUITE } from './bench/bench'
 import { BuilderPanel } from './builder/builder-panel'
+import { DeleteMenu } from './builder/delete-menu'
 import { kindLabel } from './builder/drop-targets'
 import { DragGhost, Palette } from './builder/palette'
 import { useLab } from './builder/use-lab'
@@ -15,11 +16,15 @@ import { AwsObjectsGallery, type GalleryConfig } from './gallery/aws-objects-gal
 import { useResourceGraph, type ConnectionState } from './graph/graph-client'
 import { graphToScene } from './graph/graph-to-scene'
 import { mergeTwin } from './graph/merge-twin'
+import { LabPanel } from './lab/lab-panel'
+import { useRegistry } from './registry/use-registry'
 import { ArchitectureScene } from './scene/architecture-scene'
 import { GLYPH_COVERAGE, type ThemeName } from './scene/aws-objects'
 import { LiveScene } from './scene/live-scene'
 import { useGhostToggle } from './scene/use-ghost-toggle'
 import { CheckPanel } from './twin/check-panel'
+import type { Reachability } from './reachability/reachability-api'
+import { ReachabilityPanel } from './reachability/reachability-panel'
 import { highlightFor } from './twin/highlight'
 import { useCheckSelection } from './twin/use-check-selection'
 import { PropertyPanel } from './scene/property-panel'
@@ -154,7 +159,9 @@ const FULL_SCREEN: CSSProperties = { position: 'fixed', inset: 0, width: '100%',
 
 function Live() {
   const { graph, state, events, twin } = useResourceGraph()
-  const scene = useMemo(() => (graph ? graphToScene(graph) : null), [graph])
+  // Fetched alongside the graph; the scene waits for it so kinds are not drawn as fallbacks first.
+  const registry = useRegistry()
+  const scene = useMemo(() => (graph && registry.settled ? graphToScene(graph) : null), [graph, registry.settled])
   const [showGhosts, setShowGhosts] = useGhostToggle()
   // The builder, the panels and the chat work on real resources; only the 3D scene gets the ghosts.
   const shown = useMemo(() => scene && mergeTwin(scene, twin, showGhosts).scene, [scene, twin, showGhosts])
@@ -173,6 +180,10 @@ function Live() {
   const [practice, setPractice] = usePractice()
   const chat = useChat(graph, lab, practice)
   const chatWorking = stepBusy(chat.state)
+  const [menu, setMenu] = useState<{ id: string; x: number; y: number } | null>(null)
+  const [reach, setReach] = useState<Reachability | null>(null)
+  const closeMenu = useCallback(() => setMenu(null), [])
+  const menuActions = menu && lab && !chatWorking ? builder.deletesFor(menu.id) : []
   return (
     <>
       {shown && (
@@ -184,13 +195,18 @@ function Live() {
             fitKey={fitKey}
             selected={selected}
             onSelect={setSelected}
+            onMenu={lab && graph?.status === 'ok' ? (id, x, y) => setMenu({ id, x, y }) : undefined}
             builder={lab && graph?.status === 'ok' ? builder.scene : undefined}
             highlighted={highlighted}
+            path={reach?.hops}
           />
         </Stage>
       )}
       {scene && graph && selected && (
         <PropertyPanel selected={selected} scene={scene} edges={graph.edges} theme={t} onClose={close} actions={lab && !chatWorking ? builder.actionsFor(selected) : []} />
+      )}
+      {menu && menuActions.length > 0 && (
+        <DeleteMenu x={menu.x} y={menu.y} label={scene?.nodesById.get(menu.id)?.label ?? menu.id} actions={menuActions} theme={t} onClose={closeMenu} />
       )}
       {lab && 'draft' in bs && (
         <BuilderPanel state={bs} graph={graph} lab={lab} events={events} theme={t} dispatch={builder.dispatch} onRun={builder.run} chatBusy={chatWorking} />
@@ -232,6 +248,7 @@ function Live() {
             <div>
               Lab <b>{lab.title}</b> · lần làm {lab.attempt}
             </div>
+            {lab.content && <LabPanel key={`${lab.id}#${lab.attempt}`} tabs={lab.content} />}
             <Palette lab={lab} disabled={working || chatWorking || graph?.status !== 'ok'} onStart={builder.startDrag} />
             {bs.phase === 'idle' && bs.notice && (
               <p id="builder-notice" role="status" style={{ margin: '6px 0 0' }}>
@@ -248,6 +265,8 @@ function Live() {
         )}
         {/* With no lab open, the line above already says to run labctl start. */}
         {twin?.lab && <CheckPanel twin={twin} lab={lab} selected={check} onSelect={selectCheck} theme={t} />}
+        {graph?.status === 'ok' && <ReachabilityPanel graph={graph} selected={selected} theme={t} result={reach} onResult={setReach} />}
+        {registry.error && <p id="registry-error" role="status" style={{ margin: '6px 0 0' }}>{registry.error}</p>}
         {graph && graph.warnings.length > 0 && (
           <ul id="graph-warnings" style={{ margin: '6px 0 0', paddingLeft: 18 }}>
             {graph.warnings.map((w) => <li key={w}>{w}</li>)}

@@ -46,6 +46,7 @@ export const IDLE: BuilderState = { phase: 'idle' }
 // Whether the graph shows what a run was expected to make.
 export function expectMet(expect: Expect, graph: ResourceGraph): boolean {
   if ('after' in expect) return graph.version > expect.after
+  if ('gone' in expect) return !graph.nodes.some((n) => n.id === expect.gone)
   if ('edge' in expect) return graph.edges.some((e) => e.id === expect.edge)
   const node = graph.nodes.find((n) => n.id === expect.node)
   if (!node) return false

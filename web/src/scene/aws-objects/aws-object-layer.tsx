@@ -2,6 +2,8 @@
 // so draw calls grow with the number of kinds, not the number of objects.
 // Entrance and exit: each instance scales from its base, updated in useFrame only while it runs.
 // Ghosts (PRD F6.2) get batches of their own: translucent, shadowless and not pickable.
+// A fallback object (a kind this build does not fully support) carries a yellow square marker.
+import { Line } from '@react-three/drei'
 import type { ThreeEvent } from '@react-three/fiber'
 import { useFrame, useThree } from '@react-three/fiber'
 import { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState, type RefObject } from 'react'
@@ -9,14 +11,13 @@ import { Matrix4, Quaternion, Vector3, type InstancedMesh } from 'three'
 import { Presence, SCALE_CURVE } from './entrance'
 import { glyphGeometry, plinthGeometry } from './geometry-cache'
 import { HighlightOverlay } from './highlight-overlay'
-import type { AwsKind } from './manifest'
-import { MANIFEST_BY_KIND } from './manifest'
+import { kindView } from '../../registry/registry'
 import { GLYPH_COVERAGE, plinthShape, type Vec3 } from './object-specs'
-import { OBJECT_THEMES, type ThemeName } from './object-theme'
+import { FALLBACK_OUTLINE, objectPalette, type ThemeName } from './object-theme'
 
 export interface AwsObjectPlacement {
   id: string
-  kind: AwsKind
+  kind: string
   position: Vec3 // centre of the object's base
   ghost?: boolean
   achieved?: boolean // a bound badge, which has no label of its own to carry the mark
@@ -33,6 +34,7 @@ export interface AwsObjectLayerProps {
   outlineColor?: string
   onHover?: (id: string | null) => void
   onSelect?: (id: string) => void
+  onMenu?: (id: string, x: number, y: number) => void // right-click on an object, at its screen point
   // Called once every object has reached full size, e.g. to refresh a static shadow map.
   onSettled?: () => void
   // Filled with a lookup of an object's current scale (null once it is gone), for browser checks.
@@ -42,8 +44,8 @@ export interface AwsObjectLayerProps {
 const noRaycast = () => {}
 export const GHOST_OPACITY = 0.3
 
-function KindBatch({ kind, ghost, items, presence, theme, coverage, shadows, onHover, onSelect, onSettled }: {
-  kind: AwsKind
+function KindBatch({ kind, ghost, items, presence, theme, coverage, shadows, onHover, onSelect, onMenu, onSettled }: {
+  kind: string
   ghost: boolean
   items: readonly AwsObjectPlacement[] // shown and exiting
   presence: Presence<AwsObjectPlacement>
@@ -52,6 +54,7 @@ function KindBatch({ kind, ghost, items, presence, theme, coverage, shadows, onH
   shadows: boolean
   onHover?: (id: string | null) => void
   onSelect?: (id: string) => void
+  onMenu?: (id: string, x: number, y: number) => void
   onSettled: (batch: string) => void
 }) {
   const batch = ghost ? `${kind}:ghost` : kind
@@ -59,7 +62,7 @@ function KindBatch({ kind, ghost, items, presence, theme, coverage, shadows, onH
   const glyph = useRef<InstancedMesh>(null)
   const invalidate = useThree((s) => s.invalidate)
   const shape = plinthShape(kind)
-  const palette = OBJECT_THEMES[theme][MANIFEST_BY_KIND[kind].category]
+  const palette = objectPalette(theme, kindView(kind).category)
   const anim = useRef({ running: false })
   const settledRef = useRef(onSettled)
   settledRef.current = onSettled
@@ -106,7 +109,7 @@ function KindBatch({ kind, ghost, items, presence, theme, coverage, shadows, onH
     invalidate()
   })
 
-  const handlers = !ghost && (onHover || onSelect)
+  const handlers = !ghost && (onHover || onSelect || onMenu)
     ? {
         onPointerMove: (e: ThreeEvent<PointerEvent>) => {
           e.stopPropagation()
@@ -116,6 +119,12 @@ function KindBatch({ kind, ghost, items, presence, theme, coverage, shadows, onH
         onClick: (e: ThreeEvent<MouseEvent>) => {
           e.stopPropagation()
           if (e.instanceId !== undefined) onSelect?.(items[e.instanceId].id)
+        },
+        onContextMenu: (e: ThreeEvent<MouseEvent>) => {
+          if (!onMenu || e.instanceId === undefined) return
+          e.stopPropagation()
+          e.nativeEvent.preventDefault()
+          onMenu(items[e.instanceId].id, e.nativeEvent.clientX, e.nativeEvent.clientY)
         },
       }
     : {}
@@ -149,6 +158,19 @@ function KindBatch({ kind, ghost, items, presence, theme, coverage, shadows, onH
 
 const material = (ghost: boolean) => (ghost ? { transparent: true, opacity: GHOST_OPACITY, depthWrite: false } : {})
 
+// A screen-space square around the plinth's top edge: unlike a hull outline it stays visible at
+// any zoom, so an unsupported kind is never mistaken for a supported one.
+function FallbackMarker({ target, color }: { target: AwsObjectPlacement; color: string }) {
+  const points = useMemo(() => {
+    const { side, height } = plinthShape(target.kind)
+    const [x, y, z] = target.position
+    const h = side / 2 + 0.06
+    const top = y + height + 0.01
+    return [[x - h, top, z - h], [x + h, top, z - h], [x + h, top, z + h], [x - h, top, z + h], [x - h, top, z - h]] as [number, number, number][]
+  }, [target])
+  return <Line points={points} color={color} lineWidth={2.5} raycast={() => null} userData={{ fallback: target.id }} />
+}
+
 export function AwsObjectLayer({
   placements,
   theme,
@@ -160,6 +182,7 @@ export function AwsObjectLayer({
   outlineColor = '#0972D3',
   onHover,
   onSelect,
+  onMenu,
   onSettled,
   scaleRef,
 }: AwsObjectLayerProps) {
@@ -170,7 +193,7 @@ export function AwsObjectLayer({
     presence.update(placements, performance.now(), animate)
     const groups = new Map<string, AwsObjectPlacement[]>()
     for (const p of [...placements, ...presence.exiting()]) {
-      if (MANIFEST_BY_KIND[p.kind].role === 'outline-only') continue
+      if (kindView(p.kind).role === 'outline-only') continue
       const batch = p.ghost ? `${p.kind}:ghost` : p.kind
       groups.set(batch, [...(groups.get(batch) ?? []), p])
     }
@@ -206,6 +229,7 @@ export function AwsObjectLayer({
   }, [byKind, allSettled])
   const hoverTarget = hovered && hovered !== selected ? byId.get(hovered) : undefined
   const selectTarget = selected ? byId.get(selected) : undefined
+  const fallbacks = useMemo(() => [...byId.values()].filter((p) => kindView(p.kind).fallback), [byId])
 
   return (
     <group>
@@ -222,8 +246,12 @@ export function AwsObjectLayer({
           shadows={shadows}
           onHover={onHover}
           onSelect={onSelect}
+          onMenu={onMenu}
           onSettled={batchSettled}
         />
+      ))}
+      {fallbacks.map((p) => (
+        <FallbackMarker key={`fallback-${p.id}`} target={p} color={FALLBACK_OUTLINE[theme]} />
       ))}
       {hoverTarget && <HighlightOverlay target={hoverTarget} color={outlineColor} thickness={0.06} />}
       {selectTarget && <HighlightOverlay target={selectTarget} color={outlineColor} thickness={0.09} />}

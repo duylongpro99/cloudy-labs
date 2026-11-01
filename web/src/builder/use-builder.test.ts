@@ -61,8 +61,8 @@ describe('practiceMet', () => {
 
 describe('builder state', () => {
   it('drags, hovers, and opens the form on a valid drop', () => {
-    let s = run({ type: 'drag', kind: 'vpc', op: op('create-vpc') }, { type: 'hover', hover: 'us-east-1', reason: null })
-    expect(s).toMatchObject({ phase: 'dragging', hover: 'us-east-1' })
+    let s = run({ type: 'drag', kind: 'vpc', op: op('create-vpc') }, { type: 'hover', hover: 'ap-southeast-2', reason: null })
+    expect(s).toMatchObject({ phase: 'dragging', hover: 'ap-southeast-2' })
     s = reduce(s, { type: 'drop', draft, reason: null })
     expect(s).toMatchObject({ phase: 'form', draft, preview: null })
   })

@@ -25,9 +25,10 @@ const OPS = [
   { name: 'modify-subnet-attribute', gesture: 'attribute', targets: ['subnet-public', 'subnet-private'] },
 ]
 const LAB = {
-  id: 'fixture-lab-06', title: 'Fixture lab 6', attempt: 7, tasks: [],
+  id: 'fixture-lab-06', title: 'Fixture lab 6', attempt: 7, tasks: [], hints: {}, content: null,
   palette: ['vpc', 'subnet', 'igw', 'elastic-ip', 'nat', 'route-table'], tags: { lab: 'fixture-lab-06' },
-  cidrs: ['10.66.0.0/16'], ops: OPS, azs: ['us-east-1a', 'us-east-1b', 'us-east-1c'], canRun: true, runBlocker: null,
+  cidrs: ['10.66.0.0/16'], ops: OPS, azs: ['ap-southeast-2a', 'ap-southeast-2b', 'ap-southeast-2c'], canRun: true, runBlocker: null,
+  chat: { enabled: false, missing: ['CHAT_API_KEY'] },
 }
 const PRIVATE_SUBNET = 'subnet-44acdeb7'
 
@@ -85,7 +86,7 @@ const count0 = await nodeCount()
 
 // 2. Dragging a VPC tints the region; dropping it there opens the form with the lab's CIDR.
 const vpcButton = await page.locator('#palette button[data-kind="vpc"]').boundingBox()
-const region = await probe('trayPoint', 'us-east-1')
+const region = await probe('trayPoint', 'ap-southeast-2')
 const regionEdge = { x: region.x, y: region.y + 120 } // off the VPC trays, still on the region
 await drag({ x: vpcButton.x + 10, y: vpcButton.y + 10 }, regionEdge)
 check((await page.locator('#drag-ghost').getAttribute('data-ok')) === 'true', 'ghost says the region takes a VPC')
@@ -164,7 +165,7 @@ await drag({ x: subnetButton.x + 10, y: subnetButton.y + 10 }, azPoint)
 await page.screenshot({ path: resolve(out, 'builder-drag-dark.png') })
 await page.mouse.up()
 check((await page.locator('#build-form').getAttribute('data-op').catch(() => null)) === 'create-subnet', 'subnet dropped on an AZ opens create-subnet')
-check((await page.textContent('#field-az').catch(() => ''))?.startsWith('us-east-1'), 'AZ is fixed by the tray')
+check((await page.textContent('#field-az').catch(() => ''))?.startsWith('ap-southeast-2'), 'AZ is fixed by the tray')
 
 if (errors.length) console.log('page errors:\n' + errors.join('\n'))
 await browser.close()

@@ -2,21 +2,58 @@
 // `{op, params}`; the server builds the aws command, validates it and runs it.
 // Requests go through Vite's /api proxy, which keeps the page's Origin for the server to check.
 
-export type Gesture = 'create' | 'connect' | 'attribute'
+export type Gesture = 'create' | 'modify' | 'connect' | 'attribute' | 'delete'
 
-// One entry of the server's op catalogue (builder/ops.py `Op.describe`).
+export type FieldType = 'string' | 'enum' | 'boolean' | 'integer' | 'number' | 'list' | 'json' | 'blob'
+
+// One form field of an op (builder/shapes.py `Field.describe`): from the API's input shape, or
+// the hand-written op's own field. Every value travels as text; the server reads it by `type`.
+export interface FieldSpec {
+  name: string // the API member (PascalCase), or a hand-written op's camelCase field
+  type: FieldType
+  required: boolean
+  label: string
+  doc?: string // the API's documentation, without HTML
+  choices?: string[]
+  source?: 'azs' | 'images' | 'instanceTypes' // options the lab gives
+  ref?: string // the kind whose node this field takes
+  refBy?: 'id' | 'label'
+  placeholder?: string
+  multiline?: boolean
+  free?: boolean // stays editable when a gesture opened the form
+  advanced?: boolean // shown under "Nâng cao"
+}
+
+// One entry of the server's op catalogue (builder/catalog.py `BuilderOp.describe`).
 export interface OpSpec {
   name: string
   gesture: Gesture
+  title?: string
+  kind?: string // the registry kind the op belongs to
+  generated?: boolean // built from the botocore shape rather than a hand-written op
+  fields?: FieldSpec[]
+  defaults?: Params
+  nameField?: string // a generated create op's field the new resource is known by
   creates?: string // palette kind made by a create op
   containers?: string[] // tray kinds a create op may be dropped on
+  container?: { param: string; by: 'id' | 'label' } // the field that takes the tray
   source?: string // node kind a connect op starts from
-  targets?: string[] // connect: node kinds it ends on; attribute: node kinds it changes
+  sourceParam?: string
+  targets?: string[] // connect: node kinds it ends on; attribute/modify/delete: node kinds it acts on
+  targetParam?: string
 }
+
+export const opTitle = (ops: readonly OpSpec[] | undefined, name: string): string => ops?.find((o) => o.name === name)?.title ?? name
 
 export interface LabTask {
   id: string
   text: string
+}
+
+// One tab of the lab's local theory page (a level-2 heading and what follows it).
+export interface LabTab {
+  title: string
+  markdown: string
 }
 
 export interface LabInfo {
@@ -24,6 +61,8 @@ export interface LabInfo {
   title: string
   attempt: number
   tasks: LabTask[]
+  hints: Record<string, string[]> // by task id
+  content: LabTab[] | null // null: the lab has no local content/lab.md
   palette: string[]
   tags: Record<string, string>
   cidrs: string[] // the blocks the lab plans to use
@@ -43,7 +82,7 @@ export type ChatStatus = { enabled: true; model: string; format: string } | { en
 export type Params = Record<string, string>
 
 export interface Problem {
-  field: string // camelCase param name; "" for the op as a whole
+  field: string // the field's name; "" for the op as a whole
   message: string
 }
 
@@ -65,10 +104,12 @@ export interface IngressRule {
 // What the next graph must show for a run to count as seen by the collector (F4.5).
 // `after`: the output named no id, so any graph newer than this version counts.
 // `includes`: `props[prop]` is a list holding a rule like this one; `source` is looked up in `sources`.
+// `gone`: a delete counts once the node has left the graph.
 export type Expect =
   | { node: string; prop?: string; value?: unknown; includes?: { protocol: string; from?: number; to?: number; source: string } }
   | { edge: string }
   | { after: number }
+  | { gone: string }
 
 // Practice mode has no output to read an id from: a create counts once a resource of that kind
 // with that Name shows up ("subnet" matches either subnet kind).

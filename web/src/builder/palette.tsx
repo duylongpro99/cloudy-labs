@@ -2,19 +2,19 @@
 // A drag starts on pointerdown and is followed by the scene's pointer probe; HTML5 drag-and-drop
 // is not used because the canvas cannot ray-cast during `dragover`.
 import { useEffect, useState } from 'react'
-import { MANIFEST_BY_KIND, type AwsKind } from '../scene/aws-objects'
+import { kindView } from '../registry/registry'
+import { ICON_URL } from '../scene/aws-objects'
 import type { Theme } from '../scene/theme'
 import { createOpFor, kindLabel } from './drop-targets'
 import type { LabInfo } from './builder-api'
 
-const ICON_URL = import.meta.glob('../scene/aws-objects/icons/*.svg', { query: '?url', import: 'default', eager: true }) as Record<string, string>
-
 // The palette's "subnet" becomes public or private by its route table, so it borrows the public icon.
-const ICON_KIND: Record<string, AwsKind> = { subnet: 'subnet-public' }
+const ICON_KIND: Record<string, string> = { subnet: 'subnet-public' }
 
+// A kind without bundled artwork shows the fallback icon.
 export function iconUrl(kind: string): string | undefined {
-  const file = MANIFEST_BY_KIND[(ICON_KIND[kind] ?? kind) as AwsKind]?.file
-  return file && ICON_URL[`../scene/aws-objects/icons/${file}`]
+  const file = kindView(ICON_KIND[kind] ?? kind).icon
+  return file ? ICON_URL.get(file) : undefined
 }
 
 export function Palette({ lab, disabled, onStart }: { lab: LabInfo; disabled: boolean; onStart: (kind: string) => void }) {

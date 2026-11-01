@@ -9,7 +9,7 @@ const noRaycast = () => {}
 
 export function HighlightOverlay({ target, color, thickness }: { target: AwsObjectPlacement; color: string; thickness: number }) {
   return (
-    <mesh geometry={outlineGeometry(target.kind)} position={target.position} raycast={noRaycast} userData={{ highlight: target.id }}>
+    <mesh geometry={outlineGeometry(target.kind)} position={target.position} raycast={noRaycast} userData={{ highlight: target.id, color }}>
       <meshBasicMaterial colorWrite={false} depthWrite={false} />
       <Outlines thickness={thickness} color={color} angle={0} />
     </mesh>

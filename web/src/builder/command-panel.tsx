@@ -122,7 +122,7 @@ export function CommandPanel({ state, canRun, runBlocker, practice, events, them
         </p>
       )}
       {status && (
-        <p id="builder-status" role="status" style={{ margin: '6px 0 0', fontWeight: 600, color: state.phase === 'failed' || state.phase === 'form' ? theme.edges.usesKey : undefined }}>
+        <p id="builder-status" role="status" style={{ margin: '6px 0 0', fontWeight: 600, color: state.phase === 'failed' || state.phase === 'form' ? theme.edges.reference : undefined }}>
           {status}
         </p>
       )}
@@ -138,7 +138,7 @@ export function CommandPanel({ state, canRun, runBlocker, practice, events, them
         </p>
       )}
       {nameHint && (
-        <p id="practice-name-hint" style={{ margin: '6px 0 0', fontSize: 12, color: theme.edges.usesKey }}>
+        <p id="practice-name-hint" style={{ margin: '6px 0 0', fontSize: 12, color: theme.edges.reference }}>
           Emulator đã nhận {actionOf(state.draft.op.name)} nhưng cảnh vẫn chưa có kết quả. Kiểm lại tên (Name tag) và các id đã gõ trong
           terminal có giống lệnh trên không.
         </p>
