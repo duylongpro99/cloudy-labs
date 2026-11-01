@@ -1,0 +1,131 @@
+# Lab 900: two EC2 web servers in a VPC of their own, guarded by one security group and set up by
+# UserData. The lab page is personal content and stays in content/ (gitignored); this file holds only
+# our tasks, checks and target. The learner builds from an empty region; resources are found by name.
+id: lab-900
+provider: aws
+emulator: floci
+region: ap-southeast-1
+title: Lab 900 (EC2 web servers with a security group and UserData)
+cidrs: [10.90.0.0/16]
+builder:
+  palette: [vpc, subnet, igw, route-table, security-group, key-pair, instance]
+  tags: {lab: lab-900}
+  userData: |
+    #!/bin/bash
+    # Write a page naming this instance, read from IMDSv2, and serve it on port 80.
+    T=$(curl -s -X PUT http://169.254.169.254/latest/api/token -H "X-aws-ec2-metadata-token-ttl-seconds: 300")
+    meta() { curl -s -H "X-aws-ec2-metadata-token: $T" "http://169.254.169.254/latest/meta-data/$1"; }
+    mkdir -p /srv/www
+    printf '<h1>lab900</h1><p>%s, %s, %s</p>\n' "$(meta instance-id)" "$(meta placement/availability-zone)" "$(hostname)" > /srv/www/index.html
+    # Floci runs the instance as a container without systemd, and its IMDS proxy holds
+    # 169.254.169.254:80, so 0.0.0.0:80 is taken: serve on every address but lo instead.
+    cd /srv/www
+    for IP in $(ip -4 -o addr show scope global | awk '$2 != "lo" {sub(/\/.*/, "", $4); print $4}'); do
+      nohup python3 -m http.server 80 --bind "$IP" >>/var/log/web.log 2>&1 &
+    done
+tasks:
+  - id: vpc
+    text: Create the VPC lab900-vpc on 10.90.0.0/16 with DNS hostnames on.
+  - id: subnets
+    text: >-
+      Create two public subnets, lab900-public-subnet-1a (10.90.1.0/24 in ap-southeast-1a) and
+      lab900-public-subnet-1b (10.90.2.0/24 in ap-southeast-1b), each giving instances a public IP on launch.
+  - id: internet-gateway
+    text: Create lab900-igw and attach it to the VPC.
+  - id: public-routing
+    text: Make the route table lab900-public-rt send 0.0.0.0/0 to the Internet Gateway and serve both subnets.
+  - id: security-group
+    text: >-
+      Create the security group lab900-web-sg in the VPC. Open HTTP 80 to anyone and SSH 22 to one admin
+      address (/32) only.
+  - id: key-pair
+    text: Create the key pair lab900-key.
+  - id: instances
+    text: >-
+      Launch lab900-web-1 in subnet 1a and lab900-web-2 in subnet 1b: Amazon Linux 2023, t3.micro (t4g.micro on an Arm machine), the
+      key pair lab900-key, the security group lab900-web-sg, IMDSv2 required, and UserData that serves a
+      page naming the instance.
+checks:
+  - id: vpc-exists
+    task: vpc
+    fn: checks:vpc_exists
+    args: {cidr: 10.90.0.0/16}
+    description: The VPC lab900-vpc exists with the expected CIDR.
+  - id: vpc-dns-hostnames
+    task: vpc
+    fn: checks:vpc_dns_hostnames
+    description: The VPC has DNS hostnames enabled.
+  - id: subnet-1a
+    task: subnets
+    fn: checks:public_subnet
+    args: {az: ap-southeast-1a, cidr: 10.90.1.0/24}
+    description: The subnet 10.90.1.0/24 in ap-southeast-1a gives instances a public IP on launch.
+  - id: subnet-1b
+    task: subnets
+    fn: checks:public_subnet
+    args: {az: ap-southeast-1b, cidr: 10.90.2.0/24}
+    description: The subnet 10.90.2.0/24 in ap-southeast-1b gives instances a public IP on launch.
+  - id: igw-attached
+    task: internet-gateway
+    fn: checks:igw_attached
+    description: An Internet Gateway is attached to the VPC.
+  - id: public-route-table
+    task: public-routing
+    fn: checks:public_route_table
+    description: One route table sends 0.0.0.0/0 to the Internet Gateway and serves both subnets.
+  - id: sg-http-open
+    task: security-group
+    fn: checks:sg_http_open
+    description: lab900-web-sg lets anyone reach tcp 80.
+  - id: sg-ssh-admin-only
+    task: security-group
+    fn: checks:sg_ssh_admin_only
+    description: lab900-web-sg opens tcp 22 to a /32 only, and no group in the VPC opens it to the world.
+  - id: key-pair-exists
+    task: key-pair
+    fn: checks:key_pair_exists
+    description: The key pair lab900-key exists.
+  - id: web-1-instance
+    task: instances
+    fn: checks:instance_placed
+    args: {name: lab900-web-1, az: ap-southeast-1a}
+    description: lab900-web-1 runs AL2023 on t3.micro or t4g.micro in subnet 1a with lab900-key and lab900-web-sg.
+  - id: web-2-instance
+    task: instances
+    fn: checks:instance_placed
+    args: {name: lab900-web-2, az: ap-southeast-1b}
+    description: lab900-web-2 runs AL2023 on t3.micro or t4g.micro in subnet 1b with lab900-key and lab900-web-sg.
+  - id: imdsv2-required
+    task: instances
+    fn: checks:imdsv2_required
+    description: Both web instances require IMDSv2 tokens.
+  - id: web-1-page
+    task: instances
+    fn: checks:page_names_instance
+    args: {name: lab900-web-1}
+    description: lab900-web-1 answers HTTP with a page that names its own instance id.
+  - id: web-2-page
+    task: instances
+    fn: checks:page_names_instance
+    args: {name: lab900-web-2}
+    description: lab900-web-2 answers HTTP with a page that names its own instance id.
+hints:
+  - task: instances
+    text: >-
+      An instance reports running before its UserData has finished; give the page a minute. On the
+      emulator the instance has no systemd and port 80 of 169.254.169.254 is taken, so a server started
+      with systemctl or bound to 0.0.0.0:80 never answers: the builder's UserData shows a way that works.
+target:
+  nodes:
+    - {id: vpc, kind: vpc, label: VPC 10.90.0.0/16, checks: [vpc-exists, vpc-dns-hostnames]}
+    - {id: igw, kind: igw, parent: vpc, label: Internet Gateway, checks: [igw-attached]}
+    - {id: az-a, kind: az, parent: vpc, label: AZ 1a}
+    - {id: az-b, kind: az, parent: vpc, label: AZ 1b}
+    - {id: pub-a, kind: subnet-public, parent: az-a, label: Public subnet 1a, checks: [subnet-1a]}
+    - {id: pub-b, kind: subnet-public, parent: az-b, label: Public subnet 1b, checks: [subnet-1b]}
+    - {id: rt, kind: route-table, parent: vpc, label: Route table public, checks: [public-route-table]}
+    - {id: sg, kind: security-group, parent: vpc, label: SG web, checks: [sg-http-open, sg-ssh-admin-only]}
+    - {id: key, kind: key-pair, label: Key pair, checks: [key-pair-exists]}
+    # Declared after the subnets, so each instance binds only inside the subnet of its own AZ.
+    - {id: web-1, kind: instance, parent: pub-a, label: Web server 1, checks: [web-1-instance, web-1-page]}
+    - {id: web-2, kind: instance, parent: pub-b, label: Web server 2, checks: [web-2-instance, web-2-page]}
