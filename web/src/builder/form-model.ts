@@ -123,6 +123,7 @@ export function createDraft(op: OpSpec, tray: { id: string; kind: string; label:
       params.securityGroupId = (vpc ? groupsIn(graph, vpc) : [])[0]?.id ?? ''
       params.keyName = graph.nodes.find((n) => n.kind === 'key-pair')?.label ?? ''
       params.userData = lab.userData
+      params.httpTokens = 'required'  // as AWS launches an AL2023 AMI
       locked.push('subnetId')
       break
   }

@@ -281,6 +281,8 @@ def test_run_instances_rules():
     assert fields(run(userData="x" * 16384)) == []
     assert "16,385 bytes" in run(userData="x" * 16385)[0][1]
     assert fields(run(subnetId=VPC)) == ["subnetId"]
+    assert run(httpTokens="required") == [] and run(httpTokens="optional") == []
+    assert "not a metadata option" in run(httpTokens="v2")[0][1]
 
 
 def attach(g: ResourceGraph = GOLDEN, **over) -> list[tuple[str, str]]:

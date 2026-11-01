@@ -108,6 +108,7 @@ class RunInstances(Named):
     security_group_id: str
     key_name: str  # empty: no key pair
     user_data: str  # empty: none
+    http_tokens: str = ""  # empty: the AMI's default; "required" turns IMDSv1 off
 
 
 class ModifyInstanceAttribute(Params):
@@ -192,6 +193,8 @@ def _run_instances(p: RunInstances, t: Tags) -> list[str]:
         argv += ["--key-name", p.key_name]
     if p.user_data:
         argv += ["--user-data", p.user_data]
+    if p.http_tokens:
+        argv += ["--metadata-options", f"HttpTokens={p.http_tokens}"]
     return argv + tag_spec("instance", p.name, t)
 
 

@@ -28,6 +28,7 @@ const FIELD_LABEL: Record<string, string> = {
   securityGroupId: 'Security Group',
   keyName: 'Key Pair',
   userData: 'UserData',
+  httpTokens: 'IMDSv2 (HttpTokens)',
   instanceId: 'EC2 Instance',
 }
 
@@ -170,6 +171,7 @@ function LegacyForm({ draft, problems, graph, lab, theme, disabled, onEdit }: Fo
     if (field === 'imageId') return lab.images
     if (field === 'instanceType') return lab.instanceTypes
     if (field === 'protocol') return PROTOCOLS
+    if (field === 'httpTokens') return ['', 'required', 'optional']
     if (field === 'securityGroupId') {
       const vpc = graph && vpcOf(graph, draft.params.subnetId ?? '')
       return graph && vpc ? groupsIn(graph, vpc).map((n) => n.id) : []
@@ -186,6 +188,8 @@ function LegacyForm({ draft, problems, graph, lab, theme, disabled, onEdit }: Fo
     if (field === 'keyName' && o === '') return '(không dùng key pair)'
     if (field === 'sourceGroupId' && o === '') return '(không dùng, nguồn là CIDR)'
     if (field === 'protocol' && o === '-1') return '-1 (mọi giao thức)'
+    if (field === 'httpTokens' && o === '') return '(mặc định của AMI)'
+    if (field === 'httpTokens' && o === 'required') return 'required (chỉ IMDSv2)'
     return field === 'allocationId' || field === 'securityGroupId' || field === 'sourceGroupId' ? label(o) : o
   }
   const hint = 'userData' in draft.params ? userDataHint(draft.params.userData) : null

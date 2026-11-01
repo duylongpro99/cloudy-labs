@@ -364,7 +364,7 @@
       gesture: create
       argv: run-instances
       title: "Chạy EC2 Instance"
-      note: "Launch one instance. subnetId; imageId and instanceType from the lists below; securityGroupId: a group in the subnet's VPC; keyName: a key pair's name, or empty for none; userData: a script, or empty for none."
+      note: "Launch one instance. subnetId; imageId and instanceType from the lists below; securityGroupId: a group in the subnet's VPC; keyName: a key pair's name, or empty for none; userData: a script, or empty for none; httpTokens: required (IMDSv2 only), optional, or empty for the AMI's default."
       fields:
         - {name: "name", label: "Name (tag)"}
         - {name: "subnetId", label: "Subnet", ref: "subnet"}
@@ -373,6 +373,7 @@
         - {name: "securityGroupId", label: "Security Group", ref: "security-group"}
         - {name: "keyName", label: "Key Pair", ref: "key-pair", ref_by: "label", required: false}
         - {name: "userData", label: "UserData", multiline: true, required: false}
+        - {name: "httpTokens", label: "IMDSv2 (HttpTokens)", choices: ["optional", "required"], required: false}
 
 - kind: elastic-ip
   service: ec2

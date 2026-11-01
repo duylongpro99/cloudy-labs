@@ -27,6 +27,7 @@ SSH_PORT, WORLD = 22, "0.0.0.0/0"
 PORT = re.compile(r"[0-9]{1,5}")  # str.isdigit() also takes digits like ², which int() refuses
 MAX_GROUPS_PER_INSTANCE = 5  # AWS's default quota of security groups per network interface
 GONE_INSTANCE_STATES = ("terminated", "shutting-down")
+HTTP_TOKENS = ("", "optional", "required")  # empty: the AMI's default
 
 
 class _Graph:
@@ -337,6 +338,9 @@ def _run_instances(g: _Graph, params: RunInstances, offer: Choices, problems: li
                                                 f"{', '.join(offer['instanceTypes'])}"))
     if (size := len(params.user_data.encode())) > USER_DATA_MAX:
         problems.append(Problem("userData", f"UserData is {size:,} bytes; EC2 accepts at most {USER_DATA_MAX:,}"))
+    if params.http_tokens not in HTTP_TOKENS:
+        problems.append(Problem("httpTokens", f"{params.http_tokens} is not a metadata option; choose required "
+                                              "(IMDSv2 only), optional, or leave it empty for the AMI's default"))
 
 
 def _subnet_fits(g: _Graph, vpc: Node, block: IPv4Network, problems: list[Problem]) -> None:

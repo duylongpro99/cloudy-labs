@@ -86,7 +86,7 @@ describe('EC2 drafts', () => {
     const d = createDraft(op('run-instances'), subnet, g, LAB07)
     expect(d.params).toEqual({
       name: 'lab-07-instance-1', subnetId: 'subnet-83a1f79a', imageId: 'ami-amazonlinux2023-arm64', instanceType: 't4g.micro',
-      securityGroupId: 'sg-dbd2e6007fa2e7eef', keyName: 'lab07-key', userData: LAB07.userData,
+      securityGroupId: 'sg-dbd2e6007fa2e7eef', keyName: 'lab07-key', userData: LAB07.userData, httpTokens: 'required',
     })
     expect(d.locked).toEqual(['subnetId'])
     expect(groupsIn(g, 'vpc-149d0439').map((n) => n.id)).toEqual(['sg-dbd2e6007fa2e7eef', 'sg-b58b05ddff613fe13'])

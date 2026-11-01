@@ -68,6 +68,11 @@ SPIKE_CASES = [
                            "securityGroupId": "sg-1", "keyName": "", "userData": ""},
          "ec2 run-instances --image-id ami-amazonlinux2023 --instance-type t3.micro --subnet-id subnet-1 "
          "--security-group-ids sg-1 --count 1 --tag-specifications 'ResourceType=instance,Tags=[{Key=Name,Value=w},{Key=lab,Value=06}]'"),
+        ("run-instances", {"name": "w", "subnetId": "subnet-1", "imageId": "ami-amazonlinux2023", "instanceType": "t3.micro",
+                           "securityGroupId": "sg-1", "keyName": "", "userData": "", "httpTokens": "required"},
+         "ec2 run-instances --image-id ami-amazonlinux2023 --instance-type t3.micro --subnet-id subnet-1 "
+         "--security-group-ids sg-1 --count 1 --metadata-options HttpTokens=required "
+         "--tag-specifications 'ResourceType=instance,Tags=[{Key=Name,Value=w},{Key=lab,Value=06}]'"),
         ("modify-instance-attribute", {"instanceId": "i-1", "groupId": "sg-2", "currentGroups": ["sg-1"]},
          "ec2 modify-instance-attribute --instance-id i-1 --groups sg-1 sg-2"),
 ]
