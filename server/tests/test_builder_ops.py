@@ -166,6 +166,32 @@ def test_ingress_expectation_matches_the_collector(protocol, port, includes):
     assert expectation(op, p, '{"Return": true}', 3) == {"node": "sg-1", "prop": "ingress", "includes": includes}
 
 
+def test_ingress_from_a_security_group():
+    a = argv("authorize-security-group-ingress", groupId="sg-1", protocol="tcp", port="3306", sourceGroupId="sg-2")
+    assert json.loads(a[a.index("--ip-permissions") + 1]) == [
+        {"IpProtocol": "tcp", "FromPort": 3306, "ToPort": 3306, "UserIdGroupPairs": [{"GroupId": "sg-2"}]}]
+    op = OPS["authorize-security-group-ingress"]
+    p = op.params.model_validate({"groupId": "sg-1", "protocol": "tcp", "port": "3306", "cidr": "", "sourceGroupId": "sg-2"})
+    # The collector lists a source group by its id among the rule's sources.
+    assert expectation(op, p, '{"Return": true}', 3)["includes"] == {"protocol": "tcp", "from": 3306, "to": 3306, "source": "sg-2"}
+
+
+def test_failover_is_offered_on_an_aurora_cluster():
+    from cloudy_labs.builder.catalog import catalog as full_catalog
+    from cloudy_labs.builder.catalog import op_named, prepare
+
+    op = next(o for o in full_catalog(["db-cluster"]) if o["name"] == "failover-db-cluster")
+    assert op["gesture"] == "attribute" and op["targets"] == ["db-cluster"]
+    prepared = prepare(op_named("failover-db-cluster"), {"DBClusterIdentifier": "lab-aurora", "TargetDBInstanceIdentifier": ""},
+                       graph=None, azs=[], choices={}, tags=TAGS, check=False)
+    assert prepared.argv[2] == "failover-db-cluster"
+    assert prepared.argv[prepared.argv.index("--db-cluster-identifier") + 1] == "lab-aurora"
+    assert "--target-db-instance-identifier" not in prepared.argv  # left empty, RDS picks the reader
+    chosen = prepare(op_named("failover-db-cluster"), {"DBClusterIdentifier": "lab-aurora", "TargetDBInstanceIdentifier": "lab-aurora-2"},
+                     graph=None, azs=[], choices={}, tags=TAGS, check=False)
+    assert chosen.argv[chosen.argv.index("--target-db-instance-identifier") + 1] == "lab-aurora-2"
+
+
 def test_attach_security_group_expects_the_attached_edge():
     op = OPS["modify-instance-attribute"]
     p = op.params.model_validate({"instanceId": "i-1", "groupId": "sg-2"})

@@ -280,21 +280,41 @@ def _ingress(g: _Graph, params: AuthorizeSecurityGroupIngress, problems: list[Pr
         elif not 0 <= (port := int(params.port)) <= 65535:
             problems.append(Problem("port", f"{port} is not a port: ports go from 0 to 65535"))
             port = None
-    block = _cidr("cidr", params.cidr, problems, limits=False)
-    if block is None:
+    if params.source_group_id and params.cidr.strip():
+        problems.append(Problem("sourceGroupId", "give one source: a CIDR block or a security group, not both; "
+                                                 "add a second rule for the other"))
         return
-    if str(block) == WORLD and (protocol == "-1" or (protocol == "tcp" and port == SSH_PORT)):
-        what = "all traffic, including SSH on port 22," if protocol == "-1" else "SSH (port 22)"
-        problems.append(Problem("cidr", f"this would open {what} to the whole Internet: bots scan for open port 22 "
-                                        "and try passwords and stolen keys within minutes. Allow only your own address, "
-                                        "for example 203.0.113.10/32 (look up your public IP and add /32)"))
+    if params.source_group_id:
+        source = _node(g, "sourceGroupId", params.source_group_id, ("security-group",), "security group", problems)
+        if source is None:
+            return
+        if group and g.vpc_of(source.id) != g.vpc_of(group.id):
+            problems.append(Problem("sourceGroupId", f"{_name(source)} belongs to {g.vpc_of(source.id)} but {_name(group)} "
+                                                     f"is in {g.vpc_of(group.id)}; a rule can name a security group "
+                                                     "of its own VPC"))
+            return
+        field, origin = "sourceGroupId", source.id
+    else:
+        if not params.cidr.strip():
+            problems.append(Problem("cidr", "give the source: a CIDR block such as 10.0.1.0/24, "
+                                            "or choose a security group as the source"))
+            return
+        block = _cidr("cidr", params.cidr, problems, limits=False)
+        if block is None:
+            return
+        if str(block) == WORLD and (protocol == "-1" or (protocol == "tcp" and port == SSH_PORT)):
+            what = "all traffic, including SSH on port 22," if protocol == "-1" else "SSH (port 22)"
+            problems.append(Problem("cidr", f"this would open {what} to the whole Internet: bots scan for open port 22 "
+                                            "and try passwords and stolen keys within minutes. Allow only your own address, "
+                                            "for example 203.0.113.10/32 (look up your public IP and add /32)"))
+        field, origin = "cidr", str(block)
     if group:
         portless = protocol in PORTLESS
         for rule in group.props.get("ingress") or []:
             same_ports = portless or (rule.get("from") == port and rule.get("to") == port)
-            if rule.get("protocol") == protocol and same_ports and str(block) in rule.get("sources", []):
-                problems.append(Problem("cidr", f"{_name(group)} already allows this ({protocol}"
-                                                f"{'' if portless else f' {port}'} from {block})"))
+            if rule.get("protocol") == protocol and same_ports and origin in rule.get("sources", []):
+                problems.append(Problem(field, f"{_name(group)} already allows this ({protocol}"
+                                               f"{'' if portless else f' {port}'} from {origin})"))
                 break
 
 

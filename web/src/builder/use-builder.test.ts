@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest'
 import { BuilderError, type Preview, type RunOutcome } from './builder-api'
-import { fixedDraft } from './form-model'
+import { fixedDraft, ingressDraft } from './form-model'
 import { IDLE, WAIT_MS, expectMet, practiceMet, previewCurrent, reduce, type BuilderAction, type BuilderState } from './use-builder'
 import { golden, op } from './test-fixtures'
 
@@ -81,6 +81,14 @@ describe('builder state', () => {
     expect(s.phase === 'form' && s.preview?.command).toBe(preview.command)
     s = reduce(s, { type: 'previewed', rev: 1, preview: { ...preview, command: 'new' }, error: null })
     expect(s.phase === 'form' && s.preview?.command).toBe('new')
+  })
+
+  it('clears the suggested CIDR when an inbound rule takes a security group as its source', () => {
+    const rule = ingressDraft(op('authorize-security-group-ingress'), 'sg-1')
+    const s = run({ type: 'open', draft: rule }, { type: 'edit', field: 'sourceGroupId', value: 'sg-2' })
+    expect(s.phase === 'form' && s.draft.params).toMatchObject({ sourceGroupId: 'sg-2', cidr: '' })
+    const back = reduce(s, { type: 'edit', field: 'sourceGroupId', value: '' })
+    expect(back.phase === 'form' && back.draft.params).toMatchObject({ sourceGroupId: '', cidr: '' })
   })
 
   it('ignores edits to locked fields', () => {

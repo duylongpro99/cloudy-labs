@@ -99,7 +99,7 @@ describe('EC2 drafts', () => {
 
   it('suggests the web rule for a new inbound rule and locks only the group', () => {
     const d = ingressDraft(op('authorize-security-group-ingress'), 'sg-1')
-    expect(d.params).toEqual({ groupId: 'sg-1', protocol: 'tcp', port: '80', cidr: '0.0.0.0/0' })
+    expect(d.params).toEqual({ groupId: 'sg-1', protocol: 'tcp', port: '80', cidr: '0.0.0.0/0', sourceGroupId: '' })
     expect(d.locked).toEqual(['groupId'])
   })
 })

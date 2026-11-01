@@ -91,7 +91,10 @@ class AuthorizeSecurityGroupIngress(Params):
     group_id: str
     protocol: str  # tcp, udp, icmp or -1 (all traffic)
     port: str  # one port; ignored for icmp and -1
-    cidr: str
+    # The source: an address block, or another security group (its members, wherever they run).
+    # Exactly one is given; validate.py says so when not.
+    cidr: str = ""
+    source_group_id: str = ""
 
 
 class CreateKeyPair(Named):
@@ -175,7 +178,10 @@ def ip_permissions(p: AuthorizeSecurityGroupIngress) -> str:
         rule |= {"FromPort": -1, "ToPort": -1}  # every ICMP type and code
     elif p.protocol != "-1":
         rule |= {"FromPort": _port(p.port), "ToPort": _port(p.port)}
-    rule["IpRanges"] = [{"CidrIp": p.cidr}]
+    if p.source_group_id:
+        rule["UserIdGroupPairs"] = [{"GroupId": p.source_group_id}]
+    else:
+        rule["IpRanges"] = [{"CidrIp": p.cidr}]
     return json.dumps([rule])
 
 
@@ -275,10 +281,10 @@ def result_id(op: Op, stdout: str) -> str | None:
 
 def ingress_rule(p: AuthorizeSecurityGroupIngress) -> dict[str, Any]:
     """The rule as the collector writes it into a security group's `ingress`, with `source` for
-    one of its `sources`. Rules for all traffic have no ports."""
+    one of its `sources` (a CIDR or a group id). Rules for all traffic have no ports."""
     [rule] = json.loads(ip_permissions(p))
     ports = {"from": rule["FromPort"], "to": rule["ToPort"]} if "FromPort" in rule else {}
-    return {"protocol": p.protocol, **ports, "source": p.cidr}
+    return {"protocol": p.protocol, **ports, "source": p.source_group_id or p.cidr}
 
 
 def expectation(op: Op, params: Params, stdout: str, version: int) -> dict[str, Any]:

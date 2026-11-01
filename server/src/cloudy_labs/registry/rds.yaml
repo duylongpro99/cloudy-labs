@@ -166,6 +166,14 @@
       result_id: DBCluster.DBClusterArn
       expect: {label: DBClusterIdentifier}
       note: "Create an Aurora cluster: shared storage, no instance yet. Add instances with create-db-instance and DBClusterIdentifier; the first one is the writer."
+    - id: failover-db-cluster
+      api: FailoverDBCluster
+      gesture: attribute
+      title: "Failover Aurora cluster"
+      fields: [{name: DBClusterIdentifier, ref: db-cluster, ref_by: label}, {name: TargetDBInstanceIdentifier, ref: db-instance, ref_by: label, required: false}]
+      targets: [db-cluster]
+      target_param: DBClusterIdentifier
+      note: "Make a reader the cluster's writer. TargetDBInstanceIdentifier picks the reader; leave it empty and RDS picks one. The cluster needs at least one reader."
 
 - kind: db-instance
   service: rds

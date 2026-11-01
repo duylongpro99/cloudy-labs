@@ -38,3 +38,5 @@ Nội dung lab nằm ở `labs/lab-001/content/lab.md` (gitignored). File này c
 | SG của Aurora cluster | Floci bỏ qua (`sg-00000000`). Chấm SG ở RDS instance và chính SG đó. |
 
 Giới hạn của builder gặp lúc làm: op ingress SG chỉ nhận CIDR, chưa nhận SG nguồn. Builder chưa có op failover, nên bước này dùng terminal.
+
+Đã bổ sung sau (2026-11-01): op ingress nhận `sourceGroupId` (SG nguồn cùng VPC, thay cho CIDR) và registry có op `failover-db-cluster` (chọn reader làm writer, để trống thì RDS tự chọn). Chạy lại lab-001 hoàn toàn qua builder, ingress 3306 từ `lab-001-sg-app` và failover sang `lab-001-aurora-reader`: `labctl check lab-001` 12/12 đạt, cộng 1 INFO (`rds-mysql-gp3`).

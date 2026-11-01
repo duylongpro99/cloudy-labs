@@ -227,6 +227,35 @@ def test_ingress_problems(over, field, needle):
     assert len(found) == 1 and found[0][0] == field and needle in found[0][1], found
 
 
+def test_ingress_from_a_security_group():
+    assert ingress(port="3306", cidr="", sourceGroupId=SG_DEFAULT) == []
+    assert ingress(port="3306", cidr="", sourceGroupId=SG_WEB) == []  # a group may admit its own members
+
+
+@pytest.mark.parametrize(
+    "over, field, needle",
+    [
+        ({"sourceGroupId": SG_DEFAULT}, "sourceGroupId", "not both"),
+        ({"cidr": ""}, "cidr", "give the source"),
+        ({"cidr": "", "sourceGroupId": "sg-default-ap-southeast-2"}, "sourceGroupId", "of its own VPC"),
+        ({"cidr": "", "sourceGroupId": "sg-0000000000000000"}, "sourceGroupId", ""),
+        ({"cidr": "", "sourceGroupId": INSTANCE}, "sourceGroupId", ""),
+    ],
+)
+def test_ingress_source_problems(over, field, needle):
+    found = ingress(**over)
+    assert len(found) == 1 and found[0][0] == field and needle in found[0][1], found
+
+
+def test_ingress_from_a_group_already_allowed():
+    data = GOLDEN.model_dump(mode="json", by_alias=True)
+    web = next(n for n in data["nodes"] if n["id"] == SG_WEB)
+    web["props"]["ingress"].append({"protocol": "tcp", "from": 3306, "to": 3306, "sources": [SG_DEFAULT]})
+    g = ResourceGraph.model_validate(data)
+    found = problems("authorize-security-group-ingress", g, groupId=SG_WEB, protocol="tcp", port="3306", cidr="", sourceGroupId=SG_DEFAULT)
+    assert len(found) == 1 and found[0][0] == "sourceGroupId" and "already allows this" in found[0][1], found
+
+
 def test_key_pair_names_are_unique():
     assert problems("create-key-pair", name="lab07-key-2") == []
     assert "a key pair named lab07-key already exists" in problems("create-key-pair", name="lab07-key")[0][1]

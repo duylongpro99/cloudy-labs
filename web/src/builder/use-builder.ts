@@ -93,7 +93,10 @@ export function reduce(s: BuilderState, a: BuilderAction): BuilderState {
     case 'edit': {
       if (s.phase !== 'form' && s.phase !== 'failed') return s
       if (s.draft.locked.includes(a.field)) return s
-      const draft = { ...s.draft, params: { ...s.draft.params, [a.field]: a.value }, rev: s.draft.rev + 1 }
+      const params = { ...s.draft.params, [a.field]: a.value }
+      // An inbound rule has one source: picking a security group replaces the suggested CIDR.
+      if (a.field === 'sourceGroupId' && a.value && 'cidr' in params) params.cidr = ''
+      const draft = { ...s.draft, params, rev: s.draft.rev + 1 }
       return { phase: 'form', draft, preview: s.preview, previewRev: s.phase === 'form' ? s.previewRev : null, error: null }
     }
     case 'previewed':
