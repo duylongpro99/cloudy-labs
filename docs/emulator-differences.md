@@ -29,13 +29,15 @@ Ghi chú cho người soạn lab (PRD NFR5). Mỗi lab chạy trên Floci (mặc
 - **Rule inbound trùng vẫn được thêm.** `authorize-security-group-ingress` với rule đã có trả exit 0 và nhân đôi rule; AWS thật trả `InvalidPermission.Duplicate`. Builder tự chặn rule trùng trước khi chạy; checker nên coi một group có rule trùng là bình thường.
 - **Key pair bỏ qua tag.** `create-key-pair --tag-specifications` chạy được nhưng `describe-key-pairs` trả `Tags: []`. Đừng tìm key pair của lab theo tag; dùng `KeyName`.
 - **Subnet chồng lấn bị từ chối như AWS** (`InvalidSubnet.Conflict`). Trùng tên security group (`InvalidGroup.Duplicate`), trùng tên key pair (`InvalidKeyPair.Duplicate`) và `modify-instance-attribute --groups` cũng giống AWS ([ghi chú kiểm](../plans/261030-1045-m4-builder-lab-07/notes/floci-ec2-ops.md)).
+- **Instance không có systemd.** Container instance không chạy init, nên `systemctl enable --now httpd` trong UserData lỗi dù `dnf install httpd` thành công. Cộng với việc IMDS chiếm cổng 80 (xem phần Mạng và IP), UserData kiểu "cài httpd rồi bật service" của trang lab không bao giờ trả trang. UserData trong `builder.userData` của lab (ví dụ lab-900) chạy server bằng `python3 -m http.server` trên từng địa chỉ IPv4. Kiểm ngày 2026-11-01.
+- **`HttpTokens=required` được lưu nhưng không được áp.** `describe-instances` trả `MetadataOptions.HttpTokens: required`, nhưng bên trong instance gọi IMDS không token (IMDSv1) vẫn nhận 200. Checker chấm IMDSv2 trên `MetadataOptions`, không thử gọi IMDSv1. Kiểm ngày 2026-11-01.
 - **Lần đầu public cổng ứng dụng, Floci pull `alpine/socat` không kèm tag**, khiến Docker kéo về mọi tag. `labctl up` pull sẵn `alpine/socat:latest` để tránh việc này.
 
 ### API Floci 2.3.0 không có
 
 Lab cần một trong các API dưới đây ra `blocked` trong `labctl coverage`. Danh sách nằm ở [`catalog-overrides.yaml`](../server/src/cloudy_labs/coverage/catalog-overrides.yaml); bảng theo từng kind ở [coverage.md](coverage.md).
 
-- EC2: EBS snapshot (`CreateSnapshot`, `CopySnapshot`), DHCP option set, egress-only internet gateway, placement group, replace root volume task.
+- EC2: `GetConsoleOutput` (trả `UnsupportedOperation`), EBS snapshot (`CreateSnapshot`, `CopySnapshot`), DHCP option set, egress-only internet gateway, placement group, replace root volume task.
 - RDS: engine Oracle và SQL Server; read replica và snapshot của MySQL/MariaDB; blue/green deployment.
 - CodeCommit, X-Ray, FSx, Storage Gateway, Direct Connect, Site-to-Site VPN không có.
 - API Gateway v2: `CreateStage`, `GetStages` và các API integration.

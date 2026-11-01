@@ -70,3 +70,27 @@ Lần đầu soạn target, twin gắn sai: `App b` vào subnet data của AZ a,
 | Route table app riêng cho từng AZ, route data chỉ có `local` | Khớp. Route table mới chỉ có route `local`. |
 | DB subnet group trải 3 AZ | Khớp. |
 | Egress đi qua NAT cùng AZ | Chấm tĩnh trên route table. Floci không chuyển gói tin thật qua NAT. |
+
+## Lab-900: EC2 web với security group và UserData (2026-11-01)
+
+Lab tự soạn để kiểm lại M4 (EC2 qua builder), M5 (chat) và M6 (twin) bằng một lab có EC2. Trang lab nằm ở `labs/lab-900/content/lab.md` (gitignored). Lab gồm một VPC với hai public subnet ở `ap-southeast-1a/1b`, một IGW, một route table public, security group `lab900-web-sg` (80 cho mọi nơi, 22 cho một `/32`), key pair `lab900-key`, và hai instance AL2023 bắt buộc IMDSv2, mỗi instance chạy UserData trả trang có instance id của nó. `lab.yaml` có 14 check, trong đó `web-1-page` và `web-2-page` gọi HTTP thật tới instance.
+
+Trên Mac Apple Silicon, builder chỉ cho AMI `ami-amazonlinux2023-arm64` với `t4g.micro`/`t4g.small`; Floci cũng từ chối AMI arm64 đi với `t3.micro`, như AWS. Check instance vì vậy nhận cả `t3.micro` và `t4g.micro`.
+
+| Bước | Lệnh | Kết quả |
+|---|---|---|
+| Coverage | `uv run labctl coverage lab-900 --accept` | `blocked`: dòng kiểm tra tuỳ chọn của trang gọi `aws ec2 get-console-output`, mà Floci 2.3.0 không có (`UnsupportedOperation`). Hai dòng gắn nhầm dịch vụ (cloudfront, workspaces-web) đã đánh dấu bỏ qua. Các bước bắt buộc của lab đều chạy được. |
+| Lần 1: builder | Chỉ `/api/run`: VPC, subnet, IGW, route table, SG kèm 2 rule, key pair, 2 instance với `builder.userData` | 13/14. Chỉ `imdsv2-required` FAIL vì op `run-instances` của builder không có trường metadata options. Hai trang trả qua `127.0.0.1:30000/30001` và có đúng instance id. Twin: 11/11 node gắn vào tài nguyên thật, 0 ghost. |
+| Lần 2: terminal | Chỉ AWS CLI, `run-instances --metadata-options HttpTokens=required`. Web-1 dùng UserData của trang (`dnf install httpd` rồi `systemctl enable --now httpd`), web-2 dùng `builder.userData` | Web-1 không có trang sau 4 phút (13/14); thông điệp check nói rõ instance không có `index.html` và cổng 80 chỉ có IMDS. Terminate web-1 rồi chạy lại với `builder.userData`: 14/14. Twin 11/11, 0 ghost. |
+| Reset | `labctl reset lab-900` | 0/14, không còn container instance của lab. |
+| Lần 3: chat | 5 câu tiếng Việt viết lại từ task của `lab.yaml` qua `/api/chat`, mỗi chuỗi chạy qua `/api/run` | 13/14, chỉ `imdsv2-required` FAIL như builder: chat chỉ chọn op trong danh mục builder. 4 câu đạt ngay. Câu VPC cần hỏi lại một lần vì validate chặn một bước ở câu trả lời đầu (script không lưu chi tiết bước bị chặn). Câu chạy instance dùng đúng AMI arm64, `t4g.micro`, SG, key và UserData gợi ý của lab. 6 prompt gửi đi trùng trang ở 14 cụm 8 từ: 13 cụm là URL và header IMDSv2 nằm trong `builder.userData` (system prompt gửi kèm UserData gợi ý của lab), 1 cụm là tên VPC kèm CIDR. Không có đoạn văn nào của trang. |
+| Rò nội dung | `uv run python scripts/check-content-leak.py` | exit 0. Vòng lặp tên instance trong `checks.py` được viết lại thành hằng `WEB_NAMES`. Các idiom AWS trùng trang (URL và header IMDSv2, subnet ghi theo AZ kèm CIDR, đường dẫn SSM của AMI AL2023, filter CLI tìm IGW, rule mở tcp 80) được ghi hash trong `labs/lab-900/leak-review.json`. |
+
+### Khoảng trống còn lại
+
+| Khoảng trống | Ảnh hưởng |
+|---|---|
+| Builder và chat không đặt được `HttpTokens=required` | Lab yêu cầu IMDSv2 chỉ đạt 14/14 bằng terminal. |
+| Floci lưu `HttpTokens=required` nhưng vẫn trả IMDSv1 | Check chấm trên `MetadataOptions`; người học không thấy IMDSv1 bị chặn như trên AWS. |
+| Instance Floci không có systemd, IMDS chiếm cổng 80 | UserData `httpd` + `systemctl` của trang không chạy; hint của task `instances` chỉ sang `builder.userData`. |
+| Floci không có `GetConsoleOutput` | Coverage báo `blocked` dù đó chỉ là bước kiểm tra tuỳ chọn. |
