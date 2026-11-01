@@ -1,0 +1,57 @@
+# Files that named us-east-1 before per-lab regions
+
+Taken on 2026-10-31 with `grep -rl us-east-1 server/src server/tests server/scripts web/src web/scripts docs labs`. Total: 53 files.
+
+- `docs/labctl.md`
+- `server/src/cloudy_labs/config.py`
+- `server/tests/fixtures/graph/floci-describe/describe-instances.json`
+- `server/tests/fixtures/graph/floci-describe/describe-internet-gateways.json`
+- `server/tests/fixtures/graph/floci-describe/describe-route-tables.json`
+- `server/tests/fixtures/graph/floci-describe/describe-security-groups.json`
+- `server/tests/fixtures/graph/floci-describe/describe-subnets.json`
+- `server/tests/fixtures/graph/floci-describe/describe-vpcs.json`
+- `server/tests/fixtures/graph/floci-describe/vpc-dns-hostnames.json`
+- `server/tests/fixtures/graph/lab-06-07.graph.json`
+- `server/tests/fixtures/graph/lab-06-07.twin.json`
+- `server/tests/fixtures/graph/variants/base.graph.json`
+- `server/tests/fixtures/graph/variants/eip-on-instance.graph.json`
+- `server/tests/fixtures/graph/variants/fresh-launch.graph.json`
+- `server/tests/fixtures/graph/variants/igw-gone.graph.json`
+- `server/tests/fixtures/graph/variants/nat-deleted.graph.json`
+- `server/tests/fixtures/graph/variants/no-dns-answer.graph.json`
+- `server/tests/fixtures/graph/variants/no-names.graph.json`
+- `server/tests/fixtures/graph/variants/real-public-ip.graph.json`
+- `server/tests/fixtures/graph/variants/terminated.graph.json`
+- `server/tests/test_api_tap.py`
+- `server/tests/test_app.py`
+- `server/tests/test_builder_ops.py`
+- `server/tests/test_builder_validate.py`
+- `server/tests/test_chat_prompt.py`
+- `server/tests/test_chat_suggest.py`
+- `server/tests/test_collector.py`
+- `server/tests/test_fixture_lab_07.py`
+- `server/tests/test_graph_schema.py`
+- `server/tests/test_hub.py`
+- `server/tests/test_latency_docker.py`
+- `server/tests/test_lifecycle_docker.py`
+- `server/tests/test_orphans.py`
+- `server/tests/test_preflight.py`
+- `server/tests/test_providers.py`
+- `server/tests/test_registry.py`
+- `server/tests/test_twin_binding.py`
+- `server/tests/test_twin_docker.py`
+- `server/tests/test_twin_runner.py`
+- `web/scripts/check-builder.mjs`
+- `web/scripts/e2e-builder-lab-06.mjs`
+- `web/scripts/e2e-builder-lab-07.mjs`
+- `web/src/builder/drop-targets.test.ts`
+- `web/src/builder/form-model.test.ts`
+- `web/src/builder/test-fixtures.ts`
+- `web/src/builder/use-builder.test.ts`
+- `web/src/graph/fly-target.test.ts`
+- `web/src/graph/graph-client.test.ts`
+- `web/src/graph/graph-to-scene.test.ts`
+- `web/src/graph/merge-twin.test.ts`
+- `web/src/scene/fixture.ts`
+- `web/src/scene/layout.test.ts`
+- `web/src/twin/highlight.test.ts`

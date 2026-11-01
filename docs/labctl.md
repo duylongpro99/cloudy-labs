@@ -22,17 +22,20 @@ uv run labctl --help
 | Lệnh | Việc làm |
 |---|---|
 | `labctl up` | Ghi profile `lab` vào config AWS của bạn (xem [Builder kéo-thả](#builder-kéo-thả)). Dựng api-tap, Floci và moto ([`compose.yaml`](../server/src/cloudy_labs/emulator/compose.yaml)), chờ healthy, dọn tài nguyên mồ côi từ lần trước, pull sẵn `alpine/socat:latest`. Lần đầu, lệnh này build thêm hai image Amazon Linux 2023 cài sẵn gói cho IMDS và SSH (`cloudy-labs/al2023:1-x86_64` và `:1-arm64`, khoảng 1–2 phút, cần mạng); các lần sau dùng lại. `down` không xoá các image này. Chạy lại khi stack đang chạy thì chỉ báo "already running", trừ khi Floci healthy trong Docker nhưng không trả lời ở cổng host; khi đó container Floci được tạo lại. Cổng bị process khác chiếm thì báo lỗi, không đổi sang cổng khác. |
-| `labctl down` | Tắt stack và xoá container EC2, network VPC, volume mà Floci để lại. |
+| `labctl down` | Tắt stack và xoá container EC2, network VPC, volume mà Floci để lại. Container service Floci tạo mà không gắn owner (ECR, Athena, ElastiCache, EKS) không bị xoá: `down` liệt kê chúng kèm lệnh `docker rm -f` ([lý do](emulator-differences.md#vòng-đời)). |
 | `labctl env [lab]` | In các dòng `export` trỏ AWS CLI vào emulator của lab (mặc định Floci). Dùng: `eval "$(labctl env lab-06)"`. |
 | `labctl start <lab>` | Cảnh báo nếu CIDR của lab trùng mạng Docker, reset emulator của lab, mở một lần làm mới (attempt), chạy các bước `setup` và in danh sách task. Nếu `setup` lỗi, lần làm mới vẫn được mở; chạy `labctl reset <lab>` để thử lại. |
 | `labctl check <lab> [--json]` | Chạy các check của lab. Cần lần làm hiện tại là của lab này. |
 | `labctl reset <lab>` | Reset emulator, mở lần làm mới, chạy lại `setup`. |
+| `labctl content import <lab> <file.md> [--fetch-images]` | Chép trang lab dán vào `labs/<lab>/content/lab.md` (gitignore), bỏ query presigned, in danh sách tab. Xem [Nội dung lab cục bộ](#nội-dung-lab-cục-bộ). |
+| `labctl credentials moto` | In key của user admin trên moto theo dạng `credential_process` của AWS CLI. Profile `lab` gọi lệnh này khi lab chạy trên moto; không cần chạy tay. |
 | `labctl status [lab] [--json]` | Health của từng emulator, lab đang làm, kết quả check gần nhất, danh sách lab và lab nào đã hoàn thành. |
+| `labctl coverage [lab] [--catalog <csv>] [--matrix] [--json]` | Cho biết một lab, hoặc cả danh mục, chạy được trên nền tảng tới đâu. Xem [Coverage](#coverage). |
 | `labctl serve` | Chạy lab-server cho cảnh 3D trực tiếp và builder ở `127.0.0.1:8730`, chạy foreground đến khi Ctrl-C. Cảnh báo khi thiếu `aws` CLI hoặc profile `lab`, khi AWS CLI cũ hơn 2.13 (bỏ qua `endpoint_url`), và khi file credentials có section `[lab]`. Xem [Cảnh 3D trực tiếp](#cảnh-3d-trực-tiếp). |
 
 Mã thoát của `check`: `0` khi đạt hết, `1` khi có check trượt, `2` khi không chấm được (chưa `start`, emulator chưa chạy, lab lỗi, lỗi bất ngờ). Các lệnh khác trả `1` khi lỗi. `down` vẫn tắt stack khi có tài nguyên Floci không xoá được, rồi trả `1` và liệt kê chúng.
 
-Reset chỉ đụng tới emulator mà lab dùng: container Floci được xoá và tạo lại cùng các instance của nó (khoảng 1–5 giây), moto được gọi `/moto-api/reset` và `/moto-api/reset-auth`, rồi tạo lại user admin (key cũ hết hiệu lực, cần chạy lại `eval "$(labctl env <lab>)"`).
+Reset chỉ đụng tới emulator mà lab dùng: container Floci được xoá và tạo lại cùng các instance của nó (khoảng 1–5 giây), moto được gọi `/moto-api/reset` và `/moto-api/reset-auth`, rồi tạo lại user admin. Key cũ hết hiệu lực: `--profile lab` tự đọc key mới qua `credential_process`, shell đã `eval "$(labctl env <lab>)"` cho lab moto cũng dùng profile đó nên không cần chạy lại.
 
 ## Cổng
 
@@ -43,7 +46,9 @@ Mọi cổng chỉ bind `127.0.0.1`. Nguồn gốc: [`config.py`](../server/src/
 | 4566 | api-tap, proxy đứng trước Floci | AWS CLI của người học (`labctl env`) và checker |
 | 4567 | Floci, đi thẳng (Floci cũng nghe ở 4567 trong container) | `labctl` và collector, để lệnh đọc của chúng không bị tính là hoạt động của người học |
 | 4568 | api-tap, luồng SSE `/events` các lệnh ghi | `labctl serve` |
-| 5050 | moto | lab chạy trên moto |
+| 4569 | api-tap-moto, proxy đứng trước moto | AWS CLI của người học trên lab moto (profile `lab`) |
+| 4570 | api-tap-moto, luồng SSE `/events` các lệnh ghi | `labctl serve` |
+| 5050 | moto, đi thẳng | `labctl` (reset, tạo user admin), checker và collector |
 | 8730 | lab-server (`labctl serve`) | web, qua proxy của Vite |
 | 5174 | Vite dev server của `web/` | trình duyệt |
 
@@ -58,8 +63,9 @@ Sau đó làm lab bằng AWS CLI như bình thường (`eval "$(uv run labctl en
 
 - api-tap chuyển tiếp nguyên vẹn mọi request (giữ chữ ký SigV4). Gặp lệnh ghi (`Create*`, `Run*`, `Delete*`…), nó phát một sự kiện trên kênh SSE; không ai nghe thì sự kiện bị bỏ. api-tap nằm trong compose, nên CLI vẫn chạy khi `serve` tắt.
 - `serve` nghe kênh đó, gom các sự kiện gần nhau (150 ms) rồi cho collector đọc lại Floci thành resource graph ([`schema.py`](../server/src/cloudy_labs/graph/schema.py)). Ngoài ra nó đọc lại mỗi 5 giây làm lưới an toàn. Graph chỉ được gửi khi nội dung đổi, kèm số phiên bản tăng dần.
+- Collector chỉ đọc các kind lab đang mở có thể cần: kind trong palette và target, mọi kind reachability (route table, SG, subnet…) khi lab có kind mạng, và kind đã thấy trong graph hoặc trong sự kiện ghi của api-tap. Vì vậy một tài nguyên ngoài palette, tạo bằng CLI, vẫn hiện ra ở lần refresh sau. Lab không nêu kind nào thì đọc cả registry. Mở lab khác thì quên các kind đã thấy.
 - WebSocket `/ws` gửi ba loại tin: `graph` (toàn bộ graph), `api-event` (`service`, `action`, `write`) và `twin` (kết quả check và ghost của lab đang mở, xem [Twin và ghost](#twin-và-ghost)). `GET /api/graph` trả graph gần nhất. `/ws` chỉ nhận origin của Vite dev server.
-- Floci từ chối kết nối (đã `down`, đang tạo lại) thì graph có `status: "emulator-down"` ngay và web báo trạng thái đó; Floci lên lại thì cảnh tự về trạng thái mới, không cần tải lại trang. Lỗi có thể chỉ thoáng qua (timeout) phải lặp lại 2 lần liền mới chuyển sang `emulator-down`, để một lệnh đọc chậm không xoá cảnh. `labctl reset` tạo lại Floci trong khoảng 1,5 s và cổng chỉ đóng chừng 0,5 s, ngắn hơn chu kỳ poll 5 s, nên cảnh thường đi thẳng về Region trống mà không kịp hiện `emulator-down`. Tắt `serve` khi web đang mở thì web báo mất kết nối và tự nối lại khi `serve` chạy lại.
+- Floci từ chối kết nối (đã `down`, đang tạo lại) thì graph có `status: "emulator-down"` ngay và web báo trạng thái đó; Floci lên lại thì cảnh tự về trạng thái mới, không cần tải lại trang. Lỗi có thể chỉ thoáng qua (timeout) phải lặp lại 2 lần liền mới chuyển sang `emulator-down`, để một lệnh đọc chậm không xoá cảnh. `labctl reset` tạo lại Floci trong khoảng 1,5 s và cổng chỉ đóng chừng 0,5 s, ngắn hơn chu kỳ poll 5 s, nên cảnh thường đi thẳng về Region trống mà không kịp hiện `emulator-down`. Gốc của cảnh là node `account` (id lấy từ STS, mặc định `000000000000`); mỗi region của lab là một khung con của account, đặt cạnh nhau, và tài nguyên toàn cục (IAM…) nằm trong nhóm `global` bên phải. Nhóm `global` trống thì không vẽ. Tắt `serve` khi web đang mở thì web báo mất kết nối và tự nối lại khi `serve` chạy lại.
 - Độ trễ từ lúc lệnh CLI trả về tới khi WebSocket nhận graph mới: p95 khoảng 0,3 giây trên máy phát triển (`uv run pytest -m docker tests/test_latency_docker.py -s` in số đo).
 
 ## Builder kéo-thả
@@ -72,19 +78,21 @@ Khi có lab đang làm (`labctl start <lab>`) và lab khai báo `builder.palette
 - **Instance**: form chỉ cho chọn AMI và instance type hợp với máy (khoá theo kiến trúc), SG trong VPC của subnet, key pair (hoặc không dùng), và UserData mặc định của lab (`builder.userData` trong `lab.yaml`, tối đa 16 KB). UserData bind web server vào `0.0.0.0:80` thì form nhắc rằng IMDS đã chiếm cổng đó.
 - **Key pair**: chạy `create-key-pair` xong, panel có nút "Tải `<tên>`.pem". AWS chỉ trả private key một lần; trang chỉ giữ key trong bộ nhớ (không `localStorage`, không gửi đi đâu), server không ghi stdout của lệnh vào log.
 - **Luyện tập** (công tắc trên panel builder, nhớ theo trình duyệt): builder dựng và kiểm lệnh như thường nhưng không có nút Run. Bấm Chép thì panel chờ bạn dán lệnh vào terminal và chạy; panel hiện lệnh ghi gần nhất emulator nhận được qua api-tap, và báo xong khi graph có tài nguyên đúng loại với Name đã gõ (hoặc cạnh, thuộc tính tương ứng). Emulator đã nhận lệnh mà 10 giây sau cảnh vẫn chưa khớp thì panel gợi ý kiểm lại tên đã gõ. Không có giới hạn thời gian; Esc huỷ. Công tắc khoá khi đang Run.
+- **Op từ registry**: mỗi kind trong [registry](../server/src/cloudy_labs/registry/) khai báo `ops` (create, modify, connect, attribute, delete). Op không có `argv` viết tay được sinh từ input shape botocore của API: form có một trường cho mỗi tham số op liệt kê, kiểu theo shape (enum thành danh sách chọn, boolean thành true/false, số, list cách nhau bởi dấu phẩy, structure/map thành ô JSON có báo lỗi cú pháp ngay), trường tham chiếu chọn từ node cùng kind trong cảnh, phần còn lại của shape nằm dưới "Nâng cao". Di chuột lên tên trường để xem tài liệu AWS của nó. Op modify/attribute hiện thành nút trong panel thuộc tính; op delete hiện trong menu chuột phải trên node, chọn xong vẫn mở form và lệnh để bạn đọc trước khi Run. Tài nguyên `protected` của nền tảng không có trong cảnh, và server từ chối mọi lệnh nhắm vào chúng. Thêm một kind mới vào builder chỉ cần mục registry, không sửa code web.
 - Panel lệnh hiện đúng lệnh sẽ chạy, kèm `--profile lab --output json`, để copy sang terminal. Run và Chép chỉ bật khi form hết lỗi và lệnh đang hiện khớp với lần sửa cuối; vừa sửa form thì lệnh cũ mờ đi cho tới khi preview mới về. Sau Run, panel hiện exit code, stdout, stderr, rồi chờ graph của collector thấy thay đổi (tối đa 5 giây) mới báo xong. Cảnh chỉ đổi theo graph, không theo builder. Esc huỷ thao tác đang dở.
 
-Phía server, trình duyệt chỉ gửi `{op, params}`, không bao giờ gửi dòng lệnh. Server dựng argv từ danh mục op cố định ([`ops.py`](../server/src/cloudy_labs/builder/ops.py)), kiểm theo graph hiện tại ([`validate.py`](../server/src/cloudy_labs/builder/validate.py)), rồi chạy không qua shell, mỗi lần một lệnh, timeout 60 giây. Hết giờ hoặc huỷ thì cả process group của lệnh bị kill, output đã có vẫn được trả về. Không đọc được danh sách AZ của region thì `create-subnet` bị từ chối thay vì bỏ qua bước kiểm AZ ([`runner.py`](../server/src/cloudy_labs/builder/runner.py)).
+Phía server, trình duyệt chỉ gửi `{op, params}`, không bao giờ gửi dòng lệnh. Server dựng argv từ danh mục op của registry ([`catalog.py`](../server/src/cloudy_labs/builder/catalog.py); 16 op EC2 cũ giữ argv viết tay trong [`ops.py`](../server/src/cloudy_labs/builder/ops.py)), lọc mọi giá trị trước ([`sanitize.py`](../server/src/cloudy_labs/builder/sanitize.py): chặn `file://`/`fileb://` ở mọi độ sâu, phần tử list bắt đầu bằng `-`, tên ngoài allowlist), kiểm theo shape botocore và graph hiện tại ([`validate.py`](../server/src/cloudy_labs/builder/validate.py)), rồi chạy không qua shell, mỗi lần một lệnh, timeout 60 giây. Hết giờ hoặc huỷ thì cả process group của lệnh bị kill, output đã có vẫn được trả về. Không đọc được danh sách AZ của region thì `create-subnet` bị từ chối thay vì bỏ qua bước kiểm AZ ([`runner.py`](../server/src/cloudy_labs/builder/runner.py)).
 
 | Endpoint | Việc làm |
 |---|---|
-| `GET /api/lab` | Lab đang làm: tiêu đề, attempt, palette, các op lab cho dùng, AZ của region, `images` và `instanceTypes` máy này chạy được, `userData` mặc định của lab, `canRun` và `runBlocker` (vì sao Run bị khoá: thiếu `aws` CLI, AWS CLI cũ hơn 2.13, hoặc file credentials có `[lab]`; `null` khi chạy được). `{"id": null}` khi chưa `start`. |
+| `GET /api/lab` | Lab đang làm: tiêu đề, attempt, palette, các op lab cho dùng, AZ của region, `images` và `instanceTypes` máy này chạy được, `userData` mặc định của lab, `canRun` và `runBlocker` (vì sao Run bị khoá: thiếu `aws` CLI, AWS CLI cũ hơn 2.13, hoặc file credentials có `[lab]`; `null` khi chạy được). `hints` theo task và `content` (danh sách tab `{title, markdown}` của `content/lab.md`, hoặc `null`). `{"id": null}` khi chưa `start`. |
+| `GET /api/lab/content/<tên>` | Ảnh trong `content/` của lab đang mở ([Nội dung lab cục bộ](#nội-dung-lab-cục-bộ)). |
 | `POST /api/preview` | `{op, params}` → lệnh hiển thị, argv, danh sách lỗi theo từng trường, và `practiceExpect` (graph phải có gì sau khi người học tự chạy lệnh). Không chạy gì. |
 | `POST /api/run` | Kiểm lại rồi chạy. Trả exit code, stdout, stderr, thời gian và `expect` (graph phải có gì thì coi là xong). Còn lỗi kiểm tra thì không chạy, trả `409` kèm lệnh và danh sách lỗi. Lệnh đến khi lệnh trước chưa xong cũng trả `409`. Khi Run bị khoá (`runBlocker`), trả `503` kèm lý do. |
 
 `/api/preview` và `/api/run` chỉ nhận request JSON từ origin của Vite dev server, để trang web khác không gửi lệnh được.
 
-**Profile `lab`.** `labctl up` ghi một khối `[profile lab]` vào `~/.aws/config` (hoặc file mà `AWS_CONFIG_FILE` trỏ tới): endpoint là api-tap `http://127.0.0.1:4566`, key giả `test`/`test`, region `us-east-1`. Lần đầu sửa file, nó lưu bản sao `config.cloudy-labs.bak` cạnh file gốc. Khối có dòng đánh dấu `# managed by labctl` và chỉ khối đó bị ghi lại; nếu đã có `[profile lab]` không do labctl viết thì `up` báo lỗi và không đụng vào. Ghi qua symlink thì ghi vào file đích, symlink giữ nguyên; comment nằm ngay trên section kế tiếp không bị coi là của khối lab. AWS CLI cũ hơn 2.13 bỏ qua `endpoint_url` và một section `[lab]` trong file credentials sẽ đè key giả, nên khi gặp một trong hai, lab-server khoá Run để lệnh không đi tới AWS thật. Runner bỏ mọi biến `AWS_*` (trừ `AWS_CONFIG_FILE`) khỏi môi trường của lệnh, nên lệnh chạy giống hệt khi dán vào terminal bất kỳ.
+**Profile `lab`.** `labctl up` ghi một khối `[profile lab]` vào `~/.aws/config` (hoặc file mà `AWS_CONFIG_FILE` trỏ tới): endpoint là api-tap của emulator mà lab dùng (`http://127.0.0.1:4566` cho Floci, `http://127.0.0.1:4569` cho moto), region là region của lab (mặc định `ap-southeast-2`). `labctl start` ghi lại khối này theo lab vừa mở. Với Floci, khối chứa key giả `test`/`test`; với moto, khối không chứa key mà gọi `credential_process = labctl credentials moto`, nên key của user admin không bao giờ nằm trong file config. Lần đầu sửa file, nó lưu bản sao `config.cloudy-labs.bak` cạnh file gốc. Khối có dòng đánh dấu `# managed by labctl` và chỉ khối đó bị ghi lại; nếu đã có `[profile lab]` không do labctl viết thì `up` báo lỗi và không đụng vào. Ghi qua symlink thì ghi vào file đích, symlink giữ nguyên; comment nằm ngay trên section kế tiếp không bị coi là của khối lab. AWS CLI cũ hơn 2.13 bỏ qua `endpoint_url` và một section `[lab]` trong file credentials sẽ đè key giả, nên khi gặp một trong hai, lab-server khoá Run để lệnh không đi tới AWS thật. Runner bỏ mọi biến `AWS_*` (trừ `AWS_CONFIG_FILE`) khỏi môi trường của lệnh, nên lệnh chạy giống hệt khi dán vào terminal bất kỳ.
 
 ## Chat gợi ý lệnh
 
@@ -96,6 +104,8 @@ Panel "Trợ lý lệnh" ở góc dưới bên phải cảnh: bạn mô tả vi�
 - LLM không viết dòng lệnh. Nó chỉ chọn op trong danh mục builder của lab đang mở kèm tham số; server dựng lệnh và kiểm theo graph hiện tại như builder. Bước có lỗi vẫn hiện, kèm danh sách lỗi, nhưng nút Run tắt.
 - Bước sau dùng id bước trước tạo thì lệnh hiện `<id từ bước n>` và có nhãn "kiểm khi chạy"; lúc Run, web thay bằng id thật rồi kiểm lại.
 - Chế độ **Luyện tập** (chung công tắc với builder): nút Chép thay cho Run, bạn tự chạy lệnh trong terminal, bước được tính là xong khi cảnh có tài nguyên đúng loại và tên; id của tài nguyên đó điền vào các bước sau.
+- Danh mục op, ghi chú từng op và câu giới hạn emulator chat thấy đều sinh từ registry theo palette của lab. Tham số op sinh từ botocore mang tên tham số API (PascalCase, ví dụ `QueueName`, `DBInstanceIdentifier`) kèm kiểu thật (enum, required); 16 op EC2 cũ giữ tên camelCase (`vpcId`, `cidr`).
+- Thuộc tính node gửi cho model chỉ gồm `chat_props` mà kind khai báo (mặc định không có gì). Prop có tên chứa một từ trong deny-list (`Environment`, `Password`, `Secret`, `Outputs`, `Parameters`, `UserData`, không phân biệt hoa thường) không bao giờ được gửi: registry khai báo chúng trong `chat_props` thì không nạp được.
 - Câu hỏi ngoài các op lab cho dùng (S3, VPC peering, ALB...) được trả lời với nhãn "Ngoài phạm vi" và không có bước nào.
 
 **Không làm:** chạy lệnh ngoài danh mục op, sửa tay một bước (hỏi lại, hoặc dùng builder), nhớ hội thoại sau khi tải lại trang. Hội thoại xoá khi đổi lab hay `labctl reset`; mỗi câu hỏi gửi tối đa 12 lượt gần nhất.
@@ -159,6 +169,25 @@ Khi có lab đang làm và lab khai báo `target`, cảnh vẽ kiến trúc mụ
 
 Tin `twin` trên `/ws` có dạng `{lab, attempt, checks: [{id, task, description, status, message, resourceIds}], ghosts: [{id, kind, label, parent, checks}], bound: {<id node mục tiêu>: <id tài nguyên thật>}}`. `status` là `passed`, `failed` hoặc `pending`. Id của ghost có tiền tố `ghost:`. Browser mới kết nối nhận `graph` trước rồi tới `twin`. Schema: [`twin.py`](../server/src/cloudy_labs/twin.py).
 
+## Phân tích đường đi
+
+Panel "Phân tích đường đi" hỏi: nguồn có tới được đích ở cổng và giao thức này không. Nguồn và đích là `internet`, id hoặc tên của instance, ENI, RDS, Lambda, hoặc một địa chỉ IP. Server dựng graph mạng hiện tại rồi phân tích tĩnh qua route table, security group, NACL, internet gateway, NAT, peering và transit gateway, giống VPC Reachability Analyzer. Kết quả là danh sách chặng; chặng chặn (nếu có) tô đỏ trong panel và trên cảnh, kèm lý do như `no-matching-rule`, `blackhole`, `return-denied`, `not-transitive` hay `route-target-unknown`. Đây là phân tích cấu hình, không phải traffic thật, và giao diện luôn ghi rõ điều đó.
+
+API: `POST /api/reachability` với `{src, dst, port, proto?}` (`proto` mặc định `tcp`). Body sai trả 422, emulator không trả lời trả 503. Chặn origin và content-type giống các API ghi khác.
+
+Checker gọi `ctx.reachable(src, dst, port, proto="tcp")` và đổi kết quả thành `CheckResult` bằng `reachability_result(found, message, expect=True)`:
+
+```python
+from cloudy_labs.checks import reachability_result
+
+def web_open(ctx, **_):
+    return reachability_result(ctx.reachable("internet", "web", 80), "Internet tới web:80")
+```
+
+`ctx.graph(kinds)` trả graph của các kind cần. Cờ `GRADING_ENABLED` trong [`reachability/__init__.py`](../server/src/cloudy_labs/reachability/__init__.py) đang bật. Tắt nó thì check reachability chỉ báo `INFO` ("Đã phân tích" trong panel), không chặn hoàn thành lab, và `labctl check` không đếm nó. `progress.db` có cột `info` cho trạng thái này; lần nâng cấp schema đầu tiên chép DB cũ sang `progress.db.v<phiên bản>.bak`.
+
+Giới hạn: không có endpoint ELB; route chiều về chỉ kiểm cho peering, TGW và internet; NACL của subnet gắn TGW không được mô hình; địa chỉ RDS và Lambda lấy theo CIDR subnet. Bảng tình huống chuẩn: [`scenarios.yaml`](../server/tests/fixtures/reachability/scenarios.yaml).
+
 ## Biến môi trường
 
 | Biến | Mặc định | Ý nghĩa |
@@ -167,7 +196,7 @@ Tin `twin` trên `/ws` có dạng `{lab, attempt, checks: [{id, task, descriptio
 | `CLOUDY_LABS_LABS_DIR` | `<repo>/labs` | Thư mục chứa các lab. |
 | `LLM_BASE_URL`, `LLM_API_KEY`, `LLM_MODEL`, `LLM_API_FORMAT` | không đặt (chat tắt) | Provider LLM cho chat; xem [Chat gợi ý lệnh](#chat-gợi-ý-lệnh). |
 
-Region là `us-east-1`. Với Floci, credential luôn là `test`/`test`. Với lab chạy trên moto, `start`/`reset` tạo user IAM `cloudy-labs-admin` và lưu key của nó ở `moto-credentials.json` trong `CLOUDY_LABS_HOME` (quyền `0600`); `labctl env <lab>` xuất key này, checker cũng dùng nó. Mọi key ở đây chỉ có giá trị trong emulator; không dùng credential AWS thật với `labctl`.
+Region do lab chọn: `region` (mặc định `ap-southeast-2`), thêm `regions` khi lab dùng nhiều region. Code không còn region cứng nào khác. Với Floci, credential luôn là `test`/`test`. Với lab chạy trên moto, `start`/`reset` tạo user IAM `cloudy-labs-admin` và lưu key của nó ở `moto-credentials.json` trong `CLOUDY_LABS_HOME` (quyền `0600`); checker dùng key này. `labctl env <lab>` không in key: nó xuất `AWS_PROFILE=lab` (profile đọc key qua `credential_process`) và `unset` các biến key cũ trong shell. Mọi key ở đây chỉ có giá trị trong emulator; không dùng credential AWS thật với `labctl`.
 
 ## Viết một lab
 
@@ -177,6 +206,10 @@ Mỗi lab là một thư mục trong `labs/`, tên thư mục trùng `id`:
 labs/<id>/
   lab.yaml
   checks.py
+  content/          # gitignore, không bao giờ commit (xem Nội dung lab cục bộ)
+    lab.md
+    hints.yaml
+    *.png, *.svg …
 ```
 
 `lab.yaml` (schema: [`schema.py`](../server/src/cloudy_labs/labs/schema.py)):
@@ -185,6 +218,8 @@ labs/<id>/
 id: fixture-vpc
 provider: aws
 emulator: floci          # hoặc moto, cho lab cần IAM thật sự chặn quyền
+region: ap-southeast-2   # tuỳ chọn, đây là mặc định
+regions: []             # tuỳ chọn, các region collector đọc; phải chứa region
 title: Fixture VPC
 cidrs: [10.77.0.0/16]    # mọi CIDR lab sẽ tạo, để preflight kiểm trùng mạng Docker
 setup: []                # các hàm "module:function" chạy sau mỗi lần reset
@@ -211,7 +246,7 @@ Trường lạ, `id` trùng, check hoặc hint trỏ tới task không có, hay 
 - `id`: slug, không trùng.
 - `kind`: một trong `vpc`, `az`, `subnet-public`, `subnet-private`, `igw`, `nat`, `route-table`, `security-group`, `key-pair`, `instance`, `elastic-ip`.
 - `label`: nhãn hiện trong cảnh.
-- `parent` (tuỳ chọn): id của một node khác. Bỏ trống nghĩa là node nằm trong region.
+- `parent` (tuỳ chọn): id của một node khác. Bỏ trống nghĩa là node nằm trong region của `target.region` (mặc định là region của lab), hoặc trong nhóm `global` nếu kind chỉ sống ở đó (ví dụ tài nguyên IAM).
 - `checks`: các check xác nhận node đó.
 
 Node lồng nhau giống collector: subnet nằm trong `az`, `az` nằm trong `vpc`, NAT và instance nằm trong subnet, IGW, route table và security group nằm trong VPC, key pair và Elastic IP nằm trong region. Lồng sai chỗ, parent không có, check không có, node (trừ `az`) không có check nào, hay `az` có check đều làm lab không nạp được, và lỗi nói rõ node nào sai. Chỉ có ghost cho node, không có ghost cho cạnh (route, association, key của instance).
@@ -246,6 +281,77 @@ Trước khi soạn lab, đọc [emulator-differences.md](emulator-differences.m
 
 > **Chỉ nạp lab tin cậy.** `checks.py` chạy với toàn quyền của người dùng. labctl chỉ nạp lab trong thư mục lab của repo (hoặc `CLOUDY_LABS_LABS_DIR`).
 
+### Nội dung lab cục bộ
+
+Phần lý thuyết và hint của một lab lấy từ trang khoá học nằm trong `labs/<id>/content/`. Thư mục này bị gitignore: nội dung đó chỉ dùng cá nhân, không commit, và không bao giờ được gửi sang model của chat. Repo chỉ chứa `lab.yaml`, `checks.py`, target và registry do mình viết.
+
+```bash
+cd server
+uv run labctl content import <lab> trang.md                  # chép vào labs/<lab>/content/lab.md, in các tab
+uv run labctl content import <lab> trang.md --fetch-images   # tải luôn ảnh http(s) về content/
+uv run python scripts/check-content-leak.py                  # chạy trước khi commit một lab
+```
+
+- **`lab.md`**: markdown dán từ trang lab. Mỗi heading `##` thành một tab trong panel "Bài lab"; phần trước heading đầu tiên là tab "Giới thiệu". Heading trong khối code không tính. `content import` bỏ các tham số `X-Amz-*` của URL presigned S3 trước khi ghi.
+- **Ảnh**: markdown trỏ tới tên file nằm trong `content/` (ví dụ `![sơ đồ](diagram.png)`), web tải qua `GET /api/lab/content/<tên>`. Tên phải khớp `[A-Za-z0-9._-]` và có đuôi `png`, `jpg`, `jpeg`, `gif`, `webp` hoặc `svg`. Endpoint chỉ phục vụ lab đang mở, SVG kèm `Content-Security-Policy: sandbox`. Ảnh ở URL ngoài không bao giờ được tải; web hiện nó thành link.
+- **HTML thô** trong markdown hiện dạng text, không chạy.
+- **`hints.yaml`**: `{task_id: [hint, ...]}`. Task phải có trong `lab.yaml`. Với mỗi task, hint ở đây thay hint trong `lab.yaml`; `hints` của `lab.yaml` vẫn dùng cho lab tự viết. File hỏng làm lab không nạp được. Web giấu hint sau nút "Gợi ý" trong panel Kiểm tra.
+- **`check-content-leak.py`** lấy mọi chuỗi 8 từ liên tiếp trong `labs/*/content/**/*.md` và tìm chúng trong mọi file git đang track. Có trùng thì nó in tên file và số chuỗi trùng (không in đoạn trùng) rồi thoát mã 1.
+
+## Coverage
+
+`labctl coverage` trả một trong bốn kết luận:
+
+- `blocked`: Floci thiếu service hoặc API lab cần;
+- `gap`: nền tảng còn thiếu (chưa có kind, chưa có op builder, contract test trượt);
+- `ready-with-caveats`: chạy được, kèm caveat lấy từ registry (ví dụ `control-plane-only`, `reachability-analysed`);
+- `ready`: không còn gì.
+
+```bash
+cd server
+CLOUDY_LABS_LABS_DIR=tests/fixtures/labs uv run labctl coverage fixture-lab-06   # một lab: lab.yaml, checks.py và content/lab.md nếu có
+uv run labctl coverage <lab> --quote             # in thêm dòng nguồn của từng mục ra terminal
+uv run labctl coverage <lab> --accept [--require 23]   # chốt lượt xem danh sách chưa nhận diện
+uv run labctl coverage --catalog <csv>           # cả danh mục, từ metadata công khai
+uv run labctl coverage --matrix                  # sinh lại docs/coverage.md
+```
+
+- **Một lab.** Nguồn gồm lệnh `aws` trong khối code của `content/lab.md`, tên tài nguyên trong phần chữ, palette, target và service mà `checks.py` gọi. Tên tài nguyên không chắc chắn được liệt kê kèm heading và số dòng, không kèm văn bản. Khi danh sách này còn mục chưa xem, kết luận là "nháp". `--accept` ghi `labs/<lab>/coverage-review.json`, chỉ gồm số dòng và quyết định; `--require N` đánh dấu dòng N là yêu cầu thật. `--json` không bao giờ chứa văn bản của trang lab; `--quote` chỉ in ra terminal.
+- **Danh mục.** Nguồn là namespace API, tiêu đề và mục lục trong CSV, cộng [`catalog-overrides.yaml`](../server/src/cloudy_labs/coverage/catalog-overrides.yaml) (API Floci thiếu mà namespace không lộ ra). Namespace chỉ cho biết service, không cho biết tài nguyên, nên một dòng CSV không bao giờ là `ready` chỉ vì registry có kind của service đó. Caveat `namespace-level` ghi lại điều này.
+- **Ma trận.** [`docs/coverage.md`](coverage.md) được sinh từ registry, danh sách API của Floci ([`floci-ops-2.3.0.json`](../server/src/cloudy_labs/registry/floci-ops-2.3.0.json), tạo lại bằng [`floci-ops-from-docs.py`](../server/scripts/floci-ops-from-docs.py)) và kết quả contract test ([`contract-results.json`](../server/src/cloudy_labs/registry/contract-results.json)). Có test kiểm file khớp với lần sinh mới nhất.
+- Kết quả contract mang digest image Floci. Digest khác image đang ghim ở `compose.yaml` thì `coverage` cảnh báo trên stderr; thêm `--strict` thì trả `1`.
+
+## Thêm một loại tài nguyên
+
+Mỗi loại tài nguyên (kind) là một mục trong `server/src/cloudy_labs/registry/<service>.yaml`. Collector, builder, chat, twin và web đều đọc mục này, nên không cần sửa code của chúng. Xem [`sqs.yaml`](../server/src/cloudy_labs/registry/sqs.yaml) làm mẫu.
+
+1. **Viết mục YAML.** Mục gồm:
+   - `list` (method boto3 và JMESPath ra từng item), `enrich` (gọi thêm hoặc hook), `id`, `name`, `parent`;
+   - `props`, và `chat_props` là các props được phép gửi sang chat (không đưa secret vào đây);
+   - `edges`, `caveats` (mỗi khác biệt của Floci so với AWS là một mã caveat);
+   - `view` (vai trò, nhóm, icon, nguồn icon, `actions` cho hiệu ứng lệnh API);
+   - `ops` cho builder: id, API, field, kỳ vọng; argv được sinh từ botocore;
+   - `contract`: chuỗi op tạo, sửa, xoá mà contract test chạy trên Floci thật.
+
+   Trước khi viết, thử từng API trên Floci. Floci thiếu API thì lab cần nó ra `blocked`, không giả lập.
+2. **Thêm icon.** Đặt `view.icon` và `view.source` trỏ vào gói AWS Architecture Icons, rồi chạy `node scripts/import-aws-icons.mjs <thư-mục-gói-icon>` ở gốc repo. Lệnh chép SVG vào `web/src/scene/aws-objects/icons/` và ghi lại `NOTICE.md`.
+3. **Xuất registry cho web**, rồi build lại web:
+
+   ```bash
+   cd server
+   uv run python -m cloudy_labs.registry export --out tests/fixtures/graph/registry.json
+   cp tests/fixtures/graph/registry.json ../web/src/registry/registry.json
+   ```
+
+4. **Chạy contract test và sinh lại ma trận:**
+
+   ```bash
+   uv run pytest -m docker tests/test_registry_contract_docker.py -q   # ghi registry/contract-results.json
+   uv run labctl coverage --matrix                                     # sinh lại docs/coverage.md
+   ```
+
+5. **Ghi lại fixture replay** khi kind thuộc một kịch bản đã ghi (xem [Test](#test)), rồi sinh lại golden bằng `UPDATE_GOLDEN=1 uv run pytest tests/test_collector_replay_*.py`.
+
 ## Test
 
 ```bash
@@ -263,6 +369,22 @@ uv run pytest -m llm tests/test_chat_live.py -v
 `tests/test_builder_e2e_docker.py` (cũng `-m docker`) dựng stack, mở `fixture-lab-06`, chạy lab-server, dùng Vite dev server đang chạy ở 5174 (hoặc tự bật rồi tắt), rồi để [`web/scripts/e2e-builder-lab-06.mjs`](../web/scripts/e2e-builder-lab-06.mjs) làm cả lab qua builder trong Google Chrome và chạy `labctl check`. Sau đó nó mở `fixture-lab-07` và để [`web/scripts/e2e-builder-lab-07.mjs`](../web/scripts/e2e-builder-lab-07.mjs) làm Lab 7 hai lần: một lần bằng Run, một lần ở chế độ luyện tập (chép lệnh rồi chạy bằng `bash -c`, không có `/api/run` nào), mỗi lần chờ `labctl check` đạt tới 60 giây. Cần `aws`, `node`, `pnpm` và cổng 8730 trống. Test tự trỏ `AWS_CONFIG_FILE` vào thư mục tạm, không đụng config AWS của bạn.
 
 `tests/test_twin_docker.py` (cũng `-m docker`) làm `fixture-lab-06` bằng `aws --profile lab` và boto3, rồi `fixture-lab-07` bằng CLI, trong khi nghe `/ws` của một lab-server chạy trong test. Nó kiểm ghost mất đúng lúc, `labctl check` đạt và reset trả về đủ ghost. Chạy với `-s` để in độ trễ graph, độ trễ ghost và thời gian một lượt check. Cần `aws`.
+
+`tests/test_registry_contract_docker.py` (cũng `-m docker`) chạy contract của mọi kind có `contract` trong registry. Với mỗi kind, nó tạo các tài nguyên cha bằng op builder, rồi tạo kind đó và kiểm node đúng kind, đúng cha, xuất hiện trong graph trong thời hạn của kind (mặc định 2 s). Cuối cùng nó ghi `contract-results.json` kèm độ trễ, ngày chạy và digest image. Sau khi chạy, sinh lại ma trận bằng `uv run labctl coverage --matrix`. Cần `aws` và cổng 8730 trống.
+
+Fixture Floci được ghi bằng [`record-floci-fixtures.py`](../server/scripts/record-floci-fixtures.py) trên một Floci mới (`labctl down && labctl up`). Mỗi lần dựng cần Floci sạch:
+
+```bash
+uv run python scripts/record-floci-fixtures.py build                 # dựng tài nguyên wave 1
+uv run python scripts/record-floci-fixtures.py record                # ghi lời gọi describe
+uv run python scripts/record-floci-fixtures.py build-reachability    # dựng mạng cho bảng reachability
+uv run python scripts/record-floci-fixtures.py record-reachability
+uv run python scripts/record-floci-fixtures.py build-wave-2          # dựng rồi ghi kịch bản đợt 2, trên Floci sạch khác
+uv run python scripts/record-floci-fixtures.py record-wave-2
+uv run python scripts/record-floci-fixtures.py build-wave-3          # tương tự cho đợt 3
+uv run python scripts/record-floci-fixtures.py record-wave-3
+UPDATE_GOLDEN=1 uv run pytest tests/test_collector_replay*.py        # sinh lại golden
+```
 
 `-m docker` còn so `ec2-image-catalog.yaml` với catalog nhúng trong image Floci đang ghim ở `compose.yaml`, nên quên sinh lại catalog sau khi đổi phiên bản Floci sẽ làm test trượt. Test đơn vị chỉ bắt được trường hợp tag Floci trong `compose.yaml` khác tag ghi ở đầu catalog.
 
