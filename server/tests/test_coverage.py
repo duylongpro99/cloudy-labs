@@ -122,6 +122,23 @@ def test_sso_login_is_handled_by_the_cli_not_the_service():
     [cmd] = extract.commands("```\naws sso list-accounts --access-token t\n```\n")
     assert cmd.service == "sso"
 
+
+def test_a_token_the_cli_signs_itself_is_not_an_api_call():
+    page = "```\nTOKEN=$(aws rds generate-db-auth-token --hostname h --port 5432 --username u)\naws eks get-token --cluster-name c\n```\n"
+    assert extract.commands(page) == []
+
+
+@pytest.mark.parametrize("line, service, apis", [
+    ("aws ecr get-login-password --region ap-southeast-2", "ecr", ("GetAuthorizationToken",)),
+    ("aws codeartifact login --tool pip --domain d --repository r", "codeartifact", ("GetAuthorizationToken", "GetRepositoryEndpoint")),
+    ("aws deploy push --application-name app --s3-location s3://b/app.zip", "codedeploy", ("RegisterApplicationRevision",)),
+    ("aws cloudformation deploy --template-file t.yaml --stack-name s", "cloudformation", ("CreateChangeSet", "ExecuteChangeSet")),
+    ("aws logs tail /app/web --follow", "logs", ("FilterLogEvents",)),
+])
+def test_cli_commands_built_on_other_apis_map_to_those_apis(line, service, apis):
+    [cmd] = extract.commands(f"```\n{line}\n```\n")
+    assert (cmd.service, cmd.apis) == (service, apis)
+
 def test_mentions_read_prose_only_prefer_longer_terms_and_split_certain_from_not():
     terms = extract.dictionary(REGISTRY)
     found = {(m.term, m.certain, m.line) for m in extract.mentions(PAGE, terms)}
@@ -130,6 +147,36 @@ def test_mentions_read_prose_only_prefer_longer_terms_and_split_certain_from_not
     assert not any(line in (8, 9, 10, 11, 12) for _, _, line in found)  # code blocks are not prose
     nat = extract.mentions("A NAT Gateway in the public subnet.\n", terms)
     assert {m.term for m in nat} == {"nat gateway", "subnet"}
+
+
+def test_a_kind_name_may_have_one_word_inside_it():
+    terms = extract.dictionary(REGISTRY)
+    [m] = [m for m in extract.mentions("Create the DB private Subnet Group first.\n", terms) if m.kinds]
+    assert m.kinds == ("db-subnet-group",) and not m.weak
+    assert not any("db-subnet-group" in m.kinds for m in extract.mentions("Create the DB của bạn Subnet Group.\n", terms))
+
+
+def test_one_common_word_names_a_kind_only_where_the_page_names_its_service(tmp_path, evidence):
+    ev = evidence(contract(all_create_kinds()))
+    alone = evaluate.evaluate_lab(lab_dir(tmp_path, "Pick a function, a bucket and a user.\n"), ev)
+    assert alone.kinds == []
+    named = evaluate.evaluate_lab(lab_dir(tmp_path, "Open AWS Lambda and pick a function, then an S3 bucket.\n", "lab-y"), ev)
+    assert named.kinds == ["lambda-function", "s3-bucket"]
+
+
+def test_named_services_need_their_prefix_when_the_name_is_a_plain_word():
+    assert extract.named_services("Use Amazon SQS, EC2 and AWS Config.\n", {"sqs", "ec2", "config", "lambda"}) == {"sqs", "ec2", "config"}
+    assert extract.named_services("Edit the config of the lambda.\n", {"config", "lambda"}) == set()
+    assert extract.named_services("```\naws sqs list-queues\n```\nNothing here.\n", {"sqs"}) == set()
+
+
+def test_a_console_step_may_name_an_api_floci_lacks():
+    flush = extract.actions("## Cache\n\nClick Flush entire cache.\n", "apigateway", ["FlushStageCache"], ["FlushStageAuthorizersCache"])
+    assert [(a.api, a.line, a.heading) for a in flush] == [("FlushStageCache", 3, "Cache")]
+    assert extract.actions("Flush the authorizers cache.\n", "apigateway", ["FlushStageCache"], ["FlushStageAuthorizersCache"]) == []
+    assert extract.actions("Attach the internet gateway.\n", "ec2", ["AttachVpnGateway"], ["AttachInternetGateway"]) == []
+    assert extract.actions("Launch two instances.\n", "ec2", ["LaunchInstances"], ["RunInstances"]) == []
+    assert extract.actions("```\nflush cache\n```\n", "apigateway", ["FlushStageCache"], []) == []
 
 
 def test_checker_services_reads_client_calls_without_running_them():
@@ -250,6 +297,19 @@ def test_accept_refuses_an_optional_line_without_a_command(tmp_path, evidence, m
     assert cli.main(["coverage", "lab-opt", "--accept", "--optional", "3"]) == 1
     assert "no aws command: 3" in capsys.readouterr().err
     assert not (d / "coverage-review.json").exists()
+
+
+def test_a_console_step_floci_lacks_is_listed_for_review_and_blocks_once_required(tmp_path, evidence):
+    d = lab_dir(tmp_path, "```\naws apigateway get-rest-apis\n```\n\nClick Flush entire cache.\n")
+    ev = evidence(contract(all_create_kinds()))
+    first = evaluate.evaluate_lab(d, ev)
+    assert first.draft and [(u["line"], u["term"]) for u in first.unrecognised] == [(5, "FlushStageCache")]
+    assert not any(f.code == "floci-missing-api" for f in first.findings)
+
+    evaluate.write_review(d, [], require={5})
+    required = evaluate.evaluate_lab(d, ev)
+    assert required.verdict == "blocked" and not required.draft
+    assert any(f.code == "floci-missing-api" and f.line == 5 and "apigateway:FlushStageCache" in f.text for f in required.findings)
 
 
 def test_an_override_named_only_in_prose_is_listed_for_review_not_counted(tmp_path, evidence):

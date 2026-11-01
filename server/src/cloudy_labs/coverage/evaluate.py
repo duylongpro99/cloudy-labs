@@ -19,7 +19,7 @@ import csv
 import json
 import re
 from collections import Counter
-from dataclasses import asdict, dataclass, field
+from dataclasses import asdict, dataclass, field, replace
 from datetime import date
 from pathlib import Path
 from typing import Any, Literal
@@ -323,9 +323,16 @@ def evaluate_lab(lab_dir: Path, ev: Evidence, review: dict[str, str] | None = No
             for o in ev.overrides:
                 if o.hits_command(cmd):
                     findings.append(Finding("blocked", "catalog-override", f"{o.id}: {o.reason}", **where))
-        for m in extract.mentions(text, extract.dictionary(ev.registry)):
+        found = extract.mentions(text, extract.dictionary(ev.registry))
+        # The services the page shows it uses: its commands and checks, the kinds it names in full and
+        # the services it names. A weak word ("key", "api") names a kind of one of these only.
+        named = (svcs | {s for m in found if m.certain and not m.weak for s in m.services}
+                 | extract.named_services(text, {t.service for t in ev.registry.types if t.service}))
+        for m in found:
             decision = review.get(str(m.line))
-            if m.certain:
+            if m.weak:
+                kinds.update(k for k in m.kinds if ev.registry.by_kind[k].service in named)
+            elif m.certain:
                 kinds.update(m.kinds)
             elif decision == "require":
                 # A name several services share ("target group": elbv2, vpc-lattice) most likely means
@@ -337,6 +344,21 @@ def evaluate_lab(lab_dir: Path, ev: Evidence, review: dict[str, str] | None = No
                                         line=m.line, heading=m.heading))
             else:
                 unrecognised.append({"line": m.line, "heading": m.heading, "term": m.term, "services": list(m.services)})
+        # Console steps run no command, so an API Floci lacks hides in a button's name. An emulated API
+        # of any named service may be the one meant: "Launch instances" is EC2's, not Auto Scaling's.
+        lacking_of: dict[str, list[str]] = {}
+        emulated: list[str] = []
+        for s in sorted(named):
+            if ev.floci_service(s):
+                apis = list(extract.cli_operations(s).values())
+                lacking_of[s] = [api for api in apis if ev.floci_api(s, api)]
+                emulated += [api for api in apis if api not in lacking_of[s]]
+        for s, lacking in lacking_of.items():
+            for a in extract.actions(text, s, lacking, emulated):
+                if review.get(str(a.line)) == "require" and (problem := ev.floci_api(s, a.api)):
+                    findings.append(replace(problem, line=a.line, heading=a.heading))
+                else:
+                    unrecognised.append({"line": a.line, "heading": a.heading, "term": a.api, "services": [s]})
         for n, line, _fenced, heading in extract._lines(text):
             for o in ev.overrides:
                 if o.hits_text(line):
