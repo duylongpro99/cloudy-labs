@@ -45,7 +45,8 @@ Lab cần một trong các API dưới đây ra `blocked` trong `labctl coverage
 - **Có sẵn tài nguyên mặc định như AWS:** default VPC, subnet, route table, NACL, DB subnet group và các AWS prefix list. Instance có root volume và ENI chính. ENI của interface endpoint là `requesterManaged`; cảnh không vẽ nó.
 - **NACL và launch template bỏ qua tag** lúc tạo. Tìm chúng theo id hoặc tên, không theo tag.
 - **Gateway endpoint không thêm route** vào route table được gắn. Checker kiểm `RouteTableIds` của endpoint, không tìm route prefix list.
-- **Aurora chạy trên container MySQL hoặc PostgreSQL thường** và bỏ qua security group cùng cluster parameter group. Multi-AZ và failover chỉ là cờ (caveat `flag-only`).
+- **Aurora chạy trên container MySQL hoặc PostgreSQL thường** và bỏ qua security group cùng cluster parameter group. Multi-AZ và failover chỉ là cờ (caveat `flag-only`): `failover-db-cluster` chỉ đổi `IsClusterWriter` giữa các instance.
+- **RDS luôn báo `StorageType` `gp2`**, dù lúc tạo hay modify yêu cầu `gp3` hay `io1` (caveat `rds-storage-type-gp2`). `AllocatedStorage` và `MaxAllocatedStorage` (storage autoscaling) thì được giữ đúng; checker chấm hai giá trị này và để kiểu storage ở mức INFO.
 - **S3 báo mã hoá `AES256` và public access block đầy đủ cho mọi bucket**, dù có cấu hình hay không (caveat `s3-default-encryption`). Đừng chấm hai cấu hình này bằng `Get*`; xem lệnh người học đã chạy.
 - **Replication của S3 chỉ lưu rule** và không chép object (caveat `control-plane-only`). Chấm theo rule.
 - **Floci có bucket nội bộ `awslambda-*`** để giữ code Lambda; cảnh lọc bỏ nó. `ListBuckets` không trả `BucketRegion`, nên collector hỏi `GetBucketLocation` từng bucket.

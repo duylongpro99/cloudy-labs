@@ -14,6 +14,7 @@ from functools import cache
 
 import botocore.session
 from botocore import xform_name
+from botocore.exceptions import DataNotFoundError
 
 from ..registry import Registry
 
@@ -75,6 +76,16 @@ def cli_operations(service: str) -> dict[str, str]:
     """`create-db-instance` -> `CreateDBInstance` for one botocore service."""
     model = _session().get_service_model(service)
     return {xform_name(op, "-"): op for op in model.operation_names}
+
+
+@cache
+def cli_waiters(service: str) -> dict[str, str]:
+    """`db-instance-deleted` -> `DescribeDBInstances`: the API a CLI `wait` subcommand polls."""
+    try:
+        model = _session().get_waiter_model(service)
+    except DataNotFoundError:  # a service without waiters
+        return {}
+    return {xform_name(name, "-"): model.get_waiter(name).operation for name in model.waiter_names}
 
 
 def words(name: str) -> str:
@@ -159,6 +170,11 @@ def _command(tokens: list[str], i: int, line: int, heading: str) -> Command | No
         return Command("s3", S3_HIGH_LEVEL.get(op, ()), f"s3 {op}".strip(), tuple(flags), line, heading)
     service = CLI_SERVICE.get(word, word)
     apis: tuple[str, ...] = ()
+    if service in services() and op == "wait":
+        # `aws rds wait db-instance-deleted` polls a describe API until a state is reached.
+        waiter = tokens[j + 2] if j + 2 < len(tokens) else ""
+        api = cli_waiters(service).get(waiter)
+        return Command(service, (api,) if api else (), f"{word} wait {waiter}".strip(), tuple(flags), line, heading)
     if service in services() and op:
         api = cli_operations(service).get(op)
         apis = (api,) if api else ()

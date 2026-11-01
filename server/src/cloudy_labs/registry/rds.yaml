@@ -212,6 +212,7 @@
     - {code: flag-only, prop: multiAz, text: "Floci 2.3.0 keeps Multi-AZ as a flag: no standby runs and a failover moves nothing. Check the flag, not a failover."}
     - {code: control-plane-only, prop: replicaOf, text: "Floci 2.3.0 records a cross-region read replica but copies no data between regions: check the replica's source, not its rows."}
     - {code: rds-mysql-replica-missing, text: "Floci 2.3.0 has no read replica or snapshot for MySQL and MariaDB; PostgreSQL has both."}
+    - {code: rds-storage-type-gp2, text: "Floci 2.3.0 reports StorageType gp2 whatever create or modify asks for (gp3, io1): check the storage size and MaxAllocatedStorage, not the type."}
   contract:
     create: {op: create-db-instance, params: {DBInstanceIdentifier: ct-pg, Engine: postgres, DBInstanceClass: db.t3.micro, MasterUsername: ctadmin, MasterUserPassword: Contract-test-1, AllocatedStorage: "20"}, save: db}
     then: [{op: create-db-instance-read-replica, params: {DBInstanceIdentifier: ct-pg-rr, SourceDBInstanceIdentifier: ct-pg}}]
@@ -221,12 +222,12 @@
       api: CreateDBInstance
       gesture: create
       title: "Tạo RDS DB instance"
-      fields: [DBInstanceIdentifier, Engine, DBInstanceClass, MasterUsername, MasterUserPassword, AllocatedStorage, DBSubnetGroupName, VpcSecurityGroupIds, MultiAZ, PubliclyAccessible, DBParameterGroupName, OptionGroupName, DBClusterIdentifier]
+      fields: [DBInstanceIdentifier, Engine, DBInstanceClass, MasterUsername, MasterUserPassword, AllocatedStorage, StorageType, MaxAllocatedStorage, DBSubnetGroupName, VpcSecurityGroupIds, MultiAZ, PubliclyAccessible, DBParameterGroupName, OptionGroupName, DBClusterIdentifier]
       choices: {Engine: [postgres, mysql, mariadb, aurora-postgresql, aurora-mysql]}
-      defaults: {Engine: postgres, DBInstanceClass: db.t3.micro, AllocatedStorage: "20"}
+      defaults: {Engine: postgres, DBInstanceClass: db.t3.micro}
       result_id: DBInstance.DBInstanceArn
       expect: {label: DBInstanceIdentifier}
-      note: "Create a database. MultiAZ keeps a standby in another AZ of the subnet group. For an Aurora member give DBClusterIdentifier and leave storage and credentials to the cluster."
+      note: "Create a database. MultiAZ keeps a standby in another AZ of the subnet group. MaxAllocatedStorage above AllocatedStorage turns on storage autoscaling. AllocatedStorage (GiB, for example 20) is required for a standalone instance. For an Aurora member give DBClusterIdentifier and leave storage and credentials empty: AWS refuses them, the cluster owns both."
     - id: create-db-instance-read-replica
       api: CreateDBInstanceReadReplica
       gesture: create
