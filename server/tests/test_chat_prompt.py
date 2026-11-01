@@ -1,4 +1,5 @@
 import json
+from datetime import datetime, timezone
 from pathlib import Path
 
 from cloudy_labs.builder.ec2_choices import choices
@@ -40,6 +41,14 @@ def test_compact_graph_folds_azs_into_parents():
     assert by_id["sg-dbd2e6007fa2e7eef"]["ingress"][0]["sources"] == ["203.0.113.10/32"]
     assert "tags" not in by_id["vpc-149d0439"] and "tags" not in by_id["i-fdb553d289095d128"]
     assert {"kind": "route", "from": "rtb-509e5b33", "to": "igw-34ddd4cd", "label": "0.0.0.0/0"} in g["edges"]
+
+
+def test_a_datetime_prop_is_written_as_iso():
+    g = GOLDEN.model_copy(deep=True)
+    g.nodes.append(g.nodes[0].model_copy(update={
+        "id": "arn:secret", "kind": "secretsmanager-secret", "label": "db-credentials",
+        "props": {"lastChanged": datetime(2026, 11, 1, 4, 43, tzinfo=timezone.utc)}}))
+    assert '"lastChanged":"2026-11-01T04:43:00+00:00"' in system_prompt(LAB06, g, AZS, ARM)
 
 
 def test_lab06_prompt():

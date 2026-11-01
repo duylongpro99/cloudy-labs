@@ -5,6 +5,7 @@ fills their params; the server builds the argv and validates it with the builder
 """
 
 import json
+from datetime import date
 from typing import Any
 
 from ..builder.catalog import BuilderOp, all_ops
@@ -33,8 +34,15 @@ the param value, where n is that step's number counting from 1. Never invent ids
 - Write "reply", "refusal" and every "explanation" in the learner's language."""
 
 
+def _iso(value: Any) -> str:
+    """Props read from botocore may hold a datetime (a secret's lastChanged); write it as /ws does."""
+    if isinstance(value, date):
+        return value.isoformat()
+    raise TypeError(f"{type(value).__name__} is not JSON serializable")
+
+
 def _dumps(value: Any) -> str:
-    return json.dumps(value, ensure_ascii=False, separators=(",", ":"))
+    return json.dumps(value, ensure_ascii=False, separators=(",", ":"), default=_iso)
 
 
 def _palette_ops(palette: list[str], registry: Registry) -> list[BuilderOp]:

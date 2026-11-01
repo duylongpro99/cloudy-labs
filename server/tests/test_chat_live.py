@@ -143,7 +143,8 @@ def check_answer(answer: dict[str, Any], item: dict[str, Any], g: dict[str, Any]
         for name, value in s["params"].items():
             if isinstance(value, dict):
                 assert 1 <= value["ref"] < n, f"step {n} {name}: bad ref {value}"
-            elif name.endswith("Id") and name != "imageId":
+            # An optional reference left empty (an ingress rule's sourceGroupId) names nothing.
+            elif name.endswith("Id") and name != "imageId" and value != "":
                 assert value in ids, f"step {n} {name}: {value} is not in the scene"
 
 
