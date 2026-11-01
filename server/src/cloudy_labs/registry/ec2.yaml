@@ -29,7 +29,8 @@
       note: "Create a VPC. cidr: an IPv4 block between /16 and /28, e.g. 10.0.0.0/16."
       fields:
         - {name: "name", label: "Name (tag)"}
-        - {name: "cidr", label: "CIDR", placeholder: "10.0.1.0/24", free: true}
+        - {name: "cidr", label: "CIDR nguồn", placeholder: "10.0.1.0/24", free: true, required: false}
+        - {name: "sourceGroupId", label: "Hoặc Security Group nguồn", ref: "security-group", required: false}
     - id: modify-vpc-attribute
       api: ModifyVpcAttribute
       gesture: attribute
@@ -79,7 +80,8 @@
       fields:
         - {name: "name", label: "Name (tag)"}
         - {name: "vpcId", label: "VPC", ref: "vpc"}
-        - {name: "cidr", label: "CIDR", placeholder: "10.0.1.0/24", free: true}
+        - {name: "cidr", label: "CIDR nguồn", placeholder: "10.0.1.0/24", free: true, required: false}
+        - {name: "sourceGroupId", label: "Hoặc Security Group nguồn", ref: "security-group", required: false}
         - {name: "az", label: "Availability Zone", source: "azs"}
     - id: modify-subnet-attribute
       api: ModifySubnetAttribute
@@ -277,12 +279,13 @@
       gesture: attribute
       argv: authorize-security-group-ingress
       title: "Thêm rule inbound"
-      note: "Add one inbound rule. protocol: tcp, udp, icmp or -1 (all traffic); port: one port number (any value for icmp and -1); cidr: the source block. Never open port 22 or all traffic to 0.0.0.0/0; use one address with /32."
+      note: "Add one inbound rule. protocol: tcp, udp, icmp or -1 (all traffic); port: one port number (any value for icmp and -1). The source is either cidr (an address block) or sourceGroupId (a security group of the same VPC: traffic from its members, for example the app tier into the database), never both. Never open port 22 or all traffic to 0.0.0.0/0; use one address with /32."
       fields:
         - {name: "groupId", label: "Security Group", ref: "security-group"}
         - {name: "protocol", label: "Giao thức", choices: ["tcp", "udp", "icmp", "-1"], free: true}
         - {name: "port", label: "Cổng (một số, ví dụ 80)", placeholder: "80", free: true}
-        - {name: "cidr", label: "CIDR", placeholder: "10.0.1.0/24", free: true}
+        - {name: "cidr", label: "CIDR nguồn", placeholder: "10.0.1.0/24", free: true, required: false}
+        - {name: "sourceGroupId", label: "Hoặc Security Group nguồn", ref: "security-group", required: false}
     - id: modify-instance-attribute
       api: ModifyInstanceAttribute
       gesture: connect

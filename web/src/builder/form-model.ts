@@ -136,7 +136,7 @@ export const groupsIn = (graph: ResourceGraph, vpc: string): GraphNode[] =>
     .sort((a, b) => Number(a.props.groupName === 'default') - Number(b.props.groupName === 'default'))
 
 // Fields of a connect or attribute op the learner still fills in; every other id comes from the gesture.
-const FREE_FIELDS = new Set(['destination', 'protocol', 'port', 'cidr'])
+const FREE_FIELDS = new Set(['destination', 'protocol', 'port', 'cidr', 'sourceGroupId'])
 
 // A generated op's own `free` fields stay editable instead.
 export function fixedDraft(op: OpSpec, params: Params): Draft {
@@ -155,5 +155,7 @@ export const targetDraft = (op: OpSpec, node: { id: string; label: string }): Dr
 export const opsOn = (ops: readonly OpSpec[], kind: string, gestures: readonly OpSpec['gesture'][]): OpSpec[] =>
   ops.filter((o) => o.generated && gestures.includes(o.gesture) && !!o.targetParam && (o.targets ?? []).includes(kind))
 
-// A new inbound rule for a security group, suggesting the web server's rule.
-export const ingressDraft = (op: OpSpec, groupId: string): Draft => fixedDraft(op, { groupId, protocol: 'tcp', port: '80', cidr: '0.0.0.0/0' })
+// A new inbound rule for a security group, suggesting the web server's rule. The source is the CIDR
+// unless the learner picks a security group instead (and clears the CIDR).
+export const ingressDraft = (op: OpSpec, groupId: string): Draft =>
+  fixedDraft(op, { groupId, protocol: 'tcp', port: '80', cidr: '0.0.0.0/0', sourceGroupId: '' })

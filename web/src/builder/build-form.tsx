@@ -20,6 +20,7 @@ const FIELD_LABEL: Record<string, string> = {
   destination: 'Dải đích (CIDR)',
   description: 'Mô tả',
   groupId: 'Security Group',
+  sourceGroupId: 'Hoặc Security Group nguồn (thay cho CIDR)',
   protocol: 'Giao thức',
   port: 'Cổng (một số, ví dụ 80)',
   imageId: 'AMI',
@@ -174,12 +175,18 @@ function LegacyForm({ draft, problems, graph, lab, theme, disabled, onEdit }: Fo
       return graph && vpc ? groupsIn(graph, vpc).map((n) => n.id) : []
     }
     if (field === 'keyName') return ['', ...(graph?.nodes.filter((n) => n.kind === 'key-pair').map((n) => n.label) ?? [])]
+    if (field === 'sourceGroupId') {
+      // A rule may name any group of its own VPC as the source, the group itself included.
+      const vpc = graph && vpcOf(graph, draft.params.groupId ?? '')
+      return ['', ...(graph && vpc ? groupsIn(graph, vpc).map((n) => n.id) : [])]
+    }
     return null
   }
   const optionText = (field: string, o: string) => {
     if (field === 'keyName' && o === '') return '(không dùng key pair)'
+    if (field === 'sourceGroupId' && o === '') return '(không dùng, nguồn là CIDR)'
     if (field === 'protocol' && o === '-1') return '-1 (mọi giao thức)'
-    return field === 'allocationId' || field === 'securityGroupId' ? label(o) : o
+    return field === 'allocationId' || field === 'securityGroupId' || field === 'sourceGroupId' ? label(o) : o
   }
   const hint = 'userData' in draft.params ? userDataHint(draft.params.userData) : null
 
