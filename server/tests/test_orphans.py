@@ -19,7 +19,7 @@ def test_remove_orphans_removes_containers_before_networks_and_volumes(monkeypat
     calls = []
     listing = {
         "containers": "floci-aws-ec2-i-1\nfloci-aws-ec2-volume-helper\n",
-        "networks": "floci-aws-vpc-4567-us-east-1-vpc-1\n",
+        "networks": "floci-aws-vpc-4567-ap-southeast-2-vpc-1\n",
         "volumes": "floci-aws-ec2-volumes\n",
         "forwarders": "floci-aws-ec2-fwd-i-1-80\n",
     }
@@ -29,7 +29,7 @@ def test_remove_orphans_removes_containers_before_networks_and_volumes(monkeypat
     removals = [c for c in calls if c[0] == "rm" or c[1] == "rm"]
     assert removals == [
         ("rm", "-f", "-v", "floci-aws-ec2-i-1", "floci-aws-ec2-volume-helper", "floci-aws-ec2-fwd-i-1-80"),
-        ("network", "rm", "floci-aws-vpc-4567-us-east-1-vpc-1"),
+        ("network", "rm", "floci-aws-vpc-4567-ap-southeast-2-vpc-1"),
         ("volume", "rm", "-f", "floci-aws-ec2-volumes"),
     ]
     listings = [c for c in calls if c not in removals and "name=floci-aws-ec2-fwd-" not in c]
@@ -71,3 +71,16 @@ def test_one_failed_removal_does_not_stop_the_rest(monkeypatch):
     found = orphans.remove_orphans()
     assert found.errors == ["network floci-aws-vpc-1 has active endpoints"]
     assert ("volume", "rm", "-f", "floci-aws-ec2-volumes") in calls
+
+
+def test_only_service_containers_without_an_owner_label_are_named(monkeypatch):
+    calls = []
+
+    def docker(*args):
+        calls.append(args)
+        return "floci-aws-ecr-registry\t\nfloci-aws-duck\t \nfloci-aws-ec2-i-1\t4567\n"
+
+    monkeypatch.setattr(orphans, "docker", docker)
+    assert orphans.unowned_service_containers() == ["floci-aws-ecr-registry", "floci-aws-duck"]
+    assert calls[0][:2] == ("ps", "-a") and "label=io.floci.service" in calls[0]
+    assert not any("rm" in c for c in calls)

@@ -40,7 +40,8 @@ S3_SUBRESOURCES = {
 S3_VERBS = {"GET": "Get", "PUT": "Put", "DELETE": "Delete", "HEAD": "Head", "POST": "Post"}
 QUEUE_SIZE = 256  # events buffered per SSE client before it counts as too slow and is dropped
 KEEPALIVE_S = 15
-HEALTH_PATH = "/_floci/health"
+# The upstream's health path: Floci's by default; api-tap-moto sets /moto-api/.
+HEALTH_PATH = os.environ.get("TAP_HEALTH_PATH", "/_floci/health")
 
 
 def describe(headers, body: bytes, method: str, path: str) -> tuple[str, str]:

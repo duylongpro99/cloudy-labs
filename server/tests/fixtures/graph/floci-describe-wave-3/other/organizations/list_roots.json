@@ -1,0 +1,17 @@
+{
+  "calls": [
+    {
+      "params": {},
+      "response": {
+        "Roots": [
+          {
+            "Arn": "arn:aws:organizations::000000000000:root/o-1pln15fyv4/r-gt0v",
+            "Id": "r-gt0v",
+            "Name": "Root",
+            "PolicyTypes": []
+          }
+        ]
+      }
+    }
+  ]
+}

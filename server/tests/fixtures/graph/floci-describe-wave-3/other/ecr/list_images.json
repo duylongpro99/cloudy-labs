@@ -1,0 +1,12 @@
+{
+  "calls": [
+    {
+      "params": {
+        "repositoryName": "w3-delivery-app"
+      },
+      "response": {
+        "imageIds": []
+      }
+    }
+  ]
+}

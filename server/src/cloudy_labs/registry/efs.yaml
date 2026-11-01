@@ -1,0 +1,148 @@
+# Amazon EFS. A file system is regional; its mount targets are listed per file system and sit in their
+# subnet; access points are entry paths into one file system.
+
+- kind: efs-file-system
+  service: efs
+  label: EFS File System
+  list: {method: describe_file_systems, items: FileSystems}
+  enrich:
+    - {method: describe_lifecycle_configuration, params: {FileSystemId: FileSystemId}, pick: LifecyclePolicies, merge_as: _Lifecycle}
+    - {method: describe_backup_policy, params: {FileSystemId: FileSystemId}, pick: BackupPolicy.Status, merge_as: _Backup}
+  id: FileSystemId
+  name: [Name, CreationToken, FileSystemId]
+  parent: [{kind: region}]
+  props:
+    state: LifeCycleState
+    performanceMode: PerformanceMode
+    throughputMode: ThroughputMode
+    encrypted: Encrypted
+    mountTargets: NumberOfMountTargets
+    sizeBytes: SizeInBytes.Value
+    lifecycle: "_Lifecycle[].[TransitionToIA, TransitionToPrimaryStorageClass, TransitionToArchive][] | [?@]"
+    backup: _Backup
+    tags: {hook: common.tags}
+  chat_props: [state, performanceMode, throughputMode, encrypted, mountTargets, lifecycle, backup]
+  caveats:
+    - {code: efs-no-data-plane, text: "Floci 2.3.0 keeps EFS as a control plane only: nothing can mount the file system over NFS or read or write files. Check its settings and mount targets, not files."}
+    - {code: flag-only, prop: lifecycle, text: "Floci 2.3.0 stores lifecycle policies but never moves files between storage classes."}
+    - {code: efs-backup-default, prop: backup, text: "Floci 2.3.0 reports automatic backups ENABLED for a new file system (AWS defaults to DISABLED for the API) and takes no backup."}
+  builder: true
+  view: {role: block, category: storage, icon: Res_Amazon-Elastic-File-System_File-System_48.svg, source: Resource-Icons_07312026/Res_Storage/Res_Amazon-Elastic-File-System_File-System_48.svg, height: 0.6, order: 87, host: true, actions: [FileSystem, LifecycleConfiguration, BackupPolicy]}
+  contract:
+    create: {op: create-file-system, params: {CreationToken: ct-efs}, save: fs}
+    then:
+      - {op: put-lifecycle-configuration, params: {FileSystemId: "{fs}", LifecyclePolicies: '[{"TransitionToIA": "AFTER_30_DAYS"}]'}}
+      - {op: put-backup-policy, params: {FileSystemId: "{fs}", BackupPolicy.Status: DISABLED}}
+  ops:
+    - id: create-file-system
+      api: CreateFileSystem
+      gesture: create
+      title: "Tạo EFS file system"
+      fields: [CreationToken, PerformanceMode, ThroughputMode, Encrypted]
+      choices: {PerformanceMode: [generalPurpose, maxIO], ThroughputMode: [bursting, elastic, provisioned]}
+      defaults: {PerformanceMode: generalPurpose, ThroughputMode: elastic}
+      result_id: FileSystemId
+      expect: {label: CreationToken}
+      note: "Create a shared NFS file system. CreationToken is a unique name for the request; the scene shows it until a Name tag is set. Add a mount target per subnet so instances can reach it."
+    - id: update-file-system
+      api: UpdateFileSystem
+      gesture: attribute
+      title: "Đổi throughput mode"
+      fields: [{name: FileSystemId, ref: efs-file-system}, ThroughputMode, ProvisionedThroughputInMibps]
+      choices: {ThroughputMode: [bursting, elastic, provisioned]}
+      target_param: FileSystemId
+      note: "Change the throughput mode; provisioned needs ProvisionedThroughputInMibps."
+    - id: put-lifecycle-configuration
+      api: PutLifecycleConfiguration
+      gesture: attribute
+      title: "Đặt lifecycle policy"
+      fields: [{name: FileSystemId, ref: efs-file-system}, {name: LifecyclePolicies, multiline: true}]
+      defaults: {LifecyclePolicies: '[{"TransitionToIA": "AFTER_30_DAYS"}]'}
+      target_param: FileSystemId
+      note: "Move files not read for a while to Infrequent Access. LifecyclePolicies as JSON, e.g. [{\"TransitionToIA\": \"AFTER_30_DAYS\"}, {\"TransitionToPrimaryStorageClass\": \"AFTER_1_ACCESS\"}]; [] clears it."
+    - id: put-backup-policy
+      api: PutBackupPolicy
+      gesture: attribute
+      title: "Bật/tắt backup tự động"
+      fields: [{name: FileSystemId, ref: efs-file-system}, BackupPolicy.Status]
+      choices: {BackupPolicy.Status: [ENABLED, DISABLED]}
+      target_param: FileSystemId
+      note: "Turn AWS Backup's daily automatic backups on or off for the file system."
+
+- kind: efs-mount-target
+  service: efs
+  label: EFS Mount Target
+  list: {method: describe_mount_targets, items: MountTargets, scope: {parent_kind: efs-file-system, param: FileSystemId, field: FileSystemId}}
+  enrich:
+    - {method: describe_mount_target_security_groups, params: {MountTargetId: MountTargetId}, pick: SecurityGroups, merge_as: _SecurityGroups}
+  id: MountTargetId
+  name: ["join(' ', [FileSystemId, SubnetId])", MountTargetId]
+  parent: [{kind: subnet, path: SubnetId}]
+  props:
+    fileSystem: FileSystemId
+    state: LifeCycleState
+    ipAddress: IpAddress
+    securityGroups: "_SecurityGroups && sort(_SecurityGroups)"
+  chat_props: [fileSystem, state, ipAddress, securityGroups]
+  edges:
+    - {kind: mount-of, target: FileSystemId, to: efs-file-system, style: reference}
+    - {kind: attached, target: "_SecurityGroups", to: security-group, reverse: true, style: attach}
+  caveats:
+    - {code: efs-fake-ip, prop: ipAddress, text: "Floci 2.3.0 gives every mount target the address 10.0.0.10 and reports a placeholder VPC id and the region's first AZ, whatever its subnet: check the subnet, not the address or AZ."}
+  builder: true
+  view: {role: block, category: storage, icon: Res_Amazon-VPC_Elastic-Network-Interface_48.svg, source: Resource-Icons_07312026/Res_Networking-Content-Delivery/Res_Amazon-VPC_Elastic-Network-Interface_48.svg, height: 0.3, order: 88, host: true, actions: [MountTarget]}
+  contract:
+    needs:
+      - {op: create-vpc, params: {name: ct-efs-vpc, cidr: 10.88.0.0/16}, save: vpc}
+      - {op: create-subnet, params: {name: ct-efs-a, vpcId: "{vpc}", cidr: 10.88.1.0/24, az: "{region}a"}, save: subnet}
+      - {op: create-security-group, params: {name: ct-efs-sg, vpcId: "{vpc}", description: contract test}, save: sg}
+      - {op: create-file-system, params: {CreationToken: ct-efs-mt}, save: fs}
+    create: {op: create-mount-target, params: {FileSystemId: "{fs}", SubnetId: "{subnet}", SecurityGroups: "{sg}"}, save: mt}
+    parent: subnet
+  ops:
+    - id: create-mount-target
+      api: CreateMountTarget
+      gesture: create
+      title: "Tạo mount target"
+      fields: [{name: FileSystemId, ref: efs-file-system}, {name: SubnetId, ref: subnet}, SecurityGroups, IpAddress]
+      container: {param: SubnetId}
+      result_id: MountTargetId
+      note: "Give the file system an NFS endpoint in one subnet (one per AZ). Its security groups must allow TCP 2049 from the clients. SecurityGroups: comma-separated."
+    - id: modify-mount-target-security-groups
+      api: ModifyMountTargetSecurityGroups
+      gesture: attribute
+      title: "Đổi security group của mount target"
+      fields: [{name: MountTargetId, ref: efs-mount-target}, SecurityGroups]
+      target_param: MountTargetId
+      note: "Replace the mount target's security groups (comma-separated)."
+
+- kind: efs-access-point
+  service: efs
+  label: EFS Access Point
+  list: {method: describe_access_points, items: AccessPoints}
+  id: AccessPointId
+  name: [Name, AccessPointId]
+  parent: [{kind: region}]
+  props:
+    fileSystem: FileSystemId
+    state: LifeCycleState
+    path: RootDirectory.Path
+    posixUser: "PosixUser && join(':', [to_string(PosixUser.Uid), to_string(PosixUser.Gid)])"
+    tags: {hook: common.tags}
+  chat_props: [fileSystem, state, path, posixUser]
+  edges:
+    - {kind: access-point-of, target: FileSystemId, to: efs-file-system, style: reference}
+  builder: true
+  view: {role: block, category: storage, icon: Arch_Amazon-EFS_48.svg, source: Architecture-Service-Icons_07312026/Arch_Storage/48/Arch_Amazon-EFS_48.svg, height: 0.3, order: 89, actions: [AccessPoint]}
+  contract:
+    needs:
+      - {op: create-file-system, params: {CreationToken: ct-efs-ap}, save: fs}
+    create: {op: create-access-point, params: {FileSystemId: "{fs}", RootDirectory.Path: /app, PosixUser.Uid: "1000", PosixUser.Gid: "1000"}, save: ap}
+  ops:
+    - id: create-access-point
+      api: CreateAccessPoint
+      gesture: create
+      title: "Tạo EFS access point"
+      fields: [{name: FileSystemId, ref: efs-file-system}, RootDirectory.Path, PosixUser.Uid, PosixUser.Gid]
+      result_id: AccessPointId
+      note: "An application-specific entry into the file system: clients that mount through it see RootDirectory.Path as / and act as the POSIX user given."

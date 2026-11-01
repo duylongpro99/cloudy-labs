@@ -1,5 +1,6 @@
 """bind_target and twin_state on the golden lab-06/07 graph with hand-made check results."""
 
+from datetime import datetime, timezone
 import json
 import os
 from pathlib import Path
@@ -7,6 +8,7 @@ from pathlib import Path
 import pytest
 
 from cloudy_labs.checks import CheckResult
+from cloudy_labs.graph.collector import emulator_down
 from cloudy_labs.graph.schema import ResourceGraph
 from cloudy_labs.labs import load_lab
 from cloudy_labs.labs.schema import Target
@@ -48,7 +50,7 @@ def test_nothing_passed_everything_is_a_ghost_under_its_ghost_parent(target):
     assert b.bound == {}
     parents = {g.id: g.parent for g in b.ghosts}
     assert [g.id for g in b.ghosts] == [ghost_id(n.id) for n in target.nodes]
-    assert parents[ghost_id("vpc")] == "us-east-1" and parents[ghost_id("eip")] == "us-east-1"
+    assert parents[ghost_id("vpc")] == "ap-southeast-2" and parents[ghost_id("eip")] == "ap-southeast-2"
     assert parents[ghost_id("public-1")] == ghost_id("az-1") and parents[ghost_id("az-1")] == ghost_id("vpc")
     assert next(g for g in b.ghosts if g.id == ghost_id("nat")).checks == ["nat-in-public-subnet"]
 
@@ -59,7 +61,7 @@ def test_everything_passed_binds_every_node(target):
     assert b.bound == {
         "vpc": VPC, "igw": IGW, "nat": NAT, "eip": EIP, "rt-public": RT_PUBLIC, "rt-private": RT_PRIVATE,
         "public-1": PUBLIC_A, "public-2": PUBLIC_B, "private-1": PRIVATE_A, "private-2": PRIVATE_B,
-        "az-1": f"{VPC}/us-east-1a", "az-2": f"{VPC}/us-east-1b",
+        "az-1": f"{VPC}/ap-southeast-2a", "az-2": f"{VPC}/ap-southeast-2b",
     }
 
 
@@ -121,14 +123,12 @@ def test_subnet_under_an_az_must_still_be_in_the_bound_vpc():
         {"id": "az", "kind": "az", "parent": "vpc", "label": "a"},
         {"id": "public", "kind": "subnet-public", "parent": "az", "label": "p", "checks": ["pub"]},
     ]})
-    b = bind_target(t, results({"vpc": [VPC], "pub": ["subnet-default-us-east-1-a", PUBLIC_B]}), GOLDEN)
-    assert b.bound == {"vpc": VPC, "public": PUBLIC_B, "az": f"{VPC}/us-east-1b"}
+    b = bind_target(t, results({"vpc": [VPC], "pub": ["subnet-default-ap-southeast-2-a", PUBLIC_B]}), GOLDEN)
+    assert b.bound == {"vpc": VPC, "public": PUBLIC_B, "az": f"{VPC}/ap-southeast-2b"}
 
 
 def test_emulator_down_graph_binds_nothing(target):
-    down = ResourceGraph.model_validate({"takenAt": "2026-10-31T00:00:00Z", "status": "emulator-down",
-                                         "nodes": [{"id": "us-east-1", "kind": "region", "label": "us-east-1"}],
-                                         "contains": [], "edges": []})
+    down = emulator_down(datetime(2026, 10, 31, tzinfo=timezone.utc))
     b = bind_target(target, results(DONE), down)
     assert b.bound == {} and len(b.ghosts) == len(target.nodes)
 

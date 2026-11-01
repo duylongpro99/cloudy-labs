@@ -1,0 +1,39 @@
+{
+  "calls": [
+    {
+      "params": {},
+      "response": {
+        "Buckets": [
+          {
+            "CreationDate": "2026-10-31 14:41:11+00:00",
+            "Name": "wave1-site"
+          },
+          {
+            "CreationDate": "2026-10-31 14:41:11+00:00",
+            "Name": "wave1-dst"
+          },
+          {
+            "CreationDate": "2026-10-31 14:41:11+00:00",
+            "Name": "wave1-src"
+          },
+          {
+            "CreationDate": "2026-10-31 14:41:11+00:00",
+            "Name": "wave1-logs"
+          },
+          {
+            "CreationDate": "2026-10-31 14:41:11+00:00",
+            "Name": "wave1-elsewhere"
+          },
+          {
+            "CreationDate": "2026-10-31 14:41:11+00:00",
+            "Name": "awslambda-ap-southeast-2-tasks"
+          }
+        ],
+        "Owner": {
+          "DisplayName": "floci",
+          "ID": "000000000000"
+        }
+      }
+    }
+  ]
+}

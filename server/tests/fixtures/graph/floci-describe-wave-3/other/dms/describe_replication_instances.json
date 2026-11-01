@@ -1,0 +1,60 @@
+{
+  "calls": [
+    {
+      "params": {},
+      "response": {
+        "ReplicationInstances": [
+          {
+            "AllocatedStorage": 20,
+            "AutoMinorVersionUpgrade": true,
+            "AvailabilityZone": "ap-southeast-2a",
+            "EngineVersion": "3.5.4",
+            "InstanceCreateTime": "2026-10-31 23:25:09.907000+07:00",
+            "MultiAZ": false,
+            "NetworkType": "IPV4",
+            "PreferredMaintenanceWindow": "sun:06:00-sun:06:30",
+            "PubliclyAccessible": true,
+            "ReplicationInstanceArn": "arn:aws:dms:ap-southeast-2:000000000000:rep:JSOZ6ALQRNR7ME3KTCOCFMLKL5",
+            "ReplicationInstanceClass": "dms.t3.micro",
+            "ReplicationInstanceIdentifier": "w3-dm-ri",
+            "ReplicationInstancePrivateIpAddresses": [],
+            "ReplicationInstancePublicIpAddresses": [],
+            "ReplicationInstanceStatus": "available",
+            "ReplicationSubnetGroup": {
+              "IsReadOnly": false,
+              "ReplicationSubnetGroupDescription": "w3 data movement",
+              "ReplicationSubnetGroupIdentifier": "w3-dm-rsg",
+              "SubnetGroupStatus": "Complete",
+              "Subnets": [
+                {
+                  "SubnetAvailabilityZone": {
+                    "Name": "ap-southeast-2a"
+                  },
+                  "SubnetIdentifier": "subnet-85834620",
+                  "SubnetStatus": "Active"
+                },
+                {
+                  "SubnetAvailabilityZone": {
+                    "Name": "ap-southeast-2b"
+                  },
+                  "SubnetIdentifier": "subnet-1f1f0b5e",
+                  "SubnetStatus": "Active"
+                }
+              ],
+              "SupportedNetworkTypes": [
+                "IPV4"
+              ],
+              "VpcId": "vpc-51ff849d"
+            },
+            "VpcSecurityGroups": [
+              {
+                "Status": "active",
+                "VpcSecurityGroupId": "sg-6ab169e1e9cfbb053"
+              }
+            ]
+          }
+        ]
+      }
+    }
+  ]
+}

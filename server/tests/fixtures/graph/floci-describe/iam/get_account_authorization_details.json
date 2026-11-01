@@ -1,0 +1,769 @@
+{
+  "calls": [
+    {
+      "params": {
+        "Filter": [
+          "Role"
+        ]
+      },
+      "response": {
+        "GroupDetailList": [
+          {
+            "Arn": "arn:aws:iam::000000000000:group/wave1-devs",
+            "AttachedManagedPolicies": [
+              {
+                "PolicyArn": "arn:aws:iam::000000000000:policy/wave1-read",
+                "PolicyName": "wave1-read"
+              }
+            ],
+            "CreateDate": "2026-10-31 14:41:11.882000+00:00",
+            "GroupId": "AGPA1LD5LLSUTHS1AJBH",
+            "GroupName": "wave1-devs",
+            "GroupPolicyList": [],
+            "Path": "/"
+          }
+        ],
+        "IsTruncated": false,
+        "Policies": [
+          {
+            "Arn": "arn:aws:iam::000000000000:policy/wave1-read",
+            "AttachmentCount": 2,
+            "CreateDate": "2026-10-31 14:41:11.890000+00:00",
+            "DefaultVersionId": "v1",
+            "IsAttachable": true,
+            "Path": "/",
+            "PermissionsBoundaryUsageCount": 0,
+            "PolicyId": "ANPAH1J6IQNKHIDNTGBG",
+            "PolicyName": "wave1-read",
+            "PolicyVersionList": [
+              {
+                "CreateDate": "2026-10-31 14:41:11.890000+00:00",
+                "Document": {
+                  "Statement": [
+                    {
+                      "Action": "s3:GetObject",
+                      "Effect": "Allow",
+                      "Resource": "*"
+                    }
+                  ],
+                  "Version": "2012-10-17"
+                },
+                "IsDefaultVersion": true,
+                "VersionId": "v1"
+              }
+            ],
+            "UpdateDate": "2026-10-31 14:41:11.890000+00:00"
+          },
+          {
+            "Arn": "arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole",
+            "AttachmentCount": 1,
+            "CreateDate": "2015-04-09 15:03:43+00:00",
+            "DefaultVersionId": "v1",
+            "Description": "Provides write permissions to CloudWatch Logs.",
+            "IsAttachable": true,
+            "Path": "/service-role/",
+            "PermissionsBoundaryUsageCount": 0,
+            "PolicyId": "ANPASQ5A090CUYOOOKRP",
+            "PolicyName": "AWSLambdaBasicExecutionRole",
+            "PolicyVersionList": [
+              {
+                "CreateDate": "2015-04-09 15:03:43+00:00",
+                "Document": {
+                  "Statement": [
+                    {
+                      "Action": [
+                        "logs:CreateLogGroup",
+                        "logs:CreateLogStream",
+                        "logs:PutLogEvents"
+                      ],
+                      "Effect": "Allow",
+                      "Resource": "*"
+                    }
+                  ],
+                  "Version": "2012-10-17"
+                },
+                "IsDefaultVersion": true,
+                "VersionId": "v1"
+              }
+            ],
+            "UpdateDate": "2015-04-09 15:03:43+00:00"
+          }
+        ],
+        "RoleDetailList": [
+          {
+            "Arn": "arn:aws:iam::000000000000:role/wave1-lambda-role",
+            "AssumeRolePolicyDocument": {
+              "Statement": [
+                {
+                  "Action": "sts:AssumeRole",
+                  "Effect": "Allow",
+                  "Principal": {
+                    "Service": "lambda.amazonaws.com"
+                  }
+                }
+              ],
+              "Version": "2012-10-17"
+            },
+            "AttachedManagedPolicies": [
+              {
+                "PolicyArn": "arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole",
+                "PolicyName": "AWSLambdaBasicExecutionRole"
+              }
+            ],
+            "CreateDate": "2026-10-31 14:41:11.866000+00:00",
+            "InstanceProfileList": [],
+            "Path": "/",
+            "RoleId": "AROA6E4Z61WRP50HZTQN",
+            "RoleName": "wave1-lambda-role",
+            "RolePolicyList": []
+          },
+          {
+            "Arn": "arn:aws:iam::000000000000:role/wave1-ops",
+            "AssumeRolePolicyDocument": {
+              "Statement": [
+                {
+                  "Action": "sts:AssumeRole",
+                  "Effect": "Allow",
+                  "Principal": {
+                    "AWS": "arn:aws:iam::000000000000:user/wave1-dev"
+                  }
+                }
+              ],
+              "Version": "2012-10-17"
+            },
+            "AttachedManagedPolicies": [
+              {
+                "PolicyArn": "arn:aws:iam::000000000000:policy/wave1-read",
+                "PolicyName": "wave1-read"
+              }
+            ],
+            "CreateDate": "2026-10-31 14:41:11.878000+00:00",
+            "InstanceProfileList": [
+              {
+                "Arn": "arn:aws:iam::000000000000:instance-profile/wave1-web-profile",
+                "CreateDate": "2026-10-31 14:41:11.906000+00:00",
+                "InstanceProfileId": "AIPAAWG39BGCOAMGFI5G",
+                "InstanceProfileName": "wave1-web-profile",
+                "Path": "/",
+                "Roles": [
+                  {
+                    "Arn": "arn:aws:iam::000000000000:role/wave1-ops",
+                    "AssumeRolePolicyDocument": {
+                      "Statement": [
+                        {
+                          "Action": "sts:AssumeRole",
+                          "Effect": "Allow",
+                          "Principal": {
+                            "AWS": "arn:aws:iam::000000000000:user/wave1-dev"
+                          }
+                        }
+                      ],
+                      "Version": "2012-10-17"
+                    },
+                    "CreateDate": "2026-10-31 14:41:11.878000+00:00",
+                    "MaxSessionDuration": 3600,
+                    "Path": "/",
+                    "RoleId": "AROAXVS6YO2GXIPDAEJB",
+                    "RoleName": "wave1-ops"
+                  }
+                ]
+              }
+            ],
+            "Path": "/",
+            "RoleId": "AROAXVS6YO2GXIPDAEJB",
+            "RoleName": "wave1-ops",
+            "RolePolicyList": []
+          }
+        ],
+        "UserDetailList": [
+          {
+            "Arn": "arn:aws:iam::000000000000:user/wave1-dev",
+            "AttachedManagedPolicies": [],
+            "CreateDate": "2026-10-31 14:41:11.873000+00:00",
+            "GroupList": [
+              "wave1-devs"
+            ],
+            "Path": "/",
+            "UserId": "AIDAYOFGQLSLUYNPX079",
+            "UserName": "wave1-dev",
+            "UserPolicyList": []
+          }
+        ]
+      }
+    },
+    {
+      "params": {
+        "Filter": [
+          "User"
+        ]
+      },
+      "response": {
+        "GroupDetailList": [
+          {
+            "Arn": "arn:aws:iam::000000000000:group/wave1-devs",
+            "AttachedManagedPolicies": [
+              {
+                "PolicyArn": "arn:aws:iam::000000000000:policy/wave1-read",
+                "PolicyName": "wave1-read"
+              }
+            ],
+            "CreateDate": "2026-10-31 14:41:11.882000+00:00",
+            "GroupId": "AGPA1LD5LLSUTHS1AJBH",
+            "GroupName": "wave1-devs",
+            "GroupPolicyList": [],
+            "Path": "/"
+          }
+        ],
+        "IsTruncated": false,
+        "Policies": [
+          {
+            "Arn": "arn:aws:iam::000000000000:policy/wave1-read",
+            "AttachmentCount": 2,
+            "CreateDate": "2026-10-31 14:41:11.890000+00:00",
+            "DefaultVersionId": "v1",
+            "IsAttachable": true,
+            "Path": "/",
+            "PermissionsBoundaryUsageCount": 0,
+            "PolicyId": "ANPAH1J6IQNKHIDNTGBG",
+            "PolicyName": "wave1-read",
+            "PolicyVersionList": [
+              {
+                "CreateDate": "2026-10-31 14:41:11.890000+00:00",
+                "Document": {
+                  "Statement": [
+                    {
+                      "Action": "s3:GetObject",
+                      "Effect": "Allow",
+                      "Resource": "*"
+                    }
+                  ],
+                  "Version": "2012-10-17"
+                },
+                "IsDefaultVersion": true,
+                "VersionId": "v1"
+              }
+            ],
+            "UpdateDate": "2026-10-31 14:41:11.890000+00:00"
+          },
+          {
+            "Arn": "arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole",
+            "AttachmentCount": 1,
+            "CreateDate": "2015-04-09 15:03:43+00:00",
+            "DefaultVersionId": "v1",
+            "Description": "Provides write permissions to CloudWatch Logs.",
+            "IsAttachable": true,
+            "Path": "/service-role/",
+            "PermissionsBoundaryUsageCount": 0,
+            "PolicyId": "ANPASQ5A090CUYOOOKRP",
+            "PolicyName": "AWSLambdaBasicExecutionRole",
+            "PolicyVersionList": [
+              {
+                "CreateDate": "2015-04-09 15:03:43+00:00",
+                "Document": {
+                  "Statement": [
+                    {
+                      "Action": [
+                        "logs:CreateLogGroup",
+                        "logs:CreateLogStream",
+                        "logs:PutLogEvents"
+                      ],
+                      "Effect": "Allow",
+                      "Resource": "*"
+                    }
+                  ],
+                  "Version": "2012-10-17"
+                },
+                "IsDefaultVersion": true,
+                "VersionId": "v1"
+              }
+            ],
+            "UpdateDate": "2015-04-09 15:03:43+00:00"
+          }
+        ],
+        "RoleDetailList": [
+          {
+            "Arn": "arn:aws:iam::000000000000:role/wave1-lambda-role",
+            "AssumeRolePolicyDocument": {
+              "Statement": [
+                {
+                  "Action": "sts:AssumeRole",
+                  "Effect": "Allow",
+                  "Principal": {
+                    "Service": "lambda.amazonaws.com"
+                  }
+                }
+              ],
+              "Version": "2012-10-17"
+            },
+            "AttachedManagedPolicies": [
+              {
+                "PolicyArn": "arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole",
+                "PolicyName": "AWSLambdaBasicExecutionRole"
+              }
+            ],
+            "CreateDate": "2026-10-31 14:41:11.866000+00:00",
+            "InstanceProfileList": [],
+            "Path": "/",
+            "RoleId": "AROA6E4Z61WRP50HZTQN",
+            "RoleName": "wave1-lambda-role",
+            "RolePolicyList": []
+          },
+          {
+            "Arn": "arn:aws:iam::000000000000:role/wave1-ops",
+            "AssumeRolePolicyDocument": {
+              "Statement": [
+                {
+                  "Action": "sts:AssumeRole",
+                  "Effect": "Allow",
+                  "Principal": {
+                    "AWS": "arn:aws:iam::000000000000:user/wave1-dev"
+                  }
+                }
+              ],
+              "Version": "2012-10-17"
+            },
+            "AttachedManagedPolicies": [
+              {
+                "PolicyArn": "arn:aws:iam::000000000000:policy/wave1-read",
+                "PolicyName": "wave1-read"
+              }
+            ],
+            "CreateDate": "2026-10-31 14:41:11.878000+00:00",
+            "InstanceProfileList": [
+              {
+                "Arn": "arn:aws:iam::000000000000:instance-profile/wave1-web-profile",
+                "CreateDate": "2026-10-31 14:41:11.906000+00:00",
+                "InstanceProfileId": "AIPAAWG39BGCOAMGFI5G",
+                "InstanceProfileName": "wave1-web-profile",
+                "Path": "/",
+                "Roles": [
+                  {
+                    "Arn": "arn:aws:iam::000000000000:role/wave1-ops",
+                    "AssumeRolePolicyDocument": {
+                      "Statement": [
+                        {
+                          "Action": "sts:AssumeRole",
+                          "Effect": "Allow",
+                          "Principal": {
+                            "AWS": "arn:aws:iam::000000000000:user/wave1-dev"
+                          }
+                        }
+                      ],
+                      "Version": "2012-10-17"
+                    },
+                    "CreateDate": "2026-10-31 14:41:11.878000+00:00",
+                    "MaxSessionDuration": 3600,
+                    "Path": "/",
+                    "RoleId": "AROAXVS6YO2GXIPDAEJB",
+                    "RoleName": "wave1-ops"
+                  }
+                ]
+              }
+            ],
+            "Path": "/",
+            "RoleId": "AROAXVS6YO2GXIPDAEJB",
+            "RoleName": "wave1-ops",
+            "RolePolicyList": []
+          }
+        ],
+        "UserDetailList": [
+          {
+            "Arn": "arn:aws:iam::000000000000:user/wave1-dev",
+            "AttachedManagedPolicies": [],
+            "CreateDate": "2026-10-31 14:41:11.873000+00:00",
+            "GroupList": [
+              "wave1-devs"
+            ],
+            "Path": "/",
+            "UserId": "AIDAYOFGQLSLUYNPX079",
+            "UserName": "wave1-dev",
+            "UserPolicyList": []
+          }
+        ]
+      }
+    },
+    {
+      "params": {
+        "Filter": [
+          "Group"
+        ]
+      },
+      "response": {
+        "GroupDetailList": [
+          {
+            "Arn": "arn:aws:iam::000000000000:group/wave1-devs",
+            "AttachedManagedPolicies": [
+              {
+                "PolicyArn": "arn:aws:iam::000000000000:policy/wave1-read",
+                "PolicyName": "wave1-read"
+              }
+            ],
+            "CreateDate": "2026-10-31 14:41:11.882000+00:00",
+            "GroupId": "AGPA1LD5LLSUTHS1AJBH",
+            "GroupName": "wave1-devs",
+            "GroupPolicyList": [],
+            "Path": "/"
+          }
+        ],
+        "IsTruncated": false,
+        "Policies": [
+          {
+            "Arn": "arn:aws:iam::000000000000:policy/wave1-read",
+            "AttachmentCount": 2,
+            "CreateDate": "2026-10-31 14:41:11.890000+00:00",
+            "DefaultVersionId": "v1",
+            "IsAttachable": true,
+            "Path": "/",
+            "PermissionsBoundaryUsageCount": 0,
+            "PolicyId": "ANPAH1J6IQNKHIDNTGBG",
+            "PolicyName": "wave1-read",
+            "PolicyVersionList": [
+              {
+                "CreateDate": "2026-10-31 14:41:11.890000+00:00",
+                "Document": {
+                  "Statement": [
+                    {
+                      "Action": "s3:GetObject",
+                      "Effect": "Allow",
+                      "Resource": "*"
+                    }
+                  ],
+                  "Version": "2012-10-17"
+                },
+                "IsDefaultVersion": true,
+                "VersionId": "v1"
+              }
+            ],
+            "UpdateDate": "2026-10-31 14:41:11.890000+00:00"
+          },
+          {
+            "Arn": "arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole",
+            "AttachmentCount": 1,
+            "CreateDate": "2015-04-09 15:03:43+00:00",
+            "DefaultVersionId": "v1",
+            "Description": "Provides write permissions to CloudWatch Logs.",
+            "IsAttachable": true,
+            "Path": "/service-role/",
+            "PermissionsBoundaryUsageCount": 0,
+            "PolicyId": "ANPASQ5A090CUYOOOKRP",
+            "PolicyName": "AWSLambdaBasicExecutionRole",
+            "PolicyVersionList": [
+              {
+                "CreateDate": "2015-04-09 15:03:43+00:00",
+                "Document": {
+                  "Statement": [
+                    {
+                      "Action": [
+                        "logs:CreateLogGroup",
+                        "logs:CreateLogStream",
+                        "logs:PutLogEvents"
+                      ],
+                      "Effect": "Allow",
+                      "Resource": "*"
+                    }
+                  ],
+                  "Version": "2012-10-17"
+                },
+                "IsDefaultVersion": true,
+                "VersionId": "v1"
+              }
+            ],
+            "UpdateDate": "2015-04-09 15:03:43+00:00"
+          }
+        ],
+        "RoleDetailList": [
+          {
+            "Arn": "arn:aws:iam::000000000000:role/wave1-lambda-role",
+            "AssumeRolePolicyDocument": {
+              "Statement": [
+                {
+                  "Action": "sts:AssumeRole",
+                  "Effect": "Allow",
+                  "Principal": {
+                    "Service": "lambda.amazonaws.com"
+                  }
+                }
+              ],
+              "Version": "2012-10-17"
+            },
+            "AttachedManagedPolicies": [
+              {
+                "PolicyArn": "arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole",
+                "PolicyName": "AWSLambdaBasicExecutionRole"
+              }
+            ],
+            "CreateDate": "2026-10-31 14:41:11.866000+00:00",
+            "InstanceProfileList": [],
+            "Path": "/",
+            "RoleId": "AROA6E4Z61WRP50HZTQN",
+            "RoleName": "wave1-lambda-role",
+            "RolePolicyList": []
+          },
+          {
+            "Arn": "arn:aws:iam::000000000000:role/wave1-ops",
+            "AssumeRolePolicyDocument": {
+              "Statement": [
+                {
+                  "Action": "sts:AssumeRole",
+                  "Effect": "Allow",
+                  "Principal": {
+                    "AWS": "arn:aws:iam::000000000000:user/wave1-dev"
+                  }
+                }
+              ],
+              "Version": "2012-10-17"
+            },
+            "AttachedManagedPolicies": [
+              {
+                "PolicyArn": "arn:aws:iam::000000000000:policy/wave1-read",
+                "PolicyName": "wave1-read"
+              }
+            ],
+            "CreateDate": "2026-10-31 14:41:11.878000+00:00",
+            "InstanceProfileList": [
+              {
+                "Arn": "arn:aws:iam::000000000000:instance-profile/wave1-web-profile",
+                "CreateDate": "2026-10-31 14:41:11.906000+00:00",
+                "InstanceProfileId": "AIPAAWG39BGCOAMGFI5G",
+                "InstanceProfileName": "wave1-web-profile",
+                "Path": "/",
+                "Roles": [
+                  {
+                    "Arn": "arn:aws:iam::000000000000:role/wave1-ops",
+                    "AssumeRolePolicyDocument": {
+                      "Statement": [
+                        {
+                          "Action": "sts:AssumeRole",
+                          "Effect": "Allow",
+                          "Principal": {
+                            "AWS": "arn:aws:iam::000000000000:user/wave1-dev"
+                          }
+                        }
+                      ],
+                      "Version": "2012-10-17"
+                    },
+                    "CreateDate": "2026-10-31 14:41:11.878000+00:00",
+                    "MaxSessionDuration": 3600,
+                    "Path": "/",
+                    "RoleId": "AROAXVS6YO2GXIPDAEJB",
+                    "RoleName": "wave1-ops"
+                  }
+                ]
+              }
+            ],
+            "Path": "/",
+            "RoleId": "AROAXVS6YO2GXIPDAEJB",
+            "RoleName": "wave1-ops",
+            "RolePolicyList": []
+          }
+        ],
+        "UserDetailList": [
+          {
+            "Arn": "arn:aws:iam::000000000000:user/wave1-dev",
+            "AttachedManagedPolicies": [],
+            "CreateDate": "2026-10-31 14:41:11.873000+00:00",
+            "GroupList": [
+              "wave1-devs"
+            ],
+            "Path": "/",
+            "UserId": "AIDAYOFGQLSLUYNPX079",
+            "UserName": "wave1-dev",
+            "UserPolicyList": []
+          }
+        ]
+      }
+    },
+    {
+      "params": {
+        "Filter": [
+          "LocalManagedPolicy",
+          "AWSManagedPolicy"
+        ]
+      },
+      "response": {
+        "GroupDetailList": [
+          {
+            "Arn": "arn:aws:iam::000000000000:group/wave1-devs",
+            "AttachedManagedPolicies": [
+              {
+                "PolicyArn": "arn:aws:iam::000000000000:policy/wave1-read",
+                "PolicyName": "wave1-read"
+              }
+            ],
+            "CreateDate": "2026-10-31 14:41:11.882000+00:00",
+            "GroupId": "AGPA1LD5LLSUTHS1AJBH",
+            "GroupName": "wave1-devs",
+            "GroupPolicyList": [],
+            "Path": "/"
+          }
+        ],
+        "IsTruncated": false,
+        "Policies": [
+          {
+            "Arn": "arn:aws:iam::000000000000:policy/wave1-read",
+            "AttachmentCount": 2,
+            "CreateDate": "2026-10-31 14:41:11.890000+00:00",
+            "DefaultVersionId": "v1",
+            "IsAttachable": true,
+            "Path": "/",
+            "PermissionsBoundaryUsageCount": 0,
+            "PolicyId": "ANPAH1J6IQNKHIDNTGBG",
+            "PolicyName": "wave1-read",
+            "PolicyVersionList": [
+              {
+                "CreateDate": "2026-10-31 14:41:11.890000+00:00",
+                "Document": {
+                  "Statement": [
+                    {
+                      "Action": "s3:GetObject",
+                      "Effect": "Allow",
+                      "Resource": "*"
+                    }
+                  ],
+                  "Version": "2012-10-17"
+                },
+                "IsDefaultVersion": true,
+                "VersionId": "v1"
+              }
+            ],
+            "UpdateDate": "2026-10-31 14:41:11.890000+00:00"
+          },
+          {
+            "Arn": "arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole",
+            "AttachmentCount": 1,
+            "CreateDate": "2015-04-09 15:03:43+00:00",
+            "DefaultVersionId": "v1",
+            "Description": "Provides write permissions to CloudWatch Logs.",
+            "IsAttachable": true,
+            "Path": "/service-role/",
+            "PermissionsBoundaryUsageCount": 0,
+            "PolicyId": "ANPASQ5A090CUYOOOKRP",
+            "PolicyName": "AWSLambdaBasicExecutionRole",
+            "PolicyVersionList": [
+              {
+                "CreateDate": "2015-04-09 15:03:43+00:00",
+                "Document": {
+                  "Statement": [
+                    {
+                      "Action": [
+                        "logs:CreateLogGroup",
+                        "logs:CreateLogStream",
+                        "logs:PutLogEvents"
+                      ],
+                      "Effect": "Allow",
+                      "Resource": "*"
+                    }
+                  ],
+                  "Version": "2012-10-17"
+                },
+                "IsDefaultVersion": true,
+                "VersionId": "v1"
+              }
+            ],
+            "UpdateDate": "2015-04-09 15:03:43+00:00"
+          }
+        ],
+        "RoleDetailList": [
+          {
+            "Arn": "arn:aws:iam::000000000000:role/wave1-lambda-role",
+            "AssumeRolePolicyDocument": {
+              "Statement": [
+                {
+                  "Action": "sts:AssumeRole",
+                  "Effect": "Allow",
+                  "Principal": {
+                    "Service": "lambda.amazonaws.com"
+                  }
+                }
+              ],
+              "Version": "2012-10-17"
+            },
+            "AttachedManagedPolicies": [
+              {
+                "PolicyArn": "arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole",
+                "PolicyName": "AWSLambdaBasicExecutionRole"
+              }
+            ],
+            "CreateDate": "2026-10-31 14:41:11.866000+00:00",
+            "InstanceProfileList": [],
+            "Path": "/",
+            "RoleId": "AROA6E4Z61WRP50HZTQN",
+            "RoleName": "wave1-lambda-role",
+            "RolePolicyList": []
+          },
+          {
+            "Arn": "arn:aws:iam::000000000000:role/wave1-ops",
+            "AssumeRolePolicyDocument": {
+              "Statement": [
+                {
+                  "Action": "sts:AssumeRole",
+                  "Effect": "Allow",
+                  "Principal": {
+                    "AWS": "arn:aws:iam::000000000000:user/wave1-dev"
+                  }
+                }
+              ],
+              "Version": "2012-10-17"
+            },
+            "AttachedManagedPolicies": [
+              {
+                "PolicyArn": "arn:aws:iam::000000000000:policy/wave1-read",
+                "PolicyName": "wave1-read"
+              }
+            ],
+            "CreateDate": "2026-10-31 14:41:11.878000+00:00",
+            "InstanceProfileList": [
+              {
+                "Arn": "arn:aws:iam::000000000000:instance-profile/wave1-web-profile",
+                "CreateDate": "2026-10-31 14:41:11.906000+00:00",
+                "InstanceProfileId": "AIPAAWG39BGCOAMGFI5G",
+                "InstanceProfileName": "wave1-web-profile",
+                "Path": "/",
+                "Roles": [
+                  {
+                    "Arn": "arn:aws:iam::000000000000:role/wave1-ops",
+                    "AssumeRolePolicyDocument": {
+                      "Statement": [
+                        {
+                          "Action": "sts:AssumeRole",
+                          "Effect": "Allow",
+                          "Principal": {
+                            "AWS": "arn:aws:iam::000000000000:user/wave1-dev"
+                          }
+                        }
+                      ],
+                      "Version": "2012-10-17"
+                    },
+                    "CreateDate": "2026-10-31 14:41:11.878000+00:00",
+                    "MaxSessionDuration": 3600,
+                    "Path": "/",
+                    "RoleId": "AROAXVS6YO2GXIPDAEJB",
+                    "RoleName": "wave1-ops"
+                  }
+                ]
+              }
+            ],
+            "Path": "/",
+            "RoleId": "AROAXVS6YO2GXIPDAEJB",
+            "RoleName": "wave1-ops",
+            "RolePolicyList": []
+          }
+        ],
+        "UserDetailList": [
+          {
+            "Arn": "arn:aws:iam::000000000000:user/wave1-dev",
+            "AttachedManagedPolicies": [],
+            "CreateDate": "2026-10-31 14:41:11.873000+00:00",
+            "GroupList": [
+              "wave1-devs"
+            ],
+            "Path": "/",
+            "UserId": "AIDAYOFGQLSLUYNPX079",
+            "UserName": "wave1-dev",
+            "UserPolicyList": []
+          }
+        ]
+      }
+    }
+  ]
+}

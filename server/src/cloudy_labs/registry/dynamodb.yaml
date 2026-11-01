@@ -1,0 +1,110 @@
+# Amazon DynamoDB tables. ListTables answers names only; DescribeTable and three Describe* calls
+# per table fill in indexes, stream, TTL, point-in-time recovery and global table replicas.
+
+- kind: dynamodb-table
+  service: dynamodb
+  label: DynamoDB Table
+  list: {method: list_tables, items: "TableNames[].{TableName: @}"}
+  enrich:
+    - {method: describe_table, params: {TableName: TableName}, pick: Table, merge_as: _Table}
+    - {method: describe_time_to_live, params: {TableName: TableName}, pick: TimeToLiveDescription, merge_as: _Ttl}
+    - {method: describe_continuous_backups, params: {TableName: TableName}, pick: "ContinuousBackupsDescription.PointInTimeRecoveryDescription.PointInTimeRecoveryStatus", merge_as: _Pitr}
+    # Answers an error for a table that is not global, which leaves `replicas` out.
+    - {method: describe_global_table, params: {GlobalTableName: TableName}, pick: "GlobalTableDescription.ReplicationGroup[].RegionName", merge_as: _Replicas}
+  id: _Table.TableArn
+  name: [TableName]
+  parent: [{kind: region}]
+  props:
+    status: _Table.TableStatus
+    billingMode: "_Table.BillingModeSummary.BillingMode || 'PROVISIONED'"
+    partitionKey: "_Table.KeySchema[?KeyType=='HASH'].AttributeName | [0]"
+    sortKey: "_Table.KeySchema[?KeyType=='RANGE'].AttributeName | [0]"
+    readCapacity: "_Table.BillingModeSummary.BillingMode != 'PAY_PER_REQUEST' && _Table.ProvisionedThroughput.ReadCapacityUnits || `null`"
+    writeCapacity: "_Table.BillingModeSummary.BillingMode != 'PAY_PER_REQUEST' && _Table.ProvisionedThroughput.WriteCapacityUnits || `null`"
+    globalIndexes: "_Table.GlobalSecondaryIndexes[].{name: IndexName, partitionKey: KeySchema[?KeyType=='HASH'].AttributeName | [0], sortKey: KeySchema[?KeyType=='RANGE'].AttributeName | [0], projection: Projection.ProjectionType, status: IndexStatus}"
+    localIndexes: "_Table.LocalSecondaryIndexes[].{name: IndexName, sortKey: KeySchema[?KeyType=='RANGE'].AttributeName | [0], projection: Projection.ProjectionType}"
+    stream: "_Table.StreamSpecification.StreamEnabled && _Table.StreamSpecification.StreamViewType || `null`"
+    streamArn: "_Table.StreamSpecification.StreamEnabled && _Table.LatestStreamArn || `null`"
+    ttlAttribute: "_Ttl.TimeToLiveStatus == 'ENABLED' && _Ttl.AttributeName || `null`"
+    pointInTimeRecovery: _Pitr
+    encryption: "_Table.SSEDescription.SSEType"
+    kmsKey: "_Table.SSEDescription.KMSMasterKeyArn"
+    deletionProtection: _Table.DeletionProtectionEnabled
+    tableClass: _Table.TableClassSummary.TableClass
+    itemCount: _Table.ItemCount
+    replicas: "_Replicas && sort(_Replicas) || `null`"
+  chat_props: [status, billingMode, partitionKey, sortKey, readCapacity, writeCapacity, globalIndexes, localIndexes, stream, streamArn, ttlAttribute, pointInTimeRecovery, encryption, kmsKey, deletionProtection, tableClass, itemCount, replicas]
+  edges:
+    - {kind: encrypted-by, target: "_Table.SSEDescription.KMSMasterKeyArn", match: "[KeyId, KeyArn, AliasName, AliasArn]", to: [kms-key, kms-alias], style: reference}
+    # An event source mapping reading the table's stream; its EventSourceArn is the stream ARN.
+    # Kept on this side so a registry without DynamoDB still validates.
+    - {kind: reads-stream, target: "_Table.StreamSpecification.StreamEnabled && _Table.LatestStreamArn || `null`", match: EventSourceArn, to: lambda-event-source, reverse: true, style: reference}
+  caveats:
+    - {code: control-plane-only, prop: replicas, text: "Floci 2.3.0 records global table replicas (CreateGlobalTable, UpdateTable ReplicaUpdates) but creates no table and copies no item in the replica regions, and DescribeTable never lists Replicas. Check the replica list, not the other region."}
+    - {code: dynamodb-kms-key-as-given, prop: kmsKey, text: "Floci 2.3.0 reports the KMS key of a table (SSEDescription.KMSMasterKeyArn) as it was given, often a key id or alias, not the key ARN."}
+  builder: true
+  view: {role: block, category: database, icon: Res_Amazon-DynamoDB_Table_48.svg, source: Resource-Icons_07312026/Res_Databases/Res_Amazon-DynamoDB_Table_48.svg, height: 0.6, order: 85, actions: [Table, TimeToLive, ContinuousBackups]}
+  contract:
+    create: {op: create-dynamodb-table, params: {TableName: ct-table, AttributeDefinitions: '[{"AttributeName": "pk", "AttributeType": "S"}]', KeySchema: '[{"AttributeName": "pk", "KeyType": "HASH"}]', BillingMode: PAY_PER_REQUEST}, save: table}
+    then:
+      - {op: update-dynamodb-stream, params: {TableName: ct-table, StreamSpecification.StreamEnabled: "true", StreamSpecification.StreamViewType: NEW_AND_OLD_IMAGES}}
+      - {op: update-time-to-live, params: {TableName: ct-table, TimeToLiveSpecification.Enabled: "true", TimeToLiveSpecification.AttributeName: expiresAt}}
+      - {op: update-continuous-backups, params: {TableName: ct-table, PointInTimeRecoverySpecification.PointInTimeRecoveryEnabled: "true"}}
+  ops:
+    - id: create-dynamodb-table
+      api: CreateTable
+      gesture: create
+      title: "Tạo bảng DynamoDB"
+      fields: [TableName, {name: AttributeDefinitions, multiline: true}, {name: KeySchema, multiline: true}, BillingMode, {name: GlobalSecondaryIndexes, multiline: true}, StreamSpecification.StreamEnabled, StreamSpecification.StreamViewType]
+      defaults:
+        AttributeDefinitions: '[{"AttributeName": "pk", "AttributeType": "S"}]'
+        KeySchema: '[{"AttributeName": "pk", "KeyType": "HASH"}]'
+        BillingMode: PAY_PER_REQUEST
+      result_id: TableDescription.TableArn
+      expect: {label: TableName}
+      note: "Create a table. KeySchema names the partition key (HASH) and an optional sort key (RANGE); AttributeDefinitions gives the type (S, N or B) of every key attribute, including index keys, and nothing else. PAY_PER_REQUEST needs no capacity; PROVISIONED needs ProvisionedThroughput."
+    - id: update-dynamodb-stream
+      api: UpdateTable
+      gesture: attribute
+      title: "Bật DynamoDB stream"
+      fields: [{name: TableName, ref: dynamodb-table, ref_by: label}, StreamSpecification.StreamEnabled, StreamSpecification.StreamViewType]
+      defaults: {StreamSpecification.StreamEnabled: true, StreamSpecification.StreamViewType: NEW_AND_OLD_IMAGES}
+      targets: [dynamodb-table]
+      target_param: TableName
+      note: "Record every item change in a stream a Lambda function can read through an event source mapping. To turn it off, send StreamEnabled false without a view type."
+    - id: add-dynamodb-gsi
+      api: UpdateTable
+      gesture: attribute
+      title: "Thêm global secondary index"
+      fields: [{name: TableName, ref: dynamodb-table, ref_by: label}, {name: AttributeDefinitions, multiline: true}, {name: GlobalSecondaryIndexUpdates, multiline: true}]
+      defaults: {GlobalSecondaryIndexUpdates: '[{"Create": {"IndexName": "by-status", "KeySchema": [{"AttributeName": "status", "KeyType": "HASH"}], "Projection": {"ProjectionType": "ALL"}}}]'}
+      targets: [dynamodb-table]
+      target_param: TableName
+      note: "Add an index to query by another key. AttributeDefinitions must give the type of the new key attributes, e.g. [{\"AttributeName\": \"status\", \"AttributeType\": \"S\"}]."
+    - id: update-time-to-live
+      api: UpdateTimeToLive
+      gesture: attribute
+      title: "Bật TTL"
+      fields: [{name: TableName, ref: dynamodb-table, ref_by: label}, TimeToLiveSpecification.Enabled, TimeToLiveSpecification.AttributeName]
+      defaults: {TimeToLiveSpecification.Enabled: true, TimeToLiveSpecification.AttributeName: expiresAt}
+      targets: [dynamodb-table]
+      target_param: TableName
+      note: "Delete items once the epoch-seconds number in this attribute has passed."
+    - id: update-continuous-backups
+      api: UpdateContinuousBackups
+      gesture: attribute
+      title: "Bật point-in-time recovery"
+      fields: [{name: TableName, ref: dynamodb-table, ref_by: label}, PointInTimeRecoverySpecification.PointInTimeRecoveryEnabled]
+      defaults: {PointInTimeRecoverySpecification.PointInTimeRecoveryEnabled: true}
+      targets: [dynamodb-table]
+      target_param: TableName
+      note: "Keep continuous backups so the table can be restored to any second of the last 35 days."
+    - id: add-dynamodb-replica
+      api: UpdateTable
+      gesture: attribute
+      title: "Thêm replica (global table)"
+      fields: [{name: TableName, ref: dynamodb-table, ref_by: label}, {name: ReplicaUpdates, multiline: true}]
+      defaults: {ReplicaUpdates: '[{"Create": {"RegionName": "us-east-1"}}]'}
+      targets: [dynamodb-table]
+      target_param: TableName
+      note: "Make the table global by adding a replica in another region. The table needs a NEW_AND_OLD_IMAGES stream. Floci only records the replica."

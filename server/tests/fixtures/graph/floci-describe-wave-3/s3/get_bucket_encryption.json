@@ -1,0 +1,72 @@
+{
+  "calls": [
+    {
+      "params": {
+        "Bucket": "w3-governance-logs"
+      },
+      "response": {
+        "ServerSideEncryptionConfiguration": {
+          "Rules": [
+            {
+              "ApplyServerSideEncryptionByDefault": {
+                "SSEAlgorithm": "AES256"
+              },
+              "BucketKeyEnabled": false
+            }
+          ]
+        }
+      }
+    },
+    {
+      "params": {
+        "Bucket": "w3-delivery-artifacts"
+      },
+      "response": {
+        "ServerSideEncryptionConfiguration": {
+          "Rules": [
+            {
+              "ApplyServerSideEncryptionByDefault": {
+                "SSEAlgorithm": "AES256"
+              },
+              "BucketKeyEnabled": false
+            }
+          ]
+        }
+      }
+    },
+    {
+      "params": {
+        "Bucket": "w3-dm-bucket"
+      },
+      "response": {
+        "ServerSideEncryptionConfiguration": {
+          "Rules": [
+            {
+              "ApplyServerSideEncryptionByDefault": {
+                "SSEAlgorithm": "AES256"
+              },
+              "BucketKeyEnabled": false
+            }
+          ]
+        }
+      }
+    },
+    {
+      "params": {
+        "Bucket": "w3-edge-origin"
+      },
+      "response": {
+        "ServerSideEncryptionConfiguration": {
+          "Rules": [
+            {
+              "ApplyServerSideEncryptionByDefault": {
+                "SSEAlgorithm": "AES256"
+              },
+              "BucketKeyEnabled": false
+            }
+          ]
+        }
+      }
+    }
+  ]
+}

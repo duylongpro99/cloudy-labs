@@ -1,0 +1,19 @@
+{
+  "calls": [
+    {
+      "params": {},
+      "response": {
+        "WorkGroups": [
+          {
+            "Name": "primary",
+            "State": "ENABLED"
+          },
+          {
+            "Name": "w3-dm-wg",
+            "State": "ENABLED"
+          }
+        ]
+      }
+    }
+  ]
+}

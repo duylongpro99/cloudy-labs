@@ -1,0 +1,44 @@
+{
+  "calls": [
+    {
+      "params": {},
+      "response": {
+        "Applications": [
+          {
+            "ApplicationArn": "arn:aws:elasticbeanstalk:ap-southeast-2:000000000000:application/w3-delivery-web",
+            "ApplicationName": "w3-delivery-web",
+            "ConfigurationTemplates": [
+              "default"
+            ],
+            "DateCreated": "2026-10-31 16:25:11.287000+00:00",
+            "DateUpdated": "2026-10-31 16:25:11.287000+00:00",
+            "Description": "dummy web app",
+            "Versions": []
+          }
+        ]
+      }
+    },
+    {
+      "params": {
+        "ApplicationNames": [
+          "w3-delivery-web"
+        ]
+      },
+      "response": {
+        "Applications": [
+          {
+            "ApplicationArn": "arn:aws:elasticbeanstalk:ap-southeast-2:000000000000:application/w3-delivery-web",
+            "ApplicationName": "w3-delivery-web",
+            "ConfigurationTemplates": [
+              "default"
+            ],
+            "DateCreated": "2026-10-31 16:25:11.287000+00:00",
+            "DateUpdated": "2026-10-31 16:25:11.287000+00:00",
+            "Description": "dummy web app",
+            "Versions": []
+          }
+        ]
+      }
+    }
+  ]
+}

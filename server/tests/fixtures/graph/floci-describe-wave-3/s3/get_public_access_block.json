@@ -1,0 +1,56 @@
+{
+  "calls": [
+    {
+      "params": {
+        "Bucket": "w3-governance-logs"
+      },
+      "response": {
+        "PublicAccessBlockConfiguration": {
+          "BlockPublicAcls": true,
+          "BlockPublicPolicy": true,
+          "IgnorePublicAcls": true,
+          "RestrictPublicBuckets": true
+        }
+      }
+    },
+    {
+      "params": {
+        "Bucket": "w3-delivery-artifacts"
+      },
+      "response": {
+        "PublicAccessBlockConfiguration": {
+          "BlockPublicAcls": true,
+          "BlockPublicPolicy": true,
+          "IgnorePublicAcls": true,
+          "RestrictPublicBuckets": true
+        }
+      }
+    },
+    {
+      "params": {
+        "Bucket": "w3-dm-bucket"
+      },
+      "response": {
+        "PublicAccessBlockConfiguration": {
+          "BlockPublicAcls": true,
+          "BlockPublicPolicy": true,
+          "IgnorePublicAcls": true,
+          "RestrictPublicBuckets": true
+        }
+      }
+    },
+    {
+      "params": {
+        "Bucket": "w3-edge-origin"
+      },
+      "response": {
+        "PublicAccessBlockConfiguration": {
+          "BlockPublicAcls": true,
+          "BlockPublicPolicy": true,
+          "IgnorePublicAcls": true,
+          "RestrictPublicBuckets": true
+        }
+      }
+    }
+  ]
+}

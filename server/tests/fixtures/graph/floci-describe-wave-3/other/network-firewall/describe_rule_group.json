@@ -1,0 +1,24 @@
+{
+  "calls": [
+    {
+      "params": {
+        "RuleGroupArn": "arn:aws:network-firewall:ap-southeast-2:000000000000:stateful-rulegroup/w3-allow-web"
+      },
+      "response": {
+        "RuleGroup": {
+          "RulesSource": {
+            "RulesString": "pass tcp any any -> any 443 (msg:\"allow https\"; sid:1; rev:1;)"
+          }
+        },
+        "RuleGroupResponse": {
+          "Capacity": 100,
+          "RuleGroupArn": "arn:aws:network-firewall:ap-southeast-2:000000000000:stateful-rulegroup/w3-allow-web",
+          "RuleGroupId": "bd725e4642bc117b86785f0ec33bd8b2",
+          "RuleGroupName": "w3-allow-web",
+          "Type": "STATEFUL"
+        },
+        "UpdateToken": "0f9f0555-d4e5-4a41-930c-a76ba29d1957"
+      }
+    }
+  ]
+}

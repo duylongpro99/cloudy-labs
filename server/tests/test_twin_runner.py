@@ -258,7 +258,7 @@ class Unreachable:
         return True
 
     def client(self, service, credentials=None, *, direct, config, session):
-        return session.client(service, endpoint_url="http://127.0.0.1:9", region_name="us-east-1",
+        return session.client(service, endpoint_url="http://127.0.0.1:9", region_name="ap-southeast-2",
                               aws_access_key_id="test", aws_secret_access_key="test", config=config)
 
 

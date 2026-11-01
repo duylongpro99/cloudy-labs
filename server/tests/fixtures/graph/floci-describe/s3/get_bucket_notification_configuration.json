@@ -1,0 +1,38 @@
+{
+  "calls": [
+    {
+      "params": {
+        "Bucket": "wave1-site"
+      },
+      "response": {}
+    },
+    {
+      "params": {
+        "Bucket": "wave1-dst"
+      },
+      "response": {}
+    },
+    {
+      "params": {
+        "Bucket": "wave1-src"
+      },
+      "response": {
+        "LambdaFunctionConfigurations": [
+          {
+            "Events": [
+              "s3:ObjectCreated:*"
+            ],
+            "Id": "on-put",
+            "LambdaFunctionArn": "arn:aws:lambda:ap-southeast-2:000000000000:function:wave1-fn"
+          }
+        ]
+      }
+    },
+    {
+      "params": {
+        "Bucket": "wave1-logs"
+      },
+      "response": {}
+    }
+  ]
+}

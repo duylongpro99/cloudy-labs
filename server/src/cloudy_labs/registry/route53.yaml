@@ -1,0 +1,149 @@
+# Amazon Route 53: global, drawn under the global group. Record sets are listed per hosted zone; the
+# zone's own NS and SOA records are AWS's, not the learner's, and are hidden.
+
+- kind: hosted-zone
+  service: route53
+  label: Route 53 Hosted Zone
+  scope: global
+  list: {method: list_hosted_zones, items: HostedZones}
+  enrich:
+    - {method: get_hosted_zone, params: {Id: Id}, pick: VPCs, merge_as: _VPCs}
+  id: Id
+  name: [Name, Id]
+  parent: [{kind: global}]
+  props:
+    private: Config.PrivateZone
+    comment: Config.Comment
+    recordCount: ResourceRecordSetCount
+    vpcs: "_VPCs[].{vpc: VPCId, region: VPCRegion}"
+  chat_props: [private, comment, recordCount, vpcs]
+  edges:
+    - {kind: zone-vpc, target: "_VPCs[].VPCId", to: vpc, style: association}
+  caveats:
+    - {code: route53-private-dns-only, prop: private, text: "Floci 2.3.0 answers DNS queries only for private hosted zones, only A records (following CNAME and alias), and for every VPC alike; a public zone is stored but never answered and TestDNSAnswer is refused."}
+  builder: true
+  view: {role: block, category: networking, icon: Res_Amazon-Route-53-Hosted-Zone_48.svg, source: Resource-Icons_07312026/Res_Networking-Content-Delivery/Res_Amazon-Route-53-Hosted-Zone_48.svg, height: 0.5, order: 106, actions: [HostedZone, VPCAssociation]}
+  contract:
+    needs:
+      - {op: create-vpc, params: {name: ct-hz-vpc, cidr: 10.97.0.0/16}, save: vpc}
+    create: {op: create-hosted-zone, params: {Name: ct.internal, CallerReference: ct-hz, VPC.VPCId: "{vpc}", VPC.VPCRegion: "{region}"}, save: zone}
+    then:
+      - {op: change-resource-record-sets, params: {HostedZoneId: "{zone}", ChangeBatch: '{"Changes": [{"Action": "UPSERT", "ResourceRecordSet": {"Name": "web.ct.internal", "Type": "A", "TTL": 60, "ResourceRecords": [{"Value": "10.97.1.10"}]}}]}'}}
+  ops:
+    - id: create-hosted-zone
+      api: CreateHostedZone
+      gesture: create
+      title: "Tạo Hosted Zone"
+      fields: [Name, CallerReference, {name: VPC.VPCId, ref: vpc}, VPC.VPCRegion, HostedZoneConfig.Comment]
+      result_id: HostedZone.Id
+      note: "Create a DNS zone for a domain. With VPC.VPCId and VPC.VPCRegion it is a private zone, answered only inside that VPC; without, a public one. CallerReference: any text unique per request."
+    - id: associate-vpc-with-hosted-zone
+      api: AssociateVPCWithHostedZone
+      gesture: connect
+      title: "Gắn VPC vào Hosted Zone"
+      fields: [{name: HostedZoneId, ref: hosted-zone}, {name: VPC.VPCId, ref: vpc}, VPC.VPCRegion]
+      source: hosted-zone
+      source_param: HostedZoneId
+      targets: [vpc]
+      target_param: VPC.VPCId
+      note: "Let one more VPC resolve the private zone's records."
+    - id: change-resource-record-sets
+      api: ChangeResourceRecordSets
+      gesture: attribute
+      title: "Tạo/sửa bản ghi DNS"
+      fields: [{name: HostedZoneId, ref: hosted-zone}, {name: ChangeBatch, multiline: true}]
+      defaults: {ChangeBatch: '{"Changes": [{"Action": "UPSERT", "ResourceRecordSet": {"Name": "web.example.internal", "Type": "A", "TTL": 60, "ResourceRecords": [{"Value": "10.0.1.10"}]}}]}'}
+      target_param: HostedZoneId
+      note: "Create, change (UPSERT) or delete records in the zone. ChangeBatch JSON: Changes of {Action, ResourceRecordSet {Name, Type, TTL, ResourceRecords [{Value}]}}; an alias to a load balancer uses AliasTarget {HostedZoneId, DNSName, EvaluateTargetHealth} instead of TTL and ResourceRecords."
+
+- kind: record-set
+  service: route53
+  label: Route 53 Record
+  scope: global
+  list: {method: list_resource_record_sets, items: ResourceRecordSets, scope: {parent_kind: hosted-zone, param: HostedZoneId, field: Id}}
+  filter: {path: Type, not_in: [SOA, NS]}  # the zone apex records Route 53 makes and keeps
+  id: "join('/', [_Parent, Name, Type, SetIdentifier][?@])"
+  name: ["join(' ', [Name, Type])"]
+  parent: [{kind: global}]
+  props:
+    name: Name
+    type: Type
+    ttl: TTL
+    values: "ResourceRecords[].Value"
+    alias: "AliasTarget.{dnsName: DNSName, zone: HostedZoneId, evaluateHealth: EvaluateTargetHealth}"
+    setIdentifier: SetIdentifier
+    weight: Weight
+    zone: _Parent
+  chat_props: [name, type, ttl, values, alias, setIdentifier, weight, zone]
+  edges:
+    - {kind: record-of, target: _Parent, to: hosted-zone, style: reference}
+    - {kind: alias-to, target: AliasTarget.DNSName, to: load-balancer, match: "[DNSName, join('', [DNSName, '.']), join('', ['dualstack.', DNSName]), join('', ['dualstack.', DNSName, '.'])]", style: reference}
+  caveats:
+    - {code: route53-private-dns-only, text: "Floci 2.3.0 answers DNS queries only for private hosted zones, only A records (following CNAME and alias), and for every VPC alike; a public zone is stored but never answered and TestDNSAnswer is refused."}
+  view: {role: block, category: networking, icon: Res_Document_48_Light.svg, source: Resource-Icons_07312026/Res_General-Icons/Res_48_Light/Res_Document_48_Light.svg, height: 0.2, order: 107, actions: [ResourceRecordSets]}
+
+# Route 53 health checks: global. A failover, weighted or latency record names one by HealthCheckId;
+# a calculated check combines child checks, and a CloudWatch-metric check follows an alarm.
+- kind: route53-health-check
+  service: route53
+  label: Route 53 Health Check
+  scope: global
+  list: {method: list_health_checks, items: HealthChecks}
+  enrich:
+    - {method: list_tags_for_resource, params: {ResourceId: Id}, const: {ResourceType: healthcheck}, pick: ResourceTagSet.Tags, merge_as: _Tags}
+    - {method: get_health_check_status, params: {HealthCheckId: Id}, pick: "HealthCheckObservations[0].StatusReport.Status", merge_as: _Status}
+  id: Id
+  name: ["_Tags[?Key=='Name'].Value | [0]", CallerReference, Id]
+  parent: [{kind: global}]
+  props:
+    type: HealthCheckConfig.Type
+    target: "HealthCheckConfig.{fqdn: FullyQualifiedDomainName, ip: IPAddress, port: Port, path: ResourcePath, searchString: SearchString}"
+    interval: HealthCheckConfig.RequestInterval
+    failureThreshold: HealthCheckConfig.FailureThreshold
+    inverted: HealthCheckConfig.Inverted
+    disabled: HealthCheckConfig.Disabled
+    children: HealthCheckConfig.ChildHealthChecks
+    healthThreshold: HealthCheckConfig.HealthThreshold
+    alarm: "HealthCheckConfig.AlarmIdentifier.{name: Name, region: Region}"
+    status: _Status
+    tags: {hook: common.tags, args: {field: _Tags}}
+  chat_props: [type, target, interval, failureThreshold, inverted, disabled, children, healthThreshold, alarm, status]
+  edges:
+    - {kind: uses-health-check, target: Id, to: record-set, match: HealthCheckId, reverse: true, style: reference}
+    - {kind: calculated-from, target: HealthCheckConfig.ChildHealthChecks, to: route53-health-check, style: reference}
+    - {kind: follows-alarm, target: HealthCheckConfig.AlarmIdentifier.Name, to: cloudwatch-alarm, match: AlarmName, style: reference}
+  caveats:
+    - {code: route53-health-check-always-healthy, prop: status, text: "Floci 2.3.0 never probes the endpoint: GetHealthCheckStatus always reports Success (HTTP 200), even for a name that does not resolve, so DNS failover never switches. Check the health check's configuration and the failover records."}
+    - {code: route53-health-check-update-replaces, prop: target, text: "Floci 2.3.0 UpdateHealthCheck replaces the whole configuration with the fields given (others are lost) instead of changing only them as AWS does. Send every field again when updating."}
+  builder: true
+  view: {role: block, category: networking, icon: Res_Amazon-Route-53_Readiness-Checks_48.svg, source: Resource-Icons_07312026/Res_Networking-Content-Delivery/Res_Amazon-Route-53_Readiness-Checks_48.svg, height: 0.3, order: 525, actions: [HealthCheck]}
+  contract:
+    create: {op: create-health-check, params: {CallerReference: ct-health-check, HealthCheckConfig.Type: HTTP, HealthCheckConfig.FullyQualifiedDomainName: ct-hc.example.com, HealthCheckConfig.Port: "80", HealthCheckConfig.ResourcePath: /}, save: hc}
+    then:
+      - {op: update-health-check, params: {HealthCheckId: "{hc}", FullyQualifiedDomainName: ct-hc.example.com, Port: "80", ResourcePath: /health}}
+      - {op: delete-health-check, params: {HealthCheckId: "{hc}"}}
+  ops:
+    - id: create-health-check
+      api: CreateHealthCheck
+      gesture: create
+      title: "Tạo Route 53 Health Check"
+      fields: [CallerReference, HealthCheckConfig.Type, HealthCheckConfig.FullyQualifiedDomainName, HealthCheckConfig.IPAddress, HealthCheckConfig.Port, HealthCheckConfig.ResourcePath, HealthCheckConfig.SearchString, HealthCheckConfig.RequestInterval, HealthCheckConfig.FailureThreshold]
+      choices: {HealthCheckConfig.Type: [HTTP, HTTPS, HTTP_STR_MATCH, HTTPS_STR_MATCH, TCP], HealthCheckConfig.RequestInterval: ["10", "30"]}
+      defaults: {HealthCheckConfig.Type: HTTP, HealthCheckConfig.Port: "80", HealthCheckConfig.ResourcePath: /, HealthCheckConfig.RequestInterval: "30", HealthCheckConfig.FailureThreshold: "3"}
+      result_id: HealthCheck.Id
+      note: "Check an endpoint by FullyQualifiedDomainName or IPAddress, Port and ResourcePath. Name it in a failover record (Failover PRIMARY, HealthCheckId) so Route 53 answers the SECONDARY record when it fails. CallerReference: any text unique per request."
+    - id: update-health-check
+      api: UpdateHealthCheck
+      gesture: attribute
+      title: "Sửa Route 53 Health Check"
+      fields: [{name: HealthCheckId, ref: route53-health-check}, FullyQualifiedDomainName, IPAddress, Port, ResourcePath, SearchString, FailureThreshold, Inverted, Disabled]
+      target_param: HealthCheckId
+      note: "Change what the check probes (name, IP, port, path), its failure threshold, or invert or disable it."
+    - id: delete-health-check
+      api: DeleteHealthCheck
+      gesture: delete
+      title: "Xoá Route 53 Health Check"
+      fields: [{name: HealthCheckId, ref: route53-health-check}]
+      targets: [route53-health-check]
+      target_param: HealthCheckId
+      note: "Delete the health check. Remove it from the records that name it first."

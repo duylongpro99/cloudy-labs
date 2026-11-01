@@ -1,0 +1,58 @@
+{
+  "calls": [
+    {
+      "params": {
+        "domain": "w3-delivery"
+      },
+      "response": {
+        "domain": {
+          "arn": "arn:aws:codeartifact:ap-southeast-2:000000000000:domain/w3-delivery",
+          "assetSizeBytes": 0,
+          "createdTime": "2026-10-31 23:25:11+07:00",
+          "encryptionKey": "arn:aws:kms:ap-southeast-2:000000000000:alias/aws/codeartifact",
+          "name": "w3-delivery",
+          "owner": "000000000000",
+          "repositoryCount": 2,
+          "s3BucketArn": "arn:aws:s3:::codeartifact-ap-southeast-2-000000000000",
+          "status": "Active"
+        }
+      }
+    },
+    {
+      "params": {
+        "domain": "w3-delivery"
+      },
+      "response": {
+        "domain": {
+          "arn": "arn:aws:codeartifact:ap-southeast-2:000000000000:domain/w3-delivery",
+          "assetSizeBytes": 0,
+          "createdTime": "2026-10-31 23:25:11+07:00",
+          "encryptionKey": "arn:aws:kms:ap-southeast-2:000000000000:alias/aws/codeartifact",
+          "name": "w3-delivery",
+          "owner": "000000000000",
+          "repositoryCount": 2,
+          "s3BucketArn": "arn:aws:s3:::codeartifact-ap-southeast-2-000000000000",
+          "status": "Active"
+        }
+      }
+    },
+    {
+      "params": {
+        "domain": "w3-delivery"
+      },
+      "response": {
+        "domain": {
+          "arn": "arn:aws:codeartifact:ap-southeast-2:000000000000:domain/w3-delivery",
+          "assetSizeBytes": 0,
+          "createdTime": "2026-10-31 23:25:11+07:00",
+          "encryptionKey": "arn:aws:kms:ap-southeast-2:000000000000:alias/aws/codeartifact",
+          "name": "w3-delivery",
+          "owner": "000000000000",
+          "repositoryCount": 2,
+          "s3BucketArn": "arn:aws:s3:::codeartifact-ap-southeast-2-000000000000",
+          "status": "Active"
+        }
+      }
+    }
+  ]
+}

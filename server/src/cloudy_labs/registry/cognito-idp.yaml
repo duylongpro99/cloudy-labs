@@ -1,0 +1,116 @@
+# Amazon Cognito user pools and the external identity providers (Google, Facebook, OIDC, SAML) a pool
+# federates. DescribeIdentityProvider answers the provider's client secret, so only its attribute
+# mapping and identifiers are kept: ProviderDetails is never read into the graph.
+
+- kind: cognito-user-pool
+  service: cognito-idp
+  label: Cognito User Pool
+  list: {method: list_user_pools, items: UserPools, params: {MaxResults: 60}}
+  enrich:
+    - {method: describe_user_pool, params: {UserPoolId: Id}, pick: UserPool, merge_as: _Pool}
+  id: Id
+  name: [Name, Id]
+  parent: [{kind: region}]
+  props:
+    arn: _Pool.Arn
+    status: _Pool.Status
+    mfa: _Pool.MfaConfiguration
+    minimumLength: _Pool.Policies.PasswordPolicy.MinimumLength
+    usernameAttributes: _Pool.UsernameAttributes
+    autoVerifiedAttributes: _Pool.AutoVerifiedAttributes
+    deletionProtection: _Pool.DeletionProtection
+    estimatedUsers: _Pool.EstimatedNumberOfUsers
+    domain: _Pool.Domain
+    triggers: "values(not_null(_Pool.LambdaConfig, `{}`))[?type(@) == 'string']"
+    tags: _Pool.UserPoolTags
+  chat_props: [arn, status, mfa, minimumLength, usernameAttributes, autoVerifiedAttributes, deletionProtection, estimatedUsers, domain, triggers, tags]
+  edges:
+    - {kind: invokes, target: "values(not_null(_Pool.LambdaConfig, `{}`))[?type(@) == 'string']", to: lambda-function, style: reference}
+  builder: true
+  view: {role: block, category: security, icon: Arch_Amazon-Cognito_48.svg, source: Architecture-Service-Icons_07312026/Arch_Security-Identity/48/Arch_Amazon-Cognito_48.svg, height: 0.4, order: 705, actions: [UserPool]}
+  contract:
+    create: {op: create-user-pool, params: {PoolName: ct-user-pool}, save: pool}
+    then:
+      - {op: update-user-pool, params: {UserPoolId: "{pool}", MfaConfiguration: "OFF", DeletionProtection: ACTIVE}}
+      - {op: update-user-pool, params: {UserPoolId: "{pool}", MfaConfiguration: "OFF", DeletionProtection: INACTIVE}}
+      - {op: delete-user-pool, params: {UserPoolId: "{pool}"}}
+  ops:
+    - id: create-user-pool
+      api: CreateUserPool
+      gesture: create
+      title: "Tạo Cognito User Pool"
+      fields: [PoolName, Policies.PasswordPolicy.MinimumLength, UsernameAttributes, AutoVerifiedAttributes, {name: MfaConfiguration, choices: ["OFF", "ON", "OPTIONAL"]}, {name: DeletionProtection, choices: [ACTIVE, INACTIVE]}]
+      defaults: {Policies.PasswordPolicy.MinimumLength: 8}
+      result_id: UserPool.Id
+      expect: {label: PoolName}
+      note: "A user directory for sign-up and sign-in. UsernameAttributes email lets users sign in with their email; AutoVerifiedAttributes email sends a verification code. An app client (CreateUserPoolClient) is what an application signs in through."
+    - id: update-user-pool
+      api: UpdateUserPool
+      gesture: modify
+      title: "Sửa cấu hình User Pool"
+      fields: [{name: UserPoolId, ref: cognito-user-pool}, {name: MfaConfiguration, choices: ["OFF", "ON", "OPTIONAL"]}, Policies.PasswordPolicy.MinimumLength, AutoVerifiedAttributes, {name: DeletionProtection, choices: [ACTIVE, INACTIVE]}]
+      targets: [cognito-user-pool]
+      target_param: UserPoolId
+      note: "Change the pool's settings. Like AWS, every setting left out returns to its default, so repeat the ones to keep. MFA ON or OPTIONAL needs an SMS or software token configuration (SetUserPoolMfaConfig)."
+    - id: delete-user-pool
+      api: DeleteUserPool
+      gesture: delete
+      title: "Xoá User Pool"
+      fields: [{name: UserPoolId, ref: cognito-user-pool}]
+      targets: [cognito-user-pool]
+      target_param: UserPoolId
+      note: "Delete the pool with all its users, groups and app clients. A pool with DeletionProtection ACTIVE is refused."
+
+- kind: cognito-identity-provider
+  service: cognito-idp
+  label: Cognito Identity Provider
+  list: {method: list_identity_providers, items: Providers, params: {MaxResults: 60}, scope: {parent_kind: cognito-user-pool, param: UserPoolId, field: Id}}
+  enrich:
+    - {method: describe_identity_provider, params: {UserPoolId: _Parent, ProviderName: ProviderName}, pick: "IdentityProvider.{attributeMapping: AttributeMapping, idpIdentifiers: IdpIdentifiers}", merge_as: _Idp}
+  id: "join('/', [_Parent, ProviderName])"
+  name: [ProviderName]
+  parent: [{kind: region}]
+  props:
+    providerType: ProviderType
+    userPool: _Parent
+    attributeMapping: _Idp.attributeMapping
+    idpIdentifiers: _Idp.idpIdentifiers
+  chat_props: [providerType, userPool, attributeMapping, idpIdentifiers]
+  edges:
+    - {kind: provider-of, target: _Parent, to: cognito-user-pool, style: reference}
+  caveats:
+    - {code: cognito-idp-details-not-checked, text: "Floci 2.3.0 accepts a Google, Facebook or OIDC provider without client_secret and never contacts the provider; AWS requires the provider's documented ProviderDetails keys."}
+  builder: true
+  view: {role: block, category: security, icon: Res_Authenticated-User_48_Light.svg, source: Resource-Icons_07312026/Res_General-Icons/Res_48_Light/Res_Authenticated-User_48_Light.svg, height: 0.2, order: 706, actions: [IdentityProvider]}
+  contract:
+    needs:
+      - {op: create-user-pool, params: {PoolName: ct-idp-pool}, save: pool}
+    create: {op: create-identity-provider, params: {UserPoolId: "{pool}", ProviderName: ct-oidc, ProviderType: OIDC, ProviderDetails: '{"client_id": "ct-client", "attributes_request_method": "GET", "oidc_issuer": "https://issuer.example.com", "authorize_scopes": "openid email"}', AttributeMapping: '{"email": "email"}'}, save: idp}
+    then:
+      - {op: update-identity-provider, params: {UserPoolId: "{pool}", ProviderName: ct-oidc, AttributeMapping: '{"email": "email", "name": "name"}'}}
+      - {op: delete-identity-provider, params: {UserPoolId: "{pool}", ProviderName: ct-oidc}}
+  ops:
+    - id: create-identity-provider
+      api: CreateIdentityProvider
+      gesture: create
+      title: "Thêm Identity Provider cho User Pool"
+      fields: [{name: UserPoolId, ref: cognito-user-pool}, ProviderName, {name: ProviderType, choices: [Google, Facebook, LoginWithAmazon, SignInWithApple, OIDC, SAML]}, {name: ProviderDetails, multiline: true}, {name: AttributeMapping, multiline: true}, IdpIdentifiers]
+      defaults: {ProviderType: OIDC, AttributeMapping: '{"email": "email"}'}
+      expect: {label: ProviderName}
+      note: "Let users of the pool sign in through Google, Facebook, an OIDC issuer or a SAML IdP. ProviderDetails JSON: Google and Facebook take client_id, client_secret, authorize_scopes; OIDC takes client_id, client_secret, oidc_issuer, attributes_request_method, authorize_scopes; SAML takes MetadataURL. AttributeMapping maps pool attributes to the provider's, e.g. {\"email\": \"email\"}."
+    - id: update-identity-provider
+      api: UpdateIdentityProvider
+      gesture: modify
+      title: "Sửa ánh xạ thuộc tính Identity Provider"
+      fields: [{name: UserPoolId, ref: cognito-user-pool}, {name: ProviderName, ref: cognito-identity-provider, ref_by: label}, {name: AttributeMapping, multiline: true}, {name: ProviderDetails, multiline: true}, IdpIdentifiers]
+      targets: [cognito-identity-provider]
+      target_param: ProviderName
+      note: "Change which provider attributes fill which pool attributes, or the provider's details."
+    - id: delete-identity-provider
+      api: DeleteIdentityProvider
+      gesture: delete
+      title: "Xoá Identity Provider"
+      fields: [{name: UserPoolId, ref: cognito-user-pool}, {name: ProviderName, ref: cognito-identity-provider, ref_by: label}]
+      targets: [cognito-identity-provider]
+      target_param: ProviderName
+      note: "Remove the provider; users who signed in through it stay in the pool."

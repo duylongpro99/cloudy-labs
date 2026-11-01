@@ -1,0 +1,58 @@
+# AWS Systems Manager Parameter Store. DescribeParameters answers metadata only; parameter values
+# are never read (no GetParameter), so neither the scene nor the chat ever holds one.
+
+- kind: ssm-parameter
+  service: ssm
+  label: SSM Parameter
+  list: {method: describe_parameters, items: Parameters}
+  filter: {path: "starts_with(Name, '/aws/')", not_in: [true]}  # public parameters AWS publishes
+  enrich:
+    - {method: list_tags_for_resource, params: {ResourceId: Name}, const: {ResourceType: Parameter}, pick: TagList, merge_as: _Tags}
+  # DescribeParameters gives no ARN; the name is unique within a region, as is a CloudFormation physical id.
+  id: Name
+  name: [Name]
+  parent: [{kind: region}]
+  props:
+    type: Type
+    tier: Tier
+    dataType: DataType
+    version: Version
+    description: Description
+    kmsKey: KeyId
+    lastModified: LastModifiedDate
+    tags: {hook: common.tags, args: {field: _Tags}}
+  chat_props: [type, tier, dataType, version, description, kmsKey, lastModified, tags]
+  edges:
+    - {kind: encrypted-by, target: KeyId, match: "[KeyId, KeyArn, AliasName, AliasArn]", to: [kms-key, kms-alias], style: reference}
+  builder: true
+  view: {role: block, category: management, icon: Res_AWS-Systems-Manager_Parameter-Store_48.svg, source: Resource-Icons_07312026/Res_Management-Governance/Res_AWS-Systems-Manager_Parameter-Store_48.svg, height: 0.3, order: 120, actions: [Parameter]}
+  contract:
+    create: {op: put-ssm-parameter, params: {Name: /ct/param, Value: ct-value, Type: String}}
+    # Not label-parameter-version: DescribeParameters carries no labels, so the scene cannot show one.
+    then:
+      - {op: delete-ssm-parameter, params: {Name: /ct/param}}
+  ops:
+    - id: put-ssm-parameter
+      api: PutParameter
+      gesture: create
+      title: "Tạo SSM parameter"
+      fields: [{name: Name, placeholder: /my-app/db/host}, Value, Type, Description, {name: KeyId, ref: kms-key}, Tier]
+      defaults: {Type: String, Tier: Standard}
+      expect: {label: Name}
+      note: "Store a configuration value under a path-like name. String and StringList are plain text; SecureString encrypts the value with KMS (KeyId, or the account's alias/aws/ssm key when empty). The scene never shows the value."
+    - id: label-parameter-version
+      api: LabelParameterVersion
+      gesture: attribute
+      title: "Gắn nhãn phiên bản parameter"
+      fields: [{name: Name, ref: ssm-parameter}, Labels, ParameterVersion]
+      targets: [ssm-parameter]
+      target_param: Name
+      note: "Give a version a label such as prod, so readers can ask for name:prod instead of a number."
+    - id: delete-ssm-parameter
+      api: DeleteParameter
+      gesture: delete
+      title: "Xoá SSM parameter"
+      fields: [{name: Name, ref: ssm-parameter}]
+      targets: [ssm-parameter]
+      target_param: Name
+      note: "Delete the parameter and every version of it."

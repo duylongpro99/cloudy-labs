@@ -1,0 +1,71 @@
+{
+  "calls": [
+    {
+      "params": {
+        "Bucket": "wave1-site"
+      },
+      "response": {
+        "ServerSideEncryptionConfiguration": {
+          "Rules": [
+            {
+              "ApplyServerSideEncryptionByDefault": {
+                "SSEAlgorithm": "AES256"
+              },
+              "BucketKeyEnabled": false
+            }
+          ]
+        }
+      }
+    },
+    {
+      "params": {
+        "Bucket": "wave1-dst"
+      },
+      "response": {
+        "ServerSideEncryptionConfiguration": {
+          "Rules": [
+            {
+              "ApplyServerSideEncryptionByDefault": {
+                "SSEAlgorithm": "AES256"
+              },
+              "BucketKeyEnabled": false
+            }
+          ]
+        }
+      }
+    },
+    {
+      "params": {
+        "Bucket": "wave1-src"
+      },
+      "response": {
+        "ServerSideEncryptionConfiguration": {
+          "Rules": [
+            {
+              "ApplyServerSideEncryptionByDefault": {
+                "SSEAlgorithm": "AES256"
+              },
+              "BucketKeyEnabled": false
+            }
+          ]
+        }
+      }
+    },
+    {
+      "params": {
+        "Bucket": "wave1-logs"
+      },
+      "response": {
+        "ServerSideEncryptionConfiguration": {
+          "Rules": [
+            {
+              "ApplyServerSideEncryptionByDefault": {
+                "SSEAlgorithm": "AES256"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ]
+}

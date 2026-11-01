@@ -1,13 +1,17 @@
 import json
+from pathlib import Path
 
 import pytest
 from fastapi.testclient import TestClient
 from starlette.websockets import WebSocketDisconnect
 
+from cloudy_labs.registry.__main__ import export_json
 from cloudy_labs.server.app import create_app
 from test_hub import FakeCollector
 
 
+REGISTRY_GOLDEN = Path(__file__).parent / "fixtures" / "graph" / "registry.json"
+WEB_REGISTRY = Path(__file__).parents[2] / "web" / "src" / "registry" / "registry.json"
 WS = "ws://127.0.0.1:8730/ws"  # absolute: the test client otherwise sends Host: testserver
 
 
@@ -33,7 +37,16 @@ def test_health_and_graph(served):
     client, _, _ = served
     assert client.get("/api/health").json() == {"floci": True, "tap": False, "version": 1}
     body = client.get("/api/graph").json()
-    assert body["version"] == 1 and body["status"] == "ok" and body["nodes"][0]["kind"] == "region"
+    assert body["version"] == 1 and body["status"] == "ok" and body["nodes"][0]["kind"] == "account"
+
+
+def test_registry_endpoint_matches_the_golden_and_the_web_copy(served):
+    client, _, _ = served
+    body = client.get("/api/registry").json()
+    assert body == json.loads(REGISTRY_GOLDEN.read_text())
+    # the web app bundles this copy so the gallery and bench work without a server
+    assert body == json.loads(WEB_REGISTRY.read_text())
+    assert export_json() == REGISTRY_GOLDEN.read_text()
 
 
 def test_websocket_gets_current_graph_then_updates(served):
@@ -73,7 +86,7 @@ def test_listener_events_reach_browsers_and_writes_refresh(served):
         client.portal.call(lambda: listener.handle({"seq": 1, "service": "ec2", "action": "CreateVpc", "write": True}))
         assert ws.receive_json() == {"type": "api-event", "service": "ec2", "action": "CreateVpc", "seq": 1, "write": True}
         message = ws.receive_json()  # after the debounce
-        assert message["type"] == "graph" and [n["id"] for n in message["graph"]["nodes"]] == ["us-east-1", "vpc-2"]
+        assert message["type"] == "graph" and [n["id"] for n in message["graph"]["nodes"]] == ["000000000000", "ap-southeast-2", "vpc-2"]
 
 
 # --- builder ---------------------------------------------------------------------------------
@@ -115,7 +128,7 @@ def builder():
         return state["lab"]
 
     app = create_app(lambda: state["graph"], listen=False, lab=lab, runner=runner, checks_runner=NO_CHECKS,
-                     azs=lambda: ["us-east-1a", "us-east-1b"], blocker=lambda: state["block"])
+                     azs=lambda: ["ap-southeast-2a", "ap-southeast-2b"], blocker=lambda: state["block"])
     with TestClient(app, base_url="http://127.0.0.1:8730") as client:
         yield client, state, runner
 
@@ -130,7 +143,7 @@ def test_lab_info(builder):
     assert body["id"] == "fixture-lab-06" and body["attempt"] == 7
     assert body["palette"] == ["vpc", "subnet", "igw", "elastic-ip", "nat", "route-table"]
     assert body["tags"] == {"lab": "fixture-lab-06"} and body["cidrs"] == ["10.66.0.0/16"]
-    assert body["azs"] == ["us-east-1a", "us-east-1b"] and body["canRun"] is True and body["runBlocker"] is None
+    assert body["azs"] == ["ap-southeast-2a", "ap-southeast-2b"] and body["canRun"] is True and body["runBlocker"] is None
     assert {o["name"] for o in body["ops"]} >= {"create-vpc", "create-route", "modify-subnet-attribute"}
     assert [t["id"] for t in body["tasks"]][0] == "vpc"
 
@@ -173,10 +186,10 @@ def test_preview_shows_exact_command(builder):
 
 def test_preview_explains_problems(builder):
     client, _, _ = builder
-    r = post(client, "/api/preview", "create-subnet", {"name": "x", "vpcId": VPC, "cidr": "10.0.1.5/24", "az": "us-east-1z"})
+    r = post(client, "/api/preview", "create-subnet", {"name": "x", "vpcId": VPC, "cidr": "10.0.1.5/24", "az": "ap-southeast-2z"})
     assert r.status_code == 200
     fields = {p["field"]: p["message"] for p in r.json()["problems"]}
-    assert "host bits" in fields["cidr"] and "us-east-1a, us-east-1b" in fields["az"]
+    assert "host bits" in fields["cidr"] and "ap-southeast-2a, ap-southeast-2b" in fields["az"]
 
 
 @pytest.mark.parametrize("body, status", [
@@ -424,7 +437,7 @@ def chat(builder):
         return state["answer"]
 
     app = create_app(lambda: state["graph"], listen=False, lab=lambda: state["lab"], runner=runner, checks_runner=NO_CHECKS,
-                     azs=lambda: ["us-east-1a", "us-east-1b"], blocker=lambda: None,
+                     azs=lambda: ["ap-southeast-2a", "ap-southeast-2b"], blocker=lambda: None,
                      llm=lambda: state["llm"], complete=complete)
     with TestClient(app, base_url="http://127.0.0.1:8730") as c:
         yield c, state, runner
@@ -530,3 +543,26 @@ def test_key_never_leaves_the_server(chat, caplog):
     with caplog.at_level(logging.DEBUG):
         texts = [ask(client).text, client.get("/api/lab").text]
     assert all(LLM_KEY not in t for t in texts) and LLM_KEY not in caplog.text
+
+
+def test_the_scene_lists_only_the_kinds_the_open_lab_can_show(monkeypatch):
+    import cloudy_labs.server.app as app_module
+
+    asked: list = []
+    monkeypatch.setattr(app_module, "collect", lambda provider, *, regions, kinds: asked.append(kinds) or GOLDEN)
+    lab06, lab07 = (LAB06, Attempt(1, "fixture-lab-06", "")), (LAB07, Attempt(2, "fixture-lab-07", ""))
+    state = {"lab": lab07}
+    app = create_app(listen=False, lab=lambda: state["lab"], checks_runner=NO_CHECKS)
+    hub = app.state.hub
+    hub._collect()
+    hub.see({"elastic-ip"})  # as a write or a graph of this lab would
+    hub._collect()
+    state["lab"] = lab06
+    hub._collect()
+    state["lab"] = lab07
+    hub._collect()
+    first, seen, _, reopened = (set(k) for k in asked)
+    assert {"vpc", "instance", "key-pair", "security-group", "route-table"} <= first
+    assert "elastic-ip" not in first and "nat" not in first
+    assert seen == first | {"elastic-ip"}
+    assert reopened == first  # kinds seen in one lab do not follow the learner to the next

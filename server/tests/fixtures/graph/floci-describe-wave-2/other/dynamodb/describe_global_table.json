@@ -1,0 +1,10 @@
+{
+  "calls": [
+    {
+      "error": "GlobalTableNotFoundException",
+      "params": {
+        "GlobalTableName": "w2-orders"
+      }
+    }
+  ]
+}

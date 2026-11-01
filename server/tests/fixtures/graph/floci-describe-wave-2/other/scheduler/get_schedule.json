@@ -1,0 +1,28 @@
+{
+  "calls": [
+    {
+      "params": {
+        "GroupName": "default",
+        "Name": "w2-schedule"
+      },
+      "response": {
+        "Arn": "arn:aws:scheduler:ap-southeast-2:000000000000:schedule/default/w2-schedule",
+        "CreationDate": "2026-10-31 22:16:09.323991+07:00",
+        "Description": "w2 hourly ping",
+        "FlexibleTimeWindow": {
+          "Mode": "OFF"
+        },
+        "GroupName": "default",
+        "LastModificationDate": "2026-10-31 22:16:09.323991+07:00",
+        "Name": "w2-schedule",
+        "ScheduleExpression": "rate(1 hour)",
+        "State": "DISABLED",
+        "Target": {
+          "Arn": "arn:aws:events:ap-southeast-2:000000000000:event-bus/w2-bus",
+          "Input": "{\"source\": \"w2.app\"}",
+          "RoleArn": "arn:aws:iam::000000000000:role/w2-mon-role"
+        }
+      }
+    }
+  ]
+}

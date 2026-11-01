@@ -1,0 +1,22 @@
+{
+  "calls": [
+    {
+      "params": {
+        "ResourceId": "e3444407-d988-4961-be66-64b459c57cfa",
+        "ResourceType": "healthcheck"
+      },
+      "response": {
+        "ResourceTagSet": {
+          "ResourceId": "e3444407-d988-4961-be66-64b459c57cfa",
+          "ResourceType": "healthcheck",
+          "Tags": [
+            {
+              "Key": "Name",
+              "Value": "w3-edge-hc"
+            }
+          ]
+        }
+      }
+    }
+  ]
+}

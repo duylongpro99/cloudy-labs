@@ -6,12 +6,17 @@ import logging
 
 import httpx
 
-from ..config import HOST, TAP_EVENTS_PORT
+from ..config import HOST, MOTO_TAP_EVENTS_PORT, TAP_EVENTS_PORT
+from ..graph.collector import kinds_of_action
+from ..registry import default_registry
 from .hub import GraphHub
 
 log = logging.getLogger(__name__)
 
 EVENTS_URL = f"http://{HOST}:{TAP_EVENTS_PORT}/events"
+# api-tap in front of Floci, and api-tap-moto in front of moto: a lab runs on one, but the
+# learner may have either open.
+EVENTS_URLS = (EVENTS_URL, f"http://{HOST}:{MOTO_TAP_EVENTS_PORT}/events")
 BACKOFF_S = (0.5, 5.0)  # first and longest wait between reconnects
 READ_TIMEOUT_S = 40.0  # api-tap pings every 15 s, so silence this long means a dead stream
 
@@ -25,6 +30,8 @@ class TapListener:
         write = bool(event.get("write"))
         self.hub.broadcast({"type": "api-event", "service": event.get("service"), "action": event.get("action"), "seq": event.get("seq"), "write": write})
         if write:
+            # A write may make a kind the lab did not name: list that kind from now on.
+            self.hub.see(kinds_of_action(default_registry(), str(event.get("service")), str(event.get("action"))))
             self.hub.notify("tap")
 
     async def run(self) -> None:

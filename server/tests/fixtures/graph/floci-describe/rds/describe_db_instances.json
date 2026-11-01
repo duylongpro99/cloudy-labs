@@ -1,0 +1,248 @@
+{
+  "calls": [
+    {
+      "params": {},
+      "response": {
+        "DBInstances": [
+          {
+            "AllocatedStorage": 20,
+            "AssociatedRoles": [],
+            "AutoMinorVersionUpgrade": true,
+            "AvailabilityZone": "ap-southeast-2b",
+            "BackupRetentionPeriod": 0,
+            "CopyTagsToSnapshot": false,
+            "DBInstanceArn": "arn:aws:rds:ap-southeast-2:000000000000:db:wave1-pg-rr",
+            "DBInstanceClass": "db.t3.micro",
+            "DBInstanceIdentifier": "wave1-pg-rr",
+            "DBInstanceStatus": "available",
+            "DBParameterGroups": [
+              {
+                "DBParameterGroupName": "wave1-pg16",
+                "ParameterApplyStatus": "in-sync"
+              }
+            ],
+            "DBSubnetGroup": {
+              "DBSubnetGroupArn": "arn:aws:rds:ap-southeast-2:000000000000:subgrp:wave1-db",
+              "DBSubnetGroupDescription": "wave1",
+              "DBSubnetGroupName": "wave1-db",
+              "SubnetGroupStatus": "Complete",
+              "Subnets": [
+                {
+                  "SubnetAvailabilityZone": {
+                    "Name": "ap-southeast-2a"
+                  },
+                  "SubnetIdentifier": "subnet-2b9c9233",
+                  "SubnetStatus": "Active"
+                },
+                {
+                  "SubnetAvailabilityZone": {
+                    "Name": "ap-southeast-2b"
+                  },
+                  "SubnetIdentifier": "subnet-4f1dede6",
+                  "SubnetStatus": "Active"
+                }
+              ],
+              "VpcId": "vpc-03e9e3f9"
+            },
+            "DbiResourceId": "db-26F81008F4BE4869A32C4766",
+            "DeletionProtection": false,
+            "Endpoint": {
+              "Address": "172.27.0.3",
+              "Port": 7002
+            },
+            "Engine": "postgres",
+            "EngineLifecycleSupport": "open-source-rds-extended-support",
+            "EngineVersion": "16.3",
+            "IAMDatabaseAuthenticationEnabled": false,
+            "MasterUsername": "wave1",
+            "MonitoringInterval": 0,
+            "MultiAZ": false,
+            "OptionGroupMemberships": [
+              {
+                "OptionGroupName": "wave1-og",
+                "Status": "in-sync"
+              }
+            ],
+            "PerformanceInsightsEnabled": false,
+            "PreferredBackupWindow": "04:00-06:00",
+            "PreferredMaintenanceWindow": "mon:00:00-mon:03:00",
+            "PubliclyAccessible": false,
+            "ReadReplicaDBInstanceIdentifiers": [],
+            "ReadReplicaSourceDBInstanceIdentifier": "wave1-pg",
+            "StatusInfos": [
+              {
+                "Message": "",
+                "Normal": true,
+                "Status": "replicating",
+                "StatusType": "read replication"
+              }
+            ],
+            "StorageEncrypted": false,
+            "StorageType": "gp2",
+            "TagList": [],
+            "VpcSecurityGroups": [
+              {
+                "Status": "active",
+                "VpcSecurityGroupId": "sg-5271729b7a5ffc3e2"
+              }
+            ]
+          },
+          {
+            "AllocatedStorage": 20,
+            "AssociatedRoles": [],
+            "AutoMinorVersionUpgrade": true,
+            "AvailabilityZone": "ap-southeast-2b",
+            "BackupRetentionPeriod": 1,
+            "CopyTagsToSnapshot": false,
+            "DBInstanceArn": "arn:aws:rds:ap-southeast-2:000000000000:db:wave1-pg",
+            "DBInstanceClass": "db.t3.micro",
+            "DBInstanceIdentifier": "wave1-pg",
+            "DBInstanceStatus": "available",
+            "DBParameterGroups": [
+              {
+                "DBParameterGroupName": "wave1-pg16",
+                "ParameterApplyStatus": "in-sync"
+              }
+            ],
+            "DBSubnetGroup": {
+              "DBSubnetGroupArn": "arn:aws:rds:ap-southeast-2:000000000000:subgrp:wave1-db",
+              "DBSubnetGroupDescription": "wave1",
+              "DBSubnetGroupName": "wave1-db",
+              "SubnetGroupStatus": "Complete",
+              "Subnets": [
+                {
+                  "SubnetAvailabilityZone": {
+                    "Name": "ap-southeast-2a"
+                  },
+                  "SubnetIdentifier": "subnet-2b9c9233",
+                  "SubnetStatus": "Active"
+                },
+                {
+                  "SubnetAvailabilityZone": {
+                    "Name": "ap-southeast-2b"
+                  },
+                  "SubnetIdentifier": "subnet-4f1dede6",
+                  "SubnetStatus": "Active"
+                }
+              ],
+              "VpcId": "vpc-03e9e3f9"
+            },
+            "DbiResourceId": "db-BB561C051021409B8046BCAD",
+            "DeletionProtection": false,
+            "Endpoint": {
+              "Address": "172.27.0.3",
+              "Port": 7001
+            },
+            "Engine": "postgres",
+            "EngineLifecycleSupport": "open-source-rds-extended-support",
+            "EngineVersion": "16.3",
+            "IAMDatabaseAuthenticationEnabled": false,
+            "LatestRestorableTime": "2026-10-31 14:41:18.786912+00:00",
+            "MasterUsername": "wave1",
+            "MonitoringInterval": 0,
+            "MultiAZ": true,
+            "OptionGroupMemberships": [
+              {
+                "OptionGroupName": "wave1-og",
+                "Status": "in-sync"
+              }
+            ],
+            "PerformanceInsightsEnabled": false,
+            "PreferredBackupWindow": "04:00-06:00",
+            "PreferredMaintenanceWindow": "mon:00:00-mon:03:00",
+            "PubliclyAccessible": false,
+            "ReadReplicaDBInstanceIdentifiers": [
+              "wave1-pg-rr"
+            ],
+            "StorageEncrypted": false,
+            "StorageType": "gp2",
+            "TagList": [],
+            "VpcSecurityGroups": [
+              {
+                "Status": "active",
+                "VpcSecurityGroupId": "sg-5271729b7a5ffc3e2"
+              }
+            ]
+          },
+          {
+            "AllocatedStorage": 20,
+            "AssociatedRoles": [],
+            "AutoMinorVersionUpgrade": true,
+            "AvailabilityZone": "ap-southeast-2b",
+            "BackupRetentionPeriod": 1,
+            "CopyTagsToSnapshot": false,
+            "DBClusterIdentifier": "wave1-aurora",
+            "DBInstanceArn": "arn:aws:rds:ap-southeast-2:000000000000:db:wave1-aurora-1",
+            "DBInstanceClass": "db.t3.medium",
+            "DBInstanceIdentifier": "wave1-aurora-1",
+            "DBInstanceStatus": "available",
+            "DBParameterGroups": [
+              {
+                "DBParameterGroupName": "default.aurora-postgresql16",
+                "ParameterApplyStatus": "in-sync"
+              }
+            ],
+            "DBSubnetGroup": {
+              "DBSubnetGroupArn": "arn:aws:rds:ap-southeast-2:000000000000:subgrp:wave1-db",
+              "DBSubnetGroupDescription": "wave1",
+              "DBSubnetGroupName": "wave1-db",
+              "SubnetGroupStatus": "Complete",
+              "Subnets": [
+                {
+                  "SubnetAvailabilityZone": {
+                    "Name": "ap-southeast-2a"
+                  },
+                  "SubnetIdentifier": "subnet-2b9c9233",
+                  "SubnetStatus": "Active"
+                },
+                {
+                  "SubnetAvailabilityZone": {
+                    "Name": "ap-southeast-2b"
+                  },
+                  "SubnetIdentifier": "subnet-4f1dede6",
+                  "SubnetStatus": "Active"
+                }
+              ],
+              "VpcId": "vpc-03e9e3f9"
+            },
+            "DbiResourceId": "db-A8BC20E374A34875AFCA4286",
+            "DeletionProtection": false,
+            "Endpoint": {
+              "Address": "172.27.0.3",
+              "Port": 7004
+            },
+            "Engine": "aurora-postgresql",
+            "EngineLifecycleSupport": "open-source-rds-extended-support",
+            "EngineVersion": "16.3",
+            "IAMDatabaseAuthenticationEnabled": false,
+            "LatestRestorableTime": "2026-10-31 14:41:18.789361+00:00",
+            "MasterUsername": "wave1",
+            "MonitoringInterval": 0,
+            "MultiAZ": false,
+            "OptionGroupMemberships": [
+              {
+                "OptionGroupName": "default:postgres-16",
+                "Status": "in-sync"
+              }
+            ],
+            "PerformanceInsightsEnabled": false,
+            "PreferredBackupWindow": "04:00-06:00",
+            "PreferredMaintenanceWindow": "mon:00:00-mon:03:00",
+            "PubliclyAccessible": false,
+            "ReadReplicaDBInstanceIdentifiers": [],
+            "StorageEncrypted": false,
+            "StorageType": "gp2",
+            "TagList": [],
+            "VpcSecurityGroups": [
+              {
+                "Status": "active",
+                "VpcSecurityGroupId": "sg-00000000"
+              }
+            ]
+          }
+        ],
+        "Marker": ""
+      }
+    }
+  ]
+}

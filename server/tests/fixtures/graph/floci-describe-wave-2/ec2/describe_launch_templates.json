@@ -1,0 +1,25 @@
+{
+  "calls": [
+    {
+      "params": {},
+      "response": {
+        "LaunchTemplates": [
+          {
+            "CreateTime": "2026-10-31 15:16:09.436000+00:00",
+            "CreatedBy": "arn:aws:iam::000000000000:root",
+            "DefaultVersionNumber": 1,
+            "LatestVersionNumber": 1,
+            "LaunchTemplateId": "lt-aff1b0b07a8eb90d9",
+            "LaunchTemplateName": "w2-lt",
+            "Tags": [
+              {
+                "Key": "Name",
+                "Value": "w2-lt"
+              }
+            ]
+          }
+        ]
+      }
+    }
+  ]
+}

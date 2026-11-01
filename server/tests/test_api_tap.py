@@ -10,7 +10,7 @@ import pytest
 from cloudy_labs.tap import api_tap
 from cloudy_labs.tap.api_tap import ApiTap, EventHub, describe, is_write
 
-AUTH = "AWS4-HMAC-SHA256 Credential=test/20261029/us-east-1/{service}/aws4_request, SignedHeaders=host, Signature=abc"
+AUTH = "AWS4-HMAC-SHA256 Credential=test/20261029/ap-southeast-2/{service}/aws4_request, SignedHeaders=host, Signature=abc"
 
 
 def free_port() -> int:

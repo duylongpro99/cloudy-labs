@@ -1,0 +1,204 @@
+{
+  "calls": [
+    {
+      "params": {
+        "KeyId": "4a860c82-ef36-4c8a-b95c-af594d75ee33"
+      },
+      "response": {
+        "KeyRotationEnabled": true
+      }
+    },
+    {
+      "params": {
+        "KeyId": "519b4f47-5cbb-4e83-b728-e29650bf1830"
+      },
+      "response": {
+        "KeyRotationEnabled": true
+      }
+    },
+    {
+      "params": {
+        "KeyId": "540aee60-29ff-4556-8ca3-27137ff3a644"
+      },
+      "response": {
+        "KeyRotationEnabled": true
+      }
+    },
+    {
+      "params": {
+        "KeyId": "4b53f4d5-69d4-4eac-9bba-19c90dc18e97"
+      },
+      "response": {
+        "KeyRotationEnabled": true
+      }
+    },
+    {
+      "params": {
+        "KeyId": "8be0f1d1-ba20-4ebb-89d1-6381ebec8168"
+      },
+      "response": {
+        "KeyRotationEnabled": true
+      }
+    },
+    {
+      "params": {
+        "KeyId": "a640d42b-e160-4dfe-8af8-6b9c9f70c66d"
+      },
+      "response": {
+        "KeyRotationEnabled": true
+      }
+    },
+    {
+      "params": {
+        "KeyId": "147e9b7e-1c85-4bf8-ba21-29dc3c34ada0"
+      },
+      "response": {
+        "KeyRotationEnabled": true
+      }
+    },
+    {
+      "params": {
+        "KeyId": "001d4ddf-fd9c-4d7e-9681-0dd608d83f5e"
+      },
+      "response": {
+        "KeyRotationEnabled": true
+      }
+    },
+    {
+      "params": {
+        "KeyId": "63f3464b-fbe5-4aa1-aa88-674e2fbb5a1b"
+      },
+      "response": {
+        "KeyRotationEnabled": true
+      }
+    },
+    {
+      "params": {
+        "KeyId": "8ec4aafe-67c1-40ed-8c80-0ff6c8576e8b"
+      },
+      "response": {
+        "KeyRotationEnabled": true
+      }
+    },
+    {
+      "params": {
+        "KeyId": "d59b8959-57ea-446a-8290-17e00d036828"
+      },
+      "response": {
+        "KeyRotationEnabled": true
+      }
+    },
+    {
+      "params": {
+        "KeyId": "e78edc57-76b5-4759-b073-a827cf6628f0"
+      },
+      "response": {
+        "KeyRotationEnabled": true
+      }
+    },
+    {
+      "params": {
+        "KeyId": "420676f3-0d16-44c0-a239-ee92031b5a1b"
+      },
+      "response": {
+        "KeyRotationEnabled": true
+      }
+    },
+    {
+      "params": {
+        "KeyId": "f30ff399-8723-43ed-bd2a-22c47df60695"
+      },
+      "response": {
+        "KeyRotationEnabled": true
+      }
+    },
+    {
+      "params": {
+        "KeyId": "778bcd17-c640-4e9a-9d94-b0cc202c94d4"
+      },
+      "response": {
+        "KeyRotationEnabled": true
+      }
+    },
+    {
+      "params": {
+        "KeyId": "a94d62cd-3158-427b-8123-cbcc967ecfc9"
+      },
+      "response": {
+        "KeyRotationEnabled": true
+      }
+    },
+    {
+      "params": {
+        "KeyId": "96418982-0fbe-4fd0-9f34-0f4bae3f1c54"
+      },
+      "response": {
+        "KeyRotationEnabled": true
+      }
+    },
+    {
+      "params": {
+        "KeyId": "bacb38d6-9fea-46e1-885f-cbb8b50db086"
+      },
+      "response": {
+        "KeyRotationEnabled": true
+      }
+    },
+    {
+      "params": {
+        "KeyId": "ad60eab0-66be-4902-a342-33adfca5e277"
+      },
+      "response": {
+        "KeyRotationEnabled": true
+      }
+    },
+    {
+      "params": {
+        "KeyId": "87afa14c-83b8-415b-8b70-fb164d44d67e"
+      },
+      "response": {
+        "KeyRotationEnabled": true
+      }
+    },
+    {
+      "params": {
+        "KeyId": "ff99f426-6524-4a48-b387-6d488e276c65"
+      },
+      "response": {
+        "KeyRotationEnabled": true
+      }
+    },
+    {
+      "params": {
+        "KeyId": "c7a0f61e-5ef8-4f8a-9b27-0b7cb7579906"
+      },
+      "response": {
+        "KeyRotationEnabled": true
+      }
+    },
+    {
+      "params": {
+        "KeyId": "974808d4-4279-4d86-9a41-840db577e860"
+      },
+      "response": {
+        "KeyRotationEnabled": true
+      }
+    },
+    {
+      "params": {
+        "KeyId": "abc5c9f4-7420-4ac2-ba9a-a6e116a129cc"
+      },
+      "response": {
+        "KeyRotationEnabled": true
+      }
+    },
+    {
+      "params": {
+        "KeyId": "ceb5c200-3d51-4fb6-8ef8-6f4f9a29c7e7"
+      },
+      "response": {
+        "KeyRotationEnabled": true
+      }
+    }
+  ]
+}

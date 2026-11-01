@@ -15,7 +15,8 @@ from pydantic.alias_generators import to_camel
 from .checks import CheckResult
 from .graph.schema import ResourceGraph
 from .labs import LoadedLab
-from .labs.schema import Target
+from .labs.schema import Target, root_kind
+from .registry import default_registry
 from .progress import Attempt
 
 GHOST_PREFIX = "ghost:"  # target ids are slugs and could equal a real id such as the region's
@@ -40,7 +41,7 @@ class Binding:
     ghosts: list[GhostNode]
 
 
-def bind_target(target: Target, results: list[CheckResult], graph: ResourceGraph) -> Binding:
+def bind_target(target: Target, results: list[CheckResult], graph: ResourceGraph, *, region: str | None = None) -> Binding:
     """Same inputs, same binding. Nodes bind in the order the lab declares them:
 
     a node binds once every check it lists passed, to the first id in those checks' resource ids
@@ -48,11 +49,19 @@ def bind_target(target: Target, results: list[CheckResult], graph: ResourceGraph
     resource its parent bound to. Under an az, candidates go by (real az, id), so the first az of
     the target lands on the alphabetically first real one. An az binds to the real az its bound
     children share.
+
+    Target nodes without a parent sit in `region` (default: the target's own region, else the
+    graph's first region), or in the global group for a kind that only lives there.
     """
     passed = {r.check_id: r for r in results if r.passed}
     kinds = {n.id: n.kind for n in graph.nodes}
     parent_of = {c.child: c.parent for c in graph.contains}
-    region = next(n.id for n in graph.nodes if n.id not in parent_of)
+    region = region or target.region or next((n.id for n in graph.nodes if n.kind == "region"), "")
+    global_id = next((n.id for n in graph.nodes if n.kind == "global"), "global")
+    parent_kinds = default_registry().parent_kinds()
+
+    def top(kind: str) -> str:
+        return global_id if root_kind(kind, parent_kinds) == "global" else region
     nodes = {n.id: n for n in target.nodes}
     bound: dict[str, str] = {}
     taken: set[str] = set()
@@ -64,7 +73,7 @@ def bind_target(target: Target, results: list[CheckResult], graph: ResourceGraph
         candidates = [i for i in ids if kinds.get(i) == node.kind and i not in taken]
         parent = nodes[node.parent] if node.parent else None
         if parent is None:
-            candidates = [i for i in candidates if parent_of.get(i) == region]
+            candidates = [i for i in candidates if parent_of.get(i) == top(node.kind)]
         elif parent.id in bound:
             candidates = [i for i in candidates if parent_of.get(i) == bound[parent.id]]
         elif parent.kind == "az" and parent.parent in bound:  # the az binds later; its vpc must still match
@@ -86,13 +95,13 @@ def bind_target(target: Target, results: list[CheckResult], graph: ResourceGraph
             if node.parent not in bound or parent_of.get(az) == bound[node.parent]:
                 bound[node.id] = az
 
-    def resolve(target_id: str | None) -> str:
+    def resolve(target_id: str | None, kind: str) -> str:
         if target_id is None:
-            return region
+            return top(kind)
         return bound.get(target_id) or ghost_id(target_id)
 
     ghosts = [
-        GhostNode(ghost_id(n.id), n.kind, n.label, resolve(n.parent), list(n.checks))
+        GhostNode(ghost_id(n.id), n.kind, n.label, resolve(n.parent, n.kind), list(n.checks))
         for n in target.nodes if n.id not in bound
     ]
     return Binding(bound=bound, ghosts=ghosts)
@@ -106,7 +115,8 @@ class TwinCheck(_Model):
     id: str
     task: str
     description: str
-    status: Literal["passed", "failed", "pending"]  # pending: not run against the current emulator state
+    # pending: not run against the current emulator state; info: shown, not graded
+    status: Literal["passed", "failed", "pending", "info"]
     message: str
     resource_ids: list[str]
 
@@ -137,10 +147,10 @@ def twin_state(loaded: LoadedLab, attempt: Attempt, results: list[CheckResult] |
     checks = []
     for c in loaded.lab.checks:
         r = by_id.get(c.id)
-        status = "pending" if r is None else "passed" if r.passed else "failed"
+        status = "pending" if r is None else "info" if r.info else "passed" if r.passed else "failed"
         checks.append(TwinCheck(id=c.id, task=c.task, description=c.description, status=status,
                                 message=r.message if r else note, resource_ids=list(r.resource_ids) if r else []))
-    binding = bind_target(loaded.lab.target, results or [], graph)
+    binding = bind_target(loaded.lab.target, results or [], graph, region=loaded.lab.target_region())
     return TwinState(
         lab=loaded.lab.id, attempt=attempt.id, checks=checks, bound=binding.bound,
         ghosts=[TwinGhost(id=g.id, kind=g.kind, label=g.label, parent=g.parent, checks=g.checks) for g in binding.ghosts],

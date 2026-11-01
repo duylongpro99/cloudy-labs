@@ -1,0 +1,126 @@
+# AWS Backup. Plans are nodes by their BackupPlanId (what every Backup call takes); selections are
+# listed per plan and sit in it. Floci simulates jobs: on-demand jobs complete, plans never start one.
+
+- kind: backup-vault
+  service: backup
+  label: Backup Vault
+  list: {method: list_backup_vaults, items: BackupVaultList}
+  id: BackupVaultArn
+  name: [BackupVaultName]
+  parent: [{kind: region}]
+  props:
+    recoveryPoints: NumberOfRecoveryPoints
+    locked: Locked
+    minRetentionDays: MinRetentionDays
+    maxRetentionDays: MaxRetentionDays
+    encryptionKey: EncryptionKeyArn
+  chat_props: [recoveryPoints, locked, minRetentionDays, maxRetentionDays, encryptionKey]
+  caveats:
+    - {code: floci-backup-simulated, prop: recoveryPoints, text: "Floci 2.3.0 simulates backups: start-backup-job completes in a few seconds and adds a recovery point, but no data is copied and nothing can be restored."}
+  builder: true
+  view: {role: block, category: storage, icon: Res_AWS-Backup_Backup-Vault_48.svg, source: Resource-Icons_07312026/Res_Storage/Res_AWS-Backup_Backup-Vault_48.svg, height: 0.4, order: 420, actions: [BackupVault, BackupJob]}
+  contract:
+    create: {op: create-backup-vault, params: {BackupVaultName: ct-vault}, save: vault}
+    then:
+      - {op: put-backup-vault-lock-configuration, params: {BackupVaultName: ct-vault, MinRetentionDays: "1", MaxRetentionDays: "30"}}
+  ops:
+    - id: create-backup-vault
+      api: CreateBackupVault
+      gesture: create
+      title: "Tạo backup vault"
+      fields: [BackupVaultName, EncryptionKeyArn]
+      result_id: BackupVaultArn
+      expect: {label: BackupVaultName}
+      note: "Create a vault, the container that stores recovery points. A backup plan rule names its vault by name."
+    - id: put-backup-vault-lock-configuration
+      api: PutBackupVaultLockConfiguration
+      gesture: attribute
+      title: "Khoá vault"
+      fields: [{name: BackupVaultName, ref: backup-vault, ref_by: label}, MinRetentionDays, MaxRetentionDays, ChangeableForDays]
+      targets: [backup-vault]
+      target_param: BackupVaultName
+      note: "Vault Lock: recovery points cannot be deleted before MinRetentionDays nor kept past MaxRetentionDays. Without ChangeableForDays the lock stays removable (governance mode)."
+    - id: start-backup-job
+      api: StartBackupJob
+      gesture: attribute
+      title: "Chạy backup ngay"
+      fields: [{name: BackupVaultName, ref: backup-vault, ref_by: label}, ResourceArn, {name: IamRoleArn, ref: iam-role}]
+      targets: [backup-vault]
+      target_param: BackupVaultName
+      note: "Back up one resource now into the vault, e.g. ResourceArn arn:aws:s3:::my-bucket or a DB instance ARN. IamRoleArn: a role backup.amazonaws.com may assume."
+
+- kind: backup-plan
+  service: backup
+  label: Backup Plan
+  list: {method: list_backup_plans, items: BackupPlansList}
+  enrich:
+    - {method: get_backup_plan, params: {BackupPlanId: BackupPlanId}, pick: BackupPlan, merge_as: _Plan}
+  id: BackupPlanId
+  name: [BackupPlanName]
+  parent: [{kind: region}]
+  props:
+    rules: "_Plan.Rules[].{name: RuleName, vault: TargetBackupVaultName, schedule: ScheduleExpression, deleteAfterDays: Lifecycle.DeleteAfterDays, coldAfterDays: Lifecycle.MoveToColdStorageAfterDays}"
+    lastExecution: LastExecutionDate
+  chat_props: [rules, lastExecution]
+  edges:
+    - {kind: backs-up-to, target: "_Plan.Rules[].TargetBackupVaultName", match: BackupVaultName, to: backup-vault, style: reference}
+  caveats:
+    - {code: floci-backup-plan-no-schedule, prop: rules, text: "Floci 2.3.0 stores a plan's schedule but never starts a job from it, and accepts a rule naming a vault that does not exist. Use start-backup-job to see a recovery point."}
+  builder: true
+  view: {role: block, category: storage, icon: Res_AWS-Backup_Backup-Plan_48.svg, source: Resource-Icons_07312026/Res_Storage/Res_AWS-Backup_Backup-Plan_48.svg, height: 0.4, order: 421, actions: [BackupPlan]}
+  contract:
+    needs:
+      - {op: create-backup-vault, params: {BackupVaultName: ct-plan-vault}, save: vault}
+    create: {op: create-backup-plan, params: {BackupPlan.BackupPlanName: ct-plan, BackupPlan.Rules: '[{"RuleName": "daily", "TargetBackupVaultName": "ct-plan-vault", "ScheduleExpression": "cron(0 5 ? * * *)", "Lifecycle": {"DeleteAfterDays": 7}}]'}, save: plan}
+  ops:
+    - id: create-backup-plan
+      api: CreateBackupPlan
+      gesture: create
+      title: "Tạo backup plan"
+      fields: [BackupPlan.BackupPlanName, {name: BackupPlan.Rules, multiline: true}]
+      defaults: {BackupPlan.Rules: '[{"RuleName": "daily", "TargetBackupVaultName": "Default", "ScheduleExpression": "cron(0 5 ? * * *)", "Lifecycle": {"DeleteAfterDays": 35}}]'}
+      result_id: BackupPlanId
+      note: "Rules say when to back up (ScheduleExpression), into which vault (TargetBackupVaultName) and how long to keep it (Lifecycle.DeleteAfterDays). Assign resources afterwards with a backup selection."
+
+- kind: backup-selection
+  service: backup
+  label: Backup Selection
+  list:
+    method: list_backup_selections
+    items: BackupSelectionsList
+    scope: {parent_kind: backup-plan, param: BackupPlanId, field: BackupPlanId}
+  enrich:
+    - {method: get_backup_selection, params: {BackupPlanId: BackupPlanId, SelectionId: SelectionId}, pick: BackupSelection, merge_as: _Selection}
+  id: SelectionId
+  name: [SelectionName]
+  parent: [{kind: backup-plan, path: BackupPlanId}]
+  props:
+    resources: _Selection.Resources
+    notResources: _Selection.NotResources
+    tagConditions: "_Selection.ListOfTags[].{type: ConditionType, key: ConditionKey, value: ConditionValue}"
+    role: IamRoleArn
+  chat_props: [resources, notResources, tagConditions, role]
+  edges:
+    - {kind: selects, target: _Selection.Resources, to: [s3-bucket, db-instance, db-cluster], style: reference}
+    - {kind: execution-role, target: IamRoleArn, to: iam-role, style: reference}
+  caveats:
+    - {code: floci-selection-tags-dropped, prop: tagConditions, text: "Floci 2.3.0 drops ListOfTags from a selection: it is accepted but never returned. Name resources by ARN in Resources instead."}
+  builder: true
+  view: {role: block, category: storage, icon: Arch_AWS-Backup_48.svg, source: Architecture-Service-Icons_07312026/Arch_Storage/48/Arch_AWS-Backup_48.svg, height: 0.3, order: 422, actions: [BackupSelection]}
+  contract:
+    needs:
+      - {op: create-backup-vault, params: {BackupVaultName: ct-sel-vault}, save: vault}
+      - {op: create-backup-plan, params: {BackupPlan.BackupPlanName: ct-sel-plan, BackupPlan.Rules: '[{"RuleName": "daily", "TargetBackupVaultName": "ct-sel-vault", "ScheduleExpression": "cron(0 5 ? * * *)"}]'}, save: plan}
+      - {op: create-role, params: {RoleName: ct-backup-role, AssumeRolePolicyDocument: '{"Version": "2012-10-17", "Statement": [{"Effect": "Allow", "Principal": {"Service": "backup.amazonaws.com"}, "Action": "sts:AssumeRole"}]}'}, save: role}
+      - {op: create-bucket, params: {Bucket: ct-backup-sel-bucket, CreateBucketConfiguration.LocationConstraint: "{region}"}, save: bucket}
+    create: {op: create-backup-selection, params: {BackupPlanId: "{plan}", BackupSelection.SelectionName: ct-sel, BackupSelection.IamRoleArn: "{role}", BackupSelection.Resources: "{bucket}"}, save: selection}
+    parent: plan
+  ops:
+    - id: create-backup-selection
+      api: CreateBackupSelection
+      gesture: create
+      title: "Gán tài nguyên vào backup plan"
+      fields: [{name: BackupPlanId, ref: backup-plan}, BackupSelection.SelectionName, {name: BackupSelection.IamRoleArn, ref: iam-role}, BackupSelection.Resources, {name: BackupSelection.ListOfTags, multiline: true}]
+      container: {param: BackupPlanId}
+      result_id: SelectionId
+      note: "Choose what the plan backs up: resource ARNs in Resources (arn:aws:s3:::my-bucket, a DB instance ARN) or tag conditions in ListOfTags. IamRoleArn: a role backup.amazonaws.com may assume."

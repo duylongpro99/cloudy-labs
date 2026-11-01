@@ -1,0 +1,73 @@
+# Amazon SQS. ListQueues answers queue URLs only: GetQueueAttributes adds the ARN (the node id, as
+# SNS subscriptions, rule targets and event source mappings name a queue by ARN) and the settings,
+# and the name is the URL's last segment. A dead-letter queue knows its sources through
+# ListDeadLetterSourceQueues; the RedrivePolicy attribute is a JSON string JMESPath cannot read.
+
+- kind: sqs-queue
+  service: sqs
+  label: SQS Queue
+  list: {method: list_queues, items: "QueueUrls[].{QueueUrl: @}"}
+  enrich:
+    - {method: get_queue_attributes, params: {QueueUrl: QueueUrl}, const: {AttributeNames: [All]}, pick: Attributes, merge_as: _Attr}
+    - {method: list_dead_letter_source_queues, params: {QueueUrl: QueueUrl}, pick: queueUrls, merge_as: _Sources}
+    - {hook: common.last_segment, args: {field: QueueUrl, sep: /}}
+  id: _Attr.QueueArn
+  name: [_Name, QueueUrl]
+  parent: [{kind: region}]
+  props:
+    url: QueueUrl
+    fifo: "_Attr.FifoQueue == 'true'"
+    contentBasedDeduplication: _Attr.ContentBasedDeduplication
+    visibilityTimeout: _Attr.VisibilityTimeout
+    messageRetentionPeriod: _Attr.MessageRetentionPeriod
+    delaySeconds: _Attr.DelaySeconds
+    receiveMessageWaitTime: _Attr.ReceiveMessageWaitTimeSeconds
+    maximumMessageSize: _Attr.MaximumMessageSize
+    redrivePolicy: _Attr.RedrivePolicy
+    kmsKey: _Attr.KmsMasterKeyId
+    hasPolicy: "_Attr.Policy && `true` || `false`"
+    messages: _Attr.ApproximateNumberOfMessages
+    messagesInFlight: _Attr.ApproximateNumberOfMessagesNotVisible
+  chat_props: [url, fifo, contentBasedDeduplication, visibilityTimeout, messageRetentionPeriod, delaySeconds,
+               receiveMessageWaitTime, maximumMessageSize, redrivePolicy, kmsKey, hasPolicy, messages, messagesInFlight]
+  edges:
+    # Drawn from the source queue to its dead-letter queue: only the DLQ can list who redrives to it.
+    - {kind: dead-letter, target: _Sources, match: QueueUrl, to: sqs-queue, reverse: true, style: reference}
+    # A Lambda event source mapping polls the queue: queue -> mapping -> function.
+    - {kind: event-source, target: _Attr.QueueArn, match: EventSourceArn, to: lambda-event-source, style: reference}
+  caveats:
+    - {code: floci-queue-name-as-url, text: "Floci 2.3.0 accepts a queue name where QueueUrl is asked (aws sqs delete-queue --queue-url orders); AWS needs the full URL, from aws sqs get-queue-url --queue-name orders."}
+  builder: true
+  view: {role: block, category: app-integration, icon: Res_Amazon-Simple-Queue-Service_Queue_48.svg, source: Resource-Icons_07312026/Res_Application-Integration/Res_Amazon-Simple-Queue-Service_Queue_48.svg, height: 0.4, order: 550, actions: [Queue, QueueAttributes]}
+  contract:
+    needs:
+      - {op: create-queue, params: {QueueName: ct-dlq}, save: dlq}
+    create: {op: create-queue, params: {QueueName: ct-queue}, save: queue}
+    then:
+      - {op: set-queue-attributes, params: {QueueUrl: ct-queue, Attributes: '{"VisibilityTimeout": "60", "RedrivePolicy": "{\"deadLetterTargetArn\": \"{dlq}\", \"maxReceiveCount\": \"3\"}"}'}}
+      - {op: delete-queue, params: {QueueUrl: ct-dlq}}
+    max_seconds: 5
+  ops:
+    - id: create-queue
+      api: CreateQueue
+      gesture: create
+      title: "Tạo SQS queue"
+      fields: [QueueName, {name: Attributes, placeholder: '{"VisibilityTimeout": "30", "FifoQueue": "true"}'}]
+      expect: {label: QueueName}
+      note: "Create a queue. Attributes (all values strings): VisibilityTimeout, MessageRetentionPeriod, DelaySeconds, ReceiveMessageWaitTimeSeconds; a FIFO queue needs a name ending in .fifo and {\"FifoQueue\": \"true\"}, optionally ContentBasedDeduplication."
+    - id: set-queue-attributes
+      api: SetQueueAttributes
+      gesture: attribute
+      title: "Đổi thuộc tính queue"
+      fields: [{name: QueueUrl, ref: sqs-queue, ref_by: label, free: true}, Attributes]
+      targets: [sqs-queue]
+      target_param: QueueUrl
+      note: "Change queue settings, values as strings: {\"VisibilityTimeout\": \"60\"}, or a dead-letter queue with {\"RedrivePolicy\": \"{\\\"deadLetterTargetArn\\\": \\\"<DLQ ARN>\\\", \\\"maxReceiveCount\\\": \\\"3\\\"}\"}. On AWS QueueUrl is the queue URL (get-queue-url)."
+    - id: delete-queue
+      api: DeleteQueue
+      gesture: delete
+      title: "Xoá queue"
+      fields: [{name: QueueUrl, ref: sqs-queue, ref_by: label, free: true}]
+      targets: [sqs-queue]
+      target_param: QueueUrl
+      note: "Delete the queue and every message in it. On AWS QueueUrl is the queue URL (get-queue-url)."

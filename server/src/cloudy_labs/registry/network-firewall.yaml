@@ -1,0 +1,191 @@
+# AWS Network Firewall: a firewall sits in a VPC with an endpoint in each of its subnets and follows one
+# firewall policy, which points at stateless and stateful rule groups. Every Update* call takes the
+# UpdateToken the last Describe* answered, so the policy and the rule group show it as updateToken.
+
+- kind: network-firewall
+  service: network-firewall
+  label: Network Firewall
+  list: {method: list_firewalls, items: Firewalls}
+  enrich:
+    - {method: describe_firewall, params: {FirewallArn: FirewallArn}, pick: "{Firewall: Firewall, Status: FirewallStatus}", merge_as: _Fw}
+  id: FirewallArn
+  name: [FirewallName]
+  parent: [{kind: vpc, path: _Fw.Firewall.VpcId}, {kind: region}]
+  props:
+    status: _Fw.Status.Status
+    syncState: _Fw.Status.ConfigurationSyncStateSummary
+    policy: _Fw.Firewall.FirewallPolicyArn
+    subnets: "_Fw.Firewall.SubnetMappings[].SubnetId"
+    endpoints: "values(not_null(_Fw.Status.SyncStates, `{}`))[].Attachment.EndpointId"
+    description: _Fw.Firewall.Description
+    deleteProtection: _Fw.Firewall.DeleteProtection
+    policyChangeProtection: _Fw.Firewall.FirewallPolicyChangeProtection
+    subnetChangeProtection: _Fw.Firewall.SubnetChangeProtection
+  chat_props: [status, syncState, policy, subnets, endpoints, description, deleteProtection, policyChangeProtection, subnetChangeProtection]
+  edges:
+    - {kind: uses-firewall-policy, target: _Fw.Firewall.FirewallPolicyArn, to: firewall-policy, style: reference}
+    - {kind: firewall-subnet, target: "_Fw.Firewall.SubnetMappings[].SubnetId", to: subnet, style: association}
+  caveats:
+    - {code: network-firewall-no-filtering, prop: endpoints, text: "Floci 2.3.0 reports a firewall endpoint in each subnet but creates no VPC endpoint and filters no traffic: routes to the endpoint id and the rules have no effect."}
+    - {code: network-firewall-refs-not-checked, prop: policy, text: "Floci 2.3.0 creates a firewall whose policy ARN or subnets do not exist, and deletes a policy or rule group that is still in use; AWS refuses all three."}
+    - {code: network-firewall-protection-on, prop: deleteProtection, text: "Floci 2.3.0 turns DeleteProtection, SubnetChangeProtection and FirewallPolicyChangeProtection on when CreateFirewall leaves them out (AWS leaves them off): the builder sends false for all three."}
+  floci: {status: control-plane-only, note: "Firewalls, policies and rule groups are stored and described; no traffic passes through a firewall."}
+  builder: true
+  view: {role: block, category: security, icon: Res_AWS-Network-Firewall_Endpoints_48.svg, source: Resource-Icons_07312026/Res_Security-Identity/Res_AWS-Network-Firewall_Endpoints_48.svg, height: 0.4, order: 722, actions: [Firewall, FirewallPolicy, SubnetMappings, LoggingConfiguration]}
+  contract:
+    needs:
+      - {op: create-vpc, params: {name: ct-nfw-vpc, cidr: 10.94.0.0/16}, save: vpc}
+      - {op: create-subnet, params: {name: ct-nfw-a, vpcId: "{vpc}", cidr: 10.94.1.0/24, az: "{region}a"}, save: a}
+      - {op: create-firewall-policy, params: {FirewallPolicyName: ct-nfw-policy}, save: policy}
+      - {op: create-firewall-policy, params: {FirewallPolicyName: ct-nfw-policy-2}, save: policy2}
+    create: {op: create-firewall, params: {FirewallName: ct-firewall, FirewallPolicyArn: "{policy}", VpcId: "{vpc}", SubnetMappings: '[{"SubnetId": "{a}"}]'}, save: firewall}
+    parent: vpc
+    then:
+      - {op: associate-firewall-policy, params: {FirewallArn: "{firewall}", FirewallPolicyArn: "{policy2}"}}
+      - {op: delete-firewall, params: {FirewallArn: "{firewall}"}}
+  ops:
+    - id: create-firewall
+      api: CreateFirewall
+      gesture: create
+      title: "Tạo Network Firewall"
+      fields: [FirewallName, {name: FirewallPolicyArn, ref: firewall-policy}, {name: VpcId, ref: vpc}, {name: SubnetMappings, multiline: true, placeholder: '[{"SubnetId": "subnet-0a1b2c3d"}]'}, Description, DeleteProtection, SubnetChangeProtection, FirewallPolicyChangeProtection]
+      defaults: {DeleteProtection: false, SubnetChangeProtection: false, FirewallPolicyChangeProtection: false}
+      container: {param: VpcId}
+      containers: [vpc]
+      result_id: Firewall.FirewallArn
+      expect: {label: FirewallName}
+      note: "Put a firewall in a VPC, one endpoint per subnet in SubnetMappings (use small dedicated firewall subnets, one per AZ). Traffic goes through it only when route tables send it to the endpoint: the internet gateway's edge route table and the workload subnets' 0.0.0.0/0 routes point at the endpoint id."
+    - id: associate-firewall-policy
+      api: AssociateFirewallPolicy
+      gesture: connect
+      title: "Gán firewall policy khác cho firewall"
+      fields: [{name: FirewallArn, ref: network-firewall}, {name: FirewallPolicyArn, ref: firewall-policy}]
+      source: network-firewall
+      source_param: FirewallArn
+      targets: [firewall-policy]
+      target_param: FirewallPolicyArn
+      note: "Switch the firewall to another policy. Refused while FirewallPolicyChangeProtection is on."
+    - id: delete-firewall
+      api: DeleteFirewall
+      gesture: delete
+      title: "Xoá Network Firewall"
+      fields: [{name: FirewallArn, ref: network-firewall}]
+      targets: [network-firewall]
+      target_param: FirewallArn
+      note: "Delete the firewall and its endpoints; remove routes pointing at the endpoints first. Refused while DeleteProtection is on (UpdateFirewallDeleteProtection turns it off)."
+
+- kind: firewall-policy
+  service: network-firewall
+  label: Firewall Policy
+  list: {method: list_firewall_policies, items: FirewallPolicies}
+  enrich:
+    - {method: describe_firewall_policy, params: {FirewallPolicyArn: Arn}, merge_as: _Policy}
+  id: Arn
+  name: [Name]
+  parent: [{kind: region}]
+  props:
+    statelessDefaultActions: _Policy.FirewallPolicy.StatelessDefaultActions
+    statelessFragmentDefaultActions: _Policy.FirewallPolicy.StatelessFragmentDefaultActions
+    statefulDefaultActions: _Policy.FirewallPolicy.StatefulDefaultActions
+    statelessRuleGroups: "_Policy.FirewallPolicy.StatelessRuleGroupReferences[].{arn: ResourceArn, priority: Priority}"
+    statefulRuleGroups: "_Policy.FirewallPolicy.StatefulRuleGroupReferences[].{arn: ResourceArn, priority: Priority}"
+    description: _Policy.FirewallPolicyResponse.Description
+    # The optimistic-lock value UpdateFirewallPolicy must echo; it changes on every update.
+    updateToken: _Policy.UpdateToken
+  chat_props: [statelessDefaultActions, statelessFragmentDefaultActions, statefulDefaultActions, statelessRuleGroups, statefulRuleGroups, description, updateToken]
+  edges:
+    - {kind: uses-rule-group, target: "[_Policy.FirewallPolicy.StatelessRuleGroupReferences[].ResourceArn, _Policy.FirewallPolicy.StatefulRuleGroupReferences[].ResourceArn][][]", to: firewall-rule-group, style: reference}
+  caveats:
+    - {code: network-firewall-refs-not-checked, text: "Floci 2.3.0 creates a firewall whose policy ARN or subnets do not exist, and deletes a policy or rule group that is still in use; AWS refuses all three."}
+  floci: {status: control-plane-only, note: "Policies are stored; no traffic is evaluated against them."}
+  builder: true
+  view: {role: block, category: security, icon: Arch_AWS-Network-Firewall_48.svg, source: Architecture-Service-Icons_07312026/Arch_Security-Identity/48/Arch_AWS-Network-Firewall_48.svg, height: 0.3, order: 723, actions: [FirewallPolicy]}
+  contract:
+    needs:
+      - {op: create-firewall-rule-group, params: {RuleGroupName: ct-nfw-rules}, save: rules}
+    create: {op: create-firewall-policy, params: {FirewallPolicyName: ct-firewall-policy, FirewallPolicy: '{"StatelessDefaultActions": ["aws:forward_to_sfe"], "StatelessFragmentDefaultActions": ["aws:forward_to_sfe"], "StatefulRuleGroupReferences": [{"ResourceArn": "{rules}"}]}'}, save: policy}
+    then:
+      - {op: delete-firewall-policy, params: {FirewallPolicyArn: "{policy}"}}
+  ops:
+    - id: create-firewall-policy
+      api: CreateFirewallPolicy
+      gesture: create
+      title: "Tạo Firewall Policy"
+      fields: [FirewallPolicyName, {name: FirewallPolicy, multiline: true}, Description]
+      defaults: {FirewallPolicy: '{"StatelessDefaultActions": ["aws:forward_to_sfe"], "StatelessFragmentDefaultActions": ["aws:forward_to_sfe"]}'}
+      result_id: FirewallPolicyResponse.FirewallPolicyArn
+      expect: {label: FirewallPolicyName}
+      note: "What a firewall does with packets. StatelessDefaultActions aws:forward_to_sfe hands every packet to the stateful engine; StatefulRuleGroupReferences [{\"ResourceArn\": <rule group ARN>}] and StatelessRuleGroupReferences [{\"ResourceArn\": ..., \"Priority\": 10}] add rule groups."
+    - id: update-firewall-policy
+      api: UpdateFirewallPolicy
+      gesture: modify
+      title: "Sửa Firewall Policy"
+      fields: [{name: FirewallPolicyName, ref: firewall-policy, ref_by: label}, UpdateToken, {name: FirewallPolicy, multiline: true}, Description]
+      targets: [firewall-policy]
+      target_param: FirewallPolicyName
+      note: "Replace the whole policy, e.g. to add a rule group reference. UpdateToken: the policy's current updateToken (DescribeFirewallPolicy answers it); a stale one is refused."
+    - id: delete-firewall-policy
+      api: DeleteFirewallPolicy
+      gesture: delete
+      title: "Xoá Firewall Policy"
+      fields: [{name: FirewallPolicyArn, ref: firewall-policy}]
+      targets: [firewall-policy]
+      target_param: FirewallPolicyArn
+      note: "Delete a policy no firewall uses."
+
+- kind: firewall-rule-group
+  service: network-firewall
+  label: Firewall Rule Group
+  list: {method: list_rule_groups, items: RuleGroups}
+  enrich:
+    - {method: describe_rule_group, params: {RuleGroupArn: Arn}, merge_as: _Rg}
+  id: Arn
+  name: [Name]
+  parent: [{kind: region}]
+  props:
+    type: _Rg.RuleGroupResponse.Type
+    capacity: _Rg.RuleGroupResponse.Capacity
+    description: _Rg.RuleGroupResponse.Description
+    rulesString: _Rg.RuleGroup.RulesSource.RulesString
+    domainList: _Rg.RuleGroup.RulesSource.RulesSourceList
+    statelessRules: "length(not_null(_Rg.RuleGroup.RulesSource.StatelessRulesAndCustomActions.StatelessRules, `[]`))"
+    statefulRules: "length(not_null(_Rg.RuleGroup.RulesSource.StatefulRules, `[]`))"
+    # The optimistic-lock value UpdateRuleGroup must echo; it changes on every update.
+    updateToken: _Rg.UpdateToken
+  chat_props: [type, capacity, description, rulesString, domainList, statelessRules, statefulRules, updateToken]
+  caveats:
+    - {code: network-firewall-refs-not-checked, text: "Floci 2.3.0 creates a firewall whose policy ARN or subnets do not exist, and deletes a policy or rule group that is still in use; AWS refuses all three."}
+    - {code: network-firewall-rules-flag-dropped, prop: rulesString, text: "Floci 2.3.0 drops the Rules string of CreateRuleGroup and UpdateRuleGroup (the group has no RulesSource afterwards); give the Suricata rules inside RuleGroup as {\"RulesSource\": {\"RulesString\": ...}} instead."}
+  floci: {status: control-plane-only, note: "Rule groups are stored; no traffic is matched against them."}
+  builder: true
+  view: {role: block, category: security, icon: Res_Firewall_48_Light.svg, source: Resource-Icons_07312026/Res_General-Icons/Res_48_Light/Res_Firewall_48_Light.svg, height: 0.2, order: 724, actions: [RuleGroup]}
+  contract:
+    create: {op: create-firewall-rule-group, params: {RuleGroupName: ct-rule-group}, save: rules}
+    then:
+      - {op: delete-firewall-rule-group, params: {RuleGroupArn: "{rules}"}}
+  ops:
+    - id: create-firewall-rule-group
+      api: CreateRuleGroup
+      gesture: create
+      title: "Tạo Firewall Rule Group"
+      fields: [RuleGroupName, {name: Type, choices: [STATEFUL, STATELESS]}, Capacity, {name: Rules, multiline: true}, {name: RuleGroup, multiline: true}, Description]
+      defaults: {Type: STATEFUL, Capacity: 100, RuleGroup: '{"RulesSource": {"RulesString": "pass tcp any any -> any 80 (msg:\"allow http\"; sid:1; rev:1;)"}}'}
+      result_id: RuleGroupResponse.RuleGroupArn
+      expect: {label: RuleGroupName}
+      note: "A set of rules a firewall policy references. STATEFUL takes Suricata rules as RuleGroup {\"RulesSource\": {\"RulesString\": ...}} (or in Rules), or RuleGroup JSON with RulesSourceList (a domain allow or deny list: {\"RulesSource\": {\"RulesSourceList\": {\"Targets\": [\".example.com\"], \"TargetTypes\": [\"TLS_SNI\", \"HTTP_HOST\"], \"GeneratedRulesType\": \"ALLOWLIST\"}}}). STATELESS takes RuleGroup JSON with StatelessRulesAndCustomActions. Capacity cannot change later."
+    - id: update-firewall-rule-group
+      api: UpdateRuleGroup
+      gesture: modify
+      title: "Sửa Firewall Rule Group"
+      fields: [{name: RuleGroupName, ref: firewall-rule-group, ref_by: label}, {name: Type, choices: [STATEFUL, STATELESS]}, UpdateToken, {name: Rules, multiline: true}, {name: RuleGroup, multiline: true}, Description]
+      targets: [firewall-rule-group]
+      target_param: RuleGroupName
+      note: "Replace the rules. UpdateToken: the rule group's current updateToken (DescribeRuleGroup answers it); a stale one is refused. Give Type with RuleGroupName."
+    - id: delete-firewall-rule-group
+      api: DeleteRuleGroup
+      gesture: delete
+      title: "Xoá Firewall Rule Group"
+      fields: [{name: RuleGroupArn, ref: firewall-rule-group}]
+      targets: [firewall-rule-group]
+      target_param: RuleGroupArn
+      note: "Delete a rule group no policy references."

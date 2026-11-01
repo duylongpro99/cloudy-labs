@@ -20,6 +20,7 @@ def test_compose_binds_loopback_only():
     ports = {name: s["ports"] for name, s in services.items()}
     assert ports == {
         "api-tap": ["127.0.0.1:4566:4566", "127.0.0.1:4568:4568"],
+        "api-tap-moto": ["127.0.0.1:4569:4569", "127.0.0.1:4570:4570"],
         "floci": ["127.0.0.1:4567:4567"],
         "moto": ["127.0.0.1:5050:5000"],
     }
@@ -49,7 +50,7 @@ def test_up_refuses_ports_held_by_another_process(monkeypatch):
         stack.up(log=lambda line: None)
 
 
-def fake_stack(monkeypatch, states, orphan_errors=()):
+def fake_stack(monkeypatch, states, orphan_errors=(), unowned=()):
     calls = []
     monkeypatch.setattr(stack, "require_docker", lambda: None)
     monkeypatch.setattr(stack, "service_states", lambda: states)
@@ -62,6 +63,7 @@ def fake_stack(monkeypatch, states, orphan_errors=()):
         return Orphans([], [], [], list(orphan_errors))
 
     monkeypatch.setattr(stack, "remove_orphans", remove_orphans)
+    monkeypatch.setattr(stack, "unowned_service_containers", lambda: list(unowned))
     return calls
 
 
@@ -98,9 +100,24 @@ def test_down_finishes_compose_down_then_reports_stuck_resources(monkeypatch):
     assert ("compose", "down", "-v", "--remove-orphans") in calls
 
 
+def test_down_names_service_containers_floci_gives_no_owner_and_leaves_them(monkeypatch):
+    calls = fake_stack(monkeypatch, {}, unowned=["floci-aws-ecr-registry", "floci-aws-duck"])
+    logs = []
+    stack.down(log=logs.append)
+    assert any("docker rm -f floci-aws-ecr-registry floci-aws-duck" in line for line in logs)
+    assert not any(c[:2] == ("docker", "rm") for c in calls)
+
+
+def test_down_says_nothing_more_when_floci_left_no_service_container(monkeypatch):
+    fake_stack(monkeypatch, {})
+    logs = []
+    stack.down(log=logs.append)
+    assert len(logs) == 1
+
+
 def test_up_recreates_floci_that_is_healthy_but_unreachable_from_the_host(monkeypatch):
     healthy = {"State": "running", "Health": "healthy"}
-    calls = fake_stack(monkeypatch, {"floci": healthy, "moto": healthy, "api-tap": healthy})
+    calls = fake_stack(monkeypatch, {"floci": healthy, "moto": healthy, "api-tap": healthy, "api-tap-moto": healthy})
     monkeypatch.setattr(stack, "reachable", lambda name: False)
     stack.up(log=lambda line: None)
     assert calls == [

@@ -1,0 +1,148 @@
+# Reachability cases with the answer AWS documents, judged against the network that
+# `scripts/record-floci-fixtures.py build-reachability` creates on Floci (recorded in floci/).
+# expect.blocked_at is the name of the resource that stops the flow.
+- name: internet reaches the public web server on 80
+  doc: https://docs.aws.amazon.com/vpc/latest/userguide/VPC_Internet_Gateway.html
+  src: internet
+  dst: rx-web
+  port: 80
+  expect: {ok: true}
+- name: ssh from the internet is not in the web group
+  doc: https://docs.aws.amazon.com/vpc/latest/userguide/vpc-security-groups.html
+  src: internet
+  dst: rx-web
+  port: 22
+  expect: {ok: false, blocked_at: rx-sg-web, reason: no-matching-rule}
+- name: ssh from the office prefix list is allowed
+  doc: https://docs.aws.amazon.com/vpc/latest/userguide/managed-prefix-lists.html
+  src: 203.0.113.5
+  dst: rx-web
+  port: 22
+  expect: {ok: true}
+- name: a private host has no public IP
+  doc: https://docs.aws.amazon.com/vpc/latest/userguide/VPC_Internet_Gateway.html
+  src: internet
+  dst: rx-app
+  port: 8080
+  expect: {ok: false, blocked_at: rx-app, reason: no-public-ip}
+- name: web tier reaches app tier by group reference
+  doc: https://docs.aws.amazon.com/vpc/latest/userguide/security-group-rules.html
+  src: rx-web
+  dst: rx-app
+  port: 8080
+  expect: {ok: true}
+- name: the app group allows tcp only
+  doc: https://docs.aws.amazon.com/vpc/latest/userguide/security-group-rules.html
+  src: rx-web
+  dst: rx-app
+  port: 8080
+  proto: udp
+  expect: {ok: false, blocked_at: rx-sg-app, reason: no-matching-rule}
+- name: app tier reaches the database
+  doc: https://docs.aws.amazon.com/AmazonRDS/latest/UserGuide/Overview.RDSSecurityGroups.html
+  src: rx-app
+  dst: rx-db
+  port: 5432
+  expect: {ok: true}
+- name: web tier is not allowed into the database group
+  doc: https://docs.aws.amazon.com/AmazonRDS/latest/UserGuide/Overview.RDSSecurityGroups.html
+  src: rx-web
+  dst: rx-db
+  port: 5432
+  expect: {ok: false, blocked_at: rx-sg-db, reason: no-matching-rule}
+- name: a private host reaches the internet through the NAT gateway
+  doc: https://docs.aws.amazon.com/vpc/latest/userguide/vpc-nat-gateway.html
+  src: rx-app
+  dst: internet
+  port: 443
+  expect: {ok: true}
+- name: a group with no outbound rule stops everything
+  doc: https://docs.aws.amazon.com/vpc/latest/userguide/security-group-rules.html
+  src: rx-locked
+  dst: internet
+  port: 443
+  expect: {ok: false, blocked_at: rx-sg-locked, reason: no-matching-rule}
+- name: a route to a deleted NAT gateway is a blackhole
+  doc: https://docs.aws.amazon.com/vpc/latest/userguide/nat-gateway-troubleshooting.html
+  src: rx-black-host
+  dst: internet
+  port: 443
+  expect: {ok: false, blocked_at: rx-rt-a-black, reason: blackhole}
+- name: a default route to a network interface in its own subnet loops
+  doc: https://docs.aws.amazon.com/vpc/latest/userguide/route-table-options.html
+  src: rx-loop-host
+  dst: internet
+  port: 443
+  expect: {ok: false, blocked_at: rx-rt-a-loop, reason: loop-detected}
+- name: the NACL denies ssh before it allows tcp
+  doc: https://docs.aws.amazon.com/vpc/latest/userguide/nacl-rules.html
+  src: rx-web
+  dst: rx-nacl-host
+  port: 22
+  expect: {ok: false, blocked_at: rx-acl, reason: denied-by-rule}
+- name: a stateless NACL also needs the return on ephemeral ports
+  doc: https://docs.aws.amazon.com/vpc/latest/userguide/nacl-ephemeral-ports.html
+  src: rx-web
+  dst: rx-nacl-host
+  port: 80
+  expect: {ok: false, blocked_at: rx-acl, reason: return-denied}
+- name: no route to the other VPC
+  doc: https://docs.aws.amazon.com/vpc/latest/userguide/VPC_Route_Tables.html
+  src: rx-a2-host
+  dst: rx-b-host
+  port: 80
+  expect: {ok: false, blocked_at: rx-rt-a-main, reason: no-route}
+- name: peering with routes on both sides
+  doc: https://docs.aws.amazon.com/vpc/latest/peering/vpc-peering-routing.html
+  src: rx-app
+  dst: rx-b-host
+  port: 80
+  expect: {ok: true}
+- name: peering is not transitive
+  doc: https://docs.aws.amazon.com/vpc/latest/peering/invalid-peering-configurations.html
+  src: rx-app
+  dst: rx-c-host
+  port: 80
+  expect: {ok: false, blocked_at: rx-pcx-ab, reason: not-transitive}
+- name: the peer has no route back
+  doc: https://docs.aws.amazon.com/vpc/latest/peering/vpc-peering-routing.html
+  src: rx-b-host
+  dst: rx-a2-host
+  port: 80
+  expect: {ok: false, blocked_at: rx-rt-a-main, reason: no-return-route}
+- name: a gateway endpoint serves the route tables it is attached to
+  doc: https://docs.aws.amazon.com/vpc/latest/privatelink/gateway-endpoints.html
+  src: rx-app
+  dst: rx-s3-endpoint
+  port: 443
+  expect: {ok: true}
+- name: a subnet whose table is not attached cannot use the gateway endpoint
+  doc: https://docs.aws.amazon.com/vpc/latest/privatelink/gateway-endpoints.html
+  src: rx-a2-host
+  dst: rx-s3-endpoint
+  port: 443
+  expect: {ok: false, blocked_at: rx-s3-endpoint, reason: endpoint-not-associated}
+- name: two VPCs through a Transit Gateway with separate route tables
+  doc: https://docs.aws.amazon.com/vpc/latest/tgw/tgw-route-tables.html
+  src: rx-d-host
+  dst: rx-e-host
+  port: 80
+  expect: {ok: true}
+- name: the way back uses the other TGW route table
+  doc: https://docs.aws.amazon.com/vpc/latest/tgw/tgw-route-tables.html
+  src: rx-e-host
+  dst: rx-d-host
+  port: 80
+  expect: {ok: true}
+- name: a TGW blackhole route drops the flow
+  doc: https://docs.aws.amazon.com/vpc/latest/tgw/tgw-route-tables.html
+  src: rx-d-host
+  dst: 10.65.0.10
+  port: 80
+  expect: {ok: false, blocked_at: rx-tgw-rt-main, reason: blackhole}
+- name: a TGW route back into the sending VPC loops
+  doc: https://docs.aws.amazon.com/vpc/latest/tgw/how-transit-gateways-work.html
+  src: rx-d-host
+  dst: 10.99.0.1
+  port: 80
+  expect: {ok: false, blocked_at: rx-rt-d-main, reason: loop-detected}

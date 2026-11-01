@@ -1,0 +1,87 @@
+{
+  "calls": [
+    {
+      "params": {},
+      "response": {
+        "DBInstances": [
+          {
+            "AllocatedStorage": 20,
+            "AssociatedRoles": [],
+            "AutoMinorVersionUpgrade": true,
+            "AvailabilityZone": "ap-southeast-2a",
+            "BackupRetentionPeriod": 1,
+            "CopyTagsToSnapshot": false,
+            "DBInstanceArn": "arn:aws:rds:ap-southeast-2:000000000000:db:rx-db",
+            "DBInstanceClass": "db.t3.micro",
+            "DBInstanceIdentifier": "rx-db",
+            "DBInstanceStatus": "available",
+            "DBParameterGroups": [
+              {
+                "DBParameterGroupName": "default.postgres16",
+                "ParameterApplyStatus": "in-sync"
+              }
+            ],
+            "DBSubnetGroup": {
+              "DBSubnetGroupArn": "arn:aws:rds:ap-southeast-2:000000000000:subgrp:rx-db",
+              "DBSubnetGroupDescription": "reachability",
+              "DBSubnetGroupName": "rx-db",
+              "SubnetGroupStatus": "Complete",
+              "Subnets": [
+                {
+                  "SubnetAvailabilityZone": {
+                    "Name": "ap-southeast-2a"
+                  },
+                  "SubnetIdentifier": "subnet-5bfd1da3",
+                  "SubnetStatus": "Active"
+                },
+                {
+                  "SubnetAvailabilityZone": {
+                    "Name": "ap-southeast-2b"
+                  },
+                  "SubnetIdentifier": "subnet-7322989f",
+                  "SubnetStatus": "Active"
+                }
+              ],
+              "VpcId": "vpc-ae467f29"
+            },
+            "DbiResourceId": "db-AB12AFEC51D74631ABC3B3B1",
+            "DeletionProtection": false,
+            "Endpoint": {
+              "Address": "172.27.0.3",
+              "Port": 7001
+            },
+            "Engine": "postgres",
+            "EngineLifecycleSupport": "open-source-rds-extended-support",
+            "EngineVersion": "16.3",
+            "IAMDatabaseAuthenticationEnabled": false,
+            "LatestRestorableTime": "2026-10-31 14:34:07.333371+00:00",
+            "MasterUsername": "rx",
+            "MonitoringInterval": 0,
+            "MultiAZ": false,
+            "OptionGroupMemberships": [
+              {
+                "OptionGroupName": "default:postgres-16",
+                "Status": "in-sync"
+              }
+            ],
+            "PerformanceInsightsEnabled": false,
+            "PreferredBackupWindow": "04:00-06:00",
+            "PreferredMaintenanceWindow": "mon:00:00-mon:03:00",
+            "PubliclyAccessible": false,
+            "ReadReplicaDBInstanceIdentifiers": [],
+            "StorageEncrypted": false,
+            "StorageType": "gp2",
+            "TagList": [],
+            "VpcSecurityGroups": [
+              {
+                "Status": "active",
+                "VpcSecurityGroupId": "sg-7922c298150d7675f"
+              }
+            ]
+          }
+        ],
+        "Marker": ""
+      }
+    }
+  ]
+}

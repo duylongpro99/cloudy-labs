@@ -1,0 +1,21 @@
+{
+  "calls": [
+    {
+      "params": {
+        "ConfigRuleNames": [
+          "w3-bucket-versioning"
+        ]
+      },
+      "response": {
+        "ComplianceByConfigRules": [
+          {
+            "Compliance": {
+              "ComplianceType": "INSUFFICIENT_DATA"
+            },
+            "ConfigRuleName": "w3-bucket-versioning"
+          }
+        ]
+      }
+    }
+  ]
+}

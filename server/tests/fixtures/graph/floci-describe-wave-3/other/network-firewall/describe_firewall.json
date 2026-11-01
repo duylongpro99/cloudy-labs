@@ -1,0 +1,41 @@
+{
+  "calls": [
+    {
+      "params": {
+        "FirewallArn": "arn:aws:network-firewall:ap-southeast-2:000000000000:firewall/w3-firewall"
+      },
+      "response": {
+        "Firewall": {
+          "AvailabilityZoneChangeProtection": false,
+          "DeleteProtection": false,
+          "FirewallArn": "arn:aws:network-firewall:ap-southeast-2:000000000000:firewall/w3-firewall",
+          "FirewallId": "cca8f2707d09232a5bf1d9b634d55d31",
+          "FirewallName": "w3-firewall",
+          "FirewallPolicyArn": "arn:aws:network-firewall:ap-southeast-2:000000000000:firewall-policy/w3-policy",
+          "FirewallPolicyChangeProtection": false,
+          "SubnetChangeProtection": false,
+          "SubnetMappings": [
+            {
+              "SubnetId": "subnet-52650042"
+            }
+          ],
+          "VpcId": "vpc-c238e6aa"
+        },
+        "FirewallStatus": {
+          "ConfigurationSyncStateSummary": "IN_SYNC",
+          "Status": "READY",
+          "SyncStates": {
+            "ap-southeast-2a": {
+              "Attachment": {
+                "EndpointId": "vpce-124587678c1d47382",
+                "Status": "READY",
+                "SubnetId": "subnet-52650042"
+              }
+            }
+          }
+        },
+        "UpdateToken": "d69aa825-fbd2-4fe4-b3e7-205bc3407c2d"
+      }
+    }
+  ]
+}

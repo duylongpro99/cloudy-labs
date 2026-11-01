@@ -1,0 +1,77 @@
+# AWS CodePipeline pipelines. ListPipelines gives names and versions; GetPipeline gives the stages,
+# the role and the artifact store. Action configuration can hold tokens (e.g. a GitHub OAuthToken), so
+# it is only read for the bucket, project and application names the edges need, never into props.
+
+- kind: codepipeline-pipeline
+  service: codepipeline
+  label: CodePipeline
+  list: {method: list_pipelines, items: pipelines}
+  enrich:
+    - {method: get_pipeline, params: {name: name}, merge_as: _Pipeline}
+  id: _Pipeline.metadata.pipelineArn
+  name: [name]
+  parent: [{kind: region}]
+  props:
+    version: version
+    pipelineType: pipelineType
+    executionMode: executionMode
+    roleArn: _Pipeline.pipeline.roleArn
+    artifactStore: _Pipeline.pipeline.artifactStore.location
+    stages: "_Pipeline.pipeline.stages[].name"
+    actions: "_Pipeline.pipeline.stages[].actions[].join(':', [actionTypeId.category, actionTypeId.provider])"
+  chat_props: [version, pipelineType, executionMode, roleArn, artifactStore, stages, actions]
+  edges:
+    - {kind: execution-role, target: _Pipeline.pipeline.roleArn, to: iam-role, style: reference}
+    - {kind: upload-to, target: _Pipeline.pipeline.artifactStore.location, match: Name, to: s3-bucket, style: reference}
+    - {kind: pipeline-source, target: "_Pipeline.pipeline.stages[].actions[?actionTypeId.provider=='S3'][].configuration.S3Bucket", match: Name, to: s3-bucket, reverse: true, style: route}
+    - {kind: pipeline-source, target: "_Pipeline.pipeline.stages[].actions[?actionTypeId.provider=='ECR'][].configuration.RepositoryName", match: repositoryName, to: ecr-repository, reverse: true, style: route}
+    - {kind: pipeline-action, target: "_Pipeline.pipeline.stages[].actions[?actionTypeId.provider=='CodeBuild'][].configuration.ProjectName", match: name, to: codebuild-project, style: route}
+    - {kind: pipeline-action, target: "_Pipeline.pipeline.stages[].actions[?actionTypeId.provider=='CodeDeploy'][].configuration.ApplicationName", match: applicationName, to: codedeploy-application, style: route}
+    - {kind: pipeline-action, target: "_Pipeline.pipeline.stages[].actions[?actionTypeId.provider=='ElasticBeanstalk'][].configuration.EnvironmentName", match: EnvironmentName, to: beanstalk-environment, style: route}
+    - {kind: pipeline-action, target: "_Pipeline.pipeline.stages[].actions[?actionTypeId.provider=='Lambda'][].configuration.FunctionName", match: FunctionName, to: lambda-function, style: route}
+  builder: true
+  view: {role: block, category: developer-tools, icon: Arch_AWS-CodePipeline_48.svg, source: Architecture-Service-Icons_07312026/Arch_Developer-Tools/48/Arch_AWS-CodePipeline_48.svg, height: 0.5, order: 630, actions: [Pipeline, PipelineExecution, StageTransition]}
+  contract:
+    needs:
+      - {op: create-role, params: {RoleName: ct-pipeline-role, AssumeRolePolicyDocument: '{"Version": "2012-10-17", "Statement": [{"Effect": "Allow", "Principal": {"Service": "codepipeline.amazonaws.com"}, "Action": "sts:AssumeRole"}]}'}, save: role}
+      - {op: create-bucket, params: {Bucket: ct-pipeline-artifacts, CreateBucketConfiguration.LocationConstraint: "{region}"}, save: bucket}
+    create: {op: create-codepipeline-pipeline, params: {pipeline.name: ct-pipeline, pipeline.roleArn: "{role}", pipeline.artifactStore.type: S3, pipeline.artifactStore.location: ct-pipeline-artifacts, pipeline.stages: '[{"name": "Source", "actions": [{"name": "Source", "actionTypeId": {"category": "Source", "owner": "AWS", "provider": "S3", "version": "1"}, "configuration": {"S3Bucket": "ct-pipeline-artifacts", "S3ObjectKey": "source.zip", "PollForSourceChanges": "false"}, "outputArtifacts": [{"name": "src"}]}]}, {"name": "Approve", "actions": [{"name": "Approve", "actionTypeId": {"category": "Approval", "owner": "AWS", "provider": "Manual", "version": "1"}}]}]'}, save: pipeline}
+    then:
+      - {op: update-codepipeline-pipeline, params: {pipeline.name: ct-pipeline, pipeline.roleArn: "{role}", pipeline.artifactStore.type: S3, pipeline.artifactStore.location: ct-pipeline-artifacts, pipeline.stages: '[{"name": "Source", "actions": [{"name": "Source", "actionTypeId": {"category": "Source", "owner": "AWS", "provider": "S3", "version": "1"}, "configuration": {"S3Bucket": "ct-pipeline-artifacts", "S3ObjectKey": "source.zip", "PollForSourceChanges": "false"}, "outputArtifacts": [{"name": "src"}]}]}, {"name": "Review", "actions": [{"name": "Review", "actionTypeId": {"category": "Approval", "owner": "AWS", "provider": "Manual", "version": "1"}}]}]'}}
+      - {op: delete-codepipeline-pipeline, params: {name: ct-pipeline}}
+  ops:
+    - id: create-codepipeline-pipeline
+      api: CreatePipeline
+      gesture: create
+      title: "Tạo CodePipeline"
+      fields:
+        - {name: pipeline.name, placeholder: my-pipeline}
+        - {name: pipeline.roleArn, ref: iam-role}
+        - pipeline.artifactStore.type
+        - pipeline.artifactStore.location
+        - {name: pipeline.stages, multiline: true, placeholder: '[{"name": "Source", "actions": [...]}, {"name": "Build", "actions": [...]}]'}
+      defaults: {pipeline.artifactStore.type: S3}
+      expect: {label: pipeline.name}
+      note: "Create a pipeline: roleArn is a role codepipeline.amazonaws.com may assume, artifactStore.location an S3 bucket name, stages (JSON) at least two. The first stage holds only Source actions (S3 with S3Bucket/S3ObjectKey, ECR with RepositoryName); later stages run CodeBuild (ProjectName), CodeDeploy (ApplicationName, DeploymentGroupName), ElasticBeanstalk (ApplicationName, EnvironmentName), Lambda (FunctionName) or Manual approval actions, passing inputArtifacts/outputArtifacts by name."
+    - id: update-codepipeline-pipeline
+      api: UpdatePipeline
+      gesture: attribute
+      title: "Cập nhật CodePipeline"
+      fields:
+        - {name: pipeline.name, ref: codepipeline-pipeline, ref_by: label}
+        - {name: pipeline.roleArn, ref: iam-role}
+        - pipeline.artifactStore.type
+        - pipeline.artifactStore.location
+        - {name: pipeline.stages, multiline: true, placeholder: '[{"name": "Source", "actions": [...]}, {"name": "Build", "actions": [...]}]'}
+      defaults: {pipeline.artifactStore.type: S3}
+      targets: [codepipeline-pipeline]
+      target_param: pipeline.name
+      note: "Replace the pipeline's whole structure (role, artifact store and all stages): add or change stages and actions. The version goes up by one."
+    - id: delete-codepipeline-pipeline
+      api: DeletePipeline
+      gesture: delete
+      title: "Xoá CodePipeline"
+      fields: [{name: name, ref: codepipeline-pipeline, ref_by: label}]
+      targets: [codepipeline-pipeline]
+      target_param: name
+      note: "Delete the pipeline. Its artifact bucket and the projects it runs stay."

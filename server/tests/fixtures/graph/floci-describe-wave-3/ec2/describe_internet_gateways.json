@@ -1,0 +1,22 @@
+{
+  "calls": [
+    {
+      "params": {},
+      "response": {
+        "InternetGateways": [
+          {
+            "Attachments": [
+              {
+                "State": "available",
+                "VpcId": "vpc-default-ap-southeast-2"
+              }
+            ],
+            "InternetGatewayId": "igw-default",
+            "OwnerId": "000000000000",
+            "Tags": []
+          }
+        ]
+      }
+    }
+  ]
+}

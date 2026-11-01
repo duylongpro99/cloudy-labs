@@ -1,0 +1,10 @@
+# A global kind (like an IAM user): listed once, drawn in the global group of the account.
+- kind: test-global
+  service: testglobal
+  scope: global
+  label: Test global resource
+  list: {method: list_things, items: Things}
+  test_only: true
+  id: Id
+  parent: [{kind: global}]
+  view: {role: block, category: general, icon: Test-Only_48.svg, order: 998}

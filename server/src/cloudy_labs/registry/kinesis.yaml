@@ -1,0 +1,60 @@
+# Amazon Kinesis Data Streams. Floci's ListStreams answers StreamNames only (no StreamSummaries), so
+# DescribeStreamSummary adds the ARN, shard count and retention. A Lambda event source mapping reads
+# the stream: stream -> mapping -> function.
+
+- kind: kinesis-stream
+  service: kinesis
+  label: Kinesis Data Stream
+  list: {method: list_streams, items: "StreamNames[].{StreamName: @}"}
+  enrich:
+    - {method: describe_stream_summary, params: {StreamName: StreamName}, pick: StreamDescriptionSummary, merge_as: _Summary}
+  id: _Summary.StreamARN
+  name: [StreamName]
+  parent: [{kind: region}]
+  props:
+    status: _Summary.StreamStatus
+    mode: _Summary.StreamModeDetails.StreamMode
+    openShards: _Summary.OpenShardCount
+    retentionHours: _Summary.RetentionPeriodHours
+    encryption: _Summary.EncryptionType
+    kmsKey: _Summary.KeyId
+    consumers: _Summary.ConsumerCount
+  chat_props: [status, mode, openShards, retentionHours, encryption, kmsKey, consumers]
+  edges:
+    - {kind: event-source, target: _Summary.StreamARN, match: EventSourceArn, to: lambda-event-source, style: reference}
+  caveats:
+    - {code: floci-kinesis-instant-resharding, prop: openShards, text: "Floci 2.3.0 reshards at once: after UpdateShardCount the stream stays ACTIVE with the new shard count, where AWS spends minutes in UPDATING."}
+  builder: true
+  view: {role: block, category: analytics, icon: Arch_Amazon-Kinesis-Data-Streams_48.svg, source: Architecture-Service-Icons_07312026/Arch_Analytics/48/Arch_Amazon-Kinesis-Data-Streams_48.svg, height: 0.4, order: 570, actions: [Stream, ShardCount, StreamRetentionPeriod]}
+  contract:
+    create: {op: create-stream, params: {StreamName: ct-stream, ShardCount: "1"}, save: stream}
+    then:
+      - {op: update-shard-count, params: {StreamName: ct-stream, TargetShardCount: "2"}}
+      - {op: delete-stream, params: {StreamName: ct-stream}}
+    max_seconds: 5
+  ops:
+    - id: create-stream
+      api: CreateStream
+      gesture: create
+      title: "Tạo Kinesis data stream"
+      fields: [StreamName, ShardCount, StreamModeDetails.StreamMode]
+      defaults: {ShardCount: 1}
+      expect: {label: StreamName}
+      note: "Create a data stream. PROVISIONED mode takes a ShardCount (each shard: 1 MB/s or 1000 records/s in, 2 MB/s out); ON_DEMAND scales by itself and takes no ShardCount."
+    - id: update-shard-count
+      api: UpdateShardCount
+      gesture: attribute
+      title: "Đổi số shard"
+      fields: [{name: StreamName, ref: kinesis-stream, ref_by: label}, TargetShardCount, ScalingType]
+      defaults: {ScalingType: UNIFORM_SCALING}
+      targets: [kinesis-stream]
+      target_param: StreamName
+      note: "Scale a provisioned stream to TargetShardCount shards (at most double or half the current count per call): the usual fix for ProvisionedThroughputExceededException."
+    - id: delete-stream
+      api: DeleteStream
+      gesture: delete
+      title: "Xoá stream"
+      fields: [{name: StreamName, ref: kinesis-stream, ref_by: label}, EnforceConsumerDeletion]
+      targets: [kinesis-stream]
+      target_param: StreamName
+      note: "Delete the stream and its records; EnforceConsumerDeletion also removes registered consumers."

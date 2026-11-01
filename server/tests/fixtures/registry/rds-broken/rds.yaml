@@ -1,0 +1,7 @@
+- kind: test-db
+  service: rds
+  label: Test DB
+  list: {method: describe_db_instances, items: DBInstances}
+  id: DBInstanceIdentifier
+  parent: [{kind: region}]
+  view: {icon: Test-DB_48.svg}

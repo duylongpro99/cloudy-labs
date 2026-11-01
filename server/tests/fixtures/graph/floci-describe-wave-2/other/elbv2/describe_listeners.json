@@ -1,0 +1,29 @@
+{
+  "calls": [
+    {
+      "params": {
+        "LoadBalancerArn": "arn:aws:elasticloadbalancing:ap-southeast-2:000000000000:loadbalancer/app/w2-alb/74ca62bb5d81462c"
+      },
+      "response": {
+        "Listeners": [
+          {
+            "AlpnPolicy": [],
+            "Certificates": [],
+            "DefaultActions": [
+              {
+                "TargetGroupArn": "arn:aws:elasticloadbalancing:ap-southeast-2:000000000000:targetgroup/w2-tg/d4fadde448d443e1",
+                "Type": "forward"
+              }
+            ],
+            "ListenerArn": "arn:aws:elasticloadbalancing:ap-southeast-2:000000000000:listener/app/w2-alb/74ca62bb5d81462c/a5fd1a810d4f417a",
+            "LoadBalancerArn": "arn:aws:elasticloadbalancing:ap-southeast-2:000000000000:loadbalancer/app/w2-alb/74ca62bb5d81462c",
+            "Port": 18091,
+            "Protocol": "HTTP",
+            "SslPolicy": ""
+          }
+        ],
+        "NextMarker": ""
+      }
+    }
+  ]
+}

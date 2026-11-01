@@ -1,0 +1,36 @@
+{
+  "calls": [
+    {
+      "params": {
+        "Bucket": "w3-governance-logs"
+      },
+      "response": {
+        "LocationConstraint": "ap-southeast-2"
+      }
+    },
+    {
+      "params": {
+        "Bucket": "w3-delivery-artifacts"
+      },
+      "response": {
+        "LocationConstraint": "ap-southeast-2"
+      }
+    },
+    {
+      "params": {
+        "Bucket": "w3-dm-bucket"
+      },
+      "response": {
+        "LocationConstraint": "ap-southeast-2"
+      }
+    },
+    {
+      "params": {
+        "Bucket": "w3-edge-origin"
+      },
+      "response": {
+        "LocationConstraint": "ap-southeast-2"
+      }
+    }
+  ]
+}

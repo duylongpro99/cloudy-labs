@@ -1,0 +1,50 @@
+{
+  "calls": [
+    {
+      "params": {
+        "ListenerArn": "arn:aws:elasticloadbalancing:ap-southeast-2:000000000000:listener/app/w2-alb/74ca62bb5d81462c/a5fd1a810d4f417a"
+      },
+      "response": {
+        "NextMarker": "",
+        "Rules": [
+          {
+            "Actions": [
+              {
+                "TargetGroupArn": "arn:aws:elasticloadbalancing:ap-southeast-2:000000000000:targetgroup/w2-tg/d4fadde448d443e1",
+                "Type": "forward"
+              }
+            ],
+            "Conditions": [
+              {
+                "Field": "path-pattern",
+                "PathPatternConfig": {
+                  "Values": [
+                    "/api/*"
+                  ]
+                },
+                "Values": [
+                  "/api/*"
+                ]
+              }
+            ],
+            "IsDefault": false,
+            "Priority": "10",
+            "RuleArn": "arn:aws:elasticloadbalancing:ap-southeast-2:000000000000:listener-rule/app/w2-alb/74ca62bb5d81462c/a5fd1a810d4f417a/836427531c514b87"
+          },
+          {
+            "Actions": [
+              {
+                "TargetGroupArn": "arn:aws:elasticloadbalancing:ap-southeast-2:000000000000:targetgroup/w2-tg/d4fadde448d443e1",
+                "Type": "forward"
+              }
+            ],
+            "Conditions": [],
+            "IsDefault": true,
+            "Priority": "default",
+            "RuleArn": "arn:aws:elasticloadbalancing:ap-southeast-2:000000000000:listener-rule/app/w2-alb/74ca62bb5d81462c/a5fd1a810d4f417a/1a4f90e904a14164"
+          }
+        ]
+      }
+    }
+  ]
+}

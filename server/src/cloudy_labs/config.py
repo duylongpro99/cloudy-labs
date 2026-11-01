@@ -6,11 +6,14 @@ from pathlib import Path
 API_PORT = 4566  # api-tap in front of Floci: what the learner's CLI and the checkers use
 FLOCI_PORT = 4567  # Floci itself, for labctl and the collector
 TAP_EVENTS_PORT = 4568  # api-tap's stream of write calls
+MOTO_TAP_PORT = 4569  # api-tap-moto in front of moto, for labs that run on moto
+MOTO_TAP_EVENTS_PORT = 4570  # api-tap-moto's stream of write calls
 SERVER_PORT = 8730  # `labctl serve`
 WEB_DEV_PORT = 5174  # Vite dev server of web/, the only browser origin `labctl serve` accepts
 MOTO_PORT = 5050
 HOST = "127.0.0.1"  # NFR7: emulators listen on loopback only
-REGION = "us-east-1"
+# A lab names its region; this one applies while no lab is open.
+DEFAULT_REGION = "ap-southeast-2"
 # Emulator credentials are fake on purpose (NFR6).
 ACCESS_KEY_ID = "test"
 SECRET_ACCESS_KEY = "test"

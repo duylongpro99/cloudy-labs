@@ -1,0 +1,15 @@
+{
+  "calls": [
+    {
+      "params": {
+        "TableName": "w2-orders"
+      },
+      "response": {
+        "TimeToLiveDescription": {
+          "AttributeName": "expiresAt",
+          "TimeToLiveStatus": "ENABLED"
+        }
+      }
+    }
+  ]
+}

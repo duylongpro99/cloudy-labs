@@ -53,7 +53,7 @@ def fixture_labs_root():
 
 def ec2(port: int = 4566):
     return boto3.client(
-        "ec2", endpoint_url=f"http://127.0.0.1:{port}", region_name="us-east-1",
+        "ec2", endpoint_url=f"http://127.0.0.1:{port}", region_name="ap-southeast-2",
         aws_access_key_id="test", aws_secret_access_key="test",
     )
 
@@ -103,20 +103,20 @@ def test_floci_lifecycle(stack, capsys):
     assert main(["check", "fixture-vpc"]) == 1
 
 
-def moto_ec2(env: dict[str, str]):
+def moto_ec2(keys: tuple[str, str]):
     return boto3.client(
-        "ec2", endpoint_url=env["AWS_ENDPOINT_URL"], region_name="us-east-1",
-        aws_access_key_id=env["AWS_ACCESS_KEY_ID"], aws_secret_access_key=env["AWS_SECRET_ACCESS_KEY"],
+        "ec2", endpoint_url=AwsProvider("moto").endpoint, region_name="ap-southeast-2",
+        aws_access_key_id=keys[0], aws_secret_access_key=keys[1],
     )
 
 
 def test_moto_enforces_iam_and_checks_as_the_admin_user(stack, capsys):
     assert main(["start", "fixture-moto"]) == 0
-    env = AwsProvider("moto").env()
-    assert env["AWS_ACCESS_KEY_ID"] != "test"
+    keys = AwsProvider("moto").credentials()
+    assert keys[0] != "test"
     with pytest.raises(ClientError, match="AuthFailure"):  # the fake keys no longer work
-        moto_ec2(env | {"AWS_ACCESS_KEY_ID": "test", "AWS_SECRET_ACCESS_KEY": "test"}).describe_vpcs()
-    moto_ec2(env).create_vpc(
+        moto_ec2(("test", "test")).describe_vpcs()
+    moto_ec2(keys).create_vpc(
         CidrBlock="10.77.0.0/16",
         TagSpecifications=[{"ResourceType": "vpc", "Tags": [{"Key": "lab", "Value": "fixture-vpc"}]}],
     )
@@ -124,7 +124,7 @@ def test_moto_enforces_iam_and_checks_as_the_admin_user(stack, capsys):
 
     assert main(["reset", "fixture-moto"]) == 0
     with pytest.raises(ClientError, match="AuthFailure"):  # reset wiped the old admin user
-        moto_ec2(env).describe_vpcs()
+        moto_ec2(keys).describe_vpcs()
     assert main(["check", "fixture-moto"]) == 1  # new admin, empty account
     capsys.readouterr()
 

@@ -1,0 +1,7 @@
+# Floci 2.3.0 keeps a VPC route created with TransitGatewayId but drops the id from
+# describe_route_tables (docs/emulator-differences.md). These put back what the scenario created,
+# by name, before the recording is replayed. Nothing else in the recording is edited.
+- {vpc: rx-d, destination: 10.64.0.0/16, transit_gateway: rx-tgw}
+- {vpc: rx-d, destination: 10.65.0.0/16, transit_gateway: rx-tgw}
+- {vpc: rx-d, destination: 10.99.0.0/16, transit_gateway: rx-tgw}
+- {vpc: rx-e, destination: 10.63.0.0/16, transit_gateway: rx-tgw}

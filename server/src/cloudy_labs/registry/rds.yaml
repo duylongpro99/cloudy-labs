@@ -1,0 +1,411 @@
+# Amazon RDS and Aurora. Nodes are ARNs; what RDS names only by name (cluster, subnet group, source
+# instance, parameter and option groups) is turned into ARNs by the rds.arns hook.
+# The default subnet, parameter and option groups RDS keeps for every engine are not the learner's: hidden.
+
+- kind: db-subnet-group
+  service: rds
+  label: DB Subnet Group
+  list: {method: describe_db_subnet_groups, items: DBSubnetGroups}
+  filter: {path: "starts_with(DBSubnetGroupName, 'default')", not_in: [true]}
+  id: DBSubnetGroupArn
+  name: [DBSubnetGroupName]
+  parent: [{kind: vpc, path: VpcId}]
+  props:
+    description: DBSubnetGroupDescription
+    status: SubnetGroupStatus
+    subnets: "sort(Subnets[].SubnetIdentifier)"
+    azs: "sort(Subnets[].SubnetAvailabilityZone.Name)"
+  chat_props: [description, status, subnets, azs]
+  edges:
+    - {kind: subnet-group-member, target: "Subnets[].SubnetIdentifier", to: subnet, style: reference}
+  builder: true
+  view: {role: block, category: database, icon: Res_Amazon-RDS_Multi-AZ_48.svg, source: Resource-Icons_07312026/Res_Databases/Res_Amazon-RDS_Multi-AZ_48.svg, height: 0.4, order: 70, actions: [DBSubnetGroup]}
+  contract:
+    needs:
+      - {op: create-vpc, params: {name: ct-dbsg-vpc, cidr: 10.86.0.0/16}, save: vpc}
+      - {op: create-subnet, params: {name: ct-dbsg-a, vpcId: "{vpc}", cidr: 10.86.1.0/24, az: "{region}a"}, save: a}
+      - {op: create-subnet, params: {name: ct-dbsg-b, vpcId: "{vpc}", cidr: 10.86.2.0/24, az: "{region}b"}, save: b}
+    create: {op: create-db-subnet-group, params: {DBSubnetGroupName: ct-dbsg, DBSubnetGroupDescription: contract test, SubnetIds: "{a},{b}"}, save: dbsg}
+    parent: vpc
+  ops:
+    - id: create-db-subnet-group
+      api: CreateDBSubnetGroup
+      gesture: create
+      title: "Tạo DB Subnet Group"
+      fields: [DBSubnetGroupName, DBSubnetGroupDescription, SubnetIds]
+      result_id: DBSubnetGroup.DBSubnetGroupArn
+      expect: {label: DBSubnetGroupName}
+      note: "Group subnets of one VPC, in at least two AZs, for a DB instance or cluster to use. SubnetIds: comma-separated."
+
+- kind: db-parameter-group
+  service: rds
+  label: DB Parameter Group
+  list: {method: describe_db_parameter_groups, items: DBParameterGroups}
+  filter: {path: "starts_with(DBParameterGroupName, 'default.')", not_in: [true]}
+  id: DBParameterGroupArn
+  name: [DBParameterGroupName]
+  parent: [{kind: region}]
+  props:
+    family: DBParameterGroupFamily
+    description: Description
+  chat_props: [family, description]
+  builder: true
+  view: {role: block, category: database, icon: Res_AWS-Systems-Manager_Parameter-Store_48.svg, source: Resource-Icons_07312026/Res_Management-Governance/Res_AWS-Systems-Manager_Parameter-Store_48.svg, height: 0.3, order: 74, actions: [DBParameterGroup]}
+  contract:
+    create: {op: create-db-parameter-group, params: {DBParameterGroupName: ct-pg, DBParameterGroupFamily: postgres16, Description: contract test}, save: pg}
+  ops:
+    - id: create-db-parameter-group
+      api: CreateDBParameterGroup
+      gesture: create
+      title: "Tạo DB Parameter Group"
+      fields: [DBParameterGroupName, DBParameterGroupFamily, Description]
+      defaults: {DBParameterGroupFamily: postgres16}
+      result_id: DBParameterGroup.DBParameterGroupArn
+      expect: {label: DBParameterGroupName}
+      note: "Engine settings for DB instances of one family (postgres16, mysql8.0...). An instance uses it through DBParameterGroupName."
+
+- kind: db-cluster-parameter-group
+  service: rds
+  label: DB Cluster Parameter Group
+  list: {method: describe_db_cluster_parameter_groups, items: DBClusterParameterGroups}
+  filter: {path: "starts_with(DBClusterParameterGroupName, 'default.')", not_in: [true]}
+  id: DBClusterParameterGroupArn
+  name: [DBClusterParameterGroupName]
+  parent: [{kind: region}]
+  props:
+    family: DBParameterGroupFamily
+    description: Description
+  chat_props: [family, description]
+  builder: true
+  view: {role: block, category: database, icon: Res_AWS-Systems-Manager_Parameter-Store_48.svg, source: Resource-Icons_07312026/Res_Management-Governance/Res_AWS-Systems-Manager_Parameter-Store_48.svg, height: 0.3, order: 75, actions: [DBClusterParameterGroup]}
+  contract:
+    create: {op: create-db-cluster-parameter-group, params: {DBClusterParameterGroupName: ct-cpg, DBParameterGroupFamily: aurora-postgresql16, Description: contract test}, save: cpg}
+  ops:
+    - id: create-db-cluster-parameter-group
+      api: CreateDBClusterParameterGroup
+      gesture: create
+      title: "Tạo DB Cluster Parameter Group"
+      fields: [DBClusterParameterGroupName, DBParameterGroupFamily, Description]
+      defaults: {DBParameterGroupFamily: aurora-postgresql16}
+      result_id: DBClusterParameterGroup.DBClusterParameterGroupArn
+      expect: {label: DBClusterParameterGroupName}
+      note: "Engine settings shared by every instance of an Aurora cluster."
+
+- kind: db-option-group
+  service: rds
+  label: DB Option Group
+  list: {method: describe_option_groups, items: OptionGroupsList}
+  filter: {path: "starts_with(OptionGroupName, 'default:')", not_in: [true]}
+  id: OptionGroupArn
+  name: [OptionGroupName]
+  parent: [{kind: region}]
+  props:
+    engine: EngineName
+    majorVersion: MajorEngineVersion
+    options: "Options[].OptionName"
+  chat_props: [engine, majorVersion, options]
+  builder: true
+  view: {role: block, category: database, icon: Res_AWS-Systems-Manager_Parameter-Store_48.svg, source: Resource-Icons_07312026/Res_Management-Governance/Res_AWS-Systems-Manager_Parameter-Store_48.svg, height: 0.3, order: 76, actions: [OptionGroup]}
+  contract:
+    create: {op: create-option-group, params: {OptionGroupName: ct-og, EngineName: postgres, MajorEngineVersion: "16", OptionGroupDescription: contract test}, save: og}
+  ops:
+    - id: create-option-group
+      api: CreateOptionGroup
+      gesture: create
+      title: "Tạo DB Option Group"
+      fields: [OptionGroupName, EngineName, MajorEngineVersion, OptionGroupDescription]
+      result_id: OptionGroup.OptionGroupArn
+      expect: {label: OptionGroupName}
+      note: "Extra engine features (MySQL, MariaDB, Oracle, SQL Server) for instances of one engine version."
+
+- kind: db-cluster
+  service: rds
+  label: Aurora DB Cluster
+  list: {method: describe_db_clusters, items: DBClusters}
+  enrich:
+    - hook: rds.arns
+      args:
+        own: DBClusterArn
+        refs:
+          _SubnetGroupArn: [subgrp, DBSubnetGroup]
+          _ParamGroupArn: [cluster-pg, DBClusterParameterGroup]
+  id: DBClusterArn
+  name: [DBClusterIdentifier]
+  parent: [{kind: db-subnet-group, path: _SubnetGroupArn}, {kind: region}]
+  props:
+    engine: Engine
+    engineVersion: EngineVersion
+    status: Status
+    multiAz: MultiAZ
+    endpoint: Endpoint
+    readerEndpoint: ReaderEndpoint
+    port: Port
+    members: "sort_by(DBClusterMembers || `[]`, &DBInstanceIdentifier)[].{instance: DBInstanceIdentifier, writer: IsClusterWriter}"
+    tags: {hook: common.tags, args: {field: TagList}}
+  chat_props: [engine, engineVersion, status, multiAz, members, port]
+  edges:
+    - {kind: attached, target: "VpcSecurityGroups[].VpcSecurityGroupId", to: security-group, reverse: true, style: attach}
+    - {kind: uses-parameter-group, target: _ParamGroupArn, to: db-cluster-parameter-group, style: reference}
+  builder: true
+  view: {role: block, category: database, icon: Arch_Amazon-Aurora_48.svg, source: Architecture-Service-Icons_07312026/Arch_Databases/48/Arch_Amazon-Aurora_48.svg, height: 0.8, order: 71, host: true, actions: [DBCluster]}
+  caveats:
+    - {code: flag-only, prop: multiAz, text: "Floci 2.3.0 keeps Multi-AZ as a flag: no standby runs and a failover moves nothing. Check the flag, not a failover."}
+    - {code: aurora-plain-engine, text: "Floci 2.3.0 runs Aurora on a plain MySQL or PostgreSQL container: Aurora storage, fast failover and reader load balancing are not emulated."}
+    - {code: aurora-cluster-sg-ignored, text: "Floci 2.3.0 ignores VpcSecurityGroupIds and DBClusterParameterGroupName on an Aurora cluster: check the instance's settings instead."}
+  contract:
+    create: {op: create-db-cluster, params: {DBClusterIdentifier: ct-aurora, Engine: aurora-postgresql, MasterUsername: ctadmin, MasterUserPassword: Contract-test-1}, save: cluster}
+    max_seconds: 30
+  ops:
+    - id: create-db-cluster
+      api: CreateDBCluster
+      gesture: create
+      title: "Tạo Aurora cluster"
+      fields: [DBClusterIdentifier, Engine, MasterUsername, MasterUserPassword, DBSubnetGroupName, VpcSecurityGroupIds, DBClusterParameterGroupName]
+      choices: {Engine: [aurora-postgresql, aurora-mysql]}
+      defaults: {Engine: aurora-postgresql}
+      result_id: DBCluster.DBClusterArn
+      expect: {label: DBClusterIdentifier}
+      note: "Create an Aurora cluster: shared storage, no instance yet. Add instances with create-db-instance and DBClusterIdentifier; the first one is the writer."
+
+- kind: db-instance
+  service: rds
+  label: RDS DB Instance
+  list: {method: describe_db_instances, items: DBInstances}
+  enrich:
+    - hook: rds.arns
+      args:
+        own: DBInstanceArn
+        refs:
+          _ClusterArn: [cluster, DBClusterIdentifier]
+          _SubnetGroupArn: [subgrp, DBSubnetGroup.DBSubnetGroupName]
+          _SourceArn: [db, ReadReplicaSourceDBInstanceIdentifier]
+          _ParamGroupArns: [pg, "DBParameterGroups[].DBParameterGroupName"]
+          _OptionGroupArns: [og, "OptionGroupMemberships[].OptionGroupName"]
+  id: DBInstanceArn
+  name: [DBInstanceIdentifier]
+  parent: [{kind: db-cluster, path: _ClusterArn}, {kind: db-subnet-group, path: _SubnetGroupArn}, {kind: region}]
+  props:
+    engine: Engine
+    engineVersion: EngineVersion
+    instanceClass: DBInstanceClass
+    status: DBInstanceStatus
+    multiAz: MultiAZ
+    az: AvailabilityZone
+    secondaryAz: SecondaryAvailabilityZone
+    endpoint: Endpoint.Address
+    port: Endpoint.Port
+    publiclyAccessible: PubliclyAccessible
+    storage: AllocatedStorage
+    replicaOf: ReadReplicaSourceDBInstanceIdentifier
+    replicas: "ReadReplicaDBInstanceIdentifiers && sort(ReadReplicaDBInstanceIdentifiers)"
+    backupRetention: BackupRetentionPeriod
+    tags: {hook: common.tags, args: {field: TagList}}
+  chat_props: [engine, engineVersion, instanceClass, status, multiAz, az, publiclyAccessible, storage, replicaOf, replicas, backupRetention]
+  edges:
+    - {kind: attached, target: "VpcSecurityGroups[].VpcSecurityGroupId", to: security-group, reverse: true, style: attach}
+    - {kind: replica-of, target: _SourceArn, to: db-instance, style: replica}
+    - {kind: uses-parameter-group, target: _ParamGroupArns, to: db-parameter-group, style: reference}
+    - {kind: uses-option-group, target: _OptionGroupArns, to: db-option-group, style: reference}
+  builder: true
+  view: {role: block, category: database, icon: Arch_Amazon-RDS_48.svg, source: Architecture-Service-Icons_07312026/Arch_Databases/48/Arch_Amazon-RDS_48.svg, height: 0.7, order: 72, host: true, actions: [DBInstance]}
+  caveats:
+    - {code: flag-only, prop: multiAz, text: "Floci 2.3.0 keeps Multi-AZ as a flag: no standby runs and a failover moves nothing. Check the flag, not a failover."}
+    - {code: control-plane-only, prop: replicaOf, text: "Floci 2.3.0 records a cross-region read replica but copies no data between regions: check the replica's source, not its rows."}
+    - {code: rds-mysql-replica-missing, text: "Floci 2.3.0 has no read replica or snapshot for MySQL and MariaDB; PostgreSQL has both."}
+  contract:
+    create: {op: create-db-instance, params: {DBInstanceIdentifier: ct-pg, Engine: postgres, DBInstanceClass: db.t3.micro, MasterUsername: ctadmin, MasterUserPassword: Contract-test-1, AllocatedStorage: "20"}, save: db}
+    then: [{op: create-db-instance-read-replica, params: {DBInstanceIdentifier: ct-pg-rr, SourceDBInstanceIdentifier: ct-pg}}]
+    max_seconds: 30
+  ops:
+    - id: create-db-instance
+      api: CreateDBInstance
+      gesture: create
+      title: "Tạo RDS DB instance"
+      fields: [DBInstanceIdentifier, Engine, DBInstanceClass, MasterUsername, MasterUserPassword, AllocatedStorage, DBSubnetGroupName, VpcSecurityGroupIds, MultiAZ, PubliclyAccessible, DBParameterGroupName, OptionGroupName, DBClusterIdentifier]
+      choices: {Engine: [postgres, mysql, mariadb, aurora-postgresql, aurora-mysql]}
+      defaults: {Engine: postgres, DBInstanceClass: db.t3.micro, AllocatedStorage: "20"}
+      result_id: DBInstance.DBInstanceArn
+      expect: {label: DBInstanceIdentifier}
+      note: "Create a database. MultiAZ keeps a standby in another AZ of the subnet group. For an Aurora member give DBClusterIdentifier and leave storage and credentials to the cluster."
+    - id: create-db-instance-read-replica
+      api: CreateDBInstanceReadReplica
+      gesture: create
+      title: "Tạo read replica"
+      fields: [DBInstanceIdentifier, {name: SourceDBInstanceIdentifier, ref: db-instance, ref_by: label}, DBInstanceClass]
+      result_id: DBInstance.DBInstanceArn
+      expect: {kind: db-instance, label: DBInstanceIdentifier}
+      note: "Create a read-only copy that follows the source asynchronously. PostgreSQL only on Floci 2.3.0."
+    - id: create-db-snapshot
+      api: CreateDBSnapshot
+      gesture: create
+      title: "Chụp snapshot DB"
+      fields: [DBSnapshotIdentifier, {name: DBInstanceIdentifier, ref: db-instance, ref_by: label}]
+      creates: db-snapshot
+      result_id: DBSnapshot.DBSnapshotArn
+      expect: {kind: db-snapshot, label: DBSnapshotIdentifier}
+      note: "Take a manual snapshot; it stays until deleted and can be restored as a new instance."
+
+- kind: db-snapshot
+  service: rds
+  label: DB Snapshot
+  list: {method: describe_db_snapshots, items: DBSnapshots}
+  enrich:
+    - hook: rds.arns
+      args: {own: DBSnapshotArn, refs: {_InstanceArn: [db, DBInstanceIdentifier]}}
+  id: DBSnapshotArn
+  name: [DBSnapshotIdentifier]
+  parent: [{kind: region}]
+  props:
+    engine: Engine
+    status: Status
+    type: SnapshotType
+    storage: AllocatedStorage
+    instance: DBInstanceIdentifier
+    tags: {hook: common.tags, args: {field: TagList}}
+  chat_props: [engine, status, type, storage, instance]
+  edges:
+    - {kind: snapshot-of, target: _InstanceArn, to: db-instance, style: reference}
+  view: {role: block, category: database, icon: Res_Amazon-Elastic-Block-Store_Snapshot_48.svg, source: Resource-Icons_07312026/Res_Storage/Res_Amazon-Elastic-Block-Store_Snapshot_48.svg, height: 0.3, order: 77, curve_segments: 3}
+
+- kind: db-cluster-snapshot
+  service: rds
+  label: DB Cluster Snapshot
+  list: {method: describe_db_cluster_snapshots, items: DBClusterSnapshots}
+  enrich:
+    - hook: rds.arns
+      args: {own: DBClusterSnapshotArn, refs: {_ClusterArn: [cluster, DBClusterIdentifier]}}
+  id: DBClusterSnapshotArn
+  name: [DBClusterSnapshotIdentifier]
+  parent: [{kind: region}]
+  props:
+    engine: Engine
+    status: Status
+    type: SnapshotType
+    cluster: DBClusterIdentifier
+    tags: {hook: common.tags, args: {field: TagList}}
+  chat_props: [engine, status, type, cluster]
+  edges:
+    - {kind: snapshot-of, target: _ClusterArn, to: db-cluster, style: reference}
+  view: {role: block, category: database, icon: Res_Amazon-Elastic-Block-Store_Snapshot_48.svg, source: Resource-Icons_07312026/Res_Storage/Res_Amazon-Elastic-Block-Store_Snapshot_48.svg, height: 0.3, order: 78, curve_segments: 3}
+
+- kind: db-proxy
+  service: rds
+  label: RDS Proxy
+  list: {method: describe_db_proxies, items: DBProxies}
+  enrich:
+    - {method: describe_db_proxy_targets, params: {DBProxyName: DBProxyName}, pick: Targets, merge_as: _Targets}
+    - hook: rds.arns
+      args: {own: DBProxyArn, refs: {_TargetArns: [db, "_Targets[?Type=='RDS_INSTANCE'].RdsResourceId"]}}
+  id: DBProxyArn
+  name: [DBProxyName]
+  parent: [{kind: vpc, path: VpcId}]
+  props:
+    engineFamily: EngineFamily
+    status: Status
+    endpoint: Endpoint
+    requireTls: RequireTLS
+    subnets: "VpcSubnetIds && sort(VpcSubnetIds)"
+    targets: "sort_by(_Targets || `[]`, &RdsResourceId)[].{resource: RdsResourceId, type: Type, health: TargetHealth.State}"
+  chat_props: [engineFamily, status, requireTls, subnets, targets]
+  edges:
+    - {kind: attached, target: VpcSecurityGroupIds, to: security-group, reverse: true, style: attach}
+    - {kind: proxy-target, target: _TargetArns, to: db-instance, style: reference}
+    - {kind: execution-role, target: RoleArn, to: iam-role, style: reference}
+  builder: true
+  view: {role: block, category: database, icon: Res_Amazon-RDS-Proxy-Instance_48.svg, source: Resource-Icons_07312026/Res_Databases/Res_Amazon-RDS-Proxy-Instance_48.svg, height: 0.5, order: 73, host: true, actions: [DBProxy]}
+  contract:
+    needs:
+      - {op: create-vpc, params: {name: ct-proxy-vpc, cidr: 10.87.0.0/16}, save: vpc}
+      - {op: create-subnet, params: {name: ct-proxy-a, vpcId: "{vpc}", cidr: 10.87.1.0/24, az: "{region}a"}, save: a}
+      - {op: create-subnet, params: {name: ct-proxy-b, vpcId: "{vpc}", cidr: 10.87.2.0/24, az: "{region}b"}, save: b}
+      - {op: create-role, params: {RoleName: ct-proxy-role, AssumeRolePolicyDocument: '{"Version": "2012-10-17", "Statement": [{"Effect": "Allow", "Principal": {"Service": "rds.amazonaws.com"}, "Action": "sts:AssumeRole"}]}'}, save: role}
+    create: {op: create-db-proxy, params: {DBProxyName: ct-proxy, EngineFamily: POSTGRESQL, Auth: '[{"AuthScheme": "SECRETS", "SecretArn": "arn:aws:secretsmanager:{region}:000000000000:secret:ct-proxy"}]', RoleArn: "{role}", VpcSubnetIds: "{a},{b}"}, save: proxy}
+    parent: vpc
+  ops:
+    - id: create-db-proxy
+      api: CreateDBProxy
+      gesture: create
+      title: "Tạo RDS Proxy"
+      fields: [DBProxyName, EngineFamily, {name: Auth, multiline: true}, RoleArn, VpcSubnetIds, VpcSecurityGroupIds, RequireTLS]
+      choices: {EngineFamily: [POSTGRESQL, MYSQL, SQLSERVER]}
+      result_id: DBProxy.DBProxyArn
+      expect: {label: DBProxyName}
+      note: "Pool connections in front of a DB. Auth as JSON [{\"AuthScheme\": \"SECRETS\", \"SecretArn\": \"arn:aws:secretsmanager:...\"}]; RoleArn may read that secret; at least two subnets in different AZs."
+    - id: register-db-proxy-targets
+      api: RegisterDBProxyTargets
+      gesture: connect
+      title: "Gắn DB vào proxy"
+      fields: [{name: DBProxyName, ref: db-proxy, ref_by: label}, DBInstanceIdentifiers, DBClusterIdentifiers]
+      source: db-proxy
+      source_param: DBProxyName
+      targets: [db-instance, db-cluster]
+      note: "Send the proxy's connections to a DB instance or Aurora cluster (names, comma-separated)."
+
+- kind: rds-event-subscription
+  service: rds
+  label: RDS Event Subscription
+  list: {method: describe_event_subscriptions, items: EventSubscriptionsList}
+  id: EventSubscriptionArn
+  name: [CustSubscriptionId]
+  parent: [{kind: region}]
+  props:
+    snsTopic: SnsTopicArn
+    sourceType: SourceType
+    sourceIds: "SourceIdsList && sort(SourceIdsList)"
+    categories: "EventCategoriesList && sort(EventCategoriesList)"
+    enabled: Enabled
+    status: Status
+  chat_props: [snsTopic, sourceType, sourceIds, categories, enabled, status]
+  edges:
+    # Sources are named by identifier; an empty list means every source of the type.
+    - {kind: watches, target: "SourceType == 'db-instance' && SourceIdsList", match: DBInstanceIdentifier, to: db-instance, style: reference}
+    - {kind: watches, target: "SourceType == 'db-cluster' && SourceIdsList", match: DBClusterIdentifier, to: db-cluster, style: reference}
+    - {kind: notifies, target: SnsTopicArn, to: sns-topic, style: reference}
+  caveats:
+    - {code: rds-event-categories-dropped, prop: categories, text: "Floci 2.3.0 drops EventCategories on create and modify: the subscription lists none, as if it took every category."}
+    - {code: rds-event-source-ids-dropped, prop: sourceIds, text: "Floci 2.3.0 drops SourceIds given on create; add-source-identifier-to-subscription keeps them. It accepts any SNS topic ARN, even one that does not exist."}
+  floci: {status: control-plane-only, note: "Floci 2.3.0 stores event subscriptions but publishes no RDS events to their SNS topic (a reboot sends nothing)."}
+  builder: true
+  view: {role: block, category: database, icon: Res_Amazon-Simple-Notification-Service_Email-Notification_48.svg, source: Resource-Icons_07312026/Res_Application-Integration/Res_Amazon-Simple-Notification-Service_Email-Notification_48.svg, height: 0.3, order: 680, actions: [EventSubscription, EventSubscriptions]}
+  contract:
+    needs:
+      - {op: create-topic, params: {Name: ct-rds-events}, save: topic}
+    create: {op: create-event-subscription, params: {SubscriptionName: ct-rds-events, SnsTopicArn: "{topic}", SourceType: db-instance}, save: sub}
+    then:
+      - {op: modify-event-subscription, params: {SubscriptionName: ct-rds-events, Enabled: "false"}}
+      - {op: delete-event-subscription, params: {SubscriptionName: ct-rds-events}}
+  ops:
+    - id: create-event-subscription
+      api: CreateEventSubscription
+      gesture: create
+      title: "Tạo RDS event subscription"
+      fields: [SubscriptionName, SnsTopicArn, SourceType, SourceIds, EventCategories, Enabled]
+      choices: {SourceType: [db-instance, db-cluster, db-parameter-group, db-security-group, db-snapshot, db-cluster-snapshot, db-proxy]}
+      defaults: {SourceType: db-instance}
+      result_id: EventSubscription.EventSubscriptionArn
+      expect: {label: SubscriptionName}
+      note: "Send RDS events (failover, backup, low storage...) of SourceType to an SNS topic. SourceIds (identifiers, comma-separated) narrow it to some sources; EventCategories (availability, backup, failover...) to some kinds of event. The topic's policy must let rds.amazonaws.com publish."
+    - id: modify-event-subscription
+      api: ModifyEventSubscription
+      gesture: attribute
+      title: "Sửa RDS event subscription"
+      fields: [{name: SubscriptionName, ref: rds-event-subscription, ref_by: label}, Enabled, SnsTopicArn, SourceType, EventCategories]
+      targets: [rds-event-subscription]
+      target_param: SubscriptionName
+      note: "Turn the subscription on or off, or change its topic, source type or categories. Add sources with add-source-identifier-to-subscription."
+    - id: add-source-identifier-to-subscription
+      api: AddSourceIdentifierToSubscription
+      gesture: attribute
+      title: "Thêm nguồn cho event subscription"
+      fields: [{name: SubscriptionName, ref: rds-event-subscription, ref_by: label}, SourceIdentifier]
+      targets: [rds-event-subscription]
+      target_param: SubscriptionName
+      note: "Add one DB instance or cluster (its identifier) whose events the subscription sends."
+    - id: delete-event-subscription
+      api: DeleteEventSubscription
+      gesture: delete
+      title: "Xoá RDS event subscription"
+      fields: [{name: SubscriptionName, ref: rds-event-subscription, ref_by: label}]
+      targets: [rds-event-subscription]
+      target_param: SubscriptionName
+      note: "Delete the subscription; the SNS topic stays."

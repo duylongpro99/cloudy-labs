@@ -1,0 +1,69 @@
+{
+  "calls": [
+    {
+      "params": {
+        "HostedZoneId": "/hostedzone/Z6WG0M5Q336PDHF"
+      },
+      "response": {
+        "IsTruncated": false,
+        "MaxItems": "300",
+        "ResourceRecordSets": [
+          {
+            "Failover": "PRIMARY",
+            "HealthCheckId": "e3444407-d988-4961-be66-64b459c57cfa",
+            "Name": "app.w3-edge.example.com.",
+            "ResourceRecords": [
+              {
+                "Value": "10.153.1.10"
+              }
+            ],
+            "SetIdentifier": "primary",
+            "TTL": 60,
+            "Type": "A"
+          },
+          {
+            "Failover": "SECONDARY",
+            "Name": "app.w3-edge.example.com.",
+            "ResourceRecords": [
+              {
+                "Value": "10.153.2.10"
+              }
+            ],
+            "SetIdentifier": "secondary",
+            "TTL": 60,
+            "Type": "A"
+          },
+          {
+            "Name": "w3-edge.example.com.",
+            "ResourceRecords": [
+              {
+                "Value": "ns-1.awsdns-01.org."
+              },
+              {
+                "Value": "ns-2.awsdns-02.net."
+              },
+              {
+                "Value": "ns-3.awsdns-03.com."
+              },
+              {
+                "Value": "ns-4.awsdns-04.co.uk."
+              }
+            ],
+            "TTL": 172800,
+            "Type": "NS"
+          },
+          {
+            "Name": "w3-edge.example.com.",
+            "ResourceRecords": [
+              {
+                "Value": "ns-1.awsdns-01.org awsdns-hostmaster.amazon.com. 1 7200 900 1209600 86400"
+              }
+            ],
+            "TTL": 900,
+            "Type": "SOA"
+          }
+        ]
+      }
+    }
+  ]
+}

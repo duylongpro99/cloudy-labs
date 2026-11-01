@@ -1,0 +1,15 @@
+{
+  "calls": [
+    {
+      "params": {},
+      "response": {
+        "RuleGroups": [
+          {
+            "Arn": "arn:aws:network-firewall:ap-southeast-2:000000000000:stateful-rulegroup/w3-allow-web",
+            "Name": "w3-allow-web"
+          }
+        ]
+      }
+    }
+  ]
+}

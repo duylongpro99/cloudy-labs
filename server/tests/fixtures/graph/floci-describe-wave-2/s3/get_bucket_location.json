@@ -1,0 +1,12 @@
+{
+  "calls": [
+    {
+      "params": {
+        "Bucket": "w2-backup-src"
+      },
+      "response": {
+        "LocationConstraint": "ap-southeast-2"
+      }
+    }
+  ]
+}

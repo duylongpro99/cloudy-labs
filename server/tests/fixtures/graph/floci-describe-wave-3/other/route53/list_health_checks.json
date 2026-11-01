@@ -1,0 +1,27 @@
+{
+  "calls": [
+    {
+      "params": {},
+      "response": {
+        "HealthChecks": [
+          {
+            "CallerReference": "w3-edge-hc",
+            "HealthCheckConfig": {
+              "FailureThreshold": 3,
+              "FullyQualifiedDomainName": "w3-edge-alb-69f799da92464b34.elb.localhost.floci.io",
+              "Port": 80,
+              "RequestInterval": 30,
+              "ResourcePath": "/",
+              "Type": "HTTP"
+            },
+            "HealthCheckVersion": 1,
+            "Id": "e3444407-d988-4961-be66-64b459c57cfa"
+          }
+        ],
+        "IsTruncated": false,
+        "Marker": "",
+        "MaxItems": "100"
+      }
+    }
+  ]
+}

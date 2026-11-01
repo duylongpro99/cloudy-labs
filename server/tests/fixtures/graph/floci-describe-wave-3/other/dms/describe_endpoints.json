@@ -1,0 +1,36 @@
+{
+  "calls": [
+    {
+      "params": {},
+      "response": {
+        "Endpoints": [
+          {
+            "DatabaseName": "postgres",
+            "EndpointArn": "arn:aws:dms:ap-southeast-2:000000000000:endpoint:5BMIDRU5MGUNHOIU4HK5QBWASA",
+            "EndpointIdentifier": "w3-dm-src",
+            "EndpointType": "SOURCE",
+            "EngineName": "postgres",
+            "Port": 7001,
+            "ServerName": "172.27.0.3",
+            "SslMode": "none",
+            "Status": "active",
+            "Username": "w3admin"
+          },
+          {
+            "EndpointArn": "arn:aws:dms:ap-southeast-2:000000000000:endpoint:74ETK3CSBCD7IVPEGCR7KR7ZAS",
+            "EndpointIdentifier": "w3-dm-tgt",
+            "EndpointType": "TARGET",
+            "EngineName": "s3",
+            "S3Settings": {
+              "BucketFolder": "dms",
+              "BucketName": "w3-dm-bucket",
+              "ServiceAccessRoleArn": "arn:aws:iam::000000000000:role/w3-dm-role"
+            },
+            "SslMode": "none",
+            "Status": "active"
+          }
+        ]
+      }
+    }
+  ]
+}

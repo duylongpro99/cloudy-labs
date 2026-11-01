@@ -1,0 +1,22 @@
+{
+  "calls": [
+    {
+      "params": {
+        "QueueUrl": "http://localhost:4566/000000000000/w3-orders-dlq"
+      },
+      "response": {
+        "queueUrls": [
+          "http://localhost:4566/000000000000/w3-orders"
+        ]
+      }
+    },
+    {
+      "params": {
+        "QueueUrl": "http://localhost:4566/000000000000/w3-orders"
+      },
+      "response": {
+        "queueUrls": []
+      }
+    }
+  ]
+}

@@ -1,0 +1,30 @@
+{
+  "calls": [
+    {
+      "params": {
+        "FirewallPolicyArn": "arn:aws:network-firewall:ap-southeast-2:000000000000:firewall-policy/w3-policy"
+      },
+      "response": {
+        "FirewallPolicy": {
+          "StatefulRuleGroupReferences": [
+            {
+              "ResourceArn": "arn:aws:network-firewall:ap-southeast-2:000000000000:stateful-rulegroup/w3-allow-web"
+            }
+          ],
+          "StatelessDefaultActions": [
+            "aws:forward_to_sfe"
+          ],
+          "StatelessFragmentDefaultActions": [
+            "aws:forward_to_sfe"
+          ]
+        },
+        "FirewallPolicyResponse": {
+          "FirewallPolicyArn": "arn:aws:network-firewall:ap-southeast-2:000000000000:firewall-policy/w3-policy",
+          "FirewallPolicyId": "c05e2e43e716ca86f37d1db464d177c1",
+          "FirewallPolicyName": "w3-policy"
+        },
+        "UpdateToken": "a5dcc45b-3ae4-4580-9cdf-13079c2479d9"
+      }
+    }
+  ]
+}

@@ -1,0 +1,18 @@
+{
+  "calls": [
+    {
+      "params": {
+        "ParentId": "r-gt0v"
+      },
+      "response": {
+        "OrganizationalUnits": [
+          {
+            "Arn": "arn:aws:organizations::000000000000:ou/o-1pln15fyv4/ou-gt0v-tp01c9ap",
+            "Id": "ou-gt0v-tp01c9ap",
+            "Name": "w3-workloads"
+          }
+        ]
+      }
+    }
+  ]
+}

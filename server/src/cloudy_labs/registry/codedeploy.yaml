@@ -1,0 +1,52 @@
+# AWS CodeDeploy applications. ListApplications answers names only; GetApplication gives the id and
+# compute platform, and ListDeploymentGroups the groups in it. The API returns no application ARN, so
+# the node id is the application id. Floci stores applications and groups; a deployment runs nothing.
+
+- kind: codedeploy-application
+  service: codedeploy
+  label: CodeDeploy Application
+  list: {method: list_applications, items: "applications[].{applicationName: @}"}
+  enrich:
+    - {method: get_application, params: {applicationName: applicationName}, pick: application, merge_as: _App}
+    - {method: list_deployment_groups, params: {applicationName: applicationName}, pick: deploymentGroups, merge_as: _Groups}
+  id: _App.applicationId
+  name: [applicationName]
+  parent: [{kind: region}]
+  props:
+    computePlatform: _App.computePlatform
+    linkedToGitHub: _App.linkedToGitHub
+    deploymentGroups: "sort(_Groups || `[]`)"
+  chat_props: [computePlatform, linkedToGitHub, deploymentGroups]
+  builder: true
+  view: {role: block, category: developer-tools, icon: Arch_AWS-CodeDeploy_48.svg, source: Architecture-Service-Icons_07312026/Arch_Developer-Tools/48/Arch_AWS-CodeDeploy_48.svg, height: 0.5, order: 625, actions: [Application, DeploymentGroup, Deployment]}
+  contract:
+    create: {op: create-codedeploy-application, params: {applicationName: ct-codedeploy, computePlatform: Server}, save: app}
+    then:
+      - {op: rename-codedeploy-application, params: {applicationName: ct-codedeploy, newApplicationName: ct-codedeploy-2}}
+      - {op: delete-codedeploy-application, params: {applicationName: ct-codedeploy-2}}
+  ops:
+    - id: create-codedeploy-application
+      api: CreateApplication
+      gesture: create
+      title: "Tạo CodeDeploy application"
+      fields: [{name: applicationName, placeholder: my-app}, computePlatform]
+      defaults: {computePlatform: Server}
+      result_id: applicationId
+      expect: {label: applicationName}
+      note: "Create an application for deployments to EC2/on-premises (Server), Lambda or ECS. Add a deployment group next: it names the targets, the service role and the deployment config."
+    - id: rename-codedeploy-application
+      api: UpdateApplication
+      gesture: attribute
+      title: "Đổi tên CodeDeploy application"
+      fields: [{name: applicationName, ref: codedeploy-application, ref_by: label}, newApplicationName]
+      targets: [codedeploy-application]
+      target_param: applicationName
+      note: "Rename the application."
+    - id: delete-codedeploy-application
+      api: DeleteApplication
+      gesture: delete
+      title: "Xoá CodeDeploy application"
+      fields: [{name: applicationName, ref: codedeploy-application, ref_by: label}]
+      targets: [codedeploy-application]
+      target_param: applicationName
+      note: "Delete the application with its deployment groups and deployment history."

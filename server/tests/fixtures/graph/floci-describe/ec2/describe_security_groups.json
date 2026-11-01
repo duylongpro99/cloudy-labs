@@ -1,0 +1,177 @@
+{
+  "calls": [
+    {
+      "params": {},
+      "response": {
+        "SecurityGroups": [
+          {
+            "Description": "default VPC security group",
+            "GroupId": "sg-2559a8642555f05e7",
+            "GroupName": "default",
+            "IpPermissions": [],
+            "IpPermissionsEgress": [
+              {
+                "IpProtocol": "-1",
+                "IpRanges": [
+                  {
+                    "CidrIp": "0.0.0.0/0"
+                  }
+                ],
+                "Ipv6Ranges": [],
+                "PrefixListIds": [],
+                "UserIdGroupPairs": []
+              }
+            ],
+            "OwnerId": "000000000000",
+            "Tags": [],
+            "VpcId": "vpc-29250840"
+          },
+          {
+            "Description": "default VPC security group",
+            "GroupId": "sg-default-ap-southeast-2",
+            "GroupName": "default",
+            "IpPermissions": [],
+            "IpPermissionsEgress": [
+              {
+                "IpProtocol": "-1",
+                "IpRanges": [
+                  {
+                    "CidrIp": "0.0.0.0/0"
+                  }
+                ],
+                "Ipv6Ranges": [],
+                "PrefixListIds": [],
+                "UserIdGroupPairs": []
+              }
+            ],
+            "OwnerId": "000000000000",
+            "Tags": [],
+            "VpcId": "vpc-default-ap-southeast-2"
+          },
+          {
+            "Description": "web tier",
+            "GroupId": "sg-16d87565cacd7efa0",
+            "GroupName": "wave1-web",
+            "IpPermissions": [
+              {
+                "FromPort": 443,
+                "IpProtocol": "tcp",
+                "IpRanges": [
+                  {
+                    "CidrIp": "0.0.0.0/0"
+                  }
+                ],
+                "Ipv6Ranges": [],
+                "PrefixListIds": [],
+                "ToPort": 443,
+                "UserIdGroupPairs": []
+              },
+              {
+                "FromPort": 22,
+                "IpProtocol": "tcp",
+                "IpRanges": [],
+                "Ipv6Ranges": [],
+                "PrefixListIds": [
+                  {
+                    "PrefixListId": "pl-403ec40bdb5e527f2"
+                  }
+                ],
+                "ToPort": 22,
+                "UserIdGroupPairs": []
+              }
+            ],
+            "IpPermissionsEgress": [
+              {
+                "IpProtocol": "-1",
+                "IpRanges": [
+                  {
+                    "CidrIp": "0.0.0.0/0"
+                  }
+                ],
+                "Ipv6Ranges": [],
+                "PrefixListIds": [],
+                "UserIdGroupPairs": []
+              },
+              {
+                "FromPort": 5432,
+                "IpProtocol": "tcp",
+                "IpRanges": [],
+                "Ipv6Ranges": [],
+                "PrefixListIds": [],
+                "ToPort": 5432,
+                "UserIdGroupPairs": [
+                  {
+                    "GroupId": "sg-5271729b7a5ffc3e2",
+                    "UserId": "000000000000"
+                  }
+                ]
+              }
+            ],
+            "OwnerId": "000000000000",
+            "Tags": [],
+            "VpcId": "vpc-03e9e3f9"
+          },
+          {
+            "Description": "default VPC security group",
+            "GroupId": "sg-cc2f2105a40fceb16",
+            "GroupName": "default",
+            "IpPermissions": [],
+            "IpPermissionsEgress": [
+              {
+                "IpProtocol": "-1",
+                "IpRanges": [
+                  {
+                    "CidrIp": "0.0.0.0/0"
+                  }
+                ],
+                "Ipv6Ranges": [],
+                "PrefixListIds": [],
+                "UserIdGroupPairs": []
+              }
+            ],
+            "OwnerId": "000000000000",
+            "Tags": [],
+            "VpcId": "vpc-03e9e3f9"
+          },
+          {
+            "Description": "app tier",
+            "GroupId": "sg-5271729b7a5ffc3e2",
+            "GroupName": "wave1-app",
+            "IpPermissions": [
+              {
+                "FromPort": 5432,
+                "IpProtocol": "tcp",
+                "IpRanges": [],
+                "Ipv6Ranges": [],
+                "PrefixListIds": [],
+                "ToPort": 5432,
+                "UserIdGroupPairs": [
+                  {
+                    "GroupId": "sg-16d87565cacd7efa0",
+                    "UserId": "000000000000"
+                  }
+                ]
+              }
+            ],
+            "IpPermissionsEgress": [
+              {
+                "IpProtocol": "-1",
+                "IpRanges": [
+                  {
+                    "CidrIp": "0.0.0.0/0"
+                  }
+                ],
+                "Ipv6Ranges": [],
+                "PrefixListIds": [],
+                "UserIdGroupPairs": []
+              }
+            ],
+            "OwnerId": "000000000000",
+            "Tags": [],
+            "VpcId": "vpc-03e9e3f9"
+          }
+        ]
+      }
+    }
+  ]
+}

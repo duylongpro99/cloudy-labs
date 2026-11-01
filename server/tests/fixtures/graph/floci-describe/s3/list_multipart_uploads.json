@@ -1,0 +1,43 @@
+{
+  "calls": [
+    {
+      "params": {
+        "Bucket": "wave1-site"
+      },
+      "response": {
+        "Bucket": "wave1-site"
+      }
+    },
+    {
+      "params": {
+        "Bucket": "wave1-dst"
+      },
+      "response": {
+        "Bucket": "wave1-dst"
+      }
+    },
+    {
+      "params": {
+        "Bucket": "wave1-src"
+      },
+      "response": {
+        "Bucket": "wave1-src"
+      }
+    },
+    {
+      "params": {
+        "Bucket": "wave1-logs"
+      },
+      "response": {
+        "Bucket": "wave1-logs",
+        "Uploads": [
+          {
+            "Initiated": "2026-10-31 14:41:12+00:00",
+            "Key": "tmp/big.bin",
+            "UploadId": "e9c9b6d0-a862-4051-9e65-a3aba9ac0099"
+          }
+        ]
+      }
+    }
+  ]
+}

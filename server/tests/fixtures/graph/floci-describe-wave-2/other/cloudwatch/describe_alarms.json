@@ -1,0 +1,32 @@
+{
+  "calls": [
+    {
+      "params": {},
+      "response": {
+        "MetricAlarms": [
+          {
+            "ActionsEnabled": true,
+            "AlarmActions": [],
+            "AlarmArn": "arn:aws:cloudwatch:ap-southeast-2:000000000000:alarm:w2-errors-alarm",
+            "AlarmDescription": "errors in w2-app-logs",
+            "AlarmName": "w2-errors-alarm",
+            "ComparisonOperator": "GreaterThanOrEqualToThreshold",
+            "Dimensions": [],
+            "EvaluationPeriods": 1,
+            "InsufficientDataActions": [],
+            "MetricName": "AppErrors",
+            "Namespace": "w2/Logs",
+            "OKActions": [],
+            "Period": 60,
+            "StateReason": "Unchecked",
+            "StateUpdatedTimestamp": "2026-10-31 22:16:09+07:00",
+            "StateValue": "INSUFFICIENT_DATA",
+            "Statistic": "Sum",
+            "Threshold": 1.0,
+            "TreatMissingData": "notBreaching"
+          }
+        ]
+      }
+    }
+  ]
+}

@@ -1,0 +1,80 @@
+# AWS WAF (v2) web ACLs of scope REGIONAL, which protect load balancers, API Gateway stages and the
+# like in the lab's region. CLOUDFRONT-scope web ACLs live in us-east-1 only and are not listed here.
+# UpdateWebACL and DeleteWebACL need the LockToken GetWebACL returns; it is not shown.
+
+- kind: waf-web-acl
+  service: wafv2
+  label: WAF Web ACL
+  list: {method: list_web_acls, items: WebACLs, params: {Scope: REGIONAL}, paginate: false}
+  enrich:
+    - {method: get_web_acl, params: {Name: Name, Id: Id}, const: {Scope: REGIONAL}, pick: WebACL, merge_as: _Acl}
+    - {method: list_resources_for_web_acl, params: {WebACLArn: ARN}, const: {ResourceType: APPLICATION_LOAD_BALANCER}, pick: ResourceArns, merge_as: _Resources}
+  id: ARN
+  name: [Name, ARN]
+  parent: [{kind: region}]
+  props:
+    description: Description
+    defaultAction: "keys(_Acl.DefaultAction || `{}`)[0]"
+    rules: "sort_by(_Acl.Rules || `[]`, &Priority)[].{name: Name, priority: Priority, action: keys(Action || OverrideAction || `{}`)[0], statement: keys(Statement || `{}`)[0]}"
+    capacity: _Acl.Capacity
+    metrics: "_Acl.VisibilityConfig.{metricName: MetricName, cloudWatch: CloudWatchMetricsEnabled, sampledRequests: SampledRequestsEnabled}"
+    resources: "sort(_Resources || `[]`)"
+  chat_props: [description, defaultAction, rules, capacity, metrics, resources]
+  edges:
+    - {kind: web-acl-for, target: _Resources, to: load-balancer, style: association}
+  caveats:
+    - {code: waf-no-inspection, prop: rules, text: "Floci 2.3.0 stores web ACLs and their rules but inspects no traffic: a blocked IP or pattern still reaches the load balancer or API. Check the rules and the association."}
+    - {code: waf-accepts-unknown-resources, prop: resources, text: "Floci 2.3.0 associates a web ACL with any resource ARN, even one that does not exist, and ListResourcesForWebACL answers every associated resource whatever its ResourceType. Check that the associated load balancer is in the scene."}
+  floci: {status: control-plane-only, note: "Web ACLs, rules and associations are stored; requests are not inspected or blocked."}
+  builder: true
+  view: {role: block, category: security, icon: Arch_AWS-WAF_48.svg, source: Architecture-Service-Icons_07312026/Arch_Security-Identity/48/Arch_AWS-WAF_48.svg, height: 0.5, order: 520, actions: [WebACL]}
+  contract:
+    needs:
+      - {op: create-vpc, params: {name: ct-waf-vpc, cidr: 10.151.0.0/16}, save: vpc}
+      - {op: create-subnet, params: {name: ct-waf-a, vpcId: "{vpc}", cidr: 10.151.1.0/24, az: "{region}a"}, save: a}
+      - {op: create-subnet, params: {name: ct-waf-b, vpcId: "{vpc}", cidr: 10.151.2.0/24, az: "{region}b"}, save: b}
+      - {op: create-load-balancer, params: {Name: ct-waf-alb, Subnets: "{a},{b}"}, save: lb}
+    create: {op: create-web-acl, params: {Name: ct-web-acl, Scope: REGIONAL, VisibilityConfig.MetricName: ct-web-acl}, save: acl}
+    then:
+      - {op: associate-web-acl, params: {WebACLArn: "{acl}", ResourceArn: "{lb}"}}
+  ops:
+    - id: create-web-acl
+      api: CreateWebACL
+      gesture: create
+      title: "Tạo WAF Web ACL"
+      fields: [Name, Scope, Description, {name: DefaultAction, multiline: true}, {name: Rules, multiline: true, placeholder: '[{"Name": "block-ip", "Priority": 0, "Statement": {"IPSetReferenceStatement": {"ARN": "arn:aws:wafv2:..."}}, "Action": {"Block": {}}, "VisibilityConfig": {"SampledRequestsEnabled": true, "CloudWatchMetricsEnabled": true, "MetricName": "block-ip"}}]'}, VisibilityConfig.MetricName, VisibilityConfig.CloudWatchMetricsEnabled, VisibilityConfig.SampledRequestsEnabled]
+      choices: {Scope: [REGIONAL]}
+      defaults: {Scope: REGIONAL, DefaultAction: '{"Allow": {}}', VisibilityConfig.CloudWatchMetricsEnabled: "true", VisibilityConfig.SampledRequestsEnabled: "true"}
+      result_id: Summary.ARN
+      expect: {label: Name}
+      note: "Create a web ACL for load balancers and API Gateway stages in this region. DefaultAction {\"Allow\": {}} or {\"Block\": {}} applies when no rule matches; Rules is a JSON list of rules with Name, Priority, Statement (IPSetReferenceStatement, ByteMatchStatement, RateBasedStatement, ManagedRuleGroupStatement...), Action (or OverrideAction for a rule group) and VisibilityConfig. Then associate it with a load balancer."
+    - id: associate-web-acl
+      api: AssociateWebACL
+      gesture: connect
+      title: "Gắn Web ACL vào Load Balancer"
+      fields: [{name: WebACLArn, ref: waf-web-acl}, {name: ResourceArn, ref: load-balancer}]
+      source: waf-web-acl
+      source_param: WebACLArn
+      targets: [load-balancer]
+      target_param: ResourceArn
+      note: "Protect an application load balancer (or an API Gateway stage ARN) with the web ACL. A resource has at most one web ACL."
+    - id: update-web-acl
+      api: UpdateWebACL
+      gesture: attribute
+      title: "Sửa rule của Web ACL"
+      fields: [Name, Scope, Id, LockToken, {name: DefaultAction, multiline: true}, {name: Rules, multiline: true}, VisibilityConfig.MetricName, VisibilityConfig.CloudWatchMetricsEnabled, VisibilityConfig.SampledRequestsEnabled]
+      choices: {Scope: [REGIONAL]}
+      defaults: {Scope: REGIONAL, DefaultAction: '{"Allow": {}}', VisibilityConfig.CloudWatchMetricsEnabled: "true", VisibilityConfig.SampledRequestsEnabled: "true"}
+      targets: [waf-web-acl]
+      target_param: Name
+      note: "Replace the web ACL's default action and whole rule list (JSON, as for create-web-acl). Id and LockToken come from aws wafv2 get-web-acl --name <name> --scope REGIONAL --id <id>; a stale LockToken is refused with WAFOptimisticLockException."
+    - id: delete-web-acl
+      api: DeleteWebACL
+      gesture: delete
+      title: "Xoá WAF Web ACL"
+      fields: [Name, Scope, Id, LockToken]
+      choices: {Scope: [REGIONAL]}
+      defaults: {Scope: REGIONAL}
+      targets: [waf-web-acl]
+      target_param: Name
+      note: "Delete the web ACL. Disassociate it from its resources first; Id and LockToken come from aws wafv2 get-web-acl."

@@ -1,0 +1,45 @@
+{
+  "calls": [
+    {
+      "error": "NoSuchLifecycleConfiguration",
+      "params": {
+        "Bucket": "wave1-site"
+      }
+    },
+    {
+      "error": "NoSuchLifecycleConfiguration",
+      "params": {
+        "Bucket": "wave1-dst"
+      }
+    },
+    {
+      "error": "NoSuchLifecycleConfiguration",
+      "params": {
+        "Bucket": "wave1-src"
+      }
+    },
+    {
+      "params": {
+        "Bucket": "wave1-logs"
+      },
+      "response": {
+        "Rules": [
+          {
+            "AbortIncompleteMultipartUpload": {
+              "DaysAfterInitiation": 7
+            },
+            "Expiration": {
+              "Days": 30
+            },
+            "Filter": {
+              "Prefix": "tmp/"
+            },
+            "ID": "expire",
+            "Status": "Enabled"
+          }
+        ],
+        "TransitionDefaultMinimumObjectSize": "all_storage_classes_128K"
+      }
+    }
+  ]
+}

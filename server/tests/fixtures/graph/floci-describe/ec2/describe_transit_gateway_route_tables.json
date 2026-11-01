@@ -1,0 +1,34 @@
+{
+  "calls": [
+    {
+      "params": {},
+      "response": {
+        "TransitGatewayRouteTables": [
+          {
+            "CreationTime": "2026-10-31 14:41:10.377000+00:00",
+            "DefaultAssociationRouteTable": false,
+            "DefaultPropagationRouteTable": false,
+            "State": "available",
+            "Tags": [
+              {
+                "Key": "Name",
+                "Value": "wave1-tgw-rt"
+              }
+            ],
+            "TransitGatewayId": "tgw-694378cffac133fc8",
+            "TransitGatewayRouteTableId": "tgw-rtb-94e55f216fa9ff145"
+          },
+          {
+            "CreationTime": "2026-10-31 14:41:10.372000+00:00",
+            "DefaultAssociationRouteTable": true,
+            "DefaultPropagationRouteTable": true,
+            "State": "available",
+            "Tags": [],
+            "TransitGatewayId": "tgw-694378cffac133fc8",
+            "TransitGatewayRouteTableId": "tgw-rtb-91762891d9f9209f7"
+          }
+        ]
+      }
+    }
+  ]
+}

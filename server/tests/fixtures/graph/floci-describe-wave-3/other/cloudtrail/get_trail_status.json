@@ -1,0 +1,13 @@
+{
+  "calls": [
+    {
+      "params": {
+        "Name": "arn:aws:cloudtrail:ap-southeast-2:000000000000:trail/w3-trail"
+      },
+      "response": {
+        "IsLogging": true,
+        "StartLoggingTime": "2026-10-31 23:25:12.219000+07:00"
+      }
+    }
+  ]
+}

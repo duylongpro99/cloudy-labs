@@ -1,0 +1,153 @@
+# AWS Lambda. A function in a VPC sits in its first subnet; versions and aliases are listed per function.
+# Environment variables are never read into props: they often hold secrets.
+
+- kind: lambda-layer
+  service: lambda
+  label: Lambda Layer
+  list: {method: list_layers, items: Layers}
+  id: LayerArn
+  name: [LayerName]
+  parent: [{kind: region}]
+  props:
+    latestVersion: LatestMatchingVersion.Version
+    runtimes: LatestMatchingVersion.CompatibleRuntimes
+    description: LatestMatchingVersion.Description
+  chat_props: [latestVersion, runtimes, description]
+  builder: true
+  view: {role: block, category: compute, icon: Res_AWS-Lambda_Lambda-Function_48.svg, source: Resource-Icons_07312026/Res_Compute/Res_AWS-Lambda_Lambda-Function_48.svg, height: 0.3, order: 93, actions: [LayerVersion]}
+  contract:
+    create: {op: publish-layer-version, params: {LayerName: ct-layer, CompatibleRuntimes: python3.12}}
+  ops:
+    - id: publish-layer-version
+      api: PublishLayerVersion
+      gesture: create
+      title: "Tạo Lambda layer"
+      fields: [LayerName, {name: Content.ZipFile, sample: hello-python, flag: --zip-file}, CompatibleRuntimes, Description]
+      expect: {label: LayerName}
+      note: "Publish a layer: shared code or libraries that functions add with Layers. The builder sends a small sample zip."
+
+- kind: lambda-function
+  service: lambda
+  label: Lambda Function
+  list: {method: list_functions, items: Functions}
+  id: FunctionArn
+  name: [FunctionName]
+  parent: [{kind: subnet, path: VpcConfig.SubnetIds}, {kind: region}]
+  props:
+    runtime: Runtime
+    handler: Handler
+    memory: MemorySize
+    timeout: Timeout
+    state: State
+    packageType: PackageType
+    architectures: Architectures
+    vpc: VpcConfig.VpcId
+    subnets: "VpcConfig.SubnetIds && sort(VpcConfig.SubnetIds)"
+    layers: "Layers[].Arn"
+    role: Role
+  chat_props: [runtime, handler, memory, timeout, state, packageType, architectures, vpc, subnets, layers, role]
+  edges:
+    - {kind: attached, target: VpcConfig.SecurityGroupIds, to: security-group, reverse: true, style: attach}
+    - {kind: execution-role, target: Role, to: iam-role, style: reference}
+    - {kind: uses-layer, target: "Layers[].Arn", match: LatestMatchingVersion.LayerVersionArn, to: lambda-layer, style: reference}
+  builder: true
+  view: {role: block, category: compute, icon: Arch_AWS-Lambda_48.svg, source: Architecture-Service-Icons_07312026/Arch_Compute/48/Arch_AWS-Lambda_48.svg, height: 0.6, order: 90, host: true, actions: [Function]}
+  contract:
+    needs:
+      - {op: create-role, params: {RoleName: ct-fn-role, AssumeRolePolicyDocument: '{"Version": "2012-10-17", "Statement": [{"Effect": "Allow", "Principal": {"Service": "lambda.amazonaws.com"}, "Action": "sts:AssumeRole"}]}'}, save: role}
+    create: {op: create-function, params: {FunctionName: ct-fn, Runtime: python3.12, Role: "{role}", Handler: lambda_function.lambda_handler}, save: fn}
+    then:
+      - {op: publish-version, params: {FunctionName: ct-fn}}
+    max_seconds: 10
+  ops:
+    - id: create-function
+      api: CreateFunction
+      gesture: create
+      title: "Tạo Lambda function"
+      fields: [FunctionName, Runtime, {name: Role, ref: iam-role}, Handler, {name: Code.ZipFile, sample: hello-python, flag: --zip-file}, Timeout, MemorySize, VpcConfig.SubnetIds, VpcConfig.SecurityGroupIds, Layers]
+      defaults: {Runtime: python3.12, Handler: lambda_function.lambda_handler}
+      result_id: FunctionArn
+      expect: {label: FunctionName}
+      note: "Create a function from the sample zip (lambda_function.lambda_handler returns its event). Role: an IAM role Lambda may assume. In a VPC, give subnets and security groups."
+    - id: publish-version
+      api: PublishVersion
+      gesture: create
+      title: "Publish version"
+      fields: [{name: FunctionName, ref: lambda-function, ref_by: label}, Description]
+      creates: lambda-version
+      result_id: FunctionArn
+      note: "Freeze the current code and settings as a numbered, unchangeable version."
+    - id: create-alias
+      api: CreateAlias
+      gesture: create
+      title: "Tạo alias"
+      fields: [{name: FunctionName, ref: lambda-function, ref_by: label}, Name, FunctionVersion]
+      defaults: {FunctionVersion: "1"}
+      creates: lambda-alias
+      result_id: AliasArn
+      note: "A stable name (live, prod) pointing at one version; callers use it and you move it to release."
+    - id: add-permission
+      api: AddPermission
+      gesture: attribute
+      title: "Cho service gọi function"
+      fields: [{name: FunctionName, ref: lambda-function, ref_by: label}, StatementId, Action, Principal, SourceArn]
+      defaults: {Action: "lambda:InvokeFunction"}
+      targets: [lambda-function]
+      target_param: FunctionName
+      note: "Add to the function's resource policy, e.g. Principal s3.amazonaws.com with the bucket ARN as SourceArn."
+
+- kind: lambda-version
+  service: lambda
+  label: Lambda Version
+  list:
+    method: list_versions_by_function
+    items: Versions
+    scope: {parent_kind: lambda-function, param: FunctionName, field: FunctionArn}
+  filter: {path: Version, not_in: ["$LATEST"]}
+  id: FunctionArn
+  name: ["join(':', [FunctionName, Version])"]
+  parent: [{kind: region}]
+  props:
+    version: Version
+    runtime: Runtime
+    description: Description
+  chat_props: [version, runtime, description]
+  edges:
+    - {kind: version-of, target: _Parent, to: lambda-function, style: reference}
+  view: {role: block, category: compute, icon: Res_AWS-Lambda_Lambda-Function_48.svg, source: Resource-Icons_07312026/Res_Compute/Res_AWS-Lambda_Lambda-Function_48.svg, height: 0.3, order: 91}
+
+- kind: lambda-alias
+  service: lambda
+  label: Lambda Alias
+  list:
+    method: list_aliases
+    items: Aliases
+    scope: {parent_kind: lambda-function, param: FunctionName, field: FunctionArn}
+  id: AliasArn
+  name: [Name]
+  parent: [{kind: region}]
+  props:
+    version: FunctionVersion
+    description: Description
+    weights: RoutingConfig.AdditionalVersionWeights
+  chat_props: [version, description, weights]
+  edges:
+    - {kind: alias-of, target: "FunctionVersion != '$LATEST' && join(':', [_Parent, FunctionVersion]) || _Parent", to: [lambda-version, lambda-function], style: reference}
+  view: {role: block, category: compute, icon: Res_AWS-Lambda_Lambda-Function_48.svg, source: Resource-Icons_07312026/Res_Compute/Res_AWS-Lambda_Lambda-Function_48.svg, height: 0.3, order: 92}
+
+- kind: lambda-event-source
+  service: lambda
+  label: Event Source Mapping
+  list: {method: list_event_source_mappings, items: EventSourceMappings}
+  id: EventSourceMappingArn
+  name: [UUID]
+  parent: [{kind: region}]
+  props:
+    source: EventSourceArn
+    state: State
+    batchSize: BatchSize
+    startingPosition: StartingPosition
+  chat_props: [source, state, batchSize, startingPosition]
+  edges:
+    - {kind: invokes, target: FunctionArn, to: [lambda-function, lambda-version, lambda-alias], style: reference}
+  view: {role: block, category: compute, icon: Res_AWS-Lambda_Lambda-Function_48.svg, source: Resource-Icons_07312026/Res_Compute/Res_AWS-Lambda_Lambda-Function_48.svg, height: 0.3, order: 94}

@@ -183,8 +183,8 @@ def test_lab_06_ghosts_follow_the_learner_from_a_shell(lab, ws_url, capsys):
 
         # The subnets from boto3, which also goes through api-tap.
         subnet_to_graph, subnets = [], {}
-        for name, cidr, az in [("public-1", "10.66.1.0/24", "us-east-1a"), ("public-2", "10.66.2.0/24", "us-east-1b"),
-                               ("private-1", "10.66.11.0/24", "us-east-1a"), ("private-2", "10.66.12.0/24", "us-east-1b")]:
+        for name, cidr, az in [("public-1", "10.66.1.0/24", "ap-southeast-2a"), ("public-2", "10.66.2.0/24", "ap-southeast-2b"),
+                               ("private-1", "10.66.11.0/24", "ap-southeast-2a"), ("private-2", "10.66.12.0/24", "ap-southeast-2b")]:
             subnet = ec2.create_subnet(VpcId=vpc, CidrBlock=cidr, AvailabilityZone=az)["Subnet"]["SubnetId"]
             t0 = time.monotonic()
             subnet_to_graph.append(feed.wait(f"{subnet} in the graph", lambda f: subnet in f.nodes(), 10) - t0)

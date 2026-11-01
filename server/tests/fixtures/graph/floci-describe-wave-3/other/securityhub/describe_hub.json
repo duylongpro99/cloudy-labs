@@ -1,0 +1,12 @@
+{
+  "calls": [
+    {
+      "params": {},
+      "response": {
+        "AutoEnableControls": true,
+        "ControlFindingGenerator": "SECURITY_CONTROL",
+        "HubArn": "arn:aws:securityhub:ap-southeast-2:000000000000:hub/default"
+      }
+    }
+  ]
+}

@@ -1,0 +1,18 @@
+{
+  "calls": [
+    {
+      "params": {
+        "applicationName": "w3-delivery-deploy"
+      },
+      "response": {
+        "application": {
+          "applicationId": "cff6abb4-80e8-43cd-a569-644e8e3e3dc5",
+          "applicationName": "w3-delivery-deploy",
+          "computePlatform": "Server",
+          "createTime": "2026-10-31 23:25:11.330000+07:00",
+          "linkedToGitHub": false
+        }
+      }
+    }
+  ]
+}

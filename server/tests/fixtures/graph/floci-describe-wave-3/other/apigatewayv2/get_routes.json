@@ -1,0 +1,19 @@
+{
+  "calls": [
+    {
+      "params": {
+        "ApiId": "53e9b9a7ac"
+      },
+      "response": {
+        "Items": [
+          {
+            "AuthorizationType": "NONE",
+            "RouteId": "fa88e811",
+            "RouteKey": "$default",
+            "Target": "integrations/f6719010"
+          }
+        ]
+      }
+    }
+  ]
+}

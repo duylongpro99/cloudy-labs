@@ -1,0 +1,23 @@
+{
+  "calls": [
+    {
+      "params": {},
+      "response": {
+        "trailList": [
+          {
+            "HasCustomEventSelectors": false,
+            "HasInsightSelectors": false,
+            "HomeRegion": "ap-southeast-2",
+            "IncludeGlobalServiceEvents": true,
+            "IsMultiRegionTrail": false,
+            "IsOrganizationTrail": false,
+            "LogFileValidationEnabled": false,
+            "Name": "w3-trail",
+            "S3BucketName": "w3-governance-logs",
+            "TrailARN": "arn:aws:cloudtrail:ap-southeast-2:000000000000:trail/w3-trail"
+          }
+        ]
+      }
+    }
+  ]
+}

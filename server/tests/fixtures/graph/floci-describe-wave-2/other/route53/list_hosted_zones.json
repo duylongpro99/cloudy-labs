@@ -1,0 +1,24 @@
+{
+  "calls": [
+    {
+      "params": {},
+      "response": {
+        "HostedZones": [
+          {
+            "CallerReference": "w2-zone",
+            "Config": {
+              "Comment": "w2 private zone",
+              "PrivateZone": true
+            },
+            "Id": "/hostedzone/Z45OBADPP2X6797",
+            "Name": "w2.internal.",
+            "ResourceRecordSetCount": 4
+          }
+        ],
+        "IsTruncated": false,
+        "Marker": "",
+        "MaxItems": "100"
+      }
+    }
+  ]
+}

@@ -1,0 +1,59 @@
+# AWS Budgets: global, drawn under the global group. Every call names the account; Floci's is always
+# 000000000000. DescribeNotificationsForBudget adds the alert thresholds.
+
+- kind: budget
+  service: budgets
+  label: Budget
+  scope: global
+  list: {method: describe_budgets, items: Budgets, params: {AccountId: "000000000000"}}
+  enrich:
+    - {method: describe_notifications_for_budget, params: {BudgetName: BudgetName}, const: {AccountId: "000000000000"}, pick: Notifications, merge_as: _Notifications}
+  id: "join('', ['arn:aws:budgets::000000000000:budget/', BudgetName])"
+  name: [BudgetName]
+  parent: [{kind: global}]
+  props:
+    budgetType: BudgetType
+    limit: BudgetLimit.Amount
+    unit: BudgetLimit.Unit
+    timeUnit: TimeUnit
+    actualSpend: CalculatedSpend.ActualSpend.Amount
+    forecastedSpend: CalculatedSpend.ForecastedSpend.Amount
+    notifications: "_Notifications[].{type: NotificationType, operator: ComparisonOperator, threshold: Threshold, thresholdType: ThresholdType}"
+  chat_props: [budgetType, limit, unit, timeUnit, actualSpend, forecastedSpend, notifications]
+  caveats:
+    - {code: budgets-no-spend, prop: actualSpend, text: "Floci 2.3.0 has no billing data: actual spend stays 0 and no forecast is calculated, so a notification threshold is never crossed."}
+  floci: {status: control-plane-only, note: "Budgets and their notifications are stored; spend is never calculated."}
+  builder: true
+  view: {role: block, category: management, icon: Arch_AWS-Budgets_48.svg, source: Architecture-Service-Icons_07312026/Arch_Cloud-Financial-Management/48/Arch_AWS-Budgets_48.svg, height: 0.3, order: 710, actions: [Budget, NotificationsForBudget]}
+  contract:
+    create: {op: create-budget, params: {Budget.BudgetName: ct-budget, Budget.BudgetLimit.Amount: "10"}, save: budget}
+    then:
+      - {op: update-budget, params: {NewBudget.BudgetName: ct-budget, NewBudget.BudgetLimit.Amount: "20"}}
+      - {op: delete-budget, params: {BudgetName: ct-budget}}
+  ops:
+    - id: create-budget
+      api: CreateBudget
+      gesture: create
+      title: "Tạo Budget"
+      fields: [AccountId, Budget.BudgetName, {name: Budget.BudgetType, choices: [COST, USAGE, RI_UTILIZATION, RI_COVERAGE, SAVINGS_PLANS_UTILIZATION, SAVINGS_PLANS_COVERAGE]}, Budget.BudgetLimit.Amount, Budget.BudgetLimit.Unit, {name: Budget.TimeUnit, choices: [DAILY, MONTHLY, QUARTERLY, ANNUALLY]}, {name: NotificationsWithSubscribers, multiline: true}]
+      defaults: {AccountId: "000000000000", Budget.BudgetType: COST, Budget.BudgetLimit.Unit: USD, Budget.TimeUnit: MONTHLY}
+      expect: {label: Budget.BudgetName}
+      note: "Track cost (or usage) against a limit per period, e.g. 10 USD a month. AccountId is the account's id (000000000000 on Floci). NotificationsWithSubscribers JSON alerts by email: [{\"Notification\": {\"NotificationType\": \"ACTUAL\", \"ComparisonOperator\": \"GREATER_THAN\", \"Threshold\": 80, \"ThresholdType\": \"PERCENTAGE\"}, \"Subscribers\": [{\"SubscriptionType\": \"EMAIL\", \"Address\": \"me@example.com\"}]}]."
+    - id: update-budget
+      api: UpdateBudget
+      gesture: modify
+      title: "Sửa hạn mức Budget"
+      fields: [AccountId, {name: NewBudget.BudgetName, ref: budget, ref_by: label}, {name: NewBudget.BudgetType, choices: [COST, USAGE, RI_UTILIZATION, RI_COVERAGE, SAVINGS_PLANS_UTILIZATION, SAVINGS_PLANS_COVERAGE]}, NewBudget.BudgetLimit.Amount, NewBudget.BudgetLimit.Unit, {name: NewBudget.TimeUnit, choices: [DAILY, MONTHLY, QUARTERLY, ANNUALLY]}]
+      defaults: {AccountId: "000000000000", NewBudget.BudgetType: COST, NewBudget.BudgetLimit.Unit: USD, NewBudget.TimeUnit: MONTHLY}
+      targets: [budget]
+      target_param: NewBudget.BudgetName
+      note: "Replace the budget's limit, period or type; the name picks the budget and cannot change."
+    - id: delete-budget
+      api: DeleteBudget
+      gesture: delete
+      title: "Xoá Budget"
+      fields: [AccountId, {name: BudgetName, ref: budget, ref_by: label}]
+      defaults: {AccountId: "000000000000"}
+      targets: [budget]
+      target_param: BudgetName
+      note: "Delete the budget and its notifications."

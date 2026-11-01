@@ -1,0 +1,72 @@
+# AWS CloudTrail trails. DescribeTrails answers a multi-region trail in every region it records, so a
+# trail is drawn only in its home region; GetTrailStatus adds whether it is logging.
+
+- kind: cloudtrail-trail
+  service: cloudtrail
+  label: CloudTrail Trail
+  list: {method: describe_trails, items: trailList}
+  enrich:
+    - {method: get_trail_status, params: {Name: TrailARN}, merge_as: _Status}
+  # The copy of a multi-region trail seen from another region has no id, so it is not drawn twice.
+  id: "HomeRegion == not_null(_Region, HomeRegion) && TrailARN || `null`"
+  name: [Name]
+  parent: [{kind: region}]
+  props:
+    isLogging: _Status.IsLogging
+    homeRegion: HomeRegion
+    multiRegion: IsMultiRegionTrail
+    globalServiceEvents: IncludeGlobalServiceEvents
+    logFileValidation: LogFileValidationEnabled
+    bucket: S3BucketName
+    keyPrefix: S3KeyPrefix
+    logGroup: CloudWatchLogsLogGroupArn
+    logRole: CloudWatchLogsRoleArn
+    kmsKey: KmsKeyId
+    snsTopic: SnsTopicARN
+    customEventSelectors: HasCustomEventSelectors
+    insightSelectors: HasInsightSelectors
+    organization: IsOrganizationTrail
+  chat_props: [isLogging, homeRegion, multiRegion, globalServiceEvents, logFileValidation, bucket, keyPrefix, logGroup, logRole, kmsKey, snsTopic, customEventSelectors, insightSelectors, organization]
+  edges:
+    - {kind: delivers-to, target: "S3BucketName && join('', ['arn:aws:s3:::', S3BucketName])", to: s3-bucket, style: reference}
+    - {kind: delivers-to, target: CloudWatchLogsLogGroupArn, match: "[arn, logGroupArn]", to: log-group, style: reference}
+    - {kind: execution-role, target: CloudWatchLogsRoleArn, to: iam-role, style: reference}
+    - {kind: encrypted-by, target: KmsKeyId, match: "[KeyId, KeyArn, AliasName, AliasArn]", to: [kms-key, kms-alias], style: reference}
+  caveats:
+    - {code: cloudtrail-data-events-only, prop: isLogging, text: "Floci 2.3.0 delivers a log file to the bucket about once a minute, but it holds only S3 data events of the buckets named in the event selectors: management events (CreateBucket, RunInstances, ...) are not recorded, and LookupEvents answers no events."}
+    - {code: cloudtrail-bucket-not-checked, prop: bucket, text: "Floci 2.3.0 creates a trail whose bucket does not exist or has no bucket policy allowing cloudtrail.amazonaws.com; AWS refuses both."}
+    - {code: cloudtrail-logs-and-key-dropped, prop: logGroup, text: "Floci 2.3.0 drops CloudWatchLogsLogGroupArn, CloudWatchLogsRoleArn and KmsKeyId on CreateTrail and UpdateTrail: the trail keeps none of them, so it sends nothing to CloudWatch Logs, encrypts nothing and shows no log group, role or key link."}
+  builder: true
+  view: {role: block, category: management, icon: Arch_AWS-CloudTrail_48.svg, source: Architecture-Service-Icons_07312026/Arch_Management-Tools/48/Arch_AWS-CloudTrail_48.svg, height: 0.4, order: 700, actions: [Trail, Logging, EventSelectors]}
+  contract:
+    needs:
+      - {op: create-bucket, params: {Bucket: ct-trail-bucket, CreateBucketConfiguration.LocationConstraint: "{region}"}, save: bucket}
+    create: {op: create-trail, params: {Name: ct-trail, S3BucketName: ct-trail-bucket}, save: trail}
+    then:
+      - {op: start-logging, params: {Name: ct-trail}}
+      - {op: delete-trail, params: {Name: ct-trail}}
+  ops:
+    - id: create-trail
+      api: CreateTrail
+      gesture: create
+      title: "Tạo CloudTrail trail"
+      fields: [Name, {name: S3BucketName, ref: s3-bucket, ref_by: label}, S3KeyPrefix, IsMultiRegionTrail, IncludeGlobalServiceEvents, EnableLogFileValidation, {name: CloudWatchLogsLogGroupArn, placeholder: "arn:aws:logs:ap-southeast-2:000000000000:log-group:trail-logs:*"}, {name: CloudWatchLogsRoleArn, ref: iam-role}, {name: KmsKeyId, ref: kms-key}]
+      result_id: TrailARN
+      expect: {label: Name}
+      note: "Record API calls into an S3 bucket. The bucket policy must let cloudtrail.amazonaws.com GetBucketAcl and PutObject under AWSLogs/<account>/. A new trail does not log until StartLogging. IsMultiRegionTrail records every region into one trail; CloudWatchLogsLogGroupArn with a role trail logs can assume also sends events to CloudWatch Logs."
+    - id: start-logging
+      api: StartLogging
+      gesture: attribute
+      title: "Bật ghi log cho trail"
+      fields: [{name: Name, ref: cloudtrail-trail, ref_by: label}]
+      targets: [cloudtrail-trail]
+      target_param: Name
+      note: "Start recording API calls; StopLogging pauses the trail without deleting it."
+    - id: delete-trail
+      api: DeleteTrail
+      gesture: delete
+      title: "Xoá trail"
+      fields: [{name: Name, ref: cloudtrail-trail, ref_by: label}]
+      targets: [cloudtrail-trail]
+      target_param: Name
+      note: "Delete the trail. Log files already in the bucket stay there."

@@ -1,0 +1,28 @@
+{
+  "calls": [
+    {
+      "params": {
+        "logGroupName": "/aws/elasticache/cluster/w3-dm-memcached/engine-log"
+      },
+      "response": {
+        "metricFilters": []
+      }
+    },
+    {
+      "params": {
+        "logGroupName": "/aws/elasticache/cluster/w3-dm-redis/engine-log"
+      },
+      "response": {
+        "metricFilters": []
+      }
+    },
+    {
+      "params": {
+        "logGroupName": "/aws/rds/instance/w3-dm-db/error"
+      },
+      "response": {
+        "metricFilters": []
+      }
+    }
+  ]
+}

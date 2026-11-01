@@ -1,0 +1,133 @@
+{
+  "calls": [
+    {
+      "params": {
+        "Id": "ESUZGTI490RL77"
+      },
+      "response": {
+        "DistributionConfig": {
+          "Aliases": {
+            "Items": [
+              "w3-edge.example.com"
+            ],
+            "Quantity": 1
+          },
+          "CacheBehaviors": {
+            "Quantity": 0
+          },
+          "CallerReference": "w3-edge-cf",
+          "Comment": "w3-edge-cf",
+          "CustomErrorResponses": {
+            "Quantity": 0
+          },
+          "DefaultCacheBehavior": {
+            "AllowedMethods": {
+              "Items": [
+                "GET",
+                "HEAD"
+              ],
+              "Quantity": 2
+            },
+            "CachePolicyId": "658327ea-f89d-4fab-a63d-7e88639e58f6",
+            "Compress": false,
+            "FieldLevelEncryptionId": "",
+            "FunctionAssociations": {
+              "Quantity": 0
+            },
+            "LambdaFunctionAssociations": {
+              "Items": [
+                {
+                  "EventType": "viewer-request",
+                  "IncludeBody": false,
+                  "LambdaFunctionARN": "arn:aws:lambda:ap-southeast-2:000000000000:function:w3-edge-fn:1"
+                }
+              ],
+              "Quantity": 1
+            },
+            "MinTTL": 0,
+            "SmoothStreaming": false,
+            "TargetOriginId": "s3",
+            "TrustedKeyGroups": {
+              "Enabled": false,
+              "Quantity": 0
+            },
+            "TrustedSigners": {
+              "Enabled": false,
+              "Quantity": 0
+            },
+            "ViewerProtocolPolicy": "redirect-to-https"
+          },
+          "DefaultRootObject": "",
+          "Enabled": true,
+          "HttpVersion": "http2",
+          "IsIPV6Enabled": true,
+          "Logging": {
+            "Bucket": "",
+            "Enabled": false,
+            "IncludeCookies": false,
+            "Prefix": ""
+          },
+          "OriginGroups": {
+            "Quantity": 0
+          },
+          "Origins": {
+            "Items": [
+              {
+                "ConnectionAttempts": 3,
+                "ConnectionTimeout": 10,
+                "CustomHeaders": {
+                  "Quantity": 0
+                },
+                "DomainName": "w3-edge-origin.s3.ap-southeast-2.amazonaws.com",
+                "Id": "s3",
+                "OriginPath": "",
+                "ResponseCompletionTimeout": 0,
+                "S3OriginConfig": {
+                  "OriginAccessIdentity": ""
+                }
+              },
+              {
+                "ConnectionAttempts": 3,
+                "ConnectionTimeout": 10,
+                "CustomHeaders": {
+                  "Quantity": 0
+                },
+                "CustomOriginConfig": {
+                  "HTTPPort": 80,
+                  "HTTPSPort": 443,
+                  "OriginKeepaliveTimeout": 5,
+                  "OriginProtocolPolicy": "https-only",
+                  "OriginReadTimeout": 30,
+                  "OriginSslProtocols": {
+                    "Items": [
+                      "TLSv1.2"
+                    ],
+                    "Quantity": 1
+                  }
+                },
+                "DomainName": "w3-edge-alb-69f799da92464b34.elb.localhost.floci.io",
+                "Id": "alb",
+                "OriginPath": "",
+                "ResponseCompletionTimeout": 0
+              }
+            ],
+            "Quantity": 2
+          },
+          "PriceClass": "PriceClass_All",
+          "Restrictions": {
+            "GeoRestriction": {
+              "Quantity": 0,
+              "RestrictionType": "none"
+            }
+          },
+          "ViewerCertificate": {
+            "ACMCertificateArn": "arn:aws:acm:ap-southeast-2:000000000000:certificate/7a4702a0-cfe3-4fff-8947-03af3fb36b4e",
+            "MinimumProtocolVersion": "TLSv1.2_2021",
+            "SSLSupportMethod": "sni-only"
+          }
+        },
+        "ETag": "1e272556-d874-4b3d-9bc6-e1567362c6ba"
+      }
+    }
+  ]
+}

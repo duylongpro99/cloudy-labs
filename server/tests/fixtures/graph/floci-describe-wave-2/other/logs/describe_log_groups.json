@@ -1,0 +1,30 @@
+{
+  "calls": [
+    {
+      "params": {},
+      "response": {
+        "logGroups": [
+          {
+            "arn": "arn:aws:logs:ap-southeast-2:000000000000:log-group:w2-app-logs:*",
+            "creationTime": 1793459769282,
+            "deletionProtectionEnabled": false,
+            "logGroupArn": "arn:aws:logs:ap-southeast-2:000000000000:log-group:w2-app-logs",
+            "logGroupName": "w2-app-logs",
+            "metricFilterCount": 1,
+            "retentionInDays": 7,
+            "storedBytes": 0
+          },
+          {
+            "arn": "arn:aws:logs:ap-southeast-2:000000000000:log-group:w2-rule-target:*",
+            "creationTime": 1793459769288,
+            "deletionProtectionEnabled": false,
+            "logGroupArn": "arn:aws:logs:ap-southeast-2:000000000000:log-group:w2-rule-target",
+            "logGroupName": "w2-rule-target",
+            "metricFilterCount": 0,
+            "storedBytes": 0
+          }
+        ]
+      }
+    }
+  ]
+}

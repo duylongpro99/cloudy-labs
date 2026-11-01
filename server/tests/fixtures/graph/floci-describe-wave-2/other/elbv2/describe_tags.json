@@ -1,0 +1,44 @@
+{
+  "calls": [
+    {
+      "params": {
+        "ResourceArns": [
+          "arn:aws:elasticloadbalancing:ap-southeast-2:000000000000:loadbalancer/app/w2-alb/74ca62bb5d81462c"
+        ]
+      },
+      "response": {
+        "TagDescriptions": [
+          {
+            "ResourceArn": "arn:aws:elasticloadbalancing:ap-southeast-2:000000000000:loadbalancer/app/w2-alb/74ca62bb5d81462c",
+            "Tags": [
+              {
+                "Key": "Name",
+                "Value": "w2-alb"
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "params": {
+        "ResourceArns": [
+          "arn:aws:elasticloadbalancing:ap-southeast-2:000000000000:targetgroup/w2-tg/d4fadde448d443e1"
+        ]
+      },
+      "response": {
+        "TagDescriptions": [
+          {
+            "ResourceArn": "arn:aws:elasticloadbalancing:ap-southeast-2:000000000000:targetgroup/w2-tg/d4fadde448d443e1",
+            "Tags": [
+              {
+                "Key": "Name",
+                "Value": "w2-tg"
+              }
+            ]
+          }
+        ]
+      }
+    }
+  ]
+}

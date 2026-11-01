@@ -1,0 +1,34 @@
+{
+  "calls": [
+    {
+      "params": {},
+      "response": {
+        "TransitGatewayVpcAttachments": [
+          {
+            "CreationTime": "2026-10-31 14:41:10.376000+00:00",
+            "Options": {
+              "ApplianceModeSupport": "disable",
+              "DnsSupport": "enable",
+              "Ipv6Support": "disable",
+              "SecurityGroupReferencingSupport": "enable"
+            },
+            "State": "available",
+            "SubnetIds": [
+              "subnet-b7bc84c2"
+            ],
+            "Tags": [
+              {
+                "Key": "Name",
+                "Value": "wave1-tgw-b"
+              }
+            ],
+            "TransitGatewayAttachmentId": "tgw-attach-2fc188cb4468af231",
+            "TransitGatewayId": "tgw-694378cffac133fc8",
+            "VpcId": "vpc-29250840",
+            "VpcOwnerId": "000000000000"
+          }
+        ]
+      }
+    }
+  ]
+}

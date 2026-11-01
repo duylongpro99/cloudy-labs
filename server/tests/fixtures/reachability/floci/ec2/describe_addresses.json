@@ -1,0 +1,28 @@
+{
+  "calls": [
+    {
+      "params": {},
+      "response": {
+        "Addresses": [
+          {
+            "AllocationId": "eipalloc-81162a954ac8c654e",
+            "Domain": "vpc",
+            "PublicIp": "54.65.136.203",
+            "Tags": []
+          },
+          {
+            "AllocationId": "eipalloc-6b37349c9ea896447",
+            "Domain": "vpc",
+            "PublicIp": "54.86.188.97",
+            "Tags": [
+              {
+                "Key": "Name",
+                "Value": "rx-nat-eip"
+              }
+            ]
+          }
+        ]
+      }
+    }
+  ]
+}

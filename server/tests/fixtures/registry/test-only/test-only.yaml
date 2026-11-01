@@ -1,0 +1,23 @@
+# A kind no code knows: adding it must need only this entry.
+- kind: test-only
+  service: test
+  label: Test-only resource
+  list: {hook: test.items}
+  test_only: true
+  id: Id
+  name: Name
+  parent: [{kind: region}]
+  props:
+    size: Size
+  chat_props: [size]
+  builder: true
+  view: {role: block, category: general, icon: Test-Only_48.svg, order: 999}
+  ops:
+    - id: create-test-queue
+      api: CreateQueue
+      service: sqs
+      gesture: create
+      title: Tạo test-only
+      fields: [QueueName]
+      expect: {label: QueueName}
+      note: "Creates a test-only resource. QueueName: 1-80 letters, digits, dashes or underscores."

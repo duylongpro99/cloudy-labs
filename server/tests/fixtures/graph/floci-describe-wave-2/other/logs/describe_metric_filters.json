@@ -1,0 +1,35 @@
+{
+  "calls": [
+    {
+      "params": {
+        "logGroupName": "w2-app-logs"
+      },
+      "response": {
+        "metricFilters": [
+          {
+            "creationTime": 1793459769286,
+            "filterName": "w2-errors",
+            "filterPattern": "ERROR",
+            "logGroupName": "w2-app-logs",
+            "metricTransformations": [
+              {
+                "defaultValue": 0.0,
+                "metricName": "AppErrors",
+                "metricNamespace": "w2/Logs",
+                "metricValue": "1"
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "params": {
+        "logGroupName": "w2-rule-target"
+      },
+      "response": {
+        "metricFilters": []
+      }
+    }
+  ]
+}

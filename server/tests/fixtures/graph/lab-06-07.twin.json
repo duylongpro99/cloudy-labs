@@ -1,8 +1,8 @@
 {
   "attempt": 3,
   "bound": {
-    "az-1": "vpc-149d0439/us-east-1a",
-    "az-2": "vpc-149d0439/us-east-1b",
+    "az-1": "vpc-149d0439/ap-southeast-2a",
+    "az-2": "vpc-149d0439/ap-southeast-2b",
     "igw": "igw-34ddd4cd",
     "private-1": "subnet-e917cc42",
     "private-2": "subnet-44acdeb7",
@@ -103,7 +103,7 @@
       "id": "ghost:public-1",
       "kind": "subnet-public",
       "label": "Public 1",
-      "parent": "vpc-149d0439/us-east-1a"
+      "parent": "vpc-149d0439/ap-southeast-2a"
     },
     {
       "checks": [
@@ -113,7 +113,7 @@
       "id": "ghost:public-2",
       "kind": "subnet-public",
       "label": "Public 2",
-      "parent": "vpc-149d0439/us-east-1b"
+      "parent": "vpc-149d0439/ap-southeast-2b"
     },
     {
       "checks": [
@@ -122,7 +122,7 @@
       "id": "ghost:eip",
       "kind": "elastic-ip",
       "label": "Elastic IP của NAT",
-      "parent": "us-east-1"
+      "parent": "ap-southeast-2"
     },
     {
       "checks": [

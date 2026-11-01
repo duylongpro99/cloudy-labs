@@ -1,0 +1,76 @@
+# Amazon CloudFront: global, drawn under the global group. A distribution serves viewers from its
+# origins (an S3 bucket, a load balancer, an API Gateway API). ListDistributions answers a summary;
+# the full config and the ETag that UpdateDistribution and DeleteDistribution need come from
+# GetDistributionConfig.
+
+- kind: cloudfront-distribution
+  service: cloudfront
+  label: CloudFront Distribution
+  scope: global
+  list: {method: list_distributions, items: "DistributionList.Items"}
+  enrich:
+    - {method: get_distribution_config, params: {Id: Id}, merge_as: _Config}
+    - {method: list_tags_for_resource, params: {Resource: ARN}, pick: Tags.Items, merge_as: _Tags}
+  id: Id
+  name: [_Config.DistributionConfig.Comment, Comment, Id]
+  parent: [{kind: global}]
+  props:
+    domainName: DomainName
+    status: Status
+    enabled: _Config.DistributionConfig.Enabled
+    etag: _Config.ETag
+    origins: "_Config.DistributionConfig.Origins.Items[].{id: Id, domainName: DomainName, path: OriginPath, s3: S3OriginConfig != null, protocolPolicy: CustomOriginConfig.OriginProtocolPolicy, originAccessControl: OriginAccessControlId}"
+    defaultBehavior: "_Config.DistributionConfig.DefaultCacheBehavior.{origin: TargetOriginId, viewerProtocolPolicy: ViewerProtocolPolicy, cachePolicy: CachePolicyId, allowedMethods: AllowedMethods.Items, compress: Compress}"
+    aliases: _Config.DistributionConfig.Aliases.Items
+    defaultRootObject: _Config.DistributionConfig.DefaultRootObject
+    priceClass: _Config.DistributionConfig.PriceClass
+    certificate: "_Config.DistributionConfig.ViewerCertificate.{acmCertificate: ACMCertificateArn, cloudFrontDefault: CloudFrontDefaultCertificate, minimumProtocolVersion: MinimumProtocolVersion}"
+    webAcl: _Config.DistributionConfig.WebACLId
+    tags: {hook: common.tags, args: {field: _Tags}}
+  chat_props: [domainName, status, enabled, etag, origins, defaultBehavior, aliases, defaultRootObject, priceClass, certificate, webAcl]
+  edges:
+    # An origin is named by its DNS name; S3 has a global, a regional and two website spellings.
+    - {kind: origin, target: "_Config.DistributionConfig.Origins.Items[].DomainName", to: s3-bucket, match: "[join('', [Name, '.s3.amazonaws.com']), join('', [Name, '.s3.', _Region, '.amazonaws.com']), join('', [Name, '.s3-website-', _Region, '.amazonaws.com']), join('', [Name, '.s3-website.', _Region, '.amazonaws.com'])]", style: reference}
+    - {kind: origin, target: "_Config.DistributionConfig.Origins.Items[].DomainName", to: load-balancer, match: "[DNSName, join('', ['dualstack.', DNSName])]", style: reference}
+    - {kind: origin, target: "_Config.DistributionConfig.Origins.Items[].DomainName", to: apigateway-rest-api, match: "join('', [id, '.execute-api.', _Region, '.amazonaws.com'])", style: reference}
+    - {kind: origin, target: "_Config.DistributionConfig.Origins.Items[].DomainName", to: apigateway-http-api, match: "join('', [ApiId, '.execute-api.', _Region, '.amazonaws.com'])", style: reference}
+    - {kind: uses-certificate, target: _Config.DistributionConfig.ViewerCertificate.ACMCertificateArn, to: acm-certificate, style: reference}
+    # Lambda@Edge takes a published version's ARN.
+    - {kind: invokes, target: "_Config.DistributionConfig.DefaultCacheBehavior.LambdaFunctionAssociations.Items[].LambdaFunctionARN", to: [lambda-version, lambda-function], style: reference}
+  caveats:
+    - {code: cloudfront-no-edge-cache, prop: status, text: "Floci 2.3.0 deploys a distribution at once (Status Deployed) and proxies an enabled distribution's requests to its S3 or custom origin without caching, so cache policies, TTLs and invalidations change nothing that can be observed. Check the configuration, not cache hits."}
+    - {code: cloudfront-web-acl-dropped, prop: webAcl, text: "Floci 2.3.0 drops WebACLId on CreateDistribution and UpdateDistribution, so a distribution never shows its web ACL. Check the web ACL itself."}
+  builder: true
+  view: {role: block, category: networking, icon: Res_Amazon-CloudFront_Download-Distribution_48.svg, source: Resource-Icons_07312026/Res_Networking-Content-Delivery/Res_Amazon-CloudFront_Download-Distribution_48.svg, height: 0.6, order: 500, actions: [Distribution, DistributionConfig]}
+  contract:
+    needs:
+      - {op: create-bucket, params: {Bucket: ct-cf-origin-bucket, CreateBucketConfiguration.LocationConstraint: "{region}"}, save: bucket}
+    create: {op: create-distribution, params: {DistributionConfig.CallerReference: ct-cf, DistributionConfig.Comment: ct-cf, DistributionConfig.Enabled: "true", DistributionConfig.Origins: '{"Quantity": 1, "Items": [{"Id": "s3-origin", "DomainName": "ct-cf-origin-bucket.s3.{region}.amazonaws.com", "S3OriginConfig": {"OriginAccessIdentity": ""}}]}'}, save: dist}
+  ops:
+    - id: create-distribution
+      api: CreateDistribution
+      gesture: create
+      title: "Tạo CloudFront Distribution"
+      fields: [DistributionConfig.CallerReference, DistributionConfig.Comment, DistributionConfig.Enabled, {name: DistributionConfig.Origins, multiline: true}, {name: DistributionConfig.DefaultCacheBehavior, multiline: true}, DistributionConfig.DefaultRootObject, DistributionConfig.PriceClass]
+      choices: {DistributionConfig.PriceClass: [PriceClass_100, PriceClass_200, PriceClass_All]}
+      defaults:
+        DistributionConfig.Enabled: "true"
+        DistributionConfig.Origins: '{"Quantity": 1, "Items": [{"Id": "s3-origin", "DomainName": "my-bucket.s3.ap-southeast-2.amazonaws.com", "S3OriginConfig": {"OriginAccessIdentity": ""}}]}'
+        DistributionConfig.DefaultCacheBehavior: '{"TargetOriginId": "s3-origin", "ViewerProtocolPolicy": "redirect-to-https", "CachePolicyId": "658327ea-f89d-4fab-a63d-7e88639e58f6"}'
+      result_id: Distribution.Id
+      note: "Create a distribution in front of one or more origins. Origins JSON: {Quantity, Items [{Id, DomainName, S3OriginConfig {OriginAccessIdentity: \"\"}}]} for a bucket (DomainName <bucket>.s3.<region>.amazonaws.com), or CustomOriginConfig {HTTPPort, HTTPSPort, OriginProtocolPolicy} for a load balancer's DNS name. DefaultCacheBehavior: TargetOriginId (an origin's Id), ViewerProtocolPolicy and CachePolicyId (658327ea-... is the managed CachingOptimized policy). CallerReference: any text unique per request."
+    - id: update-distribution
+      api: UpdateDistribution
+      gesture: attribute
+      title: "Sửa CloudFront Distribution"
+      fields: [{name: Id, ref: cloudfront-distribution}, IfMatch, {name: DistributionConfig, multiline: true}]
+      target_param: Id
+      note: "Replace the distribution's whole config: get it with aws cloudfront get-distribution-config, change it (Enabled false before deleting; origins, behaviors, aliases, ViewerCertificate, WebACLId) and send it back with IfMatch set to the ETag that call returned (the etag prop)."
+    - id: delete-distribution
+      api: DeleteDistribution
+      gesture: delete
+      title: "Xoá CloudFront Distribution"
+      fields: [{name: Id, ref: cloudfront-distribution}, IfMatch]
+      targets: [cloudfront-distribution]
+      target_param: Id
+      note: "Delete a distribution. Disable it first (update-distribution with Enabled false); IfMatch is its current ETag (the etag prop)."

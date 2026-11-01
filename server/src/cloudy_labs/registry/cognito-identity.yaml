@@ -1,0 +1,65 @@
+# Amazon Cognito identity pools (federated identities): they trade a sign-in from a user pool or
+# another provider for temporary AWS credentials of the pool's authenticated or guest role.
+
+- kind: cognito-identity-pool
+  service: cognito-identity
+  label: Cognito Identity Pool
+  list: {method: list_identity_pools, items: IdentityPools, params: {MaxResults: 60}}
+  enrich:
+    - {method: describe_identity_pool, params: {IdentityPoolId: IdentityPoolId}, merge_as: _Pool}
+    - {method: get_identity_pool_roles, params: {IdentityPoolId: IdentityPoolId}, pick: Roles, merge_as: _Roles}
+  id: IdentityPoolId
+  name: [IdentityPoolName, IdentityPoolId]
+  parent: [{kind: region}]
+  props:
+    allowUnauthenticated: _Pool.AllowUnauthenticatedIdentities
+    classicFlow: _Pool.AllowClassicFlow
+    userPoolProviders: "_Pool.CognitoIdentityProviders[].ProviderName"
+    loginProviders: "keys(not_null(_Pool.SupportedLoginProviders, `{}`))"
+    authenticatedRole: _Roles.authenticated
+    unauthenticatedRole: _Roles.unauthenticated
+    tags: _Pool.IdentityPoolTags
+  chat_props: [allowUnauthenticated, classicFlow, userPoolProviders, loginProviders, authenticatedRole, unauthenticatedRole, tags]
+  edges:
+    # A user pool provider is named cognito-idp.<region>.amazonaws.com/<user pool id>.
+    - {kind: federates, target: "_Pool.CognitoIdentityProviders[].ProviderName", match: "join('', ['cognito-idp.', not_null(_Region, ''), '.amazonaws.com/', Id])", to: cognito-user-pool, style: reference}
+    - {kind: pool-role, target: "values(not_null(_Roles, `{}`))", to: iam-role, style: reference}
+  caveats:
+    - {code: cognito-identity-pool-name-not-checked, text: "Floci 2.3.0 accepts a dash in IdentityPoolName; AWS allows only letters, digits, underscores and spaces."}
+    - {code: cognito-identity-provider-not-checked, prop: userPoolProviders, text: "Floci 2.3.0 accepts a user pool provider whose user pool or app client does not exist."}
+  builder: true
+  view: {role: block, category: security, icon: Res_Users_48_Light.svg, source: Resource-Icons_07312026/Res_General-Icons/Res_48_Light/Res_Users_48_Light.svg, height: 0.3, order: 707, actions: [IdentityPool, IdentityPoolRoles]}
+  contract:
+    needs:
+      - {op: create-user-pool, params: {PoolName: ct-ip-user-pool}, save: upool}
+      - {op: create-role, params: {RoleName: ct-ip-auth-role, AssumeRolePolicyDocument: '{"Version": "2012-10-17", "Statement": [{"Effect": "Allow", "Principal": {"Federated": "cognito-identity.amazonaws.com"}, "Action": "sts:AssumeRoleWithWebIdentity"}]}'}, save: role}
+    create: {op: create-identity-pool, params: {IdentityPoolName: ct_identity_pool, AllowUnauthenticatedIdentities: "false", CognitoIdentityProviders: '[{"ProviderName": "cognito-idp.{region}.amazonaws.com/{upool}", "ClientId": "ct-client"}]'}, save: ipool}
+    then:
+      - {op: set-identity-pool-roles, params: {IdentityPoolId: "{ipool}", Roles: '{"authenticated": "{role}"}'}}
+      - {op: delete-identity-pool, params: {IdentityPoolId: "{ipool}"}}
+  ops:
+    - id: create-identity-pool
+      api: CreateIdentityPool
+      gesture: create
+      title: "Tạo Cognito Identity Pool"
+      fields: [IdentityPoolName, AllowUnauthenticatedIdentities, {name: CognitoIdentityProviders, multiline: true, placeholder: '[{"ProviderName": "cognito-idp.ap-southeast-2.amazonaws.com/ap-southeast-2_AbC123", "ClientId": "app-client-id"}]'}, {name: SupportedLoginProviders, multiline: true}]
+      defaults: {AllowUnauthenticatedIdentities: false}
+      result_id: IdentityPoolId
+      expect: {label: IdentityPoolName}
+      note: "Give signed-in users (and guests when AllowUnauthenticatedIdentities is true) temporary AWS credentials. IdentityPoolName: letters, digits and underscores. CognitoIdentityProviders: a user pool as cognito-idp.<region>.amazonaws.com/<user pool id> with one of its app client ids. Set the roles next with SetIdentityPoolRoles."
+    - id: set-identity-pool-roles
+      api: SetIdentityPoolRoles
+      gesture: attribute
+      title: "Gán IAM role cho Identity Pool"
+      fields: [{name: IdentityPoolId, ref: cognito-identity-pool}, {name: Roles, multiline: true, placeholder: '{"authenticated": "arn:aws:iam::000000000000:role/app-auth"}'}]
+      targets: [cognito-identity-pool]
+      target_param: IdentityPoolId
+      note: "The roles whose credentials the pool hands out: Roles JSON maps authenticated (and unauthenticated, for guests) to a role ARN. Their trust policy must allow cognito-identity.amazonaws.com sts:AssumeRoleWithWebIdentity, with conditions on cognito-identity.amazonaws.com:aud (the pool id) and amr (authenticated or unauthenticated)."
+    - id: delete-identity-pool
+      api: DeleteIdentityPool
+      gesture: delete
+      title: "Xoá Identity Pool"
+      fields: [{name: IdentityPoolId, ref: cognito-identity-pool}]
+      targets: [cognito-identity-pool]
+      target_param: IdentityPoolId
+      note: "Delete the pool; identities in it can no longer get credentials."

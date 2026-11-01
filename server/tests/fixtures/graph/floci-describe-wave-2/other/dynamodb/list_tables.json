@@ -1,0 +1,12 @@
+{
+  "calls": [
+    {
+      "params": {},
+      "response": {
+        "TableNames": [
+          "w2-orders"
+        ]
+      }
+    }
+  ]
+}

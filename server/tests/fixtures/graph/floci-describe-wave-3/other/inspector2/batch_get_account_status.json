@@ -1,0 +1,35 @@
+{
+  "calls": [
+    {
+      "params": {},
+      "response": {
+        "accounts": [
+          {
+            "accountId": "000000000000",
+            "resourceState": {
+              "codeRepository": {
+                "status": "DISABLED"
+              },
+              "ec2": {
+                "status": "ENABLED"
+              },
+              "ecr": {
+                "status": "ENABLED"
+              },
+              "lambda": {
+                "status": "DISABLED"
+              },
+              "lambdaCode": {
+                "status": "DISABLED"
+              }
+            },
+            "state": {
+              "status": "ENABLED"
+            }
+          }
+        ],
+        "failedAccounts": []
+      }
+    }
+  ]
+}

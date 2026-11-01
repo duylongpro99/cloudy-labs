@@ -1,0 +1,54 @@
+{
+  "calls": [
+    {
+      "params": {
+        "AttributeNames": [
+          "All"
+        ],
+        "QueueUrl": "http://localhost:4566/000000000000/w3-orders-dlq"
+      },
+      "response": {
+        "Attributes": {
+          "ApproximateNumberOfMessages": "0",
+          "ApproximateNumberOfMessagesDelayed": "0",
+          "ApproximateNumberOfMessagesNotVisible": "0",
+          "CreatedTimestamp": "1793463912",
+          "DelaySeconds": "0",
+          "LastModifiedTimestamp": "1793463912",
+          "MaximumMessageSize": "1048576",
+          "MessageRetentionPeriod": "345600",
+          "QueueArn": "arn:aws:sqs:ap-southeast-2:000000000000:w3-orders-dlq",
+          "ReceiveMessageWaitTimeSeconds": "0",
+          "SqsManagedSseEnabled": "true",
+          "VisibilityTimeout": "30"
+        }
+      }
+    },
+    {
+      "params": {
+        "AttributeNames": [
+          "All"
+        ],
+        "QueueUrl": "http://localhost:4566/000000000000/w3-orders"
+      },
+      "response": {
+        "Attributes": {
+          "ApproximateNumberOfMessages": "0",
+          "ApproximateNumberOfMessagesDelayed": "0",
+          "ApproximateNumberOfMessagesNotVisible": "0",
+          "CreatedTimestamp": "1793463912",
+          "DelaySeconds": "0",
+          "LastModifiedTimestamp": "1793463912",
+          "MaximumMessageSize": "1048576",
+          "MessageRetentionPeriod": "345600",
+          "Policy": "{\"Version\": \"2012-10-17\", \"Statement\": [{\"Effect\": \"Allow\", \"Principal\": {\"Service\": \"sns.amazonaws.com\"}, \"Action\": \"sqs:SendMessage\", \"Resource\": \"arn:aws:sqs:ap-southeast-2:000000000000:w3-orders\", \"Condition\": {\"ArnEquals\": {\"aws:SourceArn\": \"arn:aws:sns:ap-southeast-2:000000000000:w3-order-events\"}}}]}",
+          "QueueArn": "arn:aws:sqs:ap-southeast-2:000000000000:w3-orders",
+          "ReceiveMessageWaitTimeSeconds": "0",
+          "RedrivePolicy": "{\"deadLetterTargetArn\": \"arn:aws:sqs:ap-southeast-2:000000000000:w3-orders-dlq\", \"maxReceiveCount\": \"3\"}",
+          "SqsManagedSseEnabled": "true",
+          "VisibilityTimeout": "60"
+        }
+      }
+    }
+  ]
+}

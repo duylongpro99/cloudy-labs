@@ -1,0 +1,29 @@
+{
+  "calls": [
+    {
+      "params": {
+        "StreamName": "w3-clicks"
+      },
+      "response": {
+        "StreamDescriptionSummary": {
+          "EncryptionType": "NONE",
+          "EnhancedMonitoring": [
+            {
+              "ShardLevelMetrics": []
+            }
+          ],
+          "MaxRecordSizeInKiB": 1024,
+          "OpenShardCount": 1,
+          "RetentionPeriodHours": 24,
+          "StreamARN": "arn:aws:kinesis:ap-southeast-2:000000000000:stream/w3-clicks",
+          "StreamCreationTimestamp": "2026-10-31 23:25:12.656000+07:00",
+          "StreamModeDetails": {
+            "StreamMode": "PROVISIONED"
+          },
+          "StreamName": "w3-clicks",
+          "StreamStatus": "ACTIVE"
+        }
+      }
+    }
+  ]
+}

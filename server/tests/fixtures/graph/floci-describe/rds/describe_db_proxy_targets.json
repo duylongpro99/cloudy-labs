@@ -1,0 +1,23 @@
+{
+  "calls": [
+    {
+      "params": {
+        "DBProxyName": "wave1-proxy"
+      },
+      "response": {
+        "Targets": [
+          {
+            "Endpoint": "172.27.0.7",
+            "Port": 5432,
+            "RdsResourceId": "wave1-pg",
+            "TargetArn": "arn:aws:rds:ap-southeast-2:000000000000:db:wave1-pg",
+            "TargetHealth": {
+              "State": "AVAILABLE"
+            },
+            "Type": "RDS_INSTANCE"
+          }
+        ]
+      }
+    }
+  ]
+}

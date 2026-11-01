@@ -1,0 +1,23 @@
+{
+  "calls": [
+    {
+      "params": {
+        "BackupPlanId": "a042f776-eaf9-464e-8f1e-8d88a6ad3967",
+        "SelectionId": "2c68298e-38b6-44d7-8c1d-7a5b35e1f5e9"
+      },
+      "response": {
+        "BackupPlanId": "a042f776-eaf9-464e-8f1e-8d88a6ad3967",
+        "BackupSelection": {
+          "IamRoleArn": "arn:aws:iam::000000000000:role/w2-mon-role",
+          "NotResources": [],
+          "Resources": [
+            "arn:aws:s3:::w2-backup-src"
+          ],
+          "SelectionName": "w2-selection"
+        },
+        "CreationDate": "2026-10-31 22:16:09+07:00",
+        "SelectionId": "2c68298e-38b6-44d7-8c1d-7a5b35e1f5e9"
+      }
+    }
+  ]
+}

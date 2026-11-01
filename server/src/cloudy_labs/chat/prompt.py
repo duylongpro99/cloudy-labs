@@ -7,54 +7,19 @@ fills their params; the server builds the argv and validates it with the builder
 import json
 from typing import Any
 
+from ..builder.catalog import BuilderOp, all_ops
 from ..builder.ec2_choices import Choices
-from ..builder.ops import OPS, catalog
 from ..graph.schema import ResourceGraph
 from ..labs.schema import Lab
-
-# What each op does and how to fill its params, for the model. Field names are the camelCase
-# aliases the server accepts; every value is a string.
-OP_NOTES: dict[str, str] = {
-    "create-vpc": "Create a VPC. cidr: an IPv4 block between /16 and /28, e.g. 10.0.0.0/16.",
-    "create-subnet": "Create a subnet in a VPC. vpcId: the VPC id; cidr: a block inside the VPC's cidr that overlaps "
-                     "no other subnet of that VPC; az: one of the Availability Zones listed below.",
-    "create-internet-gateway": "Create an Internet Gateway (not attached yet).",
-    "attach-internet-gateway": "Attach an Internet Gateway to a VPC. A VPC has at most one, and an IGW serves one VPC.",
-    "allocate-address": "Allocate an Elastic IP. Its id (eipalloc-...) is the allocationId of a NAT Gateway.",
-    "create-nat-gateway": "Create a NAT Gateway in a public subnet. subnetId: a subnet-public; allocationId: an "
-                          "unused Elastic IP id.",
-    "create-route-table": "Create a route table in a VPC.",
-    "create-route": "Add a route to a route table. destination: a CIDR such as 0.0.0.0/0; targetId: an Internet "
-                    "Gateway attached to the table's VPC (igw-...) or an available NAT Gateway (nat-...) of that VPC.",
-    "associate-route-table": "Associate a route table with a subnet of the same VPC that has no route table yet. "
-                             "A subnet is public when its route table routes 0.0.0.0/0 to an Internet Gateway.",
-    "modify-vpc-attribute": "Turn on DNS hostnames for a VPC.",
-    "modify-subnet-attribute": "Make a subnet give instances a public IP on launch.",
-    "create-security-group": "Create a security group in a VPC. name: not starting with sg-, unique in the VPC; "
-                             "description: plain ASCII text.",
-    "authorize-security-group-ingress": "Add one inbound rule. protocol: tcp, udp, icmp or -1 (all traffic); port: "
-                                        "one port number (any value for icmp and -1); cidr: the source block. Never "
-                                        "open port 22 or all traffic to 0.0.0.0/0; use one address with /32.",
-    "create-key-pair": "Create a key pair. name is the key name used by run-instances keyName.",
-    "run-instances": "Launch one instance. subnetId; imageId and instanceType from the lists below; "
-                     "securityGroupId: a group in the subnet's VPC; keyName: a key pair's name, or empty for none; "
-                     "userData: a script, or empty for none.",
-    "modify-instance-attribute": "Attach one more security group to an instance; the groups it has are kept.",
-}
+from ..registry import CHAT_PROPS_DENY, Registry, default_registry
 
 # Where the emulator differs from AWS in a way the chat must know (docs/emulator-differences.md).
-EMULATOR_LIMITS = [
-    "Everything runs on a local AWS emulator (Floci) with the CLI profile `lab`; never ask for or mention real AWS "
-    "credentials, accounts or the AWS console.",
-    "Only the ops listed below exist here. Other services (S3, IAM, RDS, Lambda, ...) and other EC2 actions "
-    "(delete, stop, terminate, VPC peering, ...) are not available in this lab.",
+EMULATOR_NAME = {"floci": "Floci", "moto": "moto"}
+INSTANCE_LIMITS = [
     "An instance reports running before its UserData has finished; a web server may need a minute.",
     "Public IPs are 127.0.0.1 with host ports; the scene shows them.",
 ]
-
-PROPS = ("cidr", "az", "attachedVpc", "state", "groupName", "ingress", "mapPublicIpOnLaunch",
-         "enableDnsHostnames", "isDefault", "main", "keyName")
-HIDDEN_KINDS = ("region", "az")
+HIDDEN_KINDS = ("account", "region", "global", "az")
 
 FORMAT = """\
 Answer with exactly one JSON object and nothing else:
@@ -72,24 +37,60 @@ def _dumps(value: Any) -> str:
     return json.dumps(value, ensure_ascii=False, separators=(",", ":"))
 
 
-def _params(op_name: str) -> dict[str, str]:
-    op = OPS[op_name]
-    fields = [f.alias or name for name, f in op.params.model_fields.items()]
-    return {f: "string" for f in fields if f not in op.server_fields}
+def _palette_ops(palette: list[str], registry: Registry) -> list[BuilderOp]:
+    return [op for op in all_ops(registry).values() if op.palette_kind() in palette]
 
 
-def ops_section(palette: list[str]) -> list[dict[str, Any]]:
+def emulator_limits(lab: Lab, registry: Registry | None = None) -> list[str]:
+    """What the model must know about where commands run, built from the lab and its ops."""
+    ops = _palette_ops(list(lab.builder.palette), registry or default_registry())
+    services = sorted({op.service for op in ops})
+    gestures = sorted({op.gesture for op in ops})
+    lines = [
+        f"Everything runs on a local AWS emulator ({EMULATOR_NAME.get(lab.emulator, lab.emulator)}) with the CLI "
+        "profile `lab`; never ask for or mention real AWS credentials, accounts or the AWS console.",
+        f"Only the ops listed below exist here (services: {', '.join(services) or 'none'}; kinds of action: "
+        f"{', '.join(gestures) or 'none'}). Any other service or action is not available in this lab.",
+    ]
+    if "instance" in lab.builder.palette:
+        lines += INSTANCE_LIMITS
+    return lines
+
+
+def _param(field: Any) -> str:
+    """A param's type for the model; every value is still sent as a string."""
+    text = field.type
+    if field.choices:
+        text += " (one of " + " | ".join(field.choices) + ")"
+    if field.type == "list":
+        text += " (values separated by commas)"
+    elif field.type == "json":
+        text += " (JSON text)"
+    if field.ref:
+        text += f" (the {'name' if field.ref_by == 'label' else 'id'} of a {field.ref})"
+    return text + (", required" if field.required else ", optional: \"\" for none")
+
+
+def ops_section(palette: list[str], registry: Registry | None = None) -> list[dict[str, Any]]:
     out = []
-    for spec in catalog(palette):
-        name = spec["name"]
-        out.append({"op": name, "params": _params(name), "does": OP_NOTES.get(name, ""),
-                    "builderGesture": spec["gesture"]})
+    for op in _palette_ops(palette, registry or default_registry()):
+        params = {f.name: _param(f) for f in op.fields() if not f.advanced and f.type != "blob"}
+        out.append({"op": op.name, "params": params, "does": op.spec.note or op.spec.title,
+                    "builderGesture": op.gesture})
     return out
 
 
-def compact_graph(graph: ResourceGraph) -> dict[str, Any]:
+def chat_props(kind: str, registry: Registry) -> list[str]:
+    """The props of `kind` the model may see: its `chat_props`, never one that may hold a secret."""
+    t = registry.get(kind)
+    return [p for p in (t.chat_props if t else []) if not any(d in p.lower() for d in CHAT_PROPS_DENY)]
+
+
+def compact_graph(graph: ResourceGraph, registry: Registry | None = None) -> dict[str, Any]:
     """Only what the model needs to pick ids and what validate checks: AZ trays are folded into
-    the nodes' `az` prop and parents skip them, so a subnet's parent is its VPC."""
+    the nodes' `az` prop and parents skip them, so a subnet's parent is its VPC. Each kind shows
+    only its registry `chat_props`."""
+    registry = registry or default_registry()
     kinds = {n.id: n.kind for n in graph.nodes}
     parent = {c.child: c.parent for c in graph.contains}
 
@@ -108,7 +109,7 @@ def compact_graph(graph: ResourceGraph) -> dict[str, Any]:
             entry["name"] = n.label
         if p := visible_parent(n.id):
             entry["in"] = p
-        entry |= {k: n.props[k] for k in PROPS if k in n.props}
+        entry |= {k: n.props[k] for k in chat_props(n.kind, registry) if k in n.props}
         nodes.append(entry)
     edges = [{"kind": e.kind, "from": e.from_, "to": e.to, **({"label": e.label} if e.label else {})} for e in graph.edges]
     return {"nodes": nodes, "edges": edges}
@@ -117,7 +118,7 @@ def compact_graph(graph: ResourceGraph) -> dict[str, Any]:
 def system_prompt(lab: Lab, graph: ResourceGraph, azs: list[str], choices: Choices) -> str:
     builder = lab.builder
     tasks = "\n".join(f"- {t.id}: {t.text}" for t in lab.tasks)
-    limits = "\n".join(f"- {line}" for line in EMULATOR_LIMITS)
+    limits = "\n".join(f"- {line}" for line in emulator_limits(lab))
     sections = [
         f"You are the teaching assistant of the hands-on lab \"{lab.title}\" ({lab.id}). The learner asks in their "
         "own words; you answer by choosing steps from the builder ops below. The server turns each step into an "

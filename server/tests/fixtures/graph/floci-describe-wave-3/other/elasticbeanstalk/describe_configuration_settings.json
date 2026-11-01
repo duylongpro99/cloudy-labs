@@ -1,0 +1,26 @@
+{
+  "calls": [
+    {
+      "params": {
+        "ApplicationName": "w3-delivery-web",
+        "EnvironmentName": "w3-delivery-web-dev"
+      },
+      "response": {
+        "ConfigurationSettings": [
+          {
+            "ApplicationName": "w3-delivery-web",
+            "DeploymentStatus": "deployed",
+            "EnvironmentName": "w3-delivery-web-dev",
+            "OptionSettings": [
+              {
+                "Namespace": "aws:elasticbeanstalk:command",
+                "OptionName": "DeploymentPolicy",
+                "Value": "Rolling"
+              }
+            ]
+          }
+        ]
+      }
+    }
+  ]
+}

@@ -1,0 +1,46 @@
+{
+  "calls": [
+    {
+      "params": {},
+      "response": {
+        "DBClusters": [
+          {
+            "AssociatedRoles": [],
+            "DBClusterArn": "arn:aws:rds:ap-southeast-2:000000000000:cluster:wave1-aurora",
+            "DBClusterIdentifier": "wave1-aurora",
+            "DBClusterMembers": [
+              {
+                "DBInstanceIdentifier": "wave1-aurora-1",
+                "IsClusterWriter": true
+              }
+            ],
+            "DBSubnetGroup": "wave1-db",
+            "DbClusterResourceId": "cluster-277BE83BC2484707B63C2F86",
+            "EarliestRestorableTime": "2026-10-31 14:41:16.401177+00:00",
+            "Endpoint": "172.27.0.3",
+            "Engine": "aurora-postgresql",
+            "EngineMode": "provisioned",
+            "EngineVersion": "16.3",
+            "IAMDatabaseAuthenticationEnabled": false,
+            "LatestRestorableTime": "2026-10-31 14:41:18.776894+00:00",
+            "MasterUsername": "wave1",
+            "MultiAZ": false,
+            "Port": 7003,
+            "PreferredBackupWindow": "04:00-06:00",
+            "PreferredMaintenanceWindow": "mon:00:00-mon:03:00",
+            "ReaderEndpoint": "172.27.0.3",
+            "Status": "available",
+            "StorageEncrypted": false,
+            "VpcSecurityGroups": [
+              {
+                "Status": "active",
+                "VpcSecurityGroupId": "sg-00000000"
+              }
+            ]
+          }
+        ],
+        "Marker": ""
+      }
+    }
+  ]
+}

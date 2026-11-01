@@ -1,0 +1,37 @@
+{
+  "calls": [
+    {
+      "params": {},
+      "response": {
+        "MetricAlarms": [
+          {
+            "ActionsEnabled": true,
+            "AlarmActions": [
+              "arn:aws:sns:ap-southeast-2:000000000000:w3-order-events"
+            ],
+            "AlarmArn": "arn:aws:cloudwatch:ap-southeast-2:000000000000:alarm:w3-dlq-not-empty",
+            "AlarmName": "w3-dlq-not-empty",
+            "ComparisonOperator": "GreaterThanOrEqualToThreshold",
+            "Dimensions": [
+              {
+                "Name": "QueueName",
+                "Value": "w3-orders-dlq"
+              }
+            ],
+            "EvaluationPeriods": 1,
+            "InsufficientDataActions": [],
+            "MetricName": "ApproximateNumberOfMessagesVisible",
+            "Namespace": "AWS/SQS",
+            "OKActions": [],
+            "Period": 60,
+            "StateReason": "Unchecked",
+            "StateUpdatedTimestamp": "2026-10-31 23:25:12+07:00",
+            "StateValue": "INSUFFICIENT_DATA",
+            "Statistic": "Maximum",
+            "Threshold": 1.0
+          }
+        ]
+      }
+    }
+  ]
+}

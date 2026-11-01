@@ -1,0 +1,103 @@
+{
+  "calls": [
+    {
+      "params": {
+        "name": "w3-delivery-pipeline"
+      },
+      "response": {
+        "metadata": {
+          "created": "2026-10-31 23:25:11.339000+07:00",
+          "pipelineArn": "arn:aws:codepipeline:ap-southeast-2:000000000000:w3-delivery-pipeline",
+          "updated": "2026-10-31 23:25:11.339000+07:00"
+        },
+        "pipeline": {
+          "artifactStore": {
+            "location": "w3-delivery-artifacts",
+            "type": "S3"
+          },
+          "executionMode": "SUPERSEDED",
+          "name": "w3-delivery-pipeline",
+          "pipelineType": "V1",
+          "roleArn": "arn:aws:iam::000000000000:role/w3-delivery-role",
+          "stages": [
+            {
+              "actions": [
+                {
+                  "actionTypeId": {
+                    "category": "Source",
+                    "owner": "AWS",
+                    "provider": "S3",
+                    "version": "1"
+                  },
+                  "configuration": {
+                    "PollForSourceChanges": "false",
+                    "S3Bucket": "w3-delivery-artifacts",
+                    "S3ObjectKey": "source.zip"
+                  },
+                  "name": "Source",
+                  "outputArtifacts": [
+                    {
+                      "name": "src"
+                    }
+                  ]
+                }
+              ],
+              "name": "Source"
+            },
+            {
+              "actions": [
+                {
+                  "actionTypeId": {
+                    "category": "Build",
+                    "owner": "AWS",
+                    "provider": "CodeBuild",
+                    "version": "1"
+                  },
+                  "configuration": {
+                    "ProjectName": "w3-delivery-build"
+                  },
+                  "inputArtifacts": [
+                    {
+                      "name": "src"
+                    }
+                  ],
+                  "name": "Build",
+                  "outputArtifacts": [
+                    {
+                      "name": "out"
+                    }
+                  ]
+                }
+              ],
+              "name": "Build"
+            },
+            {
+              "actions": [
+                {
+                  "actionTypeId": {
+                    "category": "Deploy",
+                    "owner": "AWS",
+                    "provider": "ElasticBeanstalk",
+                    "version": "1"
+                  },
+                  "configuration": {
+                    "ApplicationName": "w3-delivery-web",
+                    "EnvironmentName": "w3-delivery-web-dev"
+                  },
+                  "inputArtifacts": [
+                    {
+                      "name": "out"
+                    }
+                  ],
+                  "name": "Deploy"
+                }
+              ],
+              "name": "Deploy"
+            }
+          ],
+          "version": 1
+        }
+      }
+    }
+  ]
+}

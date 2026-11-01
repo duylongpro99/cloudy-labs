@@ -10,23 +10,12 @@ from typing import Any, Literal
 from pydantic import BaseModel, ConfigDict, Field, model_validator
 from pydantic.alias_generators import to_camel
 
-# Same set as AwsKind in web/src/scene/aws-objects/manifest.ts.
-Kind = Literal[
-    "region", "vpc", "az", "subnet-public", "subnet-private", "igw", "nat",
-    "route-table", "security-group", "key-pair", "instance", "elastic-ip",
-]
-# route: route table -> IGW/NAT, labelled with the destination CIDR.
-# association: route table -> subnet. attached: SG/EIP -> what it is attached to.
-# uses-key: instance -> key pair.
-EdgeKind = Literal["route", "association", "attached", "uses-key"]
-# Kinds the collector may place directly under each kind: a lab's target nests the same way.
-# An attached IGW sits in its VPC; one not attached yet sits in the region.
-PARENT_KINDS: dict[str, set[str]] = {
-    "vpc": {"region"}, "key-pair": {"region"}, "elastic-ip": {"region"}, "igw": {"region", "vpc"},
-    "az": {"vpc"}, "route-table": {"vpc"}, "security-group": {"vpc"},
-    "subnet-public": {"az"}, "subnet-private": {"az"},
-    "nat": {"subnet-public", "subnet-private"}, "instance": {"subnet-public", "subnet-private"},
-}
+from ..registry import default_registry
+
+# Kinds and edge kinds are strings checked against the resource type registry (registry/*.yaml),
+# which web/src reads through /api/registry; nothing here lists them.
+Kind = str
+EdgeKind = str
 Status = Literal["ok", "emulator-down"]
 
 
@@ -57,7 +46,7 @@ class Edge(_Model):
 class ResourceGraph(_Model):
     version: int = 0
     taken_at: str  # ISO 8601, UTC
-    emulator: Literal["floci"] = "floci"
+    emulator: Literal["floci", "moto"] = "floci"
     status: Status = "ok"
     nodes: list[Node]
     contains: list[Contains]
@@ -66,6 +55,14 @@ class ResourceGraph(_Model):
 
     @model_validator(mode="after")
     def _well_formed(self) -> "ResourceGraph":
+        registry = default_registry()
+        for n in self.nodes:
+            if registry.get(n.kind) is None:
+                raise ValueError(f"node {n.id} has kind {n.kind!r}, which is not in the registry")
+        edge_kinds = set(registry.edge_kinds())
+        for e in self.edges:
+            if e.kind not in edge_kinds:
+                raise ValueError(f"edge {e.id} has kind {e.kind!r}, which no registry entry declares")
         ids = [n.id for n in self.nodes]
         known = set(ids)
         if len(known) != len(ids):
@@ -79,8 +76,12 @@ class ResourceGraph(_Model):
                 raise ValueError(f"{c.child} has two parents: {parents[c.child]} and {c.parent}")
             parents[c.child] = c.parent
         roots = [n for n in self.nodes if n.id not in parents]
-        if len(roots) != 1 or roots[0].kind != "region":
-            raise ValueError(f"the tree must have exactly one root and it must be a region, got {[n.id for n in roots]}")
+        if len(roots) != 1 or roots[0].kind != "account":
+            raise ValueError(f"the tree must have exactly one root and it must be an account, got {[n.id for n in roots]}")
+        kind_of = {n.id: n.kind for n in self.nodes}
+        for child, parent in parents.items():
+            if kind_of[child] in ("region", "global") and kind_of[parent] != "account":
+                raise ValueError(f"{child} must sit directly in the account, not in {parent}")
         for node in self.nodes:  # every chain must end at the root, so no cycles
             seen, cur = set(), node.id
             while cur in parents:

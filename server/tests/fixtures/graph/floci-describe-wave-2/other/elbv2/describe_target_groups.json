@@ -1,0 +1,36 @@
+{
+  "calls": [
+    {
+      "params": {},
+      "response": {
+        "NextMarker": "",
+        "TargetGroups": [
+          {
+            "HealthCheckEnabled": true,
+            "HealthCheckIntervalSeconds": 30,
+            "HealthCheckPath": "/",
+            "HealthCheckPort": "traffic-port",
+            "HealthCheckProtocol": "HTTP",
+            "HealthCheckTimeoutSeconds": 5,
+            "HealthyThresholdCount": 5,
+            "IpAddressType": "ipv4",
+            "LoadBalancerArns": [
+              "arn:aws:elasticloadbalancing:ap-southeast-2:000000000000:loadbalancer/app/w2-alb/74ca62bb5d81462c"
+            ],
+            "Matcher": {
+              "HttpCode": "200"
+            },
+            "Port": 80,
+            "Protocol": "HTTP",
+            "ProtocolVersion": "HTTP1",
+            "TargetGroupArn": "arn:aws:elasticloadbalancing:ap-southeast-2:000000000000:targetgroup/w2-tg/d4fadde448d443e1",
+            "TargetGroupName": "w2-tg",
+            "TargetType": "instance",
+            "UnhealthyThresholdCount": 2,
+            "VpcId": "vpc-1db2f371"
+          }
+        ]
+      }
+    }
+  ]
+}

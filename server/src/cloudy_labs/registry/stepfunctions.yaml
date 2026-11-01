@@ -1,0 +1,61 @@
+# AWS Step Functions. ListStateMachines answers name, ARN and type; DescribeStateMachine adds the
+# role, status and revision (a new revision on every UpdateStateMachine). The definition is not read
+# into props: it can be long, and the revision shows that it changed.
+
+- kind: state-machine
+  service: stepfunctions
+  label: Step Functions State Machine
+  list: {method: list_state_machines, items: stateMachines}
+  enrich:
+    - {method: describe_state_machine, params: {stateMachineArn: stateMachineArn}, merge_as: _Detail}
+  id: stateMachineArn
+  name: [name]
+  parent: [{kind: region}]
+  props:
+    type: type
+    status: _Detail.status
+    role: _Detail.roleArn
+    revision: _Detail.revisionId
+    loggingLevel: _Detail.loggingConfiguration.level
+    tracing: _Detail.tracingConfiguration.enabled
+  chat_props: [type, status, role, revision, loggingLevel, tracing]
+  edges:
+    - {kind: execution-role, target: _Detail.roleArn, to: iam-role, style: reference}
+  caveats:
+    - {code: floci-sfn-role-not-assumed, prop: role, text: "Floci 2.3.0 runs executions without assuming the state machine's role: a role missing permissions still works."}
+  builder: true
+  view: {role: block, category: app-integration, icon: Arch_AWS-Step-Functions_48.svg, source: Architecture-Service-Icons_07312026/Arch_Application-Integration/48/Arch_AWS-Step-Functions_48.svg, height: 0.5, order: 580, actions: [StateMachine]}
+  contract:
+    needs:
+      - {op: create-role, params: {RoleName: ct-sfn-role, AssumeRolePolicyDocument: '{"Version": "2012-10-17", "Statement": [{"Effect": "Allow", "Principal": {"Service": "states.amazonaws.com"}, "Action": "sts:AssumeRole"}]}'}, save: role}
+    create: {op: create-state-machine, params: {name: ct-state-machine, roleArn: "{role}", definition: '{"StartAt": "Wait", "States": {"Wait": {"Type": "Wait", "Seconds": 1, "End": true}}}'}, save: sm}
+    then:
+      - {op: update-state-machine, params: {stateMachineArn: "{sm}", definition: '{"StartAt": "Wait", "States": {"Wait": {"Type": "Wait", "Seconds": 2, "End": true}}}'}}
+      - {op: delete-state-machine, params: {stateMachineArn: "{sm}"}}
+    max_seconds: 5
+  ops:
+    - id: create-state-machine
+      api: CreateStateMachine
+      gesture: create
+      title: "Tạo state machine"
+      fields: [name, {name: definition, multiline: true, placeholder: '{"StartAt": "Wait", "States": {"Wait": {"Type": "Wait", "Seconds": 5, "End": true}}}'}, {name: roleArn, ref: iam-role}, type]
+      defaults: {type: STANDARD}
+      result_id: stateMachineArn
+      expect: {label: name}
+      note: "Create a workflow from an Amazon States Language definition (JSON: StartAt and States of Type Task, Wait, Choice, Pass, Parallel, Map, Succeed, Fail). roleArn: a role states.amazonaws.com may assume, allowed to call the Task resources (lambda:InvokeFunction...)."
+    - id: update-state-machine
+      api: UpdateStateMachine
+      gesture: attribute
+      title: "Sửa state machine"
+      fields: [{name: stateMachineArn, ref: state-machine}, {name: definition, multiline: true}, {name: roleArn, ref: iam-role}]
+      targets: [state-machine]
+      target_param: stateMachineArn
+      note: "Replace the definition or the role; running executions keep the old definition."
+    - id: delete-state-machine
+      api: DeleteStateMachine
+      gesture: delete
+      title: "Xoá state machine"
+      fields: [{name: stateMachineArn, ref: state-machine}]
+      targets: [state-machine]
+      target_param: stateMachineArn
+      note: "Delete the state machine; running executions are stopped."

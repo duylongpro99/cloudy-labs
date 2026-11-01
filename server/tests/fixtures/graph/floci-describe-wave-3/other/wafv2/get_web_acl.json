@@ -1,0 +1,50 @@
+{
+  "calls": [
+    {
+      "params": {
+        "Id": "6fdea9e8-028a-4786-9398-70895c9cb7e1",
+        "Name": "w3-edge-acl",
+        "Scope": "REGIONAL"
+      },
+      "response": {
+        "LockToken": "35b7f513-09cb-4ef7-929f-78bd27216f5a",
+        "WebACL": {
+          "ARN": "arn:aws:wafv2:ap-southeast-2:000000000000:regional/webacl/w3-edge-acl/6fdea9e8-028a-4786-9398-70895c9cb7e1",
+          "Capacity": 1,
+          "DefaultAction": {
+            "Allow": {}
+          },
+          "Id": "6fdea9e8-028a-4786-9398-70895c9cb7e1",
+          "LabelNamespace": "awswaf:000000000000:webacl:w3-edge-acl:",
+          "ManagedByFirewallManager": false,
+          "Name": "w3-edge-acl",
+          "Rules": [
+            {
+              "Action": {
+                "Block": {}
+              },
+              "Name": "rate-limit",
+              "Priority": 0,
+              "Statement": {
+                "RateBasedStatement": {
+                  "AggregateKeyType": "IP",
+                  "Limit": 100
+                }
+              },
+              "VisibilityConfig": {
+                "CloudWatchMetricsEnabled": true,
+                "MetricName": "rate-limit",
+                "SampledRequestsEnabled": true
+              }
+            }
+          ],
+          "VisibilityConfig": {
+            "CloudWatchMetricsEnabled": true,
+            "MetricName": "w3-edge-acl",
+            "SampledRequestsEnabled": true
+          }
+        }
+      }
+    }
+  ]
+}

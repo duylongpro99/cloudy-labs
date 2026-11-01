@@ -6,9 +6,12 @@ from typing import Any, Literal
 
 from pydantic import BaseModel, ConfigDict, Field, field_validator, model_validator
 
-from ..graph.schema import PARENT_KINDS
+from ..config import DEFAULT_REGION
+from ..regions import check_region
+from ..registry import default_registry
 
 SLUG = r"^[a-z0-9][a-z0-9-]*$"
+LAB_SLUG = r"^[a-z0-9][a-z0-9-]{0,80}$"  # also a directory name under labs/
 FN_REF = re.compile(r"^[A-Za-z_][A-Za-z0-9_]*:[A-Za-z_][A-Za-z0-9_]*$")
 
 
@@ -41,8 +44,9 @@ class Hint(_Strict):
     text: str
 
 
-# Resource kinds the builder can create (PRD F4.1); a lab's palette is a subset.
-BuilderKind = Literal["vpc", "subnet", "igw", "elastic-ip", "nat", "route-table", "security-group", "key-pair", "instance"]
+# Resource kinds the builder can create (PRD F4.1) and kinds a target may name both come from the
+# resource type registry; a lab's palette is a subset.
+BuilderKind = str
 # Tags go into the CLI's shorthand syntax, where commas, brackets, braces and spaces have meaning.
 TAG_TEXT = re.compile(r"[A-Za-z0-9._:/-]{1,128}")  # used with fullmatch
 USER_DATA_MAX = 16 * 1024  # bytes; EC2's limit on UserData before base64
@@ -57,6 +61,10 @@ class Builder(_Strict):
     @field_validator("palette")
     @classmethod
     def _unique(cls, v: list[str]) -> list[str]:
+        known = default_registry().builder_kinds()
+        unknown = [k for k in v if k not in known]
+        if unknown:
+            raise ValueError(f"palette kind {', '.join(map(repr, unknown))} is not a builder kind; known: {', '.join(known)}")
         if len(set(v)) != len(v):
             raise ValueError("palette lists a kind twice")
         return v
@@ -79,10 +87,7 @@ class Builder(_Strict):
         return v
 
 
-TargetKind = Literal[
-    "vpc", "az", "subnet-public", "subnet-private", "igw", "nat",
-    "route-table", "security-group", "key-pair", "instance", "elastic-ip",
-]
+TargetKind = str
 
 
 class TargetNode(_Strict):
@@ -90,12 +95,34 @@ class TargetNode(_Strict):
     id: str = Field(pattern=SLUG)
     kind: TargetKind
     label: str
-    parent: str | None = None  # another target node; none means the region
+    parent: str | None = None  # another target node; none means the region (or `global` for a global kind)
     checks: list[str] = []  # the node is reached once all of these pass; their resource ids find it
+
+    @field_validator("kind")
+    @classmethod
+    def _known_kind(cls, v: str) -> str:
+        known = default_registry().target_kinds()
+        if v not in known:
+            raise ValueError(f"unknown target kind {v!r}; known: {', '.join(known)}")
+        return v
+
+
+def root_kind(kind: str, parent_kinds: dict[str, set[str]]) -> str:
+    """Where a target node without a parent sits: the region, or the global group for a kind that
+    only lives there (IAM, CloudFront, Route 53)."""
+    allowed = parent_kinds.get(kind, set())
+    return "global" if "global" in allowed and "region" not in allowed else "region"
 
 
 class Target(_Strict):
+    # The region the nodes without a parent sit in; none means the lab's region.
+    region: str | None = None
     nodes: list[TargetNode] = []
+
+    @field_validator("region")
+    @classmethod
+    def _region(cls, v: str | None) -> str | None:
+        return None if v is None else check_region(v)
 
     def check_references(self, check_ids: set[str]) -> None:
         by_id: dict[str, TargetNode] = {}
@@ -103,16 +130,17 @@ class Target(_Strict):
             if n.id in by_id:
                 raise ValueError(f"duplicate target node id: {n.id}")
             by_id[n.id] = n
+        parent_kinds = default_registry().parent_kinds()
         for n in self.nodes:
-            parent_kind = "region"
+            parent_kind = root_kind(n.kind, parent_kinds)
             if n.parent is not None:
                 if n.parent not in by_id:
                     raise ValueError(f"target node {n.id!r} has unknown parent {n.parent!r}")
                 parent_kind = by_id[n.parent].kind
-            if parent_kind not in PARENT_KINDS[n.kind]:
-                where = "the region" if n.parent is None else f"a {parent_kind} ({n.parent!r})"
+            if parent_kind not in parent_kinds[n.kind]:
+                where = f"the {parent_kind}" if n.parent is None else f"a {parent_kind} ({n.parent!r})"
                 raise ValueError(f"target node {n.id!r}: a {n.kind} cannot sit in {where}; "
-                                 f"it goes in {' or '.join(sorted(PARENT_KINDS[n.kind]))}")
+                                 f"it goes in {' or '.join(sorted(parent_kinds[n.kind]))}")
             unknown = [c for c in n.checks if c not in check_ids]
             if unknown:
                 raise ValueError(f"target node {n.id!r} refers to unknown check {', '.join(map(repr, unknown))}")
@@ -132,9 +160,12 @@ class Target(_Strict):
 
 
 class Lab(_Strict):
-    id: str = Field(pattern=SLUG)
+    id: str = Field(pattern=LAB_SLUG)
     provider: Literal["aws"]
     emulator: Literal["floci", "moto"] = "floci"
+    region: str = DEFAULT_REGION  # where the learner's profile, the checks and the builder point
+    # Every region the lab uses, for a cross-region lab; the scene shows one tray per region.
+    regions: list[str] = []
     title: str
     # CIDRs the lab will create; checked against Docker networks before the lab starts.
     cidrs: list[IPv4Network] = []
@@ -144,6 +175,28 @@ class Lab(_Strict):
     hints: list[Hint] = []
     builder: Builder = Builder()  # no builder section: the web app says the lab has no builder
     target: Target = Target()  # the architecture the 3D scene shows as ghosts (PRD F6.2)
+
+    @field_validator("region")
+    @classmethod
+    def _region(cls, v: str) -> str:
+        return check_region(v)
+
+    @field_validator("regions")
+    @classmethod
+    def _regions(cls, v: list[str]) -> list[str]:
+        for r in v:
+            check_region(r)
+        if len(set(v)) != len(v):
+            raise ValueError("regions lists a region twice")
+        return v
+
+    @property
+    def all_regions(self) -> list[str]:
+        """`regions` as declared, or just `region`; the lab's own region always first."""
+        return [self.region, *(r for r in self.regions if r != self.region)]
+
+    def target_region(self) -> str:
+        return self.target.region or self.region
 
     @field_validator("setup")
     @classmethod
@@ -168,5 +221,9 @@ class Lab(_Strict):
         for h in self.hints:
             if h.task not in known:
                 raise ValueError(f"hint refers to unknown task {h.task!r}")
+        if self.regions and self.region not in self.regions:
+            raise ValueError(f"regions {self.regions} must include the lab's region {self.region!r}")
+        if self.target.region is not None and self.target.region not in self.all_regions:
+            raise ValueError(f"target region {self.target.region!r} is not one of the lab's regions {self.all_regions}")
         self.target.check_references(set(check_ids))
         return self

@@ -149,7 +149,7 @@
                 }
             ],
             "Tags": [],
-            "VpcId": "vpc-default-us-east-1",
+            "VpcId": "vpc-default-ap-southeast-2",
             "OwnerId": "000000000000"
         }
     ]

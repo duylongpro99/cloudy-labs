@@ -19,16 +19,12 @@ def lab(**over):
     return Lab.model_validate(data | over)
 
 
-@pytest.mark.parametrize("emulator, endpoint", [("floci", "http://127.0.0.1:4566"), ("moto", "http://127.0.0.1:5050")])
+@pytest.mark.parametrize("emulator, endpoint", [("floci", "http://127.0.0.1:4566"), ("moto", "http://127.0.0.1:4569")])  # moto through api-tap-moto
 def test_env_points_at_the_lab_emulator(emulator, endpoint):
     env = provider_for(lab(emulator=emulator)).env()
-    assert env == {
-        "AWS_ENDPOINT_URL": endpoint,
-        "AWS_ACCESS_KEY_ID": "test",
-        "AWS_SECRET_ACCESS_KEY": "test",
-        "AWS_DEFAULT_REGION": "us-east-1",
-        "AWS_PAGER": "",
-    }
+    # Moto's admin keys are never printed: the lab profile hands them over through credential_process.
+    auth = {"AWS_PROFILE": "lab"} if emulator == "moto" else {"AWS_ACCESS_KEY_ID": "test", "AWS_SECRET_ACCESS_KEY": "test"}
+    assert env == {"AWS_ENDPOINT_URL": endpoint, **auth, "AWS_DEFAULT_REGION": "ap-southeast-2", "AWS_PAGER": ""}
 
 
 def test_default_provider_is_floci_through_api_tap():
@@ -43,7 +39,8 @@ def test_direct_client_bypasses_api_tap():
 
 def test_client_uses_endpoint_and_optional_credentials():
     c = AwsProvider("moto").client("iam", credentials=("AKIA1", "s3cr3t"))
-    assert c.meta.endpoint_url == "http://127.0.0.1:5050"
+    assert c.meta.endpoint_url == "http://127.0.0.1:4569"
+    assert AwsProvider("moto").client("iam", direct=True).meta.endpoint_url == "http://127.0.0.1:5050"
     assert c._request_signer._credentials.access_key == "AKIA1"
 
 
@@ -73,15 +70,15 @@ def test_moto_reset_creates_admin_within_unauthenticated_calls(monkeypatch):
     sent, iam, used = [], FakeIam(), []
     p = AwsProvider("moto")
     monkeypatch.setattr(p, "_moto_post", lambda path, body, ctype: sent.append((path, body, ctype)))
-    monkeypatch.setattr(p, "client", lambda service, credentials=None: used.append(credentials) or iam)
+    monkeypatch.setattr(p, "client", lambda service, credentials=None, direct=False: used.append((credentials, direct)) or iam)
     p.reset()
     assert sent == [("/moto-api/reset", b"", "application/json"), ("/moto-api/reset-auth", b"3", "text/plain")]
     # Every bootstrap call must fit in the unauthenticated calls reset-auth grants.
-    assert len(iam.calls) == MOTO_NO_AUTH_ACTIONS and used == [("test", "test")]
+    assert len(iam.calls) == MOTO_NO_AUTH_ACTIONS and used == [(("test", "test"), True)]
     file = moto_credentials_file()
     assert stat.S_IMODE(file.stat().st_mode) == 0o600
     assert p.credentials() == ("AKIAADMIN", "admin-secret")
-    assert p.env()["AWS_ACCESS_KEY_ID"] == "AKIAADMIN"
+    assert "AKIAADMIN" not in str(p.env()) and "admin-secret" not in str(p.env())
     assert AwsProvider("floci").credentials() == ("test", "test")  # Floci never uses them
 
 

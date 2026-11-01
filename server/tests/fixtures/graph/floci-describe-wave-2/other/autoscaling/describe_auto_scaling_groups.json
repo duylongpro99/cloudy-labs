@@ -1,0 +1,44 @@
+{
+  "calls": [
+    {
+      "params": {},
+      "response": {
+        "AutoScalingGroups": [
+          {
+            "AutoScalingGroupARN": "arn:aws:autoscaling:ap-southeast-2:000000000000:autoScalingGroup:w2-asg",
+            "AutoScalingGroupName": "w2-asg",
+            "AvailabilityZones": [],
+            "CreatedTime": "2026-10-31 15:16:09.486000+00:00",
+            "DefaultCooldown": 300,
+            "DesiredCapacity": 0,
+            "HealthCheckGracePeriod": 60,
+            "HealthCheckType": "ELB",
+            "Instances": [],
+            "LaunchTemplate": {
+              "LaunchTemplateId": "lt-aff1b0b07a8eb90d9",
+              "Version": "$Latest"
+            },
+            "LoadBalancerNames": [],
+            "MaxSize": 2,
+            "MinSize": 0,
+            "SuspendedProcesses": [],
+            "Tags": [
+              {
+                "Key": "Name",
+                "PropagateAtLaunch": true,
+                "ResourceId": "w2-asg",
+                "ResourceType": "auto-scaling-group",
+                "Value": "w2-asg"
+              }
+            ],
+            "TargetGroupARNs": [
+              "arn:aws:elasticloadbalancing:ap-southeast-2:000000000000:targetgroup/w2-tg/d4fadde448d443e1"
+            ],
+            "TerminationPolicies": [],
+            "VPCZoneIdentifier": "subnet-5c186171,subnet-99826efa"
+          }
+        ]
+      }
+    }
+  ]
+}

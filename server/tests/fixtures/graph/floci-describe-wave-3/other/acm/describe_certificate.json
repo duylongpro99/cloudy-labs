@@ -1,0 +1,66 @@
+{
+  "calls": [
+    {
+      "params": {
+        "CertificateArn": "arn:aws:acm:ap-southeast-2:000000000000:certificate/7a4702a0-cfe3-4fff-8947-03af3fb36b4e"
+      },
+      "response": {
+        "Certificate": {
+          "CertificateArn": "arn:aws:acm:ap-southeast-2:000000000000:certificate/7a4702a0-cfe3-4fff-8947-03af3fb36b4e",
+          "CreatedAt": "2026-10-31 23:25:11.987000+07:00",
+          "DomainName": "w3-edge.example.com",
+          "DomainValidationOptions": [
+            {
+              "DomainName": "w3-edge.example.com",
+              "ResourceRecord": {
+                "Name": "_e1a95e775c13b215133a9b7ef7053e5e.w3-edge.example.com.",
+                "Type": "CNAME",
+                "Value": "_5ff838e99073ea1fb760776d6b181465.acm-validations.aws."
+              },
+              "ValidationDomain": "w3-edge.example.com",
+              "ValidationMethod": "DNS",
+              "ValidationStatus": "SUCCESS"
+            }
+          ],
+          "ExtendedKeyUsages": [
+            {
+              "Name": "TLS_WEB_SERVER_AUTHENTICATION",
+              "OID": "1.3.6.1.5.5.7.3.1"
+            },
+            {
+              "Name": "TLS_WEB_CLIENT_AUTHENTICATION",
+              "OID": "1.3.6.1.5.5.7.3.2"
+            }
+          ],
+          "InUseBy": [],
+          "IssuedAt": "2026-10-31 23:25:11.987000+07:00",
+          "Issuer": "CN=Floci Local CA",
+          "KeyAlgorithm": "RSA-2048",
+          "KeyUsages": [
+            {
+              "Name": "DIGITAL_SIGNATURE"
+            },
+            {
+              "Name": "KEY_ENCIPHERMENT"
+            }
+          ],
+          "NotAfter": "2027-10-31 23:25:11+07:00",
+          "NotBefore": "2026-10-31 23:25:11+07:00",
+          "Options": {
+            "CertificateTransparencyLoggingPreference": "ENABLED",
+            "Export": "DISABLED"
+          },
+          "RenewalEligibility": "INELIGIBLE",
+          "Serial": "6c:18:46:78:07:04:c9:d1:d0:71:bb:e4:93:03:da:12",
+          "SignatureAlgorithm": "SHA512WITHRSA",
+          "Status": "ISSUED",
+          "Subject": "CN=w3-edge.example.com",
+          "SubjectAlternativeNames": [
+            "w3-edge.example.com"
+          ],
+          "Type": "AMAZON_ISSUED"
+        }
+      }
+    }
+  ]
+}

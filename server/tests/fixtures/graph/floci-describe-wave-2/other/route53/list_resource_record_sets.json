@@ -1,0 +1,63 @@
+{
+  "calls": [
+    {
+      "params": {
+        "HostedZoneId": "/hostedzone/Z45OBADPP2X6797"
+      },
+      "response": {
+        "IsTruncated": false,
+        "MaxItems": "300",
+        "ResourceRecordSets": [
+          {
+            "AliasTarget": {
+              "DNSName": "w2-alb-74ca62bb5d81462c.elb.localhost.floci.io",
+              "EvaluateTargetHealth": false,
+              "HostedZoneId": "Z1GM3OXH4ZPM65"
+            },
+            "Name": "app.w2.internal.",
+            "Type": "A"
+          },
+          {
+            "Name": "db.w2.internal.",
+            "ResourceRecords": [
+              {
+                "Value": "10.91.1.20"
+              }
+            ],
+            "TTL": 60,
+            "Type": "A"
+          },
+          {
+            "Name": "w2.internal.",
+            "ResourceRecords": [
+              {
+                "Value": "ns-1.awsdns-01.org."
+              },
+              {
+                "Value": "ns-2.awsdns-02.net."
+              },
+              {
+                "Value": "ns-3.awsdns-03.com."
+              },
+              {
+                "Value": "ns-4.awsdns-04.co.uk."
+              }
+            ],
+            "TTL": 172800,
+            "Type": "NS"
+          },
+          {
+            "Name": "w2.internal.",
+            "ResourceRecords": [
+              {
+                "Value": "ns-1.awsdns-01.org awsdns-hostmaster.amazon.com. 1 7200 900 1209600 86400"
+              }
+            ],
+            "TTL": 900,
+            "Type": "SOA"
+          }
+        ]
+      }
+    }
+  ]
+}

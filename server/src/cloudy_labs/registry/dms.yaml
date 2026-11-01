@@ -1,0 +1,201 @@
+# AWS Database Migration Service. A replication instance runs in the VPC of its replication subnet
+# group; a replication task runs on one instance and copies from a source endpoint to a target endpoint.
+# Endpoints are connection settings only (server, port, database or S3 bucket); the password is never read.
+
+- kind: dms-replication-instance
+  service: dms
+  label: DMS Replication Instance
+  list: {method: describe_replication_instances, items: ReplicationInstances}
+  id: ReplicationInstanceArn
+  name: [ReplicationInstanceIdentifier]
+  # Without ReplicationSubnetGroupIdentifier Floci uses its default group, in its default VPC.
+  parent: [{kind: vpc, path: ReplicationSubnetGroup.VpcId}, {kind: region}]
+  props:
+    instanceClass: ReplicationInstanceClass
+    status: ReplicationInstanceStatus
+    engineVersion: EngineVersion
+    storage: AllocatedStorage
+    multiAz: MultiAZ
+    publiclyAccessible: PubliclyAccessible
+    az: AvailabilityZone
+    subnetGroup: ReplicationSubnetGroup.ReplicationSubnetGroupIdentifier
+    subnets: "ReplicationSubnetGroup.Subnets && sort(ReplicationSubnetGroup.Subnets[].SubnetIdentifier)"
+  chat_props: [instanceClass, status, engineVersion, storage, multiAz, publiclyAccessible, az, subnetGroup, subnets]
+  edges:
+    - {kind: attached, target: "VpcSecurityGroups[].VpcSecurityGroupId", to: security-group, reverse: true, style: attach}
+    - {kind: subnet-group-member, target: "ReplicationSubnetGroup.Subnets[].SubnetIdentifier", to: subnet, style: reference}
+  caveats:
+    - {code: flag-only, prop: multiAz, text: "Floci 2.3.0 keeps Multi-AZ as a flag: no standby runs and a failover moves nothing. Check the flag, not a failover."}
+    - {code: dms-no-private-ip, text: "Floci 2.3.0 gives a replication instance no private IP address and starts no container: it is available at once, whatever its class."}
+  floci: {status: control-plane-only, note: "Floci 2.3.0 stores replication instances, endpoints and tasks and moves a task between ready, running and stopped, but copies no data."}
+  builder: true
+  view: {role: block, category: database, icon: Arch_AWS-Database-Migration-Service_48.svg, source: Architecture-Service-Icons_07312026/Arch_Databases/48/Arch_AWS-Database-Migration-Service_48.svg, height: 0.6, order: 650, host: true, actions: [ReplicationInstance, ReplicationInstances]}
+  contract:
+    create: {op: create-replication-instance, params: {ReplicationInstanceIdentifier: ct-dms-ri, ReplicationInstanceClass: dms.t3.micro, AllocatedStorage: "20"}, save: ri}
+    then:
+      - {op: modify-replication-instance, params: {ReplicationInstanceArn: "{ri}", ReplicationInstanceClass: dms.t3.small, ApplyImmediately: "true"}}
+      - {op: delete-replication-instance, params: {ReplicationInstanceArn: "{ri}"}}
+  ops:
+    - id: create-replication-instance
+      api: CreateReplicationInstance
+      gesture: create
+      title: "Tạo DMS replication instance"
+      fields: [ReplicationInstanceIdentifier, ReplicationInstanceClass, AllocatedStorage, ReplicationSubnetGroupIdentifier, VpcSecurityGroupIds, MultiAZ, PubliclyAccessible]
+      choices: {ReplicationInstanceClass: [dms.t3.micro, dms.t3.small, dms.t3.medium, dms.c5.large, dms.r5.large]}
+      defaults: {ReplicationInstanceClass: dms.t3.micro, AllocatedStorage: "20"}
+      result_id: ReplicationInstance.ReplicationInstanceArn
+      expect: {label: ReplicationInstanceIdentifier}
+      note: "Create the server that runs migration tasks. ReplicationSubnetGroupIdentifier puts it in a VPC (the default group otherwise); its security groups must reach the source and target databases."
+    - id: modify-replication-instance
+      api: ModifyReplicationInstance
+      gesture: attribute
+      title: "Đổi class của replication instance"
+      fields: [{name: ReplicationInstanceArn, ref: dms-replication-instance}, ReplicationInstanceClass, AllocatedStorage, MultiAZ, ApplyImmediately]
+      choices: {ReplicationInstanceClass: [dms.t3.micro, dms.t3.small, dms.t3.medium, dms.c5.large, dms.r5.large]}
+      defaults: {ApplyImmediately: "true"}
+      targets: [dms-replication-instance]
+      target_param: ReplicationInstanceArn
+      note: "Resize the instance (class or storage) or turn Multi-AZ on. ApplyImmediately true applies it now instead of in the maintenance window."
+    - id: delete-replication-instance
+      api: DeleteReplicationInstance
+      gesture: delete
+      title: "Xoá replication instance"
+      fields: [{name: ReplicationInstanceArn, ref: dms-replication-instance}]
+      targets: [dms-replication-instance]
+      target_param: ReplicationInstanceArn
+      note: "Delete the instance. Delete the replication tasks that run on it first."
+
+- kind: dms-endpoint
+  service: dms
+  label: DMS Endpoint
+  list: {method: describe_endpoints, items: Endpoints}
+  id: EndpointArn
+  name: [EndpointIdentifier]
+  parent: [{kind: region}]
+  props:
+    type: EndpointType
+    engine: EngineName
+    status: Status
+    server: ServerName
+    port: Port
+    database: DatabaseName
+    sslMode: SslMode
+    bucket: S3Settings.BucketName
+    bucketFolder: S3Settings.BucketFolder
+    accessRole: S3Settings.ServiceAccessRoleArn
+  chat_props: [type, engine, status, server, port, database, sslMode, bucket, bucketFolder, accessRole]
+  edges:
+    # A database endpoint names its server by address and port: the RDS instance or Aurora cluster there.
+    # The port counts: Floci gives every DB instance the same address and its own port.
+    - {kind: endpoint-database, target: "ServerName && join(':', [ServerName, to_string(Port)])", match: "Endpoint.Address && join(':', [Endpoint.Address, to_string(Endpoint.Port)])", to: db-instance, style: reference}
+    - {kind: endpoint-database, target: "ServerName && join(':', [ServerName, to_string(Port)])", match: "Endpoint && [join(':', [Endpoint, to_string(Port)]), ReaderEndpoint && join(':', [ReaderEndpoint, to_string(Port)])]", to: db-cluster, style: reference}
+    - {kind: uses-bucket, target: "S3Settings.BucketName && join('', ['arn:aws:s3:::', S3Settings.BucketName])", to: s3-bucket, style: reference}
+    - {kind: execution-role, target: S3Settings.ServiceAccessRoleArn, to: iam-role, style: reference}
+  caveats:
+    - {code: dms-endpoint-not-tested, prop: status, text: "Floci 2.3.0 marks every endpoint active without connecting to it: a wrong server name, port or password is not found until a real migration."}
+  floci: {status: control-plane-only, note: "Floci 2.3.0 stores endpoint settings and never connects to the database or bucket."}
+  builder: true
+  view: {role: block, category: database, icon: Res_Database_48_Light.svg, source: Resource-Icons_07312026/Res_General-Icons/Res_48_Light/Res_Database_48_Light.svg, height: 0.3, order: 651}
+  contract:
+    create: {op: create-dms-endpoint, params: {EndpointIdentifier: ct-dms-src, EndpointType: source, EngineName: postgres, ServerName: ct-db.example.internal, Port: "5432", DatabaseName: app, Username: ctadmin, Password: Contract-test-1}, save: ep}
+    then:
+      - {op: modify-dms-endpoint, params: {EndpointArn: "{ep}", ServerName: ct-db2.example.internal}}
+      - {op: delete-dms-endpoint, params: {EndpointArn: "{ep}"}}
+  ops:
+    - id: create-dms-endpoint
+      api: CreateEndpoint
+      gesture: create
+      title: "Tạo DMS endpoint"
+      fields: [EndpointIdentifier, EndpointType, EngineName, ServerName, Port, DatabaseName, Username, Password, S3Settings.BucketName, S3Settings.BucketFolder, {name: S3Settings.ServiceAccessRoleArn, ref: iam-role}]
+      choices: {EndpointType: [source, target], EngineName: [mysql, postgres, mariadb, aurora, aurora-postgresql, oracle, sqlserver, s3, dynamodb]}
+      defaults: {EndpointType: source, EngineName: postgres}
+      result_id: Endpoint.EndpointArn
+      expect: {label: EndpointIdentifier}
+      note: "Connection settings for one side of a migration. A database endpoint takes ServerName (the RDS endpoint address), Port, DatabaseName, Username and Password; an s3 target takes S3Settings.BucketName and a ServiceAccessRoleArn that dms.amazonaws.com may assume."
+    - id: modify-dms-endpoint
+      api: ModifyEndpoint
+      gesture: attribute
+      title: "Sửa DMS endpoint"
+      fields: [{name: EndpointArn, ref: dms-endpoint}, ServerName, Port, DatabaseName, Username, Password]
+      targets: [dms-endpoint]
+      target_param: EndpointArn
+      note: "Point the endpoint at another server, port or database, or change its credentials."
+    - id: delete-dms-endpoint
+      api: DeleteEndpoint
+      gesture: delete
+      title: "Xoá DMS endpoint"
+      fields: [{name: EndpointArn, ref: dms-endpoint}]
+      targets: [dms-endpoint]
+      target_param: EndpointArn
+      note: "Delete the endpoint. Delete the replication tasks that use it first."
+
+- kind: dms-replication-task
+  service: dms
+  label: DMS Replication Task
+  list: {method: describe_replication_tasks, items: ReplicationTasks}
+  id: ReplicationTaskArn
+  name: [ReplicationTaskIdentifier]
+  parent: [{kind: region}]
+  props:
+    status: Status
+    migrationType: MigrationType
+    stopReason: StopReason
+    lastFailure: LastFailureMessage
+    progress: ReplicationTaskStats.FullLoadProgressPercent
+  chat_props: [status, migrationType, stopReason, lastFailure, progress]
+  edges:
+    - {kind: runs-on, target: ReplicationInstanceArn, to: dms-replication-instance, style: reference}
+    - {kind: copies-from, target: SourceEndpointArn, to: dms-endpoint, style: reference}
+    - {kind: copies-to, target: TargetEndpointArn, to: dms-endpoint, style: reference}
+  caveats:
+    - {code: dms-task-moves-no-data, prop: status, text: "Floci 2.3.0 moves a task from ready to running and stopped but copies no rows: check the task's status and endpoints, not the target's data."}
+  floci: {status: control-plane-only, note: "Floci 2.3.0 runs no migration: a started task reports running and copies nothing."}
+  builder: true
+  view: {role: block, category: database, icon: Res_AWS-Database-Migration-Service_Database-migration-workflow-or-job_48.svg, source: Resource-Icons_07312026/Res_Databases/Res_AWS-Database-Migration-Service_Database-migration-workflow-or-job_48.svg, height: 0.4, order: 652, actions: [ReplicationTask, ReplicationTasks]}
+  contract:
+    needs:
+      - {op: create-replication-instance, params: {ReplicationInstanceIdentifier: ct-dms-task-ri, ReplicationInstanceClass: dms.t3.micro, AllocatedStorage: "20"}, save: ri}
+      - {op: create-dms-endpoint, params: {EndpointIdentifier: ct-dms-task-src, EndpointType: source, EngineName: postgres, ServerName: ct-src.example.internal, Port: "5432", DatabaseName: app, Username: ctadmin, Password: Contract-test-1}, save: src}
+      - {op: create-dms-endpoint, params: {EndpointIdentifier: ct-dms-task-tgt, EndpointType: target, EngineName: postgres, ServerName: ct-tgt.example.internal, Port: "5432", DatabaseName: app, Username: ctadmin, Password: Contract-test-1}, save: tgt}
+    create: {op: create-replication-task, params: {ReplicationTaskIdentifier: ct-dms-task, ReplicationInstanceArn: "{ri}", SourceEndpointArn: "{src}", TargetEndpointArn: "{tgt}", MigrationType: full-load, TableMappings: '{"rules": [{"rule-type": "selection", "rule-id": "1", "rule-name": "all", "object-locator": {"schema-name": "%", "table-name": "%"}, "rule-action": "include"}]}'}, save: task}
+    then:
+      - {op: start-replication-task, params: {ReplicationTaskArn: "{task}", StartReplicationTaskType: start-replication}}
+      - {op: stop-replication-task, params: {ReplicationTaskArn: "{task}"}}
+      - {op: delete-replication-task, params: {ReplicationTaskArn: "{task}"}}
+  ops:
+    - id: create-replication-task
+      api: CreateReplicationTask
+      gesture: create
+      title: "Tạo DMS replication task"
+      fields: [ReplicationTaskIdentifier, {name: ReplicationInstanceArn, ref: dms-replication-instance}, {name: SourceEndpointArn, ref: dms-endpoint}, {name: TargetEndpointArn, ref: dms-endpoint}, MigrationType, {name: TableMappings, multiline: true}]
+      choices: {MigrationType: [full-load, cdc, full-load-and-cdc]}
+      defaults: {MigrationType: full-load, TableMappings: '{"rules": [{"rule-type": "selection", "rule-id": "1", "rule-name": "all", "object-locator": {"schema-name": "%", "table-name": "%"}, "rule-action": "include"}]}'}
+      result_id: ReplicationTask.ReplicationTaskArn
+      expect: {label: ReplicationTaskIdentifier}
+      note: "Copy tables from a source endpoint to a target endpoint on a replication instance. full-load copies once; cdc then keeps applying changes. TableMappings (JSON) selects the schemas and tables; the default takes all of them. Start it with start-replication-task."
+    - id: start-replication-task
+      api: StartReplicationTask
+      gesture: attribute
+      title: "Chạy replication task"
+      fields: [{name: ReplicationTaskArn, ref: dms-replication-task}, StartReplicationTaskType]
+      choices: {StartReplicationTaskType: [start-replication, resume-processing, reload-target]}
+      defaults: {StartReplicationTaskType: start-replication}
+      targets: [dms-replication-task]
+      target_param: ReplicationTaskArn
+      note: "Start the migration (start-replication the first time, resume-processing after a stop, reload-target to copy again)."
+    - id: stop-replication-task
+      api: StopReplicationTask
+      gesture: attribute
+      title: "Dừng replication task"
+      fields: [{name: ReplicationTaskArn, ref: dms-replication-task}]
+      targets: [dms-replication-task]
+      target_param: ReplicationTaskArn
+      note: "Stop a running task; resume it later with start-replication-task and resume-processing."
+    - id: delete-replication-task
+      api: DeleteReplicationTask
+      gesture: delete
+      title: "Xoá replication task"
+      fields: [{name: ReplicationTaskArn, ref: dms-replication-task}]
+      targets: [dms-replication-task]
+      target_param: ReplicationTaskArn
+      note: "Delete a task that is not running; stop it first."

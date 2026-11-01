@@ -1,0 +1,28 @@
+{
+  "calls": [
+    {
+      "error": "ReplicationConfigurationNotFoundError",
+      "params": {
+        "Bucket": "w3-governance-logs"
+      }
+    },
+    {
+      "error": "ReplicationConfigurationNotFoundError",
+      "params": {
+        "Bucket": "w3-delivery-artifacts"
+      }
+    },
+    {
+      "error": "ReplicationConfigurationNotFoundError",
+      "params": {
+        "Bucket": "w3-dm-bucket"
+      }
+    },
+    {
+      "error": "ReplicationConfigurationNotFoundError",
+      "params": {
+        "Bucket": "w3-edge-origin"
+      }
+    }
+  ]
+}

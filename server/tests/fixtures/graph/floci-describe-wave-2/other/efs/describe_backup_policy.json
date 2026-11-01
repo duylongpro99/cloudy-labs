@@ -1,0 +1,14 @@
+{
+  "calls": [
+    {
+      "params": {
+        "FileSystemId": "fs-52d5401d27744359b"
+      },
+      "response": {
+        "BackupPolicy": {
+          "Status": "DISABLED"
+        }
+      }
+    }
+  ]
+}

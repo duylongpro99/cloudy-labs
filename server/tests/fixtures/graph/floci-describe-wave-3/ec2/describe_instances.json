@@ -1,0 +1,96 @@
+{
+  "calls": [
+    {
+      "params": {},
+      "response": {
+        "Reservations": [
+          {
+            "Groups": [],
+            "Instances": [
+              {
+                "AmiLaunchIndex": 0,
+                "CapacityReservationSpecification": {
+                  "CapacityReservationPreference": "open"
+                },
+                "CpuOptions": {
+                  "CoreCount": 1,
+                  "ThreadsPerCore": 1
+                },
+                "EbsOptimized": false,
+                "EnaSupport": true,
+                "EnclaveOptions": {
+                  "Enabled": false
+                },
+                "HibernationOptions": {
+                  "Configured": false
+                },
+                "Hypervisor": "xen",
+                "IamInstanceProfile": {
+                  "Arn": "arn:aws:iam::000000000000:instance-profile/w3-delivery-node-profile",
+                  "Id": "AIPAFCM5TQOFNS2PT2CBF"
+                },
+                "ImageId": "ami-eks-k3s",
+                "InstanceId": "i-b067ad6376ad31dc9",
+                "InstanceType": "m5.large",
+                "LaunchTime": "2026-10-31 16:25:10.613000+00:00",
+                "MaintenanceOptions": {
+                  "AutoRecovery": "default"
+                },
+                "MetadataOptions": {
+                  "HttpEndpoint": "enabled",
+                  "HttpProtocolIpv6": "disabled",
+                  "HttpPutResponseHopLimit": 1,
+                  "HttpTokens": "optional",
+                  "InstanceMetadataTags": "disabled",
+                  "State": "applied"
+                },
+                "Monitoring": {
+                  "State": "disabled"
+                },
+                "NetworkInterfaces": [],
+                "Placement": {
+                  "AvailabilityZone": "ap-southeast-2a",
+                  "Tenancy": "default"
+                },
+                "PlatformDetails": "Linux/UNIX",
+                "PrivateDnsName": "i-b067ad6376ad31dc9.ap-southeast-2.compute.internal",
+                "PrivateDnsNameOptions": {
+                  "EnableResourceNameDnsAAAARecord": false,
+                  "EnableResourceNameDnsARecord": false,
+                  "HostnameType": "ip-name"
+                },
+                "PrivateIpAddress": "172.27.0.10",
+                "RootDeviceName": "/dev/xvda",
+                "RootDeviceType": "ebs",
+                "SecurityGroups": [],
+                "SourceDestCheck": true,
+                "State": {
+                  "Code": 16,
+                  "Name": "running"
+                },
+                "Tags": [
+                  {
+                    "Key": "Name",
+                    "Value": "w3-delivery-node"
+                  },
+                  {
+                    "Key": "kubernetes.io/cluster/w3-delivery",
+                    "Value": "owned"
+                  },
+                  {
+                    "Key": "eks:cluster-name",
+                    "Value": "w3-delivery"
+                  }
+                ],
+                "VirtualizationType": "hvm",
+                "VpcId": ""
+              }
+            ],
+            "OwnerId": "000000000000",
+            "ReservationId": "r-e821d84017aee642b"
+          }
+        ]
+      }
+    }
+  ]
+}

@@ -1,0 +1,41 @@
+{
+  "calls": [
+    {
+      "params": {
+        "ResourceId": "/w2/app/api-token",
+        "ResourceType": "Parameter"
+      },
+      "response": {
+        "TagList": [
+          {
+            "Key": "lab",
+            "Value": "w2"
+          }
+        ]
+      }
+    },
+    {
+      "params": {
+        "ResourceId": "/w2/app/db-host",
+        "ResourceType": "Parameter"
+      },
+      "response": {
+        "TagList": [
+          {
+            "Key": "lab",
+            "Value": "w2"
+          }
+        ]
+      }
+    },
+    {
+      "params": {
+        "ResourceId": "/w2/cfn/param",
+        "ResourceType": "Parameter"
+      },
+      "response": {
+        "TagList": []
+      }
+    }
+  ]
+}

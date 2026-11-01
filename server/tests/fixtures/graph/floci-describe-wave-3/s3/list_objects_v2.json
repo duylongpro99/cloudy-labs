@@ -1,0 +1,60 @@
+{
+  "calls": [
+    {
+      "params": {
+        "Bucket": "w3-governance-logs",
+        "MaxKeys": 1000
+      },
+      "response": {
+        "EncodingType": "url",
+        "IsTruncated": false,
+        "KeyCount": 0,
+        "MaxKeys": 1000,
+        "Name": "w3-governance-logs",
+        "Prefix": ""
+      }
+    },
+    {
+      "params": {
+        "Bucket": "w3-delivery-artifacts",
+        "MaxKeys": 1000
+      },
+      "response": {
+        "EncodingType": "url",
+        "IsTruncated": false,
+        "KeyCount": 0,
+        "MaxKeys": 1000,
+        "Name": "w3-delivery-artifacts",
+        "Prefix": ""
+      }
+    },
+    {
+      "params": {
+        "Bucket": "w3-dm-bucket",
+        "MaxKeys": 1000
+      },
+      "response": {
+        "EncodingType": "url",
+        "IsTruncated": false,
+        "KeyCount": 0,
+        "MaxKeys": 1000,
+        "Name": "w3-dm-bucket",
+        "Prefix": ""
+      }
+    },
+    {
+      "params": {
+        "Bucket": "w3-edge-origin",
+        "MaxKeys": 1000
+      },
+      "response": {
+        "EncodingType": "url",
+        "IsTruncated": false,
+        "KeyCount": 0,
+        "MaxKeys": 1000,
+        "Name": "w3-edge-origin",
+        "Prefix": ""
+      }
+    }
+  ]
+}

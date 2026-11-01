@@ -1,0 +1,22 @@
+{
+  "calls": [
+    {
+      "params": {
+        "ConfigRuleNames": [
+          "w3-bucket-versioning"
+        ]
+      },
+      "response": {
+        "ConfigRulesEvaluationStatus": [
+          {
+            "ConfigRuleArn": "arn:aws:config:ap-southeast-2:000000000000:config-rule/config-rule-546801e25f30",
+            "ConfigRuleId": "config-rule-546801e25f30",
+            "ConfigRuleName": "w3-bucket-versioning",
+            "FirstActivatedTime": "2026-10-31 23:25:12+07:00",
+            "FirstEvaluationStarted": false
+          }
+        ]
+      }
+    }
+  ]
+}

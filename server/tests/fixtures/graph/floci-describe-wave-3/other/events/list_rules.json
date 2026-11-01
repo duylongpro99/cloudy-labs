@@ -1,0 +1,20 @@
+{
+  "calls": [
+    {
+      "params": {
+        "EventBusName": "arn:aws:events:ap-southeast-2:000000000000:event-bus/default"
+      },
+      "response": {
+        "Rules": [
+          {
+            "Arn": "arn:aws:events:ap-southeast-2:000000000000:rule/w3-orders-rule",
+            "EventBusName": "default",
+            "EventPattern": "{\"source\": [\"w3.shop\"]}",
+            "Name": "w3-orders-rule",
+            "State": "ENABLED"
+          }
+        ]
+      }
+    }
+  ]
+}

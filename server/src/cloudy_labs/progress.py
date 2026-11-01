@@ -1,6 +1,7 @@
 """Lab progress in a local SQLite file: attempts and the results of each check run."""
 
 import json
+import shutil
 import sqlite3
 from dataclasses import dataclass
 from datetime import UTC, datetime
@@ -26,6 +27,7 @@ MIGRATIONS = [
     );
     CREATE INDEX check_runs_attempt ON check_runs(attempt_id, ran_at);
     """,
+    "ALTER TABLE check_runs ADD COLUMN info INTEGER NOT NULL DEFAULT 0;",
 ]
 
 
@@ -43,12 +45,15 @@ def _now() -> str:
 class Progress:
     def __init__(self, path: Path):
         path.parent.mkdir(parents=True, exist_ok=True)
+        self.path = path
         self.db = sqlite3.connect(path)
         self.db.row_factory = sqlite3.Row
         self._migrate()
 
     def _migrate(self) -> None:
         version = self.db.execute("PRAGMA user_version").fetchone()[0]
+        if 0 < version < len(MIGRATIONS):  # a file with history: keep a copy before changing it
+            shutil.copy2(self.path, self.path.with_name(f"{self.path.name}.v{version}.bak"))
         for i, script in enumerate(MIGRATIONS[version:], start=version + 1):
             self.db.executescript(f"BEGIN;\n{script}\nPRAGMA user_version = {i};\nCOMMIT;")
 
@@ -75,8 +80,10 @@ class Progress:
         ran_at = _now()  # one timestamp per run groups its rows
         with self.db:
             self.db.executemany(
-                "INSERT INTO check_runs VALUES (?, ?, ?, ?, ?, ?)",
-                [(attempt_id, r.check_id, r.passed, r.message, json.dumps(r.resource_ids), ran_at) for r in results],
+                "INSERT INTO check_runs (attempt_id, check_id, passed, message, resource_ids_json, ran_at, info)"
+                " VALUES (?, ?, ?, ?, ?, ?, ?)",
+                [(attempt_id, r.check_id, r.passed, r.message, json.dumps(r.resource_ids), ran_at, r.info)
+                 for r in results],
             )
 
     def record_if_changed(self, attempt_id: int, results: list[CheckResult]) -> bool:
@@ -100,15 +107,15 @@ class Progress:
             (attempt_id, attempt_id),
         ).fetchall()
         return [
-            CheckResult(bool(r["passed"]), r["message"], json.loads(r["resource_ids_json"]), r["check_id"])
+            CheckResult(bool(r["passed"]), r["message"], json.loads(r["resource_ids_json"]), r["check_id"], bool(r["info"]))
             for r in rows
         ]
 
     def lab_summary(self) -> dict[str, bool]:
-        """lab id -> whether any check run of any attempt passed every check."""
+        """lab id -> whether any check run of any attempt passed every graded (non-info) check."""
         rows = self.db.execute(
             """SELECT a.lab_id, MAX(run_ok) AS done FROM (
-                   SELECT attempt_id, ran_at, MIN(passed) AS run_ok FROM check_runs GROUP BY attempt_id, ran_at
+                   SELECT attempt_id, ran_at, MIN(CASE WHEN info THEN 1 ELSE passed END) AS run_ok FROM check_runs GROUP BY attempt_id, ran_at
                ) r JOIN attempts a ON a.id = r.attempt_id GROUP BY a.lab_id"""
         ).fetchall()
         return {r["lab_id"]: bool(r["done"]) for r in rows}

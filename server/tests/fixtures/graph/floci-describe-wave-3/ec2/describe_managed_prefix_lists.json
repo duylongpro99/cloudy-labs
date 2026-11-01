@@ -1,0 +1,33 @@
+{
+  "calls": [
+    {
+      "params": {},
+      "response": {
+        "PrefixLists": [
+          {
+            "AddressFamily": "IPv4",
+            "MaxEntries": 2,
+            "OwnerId": "AWS",
+            "PrefixListArn": "arn:aws:ec2:ap-southeast-2:aws:prefix-list/pl-63a5400a",
+            "PrefixListId": "pl-63a5400a",
+            "PrefixListName": "com.amazonaws.ap-southeast-2.s3",
+            "State": "create-complete",
+            "Tags": [],
+            "Version": 1
+          },
+          {
+            "AddressFamily": "IPv4",
+            "MaxEntries": 2,
+            "OwnerId": "AWS",
+            "PrefixListArn": "arn:aws:ec2:ap-southeast-2:aws:prefix-list/pl-02cd2c6b",
+            "PrefixListId": "pl-02cd2c6b",
+            "PrefixListName": "com.amazonaws.ap-southeast-2.dynamodb",
+            "State": "create-complete",
+            "Tags": [],
+            "Version": 1
+          }
+        ]
+      }
+    }
+  ]
+}

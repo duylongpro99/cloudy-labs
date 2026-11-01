@@ -1,0 +1,17 @@
+{
+  "calls": [
+    {
+      "params": {},
+      "response": {
+        "Topics": [
+          {
+            "TopicArn": "arn:aws:sns:ap-southeast-2:000000000000:w3-order-events"
+          },
+          {
+            "TopicArn": "arn:aws:sns:ap-southeast-2:000000000000:w3-dm-events"
+          }
+        ]
+      }
+    }
+  ]
+}

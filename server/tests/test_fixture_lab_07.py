@@ -129,14 +129,14 @@ def test_one_security_group_is_not_enough(lab):
 def test_setup_builds_a_public_subnet(fixture_labs):
     ec2 = MagicMock()
     ec2.create_vpc.return_value = {"Vpc": {"VpcId": "vpc-1"}}
-    ec2.describe_availability_zones.return_value = {"AvailabilityZones": [{"ZoneName": "us-east-1b"}, {"ZoneName": "us-east-1a"}]}
+    ec2.describe_availability_zones.return_value = {"AvailabilityZones": [{"ZoneName": "ap-southeast-2b"}, {"ZoneName": "ap-southeast-2a"}]}
     ec2.create_subnet.return_value = {"Subnet": {"SubnetId": "subnet-1"}}
     ec2.create_internet_gateway.return_value = {"InternetGateway": {"InternetGatewayId": "igw-1"}}
     ec2.create_route_table.return_value = {"RouteTable": {"RouteTableId": "rtb-1"}}
     load_lab("fixture-lab-07", fixture_labs).resolve("checks:setup_network")(CheckContext(client=lambda service: ec2))
     assert ec2.create_vpc.call_args.kwargs["CidrBlock"] == "10.67.0.0/16"
     assert {"Key": "lab", "Value": "fixture-lab-07"} in ec2.create_vpc.call_args.kwargs["TagSpecifications"][0]["Tags"]
-    assert ec2.create_subnet.call_args.kwargs["AvailabilityZone"] == "us-east-1a"
+    assert ec2.create_subnet.call_args.kwargs["AvailabilityZone"] == "ap-southeast-2a"
     ec2.modify_subnet_attribute.assert_called_once_with(SubnetId="subnet-1", MapPublicIpOnLaunch={"Value": True})
     ec2.attach_internet_gateway.assert_called_once_with(InternetGatewayId="igw-1", VpcId="vpc-1")
     ec2.create_route.assert_called_once_with(RouteTableId="rtb-1", DestinationCidrBlock="0.0.0.0/0", GatewayId="igw-1")

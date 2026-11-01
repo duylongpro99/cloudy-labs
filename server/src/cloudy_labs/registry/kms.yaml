@@ -1,0 +1,118 @@
+# AWS KMS keys and aliases. ListKeys answers ids only: DescribeKey tells a customer key from the
+# AWS-managed ones Floci seeds (alias/aws/*), which are left out of the graph.
+
+- kind: kms-key
+  service: kms
+  label: KMS Key
+  list: {method: list_keys, items: Keys}
+  enrich:
+    - {method: describe_key, params: {KeyId: KeyId}, pick: KeyMetadata, merge_as: _Meta}
+    - {method: get_key_rotation_status, params: {KeyId: KeyId}, merge_as: _Rotation}
+  # A filter runs before enrichment, so an AWS-managed key is dropped by having no id.
+  id: "_Meta.KeyManager == 'CUSTOMER' && KeyArn || `null`"
+  name: [_Meta.Description, KeyId]
+  parent: [{kind: region}]
+  props:
+    keyId: KeyId
+    description: _Meta.Description
+    state: _Meta.KeyState
+    usage: _Meta.KeyUsage
+    spec: _Meta.KeySpec
+    origin: _Meta.Origin
+    multiRegion: _Meta.MultiRegion
+    rotation: _Rotation.KeyRotationEnabled
+    deletionDate: _Meta.DeletionDate
+  chat_props: [keyId, description, state, usage, spec, origin, multiRegion, rotation, deletionDate]
+  caveats:
+    - {code: kms-enabled-while-pending, prop: state, text: "Floci 2.3.0 keeps Enabled true on a key pending deletion: check KeyState (PendingDeletion), not Enabled."}
+  builder: true
+  view: {role: block, category: security, icon: Arch_AWS-Key-Management-Service_48.svg, source: Architecture-Service-Icons_07312026/Arch_Security-Identity/48/Arch_AWS-Key-Management-Service_48.svg, height: 0.4, order: 110, actions: [Key]}
+  contract:
+    create: {op: create-kms-key, params: {Description: ct-key}, save: key}
+    then:
+      - {op: enable-key-rotation, params: {KeyId: "{key}"}}
+      - {op: disable-kms-key, params: {KeyId: "{key}"}}
+  ops:
+    - id: create-kms-key
+      api: CreateKey
+      gesture: create
+      title: "Tạo KMS key"
+      fields: [Description, KeyUsage, KeySpec]
+      defaults: {KeyUsage: ENCRYPT_DECRYPT, KeySpec: SYMMETRIC_DEFAULT}
+      result_id: KeyMetadata.Arn
+      expect: {label: Description}
+      note: "Create a customer managed key. The description is how the scene names it; give it an alias next. SYMMETRIC_DEFAULT with ENCRYPT_DECRYPT is what S3, DynamoDB, SSM and Secrets Manager use."
+    - id: enable-key-rotation
+      api: EnableKeyRotation
+      gesture: attribute
+      title: "Bật xoay vòng key"
+      fields: [{name: KeyId, ref: kms-key}]
+      targets: [kms-key]
+      target_param: KeyId
+      note: "Rotate the key material every year; old material is kept so earlier ciphertext still decrypts. Symmetric keys only."
+    - id: disable-kms-key
+      api: DisableKey
+      gesture: attribute
+      title: "Tắt key"
+      fields: [{name: KeyId, ref: kms-key}]
+      targets: [kms-key]
+      target_param: KeyId
+      note: "A disabled key can neither encrypt nor decrypt until it is enabled again."
+    - id: enable-kms-key
+      api: EnableKey
+      gesture: attribute
+      title: "Bật lại key"
+      fields: [{name: KeyId, ref: kms-key}]
+      targets: [kms-key]
+      target_param: KeyId
+      note: "Enable a disabled key."
+    - id: schedule-key-deletion
+      api: ScheduleKeyDeletion
+      gesture: attribute
+      title: "Lên lịch xoá key"
+      fields: [{name: KeyId, ref: kms-key}, PendingWindowInDays]
+      defaults: {PendingWindowInDays: 7}
+      targets: [kms-key]
+      target_param: KeyId
+      note: "A key is never deleted at once: it waits 7 to 30 days in PendingDeletion, unusable, and CancelKeyDeletion brings it back."
+
+- kind: kms-alias
+  service: kms
+  label: KMS Alias
+  list: {method: list_aliases, items: Aliases}
+  filter: {path: "starts_with(AliasName, 'alias/aws/')", not_in: [true]}  # aliases of AWS-managed keys
+  id: AliasArn
+  name: [AliasName]
+  parent: [{kind: region}]
+  props:
+    targetKey: TargetKeyId
+  chat_props: [targetKey]
+  edges:
+    - {kind: alias-of, target: TargetKeyId, match: KeyId, to: kms-key, style: reference}
+  builder: true
+  view: {role: block, category: security, icon: Arch_AWS-Key-Management-Service_48.svg, source: Architecture-Service-Icons_07312026/Arch_Security-Identity/48/Arch_AWS-Key-Management-Service_48.svg, height: 0.2, order: 111, actions: [Alias]}
+  contract:
+    needs:
+      - {op: create-kms-key, params: {Description: ct-alias-key}, save: key}
+      - {op: create-kms-key, params: {Description: ct-alias-key-2}, save: key2}
+    create: {op: create-kms-alias, params: {AliasName: alias/ct-alias, TargetKeyId: "{key}"}}
+    then:
+      - {op: update-kms-alias, params: {AliasName: alias/ct-alias, TargetKeyId: "{key2}"}}
+  ops:
+    - id: create-kms-alias
+      api: CreateAlias
+      gesture: create
+      title: "Tạo alias cho KMS key"
+      fields: [{name: AliasName, placeholder: alias/my-app}, {name: TargetKeyId, ref: kms-key}]
+      expect: {label: AliasName}
+      note: "A friendly name for a key, starting with alias/ (alias/aws/ is reserved). Services and the CLI accept the alias wherever they take a key id."
+    - id: update-kms-alias
+      api: UpdateAlias
+      gesture: connect
+      title: "Trỏ alias sang key khác"
+      fields: [{name: AliasName, ref: kms-alias, ref_by: label}, {name: TargetKeyId, ref: kms-key}]
+      source: kms-alias
+      source_param: AliasName
+      targets: [kms-key]
+      target_param: TargetKeyId
+      note: "Point the alias at another key of the same type, e.g. after a manual rotation."

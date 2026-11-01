@@ -1,0 +1,134 @@
+# AWS Elastic Beanstalk. Floci keeps applications and environments as records: an environment is Ready
+# and Green as soon as it is created, and no instance, load balancer or container runs behind it. Only
+# the deployment policy is read from the option settings, because other namespaces hold app env vars.
+
+- kind: beanstalk-application
+  service: elasticbeanstalk
+  label: Beanstalk Application
+  list: {method: describe_applications, items: Applications, paginate: false}
+  id: ApplicationArn
+  name: [ApplicationName]
+  parent: [{kind: region}]
+  props:
+    description: Description
+    versions: "length(Versions || `[]`)"
+    configurationTemplates: "sort(ConfigurationTemplates || `[]`)"
+  chat_props: [description, versions, configurationTemplates]
+  builder: true
+  floci:
+    status: control-plane-only
+    note: "Floci 2.3.0 stores Beanstalk applications and environments; an environment reports Ready/Green at once and runs no instance, load balancer or container."
+  view: {role: block, category: compute, icon: Res_AWS-Elastic-Beanstalk_Application_48.svg, source: Resource-Icons_07312026/Res_Compute/Res_AWS-Elastic-Beanstalk_Application_48.svg, height: 0.4, order: 615, actions: [Application, ApplicationVersion]}
+  contract:
+    create: {op: create-beanstalk-application, params: {ApplicationName: ct-eb-app, Description: contract test}, save: app}
+    then:
+      - {op: update-beanstalk-application, params: {ApplicationName: ct-eb-app, Description: changed by the contract test}}
+      - {op: delete-beanstalk-application, params: {ApplicationName: ct-eb-app}}
+  ops:
+    - id: create-beanstalk-application
+      api: CreateApplication
+      gesture: create
+      title: "Tạo Beanstalk application"
+      fields: [{name: ApplicationName, placeholder: my-app}, Description]
+      result_id: Application.ApplicationArn
+      expect: {label: ApplicationName}
+      note: "Create an application: the folder for its versions and environments. Create an environment in it next."
+    - id: update-beanstalk-application
+      api: UpdateApplication
+      gesture: attribute
+      title: "Đổi mô tả Beanstalk application"
+      fields: [{name: ApplicationName, ref: beanstalk-application, ref_by: label}, Description]
+      targets: [beanstalk-application]
+      target_param: ApplicationName
+      note: "Change the application's description."
+    - id: delete-beanstalk-application
+      api: DeleteApplication
+      gesture: delete
+      title: "Xoá Beanstalk application"
+      fields: [{name: ApplicationName, ref: beanstalk-application, ref_by: label}, TerminateEnvByForce]
+      targets: [beanstalk-application]
+      target_param: ApplicationName
+      note: "Delete the application and its versions. TerminateEnvByForce=true also terminates its running environments."
+
+- kind: beanstalk-environment
+  service: elasticbeanstalk
+  label: Beanstalk Environment
+  list: {method: describe_environments, items: Environments, params: {IncludeDeleted: false}}
+  filter:
+    - {path: Status, not_in: [Terminated, Terminating]}
+  enrich:
+    - {method: describe_applications, params: {ApplicationNames: "[ApplicationName]"}, pick: "Applications[0].ApplicationArn", merge_as: _AppArn}
+    - method: describe_configuration_settings
+      params: {ApplicationName: ApplicationName, EnvironmentName: EnvironmentName}
+      pick: "ConfigurationSettings[0].OptionSettings[?Namespace=='aws:elasticbeanstalk:command' && OptionName=='DeploymentPolicy'].Value | [0]"
+      merge_as: _DeploymentPolicy
+  id: EnvironmentArn
+  name: [EnvironmentName]
+  parent: [{kind: beanstalk-application, path: _AppArn}, {kind: region}]
+  props:
+    envId: EnvironmentId
+    application: ApplicationName
+    platform: SolutionStackName
+    platformArn: PlatformArn
+    status: Status
+    health: Health
+    healthStatus: HealthStatus
+    tier: Tier.Name
+    cname: CNAME
+    endpoint: EndpointURL
+    version: VersionLabel
+    description: Description
+    deploymentPolicy: _DeploymentPolicy
+  chat_props: [envId, application, platform, platformArn, status, health, healthStatus, tier, cname, endpoint, version, description, deploymentPolicy]
+  caveats:
+    - {code: beanstalk-platform-not-checked, prop: platform, text: "Floci 2.3.0 accepts any PlatformArn and keeps it as given, but reports the solution stack of a PlatformArn-created environment as the Docker one."}
+  builder: true
+  floci:
+    status: control-plane-only
+    note: "Floci 2.3.0 stores Beanstalk environments: one is Ready/Green as soon as it is created, its CNAME ends in elasticbeanstalk.local and nothing serves on it."
+  view: {role: block, category: compute, icon: Arch_AWS-Elastic-Beanstalk_48.svg, source: Architecture-Service-Icons_07312026/Arch_Compute/48/Arch_AWS-Elastic-Beanstalk_48.svg, height: 0.6, order: 616, actions: [Environment, ConfigurationSettings]}
+  contract:
+    needs:
+      - {op: create-beanstalk-application, params: {ApplicationName: ct-eb-env-app}, save: app}
+    create: {op: create-beanstalk-environment, params: {ApplicationName: ct-eb-env-app, EnvironmentName: ct-eb-env, PlatformArn: "arn:aws:elasticbeanstalk:ap-southeast-2::platform/Docker running on 64bit Amazon Linux 2023/4.3.0"}, save: env}
+    parent: app
+    then:
+      - {op: update-beanstalk-environment, params: {EnvironmentName: ct-eb-env, Description: changed by the contract test}}
+      - {op: terminate-beanstalk-environment, params: {EnvironmentName: ct-eb-env}}
+  ops:
+    - id: create-beanstalk-environment
+      api: CreateEnvironment
+      gesture: create
+      title: "Tạo Beanstalk environment"
+      fields:
+        - {name: ApplicationName, ref: beanstalk-application, ref_by: label}
+        - {name: EnvironmentName, placeholder: my-app-dev}
+        - {name: PlatformArn, choices: ["arn:aws:elasticbeanstalk:ap-southeast-2::platform/Docker running on 64bit Amazon Linux 2023/4.3.0", "arn:aws:elasticbeanstalk:ap-southeast-2::platform/Corretto 21 running on 64bit Amazon Linux 2023/4.4.0", "arn:aws:elasticbeanstalk:ap-southeast-2::platform/Python 3.13 running on 64bit Amazon Linux 2023/4.4.0", "arn:aws:elasticbeanstalk:ap-southeast-2::platform/Node.js 22 running on 64bit Amazon Linux 2023/6.5.0"]}
+        - CNAMEPrefix
+        - Description
+        - VersionLabel
+        - {name: OptionSettings, multiline: true, placeholder: '[{"Namespace": "aws:elasticbeanstalk:environment", "OptionName": "EnvironmentType", "Value": "SingleInstance"}]'}
+      container: {param: ApplicationName, by: label}
+      result_id: EnvironmentArn
+      expect: {label: EnvironmentName}
+      note: "Create an environment that runs a version of the application on a platform (PlatformArn: Docker, Corretto, Python or Node.js on Amazon Linux 2023; the builder takes the platform ARN because a solution stack name holds spaces). OptionSettings (JSON) set instance type, environment type, scaling and the deployment policy."
+    - id: update-beanstalk-environment
+      api: UpdateEnvironment
+      gesture: attribute
+      title: "Cập nhật Beanstalk environment"
+      fields:
+        - {name: EnvironmentName, ref: beanstalk-environment, ref_by: label}
+        - VersionLabel
+        - Description
+        - {name: OptionSettings, multiline: true, placeholder: '[{"Namespace": "aws:elasticbeanstalk:command", "OptionName": "DeploymentPolicy", "Value": "Rolling"}]'}
+      targets: [beanstalk-environment]
+      target_param: EnvironmentName
+      note: "Deploy another application version (VersionLabel), or change the description or option settings, e.g. the deployment policy AllAtOnce, Rolling, RollingWithAdditionalBatch or Immutable."
+    - id: terminate-beanstalk-environment
+      api: TerminateEnvironment
+      gesture: delete
+      title: "Xoá Beanstalk environment"
+      fields: [{name: EnvironmentName, ref: beanstalk-environment, ref_by: label}]
+      targets: [beanstalk-environment]
+      target_param: EnvironmentName
+      note: "Terminate the environment and the resources it made."

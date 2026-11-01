@@ -1,0 +1,23 @@
+{
+  "calls": [
+    {
+      "params": {},
+      "response": {
+        "HostedZones": [
+          {
+            "CallerReference": "w3-edge-zone",
+            "Config": {
+              "PrivateZone": false
+            },
+            "Id": "/hostedzone/Z6WG0M5Q336PDHF",
+            "Name": "w3-edge.example.com.",
+            "ResourceRecordSetCount": 4
+          }
+        ],
+        "IsTruncated": false,
+        "Marker": "",
+        "MaxItems": "100"
+      }
+    }
+  ]
+}

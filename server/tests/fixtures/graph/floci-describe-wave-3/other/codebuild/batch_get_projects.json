@@ -1,0 +1,44 @@
+{
+  "calls": [
+    {
+      "params": {
+        "names": [
+          "w3-delivery-build"
+        ]
+      },
+      "response": {
+        "projects": [
+          {
+            "arn": "arn:aws:codebuild:ap-southeast-2:000000000000:project/w3-delivery-build",
+            "artifacts": {
+              "type": "CODEPIPELINE"
+            },
+            "created": "2026-10-31 23:25:11.317000+07:00",
+            "environment": {
+              "computeType": "BUILD_GENERAL1_SMALL",
+              "environmentVariables": [
+                {
+                  "name": "STAGE",
+                  "type": "PLAINTEXT",
+                  "value": "<redacted>"
+                }
+              ],
+              "image": "aws/codebuild/standard:7.0",
+              "type": "LINUX_CONTAINER"
+            },
+            "lastModified": "2026-10-31 23:25:11.317000+07:00",
+            "name": "w3-delivery-build",
+            "projectVisibility": "PRIVATE",
+            "queuedTimeoutInMinutes": 480,
+            "serviceRole": "arn:aws:iam::000000000000:role/w3-delivery-role",
+            "source": {
+              "type": "CODEPIPELINE"
+            },
+            "timeoutInMinutes": 60
+          }
+        ],
+        "projectsNotFound": []
+      }
+    }
+  ]
+}

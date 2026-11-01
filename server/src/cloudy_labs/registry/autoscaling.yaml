@@ -1,0 +1,115 @@
+# Amazon EC2 Auto Scaling. A group spans subnets through a comma-separated VPCZoneIdentifier, so it sits
+# in the region and links to its launch template, instances and target groups; policies belong to a group.
+
+- kind: autoscaling-group
+  service: autoscaling
+  label: Auto Scaling Group
+  list: {method: describe_auto_scaling_groups, items: AutoScalingGroups}
+  id: AutoScalingGroupARN
+  name: [AutoScalingGroupName]
+  parent: [{kind: region}]
+  props:
+    minSize: MinSize
+    maxSize: MaxSize
+    desiredCapacity: DesiredCapacity
+    subnets: VPCZoneIdentifier
+    healthCheckType: HealthCheckType
+    launchTemplate: "LaunchTemplate.{id: LaunchTemplateId, name: LaunchTemplateName, version: Version}"
+    targetGroups: "TargetGroupARNs && sort(TargetGroupARNs)"
+    instances: "sort_by(Instances || `[]`, &InstanceId)[].{id: InstanceId, az: AvailabilityZone, state: LifecycleState, health: HealthStatus}"
+    tags: {hook: common.tags}
+  chat_props: [minSize, maxSize, desiredCapacity, subnets, healthCheckType, launchTemplate, targetGroups, instances]
+  edges:
+    - {kind: uses-launch-template, target: "[LaunchTemplate.LaunchTemplateId, MixedInstancesPolicy.LaunchTemplate.LaunchTemplateSpecification.LaunchTemplateId]", to: launch-template, style: reference}
+    - {kind: asg-instance, target: "Instances[].InstanceId", to: instance, style: reference}
+    - {kind: asg-target-group, target: TargetGroupARNs, to: target-group, style: reference}
+  caveats:
+    - {code: asg-no-elb-health, prop: healthCheckType, text: "Floci 2.3.0 does not replace an instance its target group reports unhealthy, even with the ELB health check type: check the group's settings, not a replacement."}
+    - {code: asg-no-group-tag, text: "Floci 2.3.0 does not tag launched instances with aws:autoscaling:groupName; find them through the group's instances."}
+  builder: true
+  view: {role: block, category: compute, icon: Res_Amazon-EC2_Auto-Scaling_48.svg, source: Resource-Icons_07312026/Res_Compute/Res_Amazon-EC2_Auto-Scaling_48.svg, height: 0.6, order: 65, actions: [AutoScalingGroup, DesiredCapacity, LoadBalancerTargetGroups]}  # not Instances: RunInstances must stay with the instance kind
+  contract:
+    needs:
+      - {op: create-vpc, params: {name: ct-asg-vpc, cidr: 10.95.0.0/16}, save: vpc}
+      - {op: create-subnet, params: {name: ct-asg-a, vpcId: "{vpc}", cidr: 10.95.1.0/24, az: "{region}a"}, save: a}
+      - {op: create-launch-template, params: {LaunchTemplateName: ct-asg-lt, LaunchTemplateData: '{"ImageId": "{image}", "InstanceType": "{instanceType}"}'}, save: lt}
+    create: {op: create-auto-scaling-group, params: {AutoScalingGroupName: ct-asg, LaunchTemplate.LaunchTemplateId: "{lt}", MinSize: "0", MaxSize: "1", DesiredCapacity: "0", VPCZoneIdentifier: "{a}"}, save: asg}
+    then: [{op: update-auto-scaling-group, params: {AutoScalingGroupName: ct-asg, MaxSize: "2"}}]
+  ops:
+    - id: create-auto-scaling-group
+      api: CreateAutoScalingGroup
+      gesture: create
+      title: "Tạo Auto Scaling Group"
+      fields: [AutoScalingGroupName, {name: LaunchTemplate.LaunchTemplateId, ref: launch-template}, LaunchTemplate.Version, MinSize, MaxSize, DesiredCapacity, VPCZoneIdentifier, TargetGroupARNs, HealthCheckType, HealthCheckGracePeriod]
+      choices: {HealthCheckType: [EC2, ELB]}
+      defaults: {MinSize: "1", MaxSize: "2", DesiredCapacity: "1", LaunchTemplate.Version: $Latest}
+      expect: {label: AutoScalingGroupName}
+      note: "Keep DesiredCapacity instances from a launch template running across subnets (VPCZoneIdentifier: subnet ids, comma-separated, one per AZ). TargetGroupARNs registers every instance with a load balancer's target group."
+    - id: update-auto-scaling-group
+      api: UpdateAutoScalingGroup
+      gesture: attribute
+      title: "Sửa Auto Scaling Group"
+      fields: [{name: AutoScalingGroupName, ref: autoscaling-group, ref_by: label}, MinSize, MaxSize, DesiredCapacity, VPCZoneIdentifier, HealthCheckType]
+      choices: {HealthCheckType: [EC2, ELB]}
+      target_param: AutoScalingGroupName
+      note: "Change the group's size limits, desired capacity, subnets or health check type."
+    - id: set-desired-capacity
+      api: SetDesiredCapacity
+      gesture: attribute
+      title: "Đặt số instance mong muốn"
+      fields: [{name: AutoScalingGroupName, ref: autoscaling-group, ref_by: label}, DesiredCapacity]
+      target_param: AutoScalingGroupName
+      note: "Scale the group by hand to DesiredCapacity, between its MinSize and MaxSize; it launches or terminates instances to match."
+    - id: attach-load-balancer-target-groups
+      api: AttachLoadBalancerTargetGroups
+      gesture: connect
+      title: "Gắn Target Group vào ASG"
+      fields: [{name: AutoScalingGroupName, ref: autoscaling-group, ref_by: label}, TargetGroupARNs]
+      source: autoscaling-group
+      source_param: AutoScalingGroupName
+      targets: [target-group]
+      target_param: TargetGroupARNs
+      note: "Register the group's instances, now and future, with target groups (ARNs, comma-separated)."
+
+- kind: scaling-policy
+  service: autoscaling
+  label: Scaling Policy
+  list: {method: describe_policies, items: ScalingPolicies}
+  id: PolicyARN
+  name: [PolicyName]
+  parent: [{kind: region}]
+  props:
+    group: AutoScalingGroupName
+    type: PolicyType
+    adjustmentType: AdjustmentType
+    scalingAdjustment: ScalingAdjustment
+    metric: "TargetTrackingConfiguration.PredefinedMetricSpecification.PredefinedMetricType"
+    targetValue: TargetTrackingConfiguration.TargetValue
+    enabled: Enabled
+    alarms: "Alarms[].AlarmName"
+  chat_props: [group, type, adjustmentType, scalingAdjustment, metric, targetValue, enabled, alarms]
+  edges:
+    - {kind: policy-of, target: AutoScalingGroupName, to: autoscaling-group, match: AutoScalingGroupName, style: reference}
+    - {kind: alarm-action, target: "Alarms[].AlarmARN", to: cloudwatch-alarm, reverse: true, style: reference}
+  caveats:
+    - {code: control-plane-only, text: "Floci 2.3.0 stores scaling policies but never runs them: no metrics drive a scale-out and target tracking makes no alarms. Check the policy, not the group's size."}
+  builder: true
+  view: {role: block, category: compute, icon: Res_Metrics_48_Light.svg, source: Resource-Icons_07312026/Res_General-Icons/Res_48_Light/Res_Metrics_48_Light.svg, height: 0.3, order: 66, actions: [ScalingPolicy, Policies]}
+  contract:
+    needs:
+      - {op: create-vpc, params: {name: ct-sp-vpc, cidr: 10.96.0.0/16}, save: vpc}
+      - {op: create-subnet, params: {name: ct-sp-a, vpcId: "{vpc}", cidr: 10.96.1.0/24, az: "{region}a"}, save: a}
+      - {op: create-launch-template, params: {LaunchTemplateName: ct-sp-lt, LaunchTemplateData: '{"ImageId": "{image}", "InstanceType": "{instanceType}"}'}, save: lt}
+      - {op: create-auto-scaling-group, params: {AutoScalingGroupName: ct-sp-asg, LaunchTemplate.LaunchTemplateId: "{lt}", MinSize: "0", MaxSize: "1", DesiredCapacity: "0", VPCZoneIdentifier: "{a}"}, save: asg}
+    create: {op: put-scaling-policy, params: {AutoScalingGroupName: ct-sp-asg, PolicyName: ct-cpu50, PolicyType: TargetTrackingScaling, TargetTrackingConfiguration.PredefinedMetricSpecification.PredefinedMetricType: ASGAverageCPUUtilization, TargetTrackingConfiguration.TargetValue: "50"}, save: policy}
+  ops:
+    - id: put-scaling-policy
+      api: PutScalingPolicy
+      gesture: create
+      title: "Tạo Scaling Policy"
+      fields: [{name: AutoScalingGroupName, ref: autoscaling-group, ref_by: label}, PolicyName, PolicyType, TargetTrackingConfiguration.PredefinedMetricSpecification.PredefinedMetricType, TargetTrackingConfiguration.TargetValue, AdjustmentType, ScalingAdjustment]
+      choices: {PolicyType: [TargetTrackingScaling, SimpleScaling, StepScaling], TargetTrackingConfiguration.PredefinedMetricSpecification.PredefinedMetricType: [ASGAverageCPUUtilization, ASGAverageNetworkIn, ASGAverageNetworkOut, ALBRequestCountPerTarget], AdjustmentType: [ChangeInCapacity, ExactCapacity, PercentChangeInCapacity]}
+      defaults: {PolicyType: TargetTrackingScaling, TargetTrackingConfiguration.PredefinedMetricSpecification.PredefinedMetricType: ASGAverageCPUUtilization, TargetTrackingConfiguration.TargetValue: "50"}
+      result_id: PolicyARN
+      expect: {label: PolicyName}
+      note: "Scale the group automatically. TargetTrackingScaling keeps a metric (average CPU...) near TargetValue; SimpleScaling adds ScalingAdjustment instances when a CloudWatch alarm that names the policy's ARN fires."

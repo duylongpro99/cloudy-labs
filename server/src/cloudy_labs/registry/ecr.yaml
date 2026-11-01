@@ -1,0 +1,58 @@
+# Amazon ECR private repositories. Floci backs them with a real registry:2 container that it starts
+# with the first repository and removes with the last one, so pushed images are real layers.
+
+- kind: ecr-repository
+  service: ecr
+  label: ECR Repository
+  list: {method: describe_repositories, items: repositories}
+  enrich:
+    - {method: list_images, params: {repositoryName: repositoryName}, pick: imageIds, merge_as: _Images}
+  id: repositoryArn
+  name: [repositoryName]
+  parent: [{kind: region}]
+  props:
+    uri: repositoryUri
+    tagMutability: imageTagMutability
+    scanOnPush: imageScanningConfiguration.scanOnPush
+    encryption: encryptionConfiguration.encryptionType
+    kmsKey: encryptionConfiguration.kmsKey
+    images: "length(_Images || `[]`)"
+    imageTags: "sort(_Images[].imageTag || `[]`)"
+  chat_props: [uri, tagMutability, scanOnPush, encryption, kmsKey, imageTags, images]
+  edges:
+    - {kind: encrypted-by, target: encryptionConfiguration.kmsKey, to: [kms-key, kms-alias], style: reference}
+  caveats:
+    - {code: ecr-no-scan, prop: scanOnPush, text: "Floci 2.3.0 stores scanOnPush but scans nothing: StartImageScan and DescribeImageScanFindings are refused, so no finding is ever reported."}
+  builder: true
+  view: {role: block, category: containers, icon: Res_Amazon-Elastic-Container-Registry_Registry_48.svg, source: Resource-Icons_07312026/Res_Containers/Res_Amazon-Elastic-Container-Registry_Registry_48.svg, height: 0.5, order: 600, actions: [Repository, Image, ImageScanningConfiguration, ImageTagMutability]}
+  contract:
+    create: {op: create-ecr-repository, params: {repositoryName: ct-ecr-repo, imageTagMutability: MUTABLE, imageScanningConfiguration.scanOnPush: "false"}, save: repo}
+    then:
+      - {op: put-image-scanning-configuration, params: {repositoryName: ct-ecr-repo, imageScanningConfiguration.scanOnPush: "true"}}
+      - {op: delete-ecr-repository, params: {repositoryName: ct-ecr-repo, force: "true"}}
+  ops:
+    - id: create-ecr-repository
+      api: CreateRepository
+      gesture: create
+      title: "Tạo ECR repository"
+      fields: [{name: repositoryName, placeholder: my-app}, imageTagMutability, imageScanningConfiguration.scanOnPush, encryptionConfiguration.encryptionType, encryptionConfiguration.kmsKey]
+      defaults: {imageTagMutability: MUTABLE}
+      result_id: repository.repositoryArn
+      expect: {label: repositoryName}
+      note: "Create a private repository for container images. Push with docker after `aws ecr get-login-password | docker login` to the repository URI. IMMUTABLE tags refuse a second push of the same tag."
+    - id: put-image-scanning-configuration
+      api: PutImageScanningConfiguration
+      gesture: attribute
+      title: "Bật/tắt scan on push"
+      fields: [{name: repositoryName, ref: ecr-repository, ref_by: label}, imageScanningConfiguration.scanOnPush]
+      targets: [ecr-repository]
+      target_param: repositoryName
+      note: "Scan each image for vulnerabilities when it is pushed (basic scanning)."
+    - id: delete-ecr-repository
+      api: DeleteRepository
+      gesture: delete
+      title: "Xoá ECR repository"
+      fields: [{name: repositoryName, ref: ecr-repository, ref_by: label}, force]
+      targets: [ecr-repository]
+      target_param: repositoryName
+      note: "Delete the repository. A repository that still holds images needs force=true, which deletes the images too."

@@ -1,0 +1,681 @@
+{
+  "calls": [
+    {
+      "params": {
+        "Filter": [
+          "Role"
+        ]
+      },
+      "response": {
+        "GroupDetailList": [],
+        "IsTruncated": false,
+        "Policies": [],
+        "RoleDetailList": [
+          {
+            "Arn": "arn:aws:iam::000000000000:role/w3-cognito-auth",
+            "AssumeRolePolicyDocument": {
+              "Statement": [
+                {
+                  "Action": "sts:AssumeRoleWithWebIdentity",
+                  "Effect": "Allow",
+                  "Principal": {
+                    "Federated": "cognito-identity.amazonaws.com"
+                  }
+                }
+              ],
+              "Version": "2012-10-17"
+            },
+            "AttachedManagedPolicies": [],
+            "CreateDate": "2026-10-31 16:25:12.209000+00:00",
+            "InstanceProfileList": [],
+            "Path": "/",
+            "RoleId": "AROA9B4G5NO99CKM6SQ9",
+            "RoleName": "w3-cognito-auth",
+            "RolePolicyList": []
+          },
+          {
+            "Arn": "arn:aws:iam::000000000000:role/w3-config",
+            "AssumeRolePolicyDocument": {
+              "Statement": [
+                {
+                  "Action": "sts:AssumeRole",
+                  "Effect": "Allow",
+                  "Principal": {
+                    "Service": "config.amazonaws.com"
+                  }
+                }
+              ],
+              "Version": "2012-10-17"
+            },
+            "AttachedManagedPolicies": [],
+            "CreateDate": "2026-10-31 16:25:12.208000+00:00",
+            "InstanceProfileList": [],
+            "Path": "/",
+            "RoleId": "AROA6Q35FGNC9UWHL8AG",
+            "RoleName": "w3-config",
+            "RolePolicyList": []
+          },
+          {
+            "Arn": "arn:aws:iam::000000000000:role/w3-delivery-role",
+            "AssumeRolePolicyDocument": {
+              "Statement": [
+                {
+                  "Action": "sts:AssumeRole",
+                  "Effect": "Allow",
+                  "Principal": {
+                    "Service": [
+                      "codebuild.amazonaws.com",
+                      "codepipeline.amazonaws.com",
+                      "eks.amazonaws.com"
+                    ]
+                  }
+                }
+              ],
+              "Version": "2012-10-17"
+            },
+            "AttachedManagedPolicies": [],
+            "CreateDate": "2026-10-31 16:25:10.349000+00:00",
+            "InstanceProfileList": [],
+            "Path": "/",
+            "RoleId": "AROAAGERYIWIFVXPQT65",
+            "RoleName": "w3-delivery-role",
+            "RolePolicyList": []
+          },
+          {
+            "Arn": "arn:aws:iam::000000000000:role/w3-dm-role",
+            "AssumeRolePolicyDocument": {
+              "Statement": [
+                {
+                  "Action": "sts:AssumeRole",
+                  "Effect": "Allow",
+                  "Principal": {
+                    "Service": [
+                      "dms.amazonaws.com",
+                      "datasync.amazonaws.com",
+                      "glue.amazonaws.com",
+                      "transfer.amazonaws.com"
+                    ]
+                  }
+                }
+              ],
+              "Version": "2012-10-17"
+            },
+            "AttachedManagedPolicies": [],
+            "CreateDate": "2026-10-31 16:25:07.933000+00:00",
+            "InstanceProfileList": [],
+            "Path": "/",
+            "RoleId": "AROATZJZUN8QS63IL569",
+            "RoleName": "w3-dm-role",
+            "RolePolicyList": []
+          },
+          {
+            "Arn": "arn:aws:iam::000000000000:role/w3-edge-fn-role",
+            "AssumeRolePolicyDocument": {
+              "Statement": [
+                {
+                  "Action": "sts:AssumeRole",
+                  "Effect": "Allow",
+                  "Principal": {
+                    "Service": [
+                      "lambda.amazonaws.com",
+                      "edgelambda.amazonaws.com"
+                    ]
+                  }
+                }
+              ],
+              "Version": "2012-10-17"
+            },
+            "AttachedManagedPolicies": [],
+            "CreateDate": "2026-10-31 16:25:12+00:00",
+            "InstanceProfileList": [],
+            "Path": "/",
+            "RoleId": "AROAUBXA5BU3WBTW3EIX",
+            "RoleName": "w3-edge-fn-role",
+            "RolePolicyList": []
+          },
+          {
+            "Arn": "arn:aws:iam::000000000000:role/w3-msg-role",
+            "AssumeRolePolicyDocument": {
+              "Statement": [
+                {
+                  "Action": "sts:AssumeRole",
+                  "Effect": "Allow",
+                  "Principal": {
+                    "Service": [
+                      "lambda.amazonaws.com",
+                      "states.amazonaws.com",
+                      "events.amazonaws.com"
+                    ]
+                  }
+                }
+              ],
+              "Version": "2012-10-17"
+            },
+            "AttachedManagedPolicies": [],
+            "CreateDate": "2026-10-31 16:25:12.589000+00:00",
+            "InstanceProfileList": [],
+            "Path": "/",
+            "RoleId": "AROAHY4TSFA9Q1MTQEJJ",
+            "RoleName": "w3-msg-role",
+            "RolePolicyList": [],
+            "Tags": [
+              {
+                "Key": "Name",
+                "Value": "w3-messaging"
+              }
+            ]
+          }
+        ],
+        "UserDetailList": []
+      }
+    },
+    {
+      "params": {
+        "Filter": [
+          "User"
+        ]
+      },
+      "response": {
+        "GroupDetailList": [],
+        "IsTruncated": false,
+        "Policies": [],
+        "RoleDetailList": [
+          {
+            "Arn": "arn:aws:iam::000000000000:role/w3-cognito-auth",
+            "AssumeRolePolicyDocument": {
+              "Statement": [
+                {
+                  "Action": "sts:AssumeRoleWithWebIdentity",
+                  "Effect": "Allow",
+                  "Principal": {
+                    "Federated": "cognito-identity.amazonaws.com"
+                  }
+                }
+              ],
+              "Version": "2012-10-17"
+            },
+            "AttachedManagedPolicies": [],
+            "CreateDate": "2026-10-31 16:25:12.209000+00:00",
+            "InstanceProfileList": [],
+            "Path": "/",
+            "RoleId": "AROA9B4G5NO99CKM6SQ9",
+            "RoleName": "w3-cognito-auth",
+            "RolePolicyList": []
+          },
+          {
+            "Arn": "arn:aws:iam::000000000000:role/w3-config",
+            "AssumeRolePolicyDocument": {
+              "Statement": [
+                {
+                  "Action": "sts:AssumeRole",
+                  "Effect": "Allow",
+                  "Principal": {
+                    "Service": "config.amazonaws.com"
+                  }
+                }
+              ],
+              "Version": "2012-10-17"
+            },
+            "AttachedManagedPolicies": [],
+            "CreateDate": "2026-10-31 16:25:12.208000+00:00",
+            "InstanceProfileList": [],
+            "Path": "/",
+            "RoleId": "AROA6Q35FGNC9UWHL8AG",
+            "RoleName": "w3-config",
+            "RolePolicyList": []
+          },
+          {
+            "Arn": "arn:aws:iam::000000000000:role/w3-delivery-role",
+            "AssumeRolePolicyDocument": {
+              "Statement": [
+                {
+                  "Action": "sts:AssumeRole",
+                  "Effect": "Allow",
+                  "Principal": {
+                    "Service": [
+                      "codebuild.amazonaws.com",
+                      "codepipeline.amazonaws.com",
+                      "eks.amazonaws.com"
+                    ]
+                  }
+                }
+              ],
+              "Version": "2012-10-17"
+            },
+            "AttachedManagedPolicies": [],
+            "CreateDate": "2026-10-31 16:25:10.349000+00:00",
+            "InstanceProfileList": [],
+            "Path": "/",
+            "RoleId": "AROAAGERYIWIFVXPQT65",
+            "RoleName": "w3-delivery-role",
+            "RolePolicyList": []
+          },
+          {
+            "Arn": "arn:aws:iam::000000000000:role/w3-dm-role",
+            "AssumeRolePolicyDocument": {
+              "Statement": [
+                {
+                  "Action": "sts:AssumeRole",
+                  "Effect": "Allow",
+                  "Principal": {
+                    "Service": [
+                      "dms.amazonaws.com",
+                      "datasync.amazonaws.com",
+                      "glue.amazonaws.com",
+                      "transfer.amazonaws.com"
+                    ]
+                  }
+                }
+              ],
+              "Version": "2012-10-17"
+            },
+            "AttachedManagedPolicies": [],
+            "CreateDate": "2026-10-31 16:25:07.933000+00:00",
+            "InstanceProfileList": [],
+            "Path": "/",
+            "RoleId": "AROATZJZUN8QS63IL569",
+            "RoleName": "w3-dm-role",
+            "RolePolicyList": []
+          },
+          {
+            "Arn": "arn:aws:iam::000000000000:role/w3-edge-fn-role",
+            "AssumeRolePolicyDocument": {
+              "Statement": [
+                {
+                  "Action": "sts:AssumeRole",
+                  "Effect": "Allow",
+                  "Principal": {
+                    "Service": [
+                      "lambda.amazonaws.com",
+                      "edgelambda.amazonaws.com"
+                    ]
+                  }
+                }
+              ],
+              "Version": "2012-10-17"
+            },
+            "AttachedManagedPolicies": [],
+            "CreateDate": "2026-10-31 16:25:12+00:00",
+            "InstanceProfileList": [],
+            "Path": "/",
+            "RoleId": "AROAUBXA5BU3WBTW3EIX",
+            "RoleName": "w3-edge-fn-role",
+            "RolePolicyList": []
+          },
+          {
+            "Arn": "arn:aws:iam::000000000000:role/w3-msg-role",
+            "AssumeRolePolicyDocument": {
+              "Statement": [
+                {
+                  "Action": "sts:AssumeRole",
+                  "Effect": "Allow",
+                  "Principal": {
+                    "Service": [
+                      "lambda.amazonaws.com",
+                      "states.amazonaws.com",
+                      "events.amazonaws.com"
+                    ]
+                  }
+                }
+              ],
+              "Version": "2012-10-17"
+            },
+            "AttachedManagedPolicies": [],
+            "CreateDate": "2026-10-31 16:25:12.589000+00:00",
+            "InstanceProfileList": [],
+            "Path": "/",
+            "RoleId": "AROAHY4TSFA9Q1MTQEJJ",
+            "RoleName": "w3-msg-role",
+            "RolePolicyList": [],
+            "Tags": [
+              {
+                "Key": "Name",
+                "Value": "w3-messaging"
+              }
+            ]
+          }
+        ],
+        "UserDetailList": []
+      }
+    },
+    {
+      "params": {
+        "Filter": [
+          "Group"
+        ]
+      },
+      "response": {
+        "GroupDetailList": [],
+        "IsTruncated": false,
+        "Policies": [],
+        "RoleDetailList": [
+          {
+            "Arn": "arn:aws:iam::000000000000:role/w3-cognito-auth",
+            "AssumeRolePolicyDocument": {
+              "Statement": [
+                {
+                  "Action": "sts:AssumeRoleWithWebIdentity",
+                  "Effect": "Allow",
+                  "Principal": {
+                    "Federated": "cognito-identity.amazonaws.com"
+                  }
+                }
+              ],
+              "Version": "2012-10-17"
+            },
+            "AttachedManagedPolicies": [],
+            "CreateDate": "2026-10-31 16:25:12.209000+00:00",
+            "InstanceProfileList": [],
+            "Path": "/",
+            "RoleId": "AROA9B4G5NO99CKM6SQ9",
+            "RoleName": "w3-cognito-auth",
+            "RolePolicyList": []
+          },
+          {
+            "Arn": "arn:aws:iam::000000000000:role/w3-config",
+            "AssumeRolePolicyDocument": {
+              "Statement": [
+                {
+                  "Action": "sts:AssumeRole",
+                  "Effect": "Allow",
+                  "Principal": {
+                    "Service": "config.amazonaws.com"
+                  }
+                }
+              ],
+              "Version": "2012-10-17"
+            },
+            "AttachedManagedPolicies": [],
+            "CreateDate": "2026-10-31 16:25:12.208000+00:00",
+            "InstanceProfileList": [],
+            "Path": "/",
+            "RoleId": "AROA6Q35FGNC9UWHL8AG",
+            "RoleName": "w3-config",
+            "RolePolicyList": []
+          },
+          {
+            "Arn": "arn:aws:iam::000000000000:role/w3-delivery-role",
+            "AssumeRolePolicyDocument": {
+              "Statement": [
+                {
+                  "Action": "sts:AssumeRole",
+                  "Effect": "Allow",
+                  "Principal": {
+                    "Service": [
+                      "codebuild.amazonaws.com",
+                      "codepipeline.amazonaws.com",
+                      "eks.amazonaws.com"
+                    ]
+                  }
+                }
+              ],
+              "Version": "2012-10-17"
+            },
+            "AttachedManagedPolicies": [],
+            "CreateDate": "2026-10-31 16:25:10.349000+00:00",
+            "InstanceProfileList": [],
+            "Path": "/",
+            "RoleId": "AROAAGERYIWIFVXPQT65",
+            "RoleName": "w3-delivery-role",
+            "RolePolicyList": []
+          },
+          {
+            "Arn": "arn:aws:iam::000000000000:role/w3-dm-role",
+            "AssumeRolePolicyDocument": {
+              "Statement": [
+                {
+                  "Action": "sts:AssumeRole",
+                  "Effect": "Allow",
+                  "Principal": {
+                    "Service": [
+                      "dms.amazonaws.com",
+                      "datasync.amazonaws.com",
+                      "glue.amazonaws.com",
+                      "transfer.amazonaws.com"
+                    ]
+                  }
+                }
+              ],
+              "Version": "2012-10-17"
+            },
+            "AttachedManagedPolicies": [],
+            "CreateDate": "2026-10-31 16:25:07.933000+00:00",
+            "InstanceProfileList": [],
+            "Path": "/",
+            "RoleId": "AROATZJZUN8QS63IL569",
+            "RoleName": "w3-dm-role",
+            "RolePolicyList": []
+          },
+          {
+            "Arn": "arn:aws:iam::000000000000:role/w3-edge-fn-role",
+            "AssumeRolePolicyDocument": {
+              "Statement": [
+                {
+                  "Action": "sts:AssumeRole",
+                  "Effect": "Allow",
+                  "Principal": {
+                    "Service": [
+                      "lambda.amazonaws.com",
+                      "edgelambda.amazonaws.com"
+                    ]
+                  }
+                }
+              ],
+              "Version": "2012-10-17"
+            },
+            "AttachedManagedPolicies": [],
+            "CreateDate": "2026-10-31 16:25:12+00:00",
+            "InstanceProfileList": [],
+            "Path": "/",
+            "RoleId": "AROAUBXA5BU3WBTW3EIX",
+            "RoleName": "w3-edge-fn-role",
+            "RolePolicyList": []
+          },
+          {
+            "Arn": "arn:aws:iam::000000000000:role/w3-msg-role",
+            "AssumeRolePolicyDocument": {
+              "Statement": [
+                {
+                  "Action": "sts:AssumeRole",
+                  "Effect": "Allow",
+                  "Principal": {
+                    "Service": [
+                      "lambda.amazonaws.com",
+                      "states.amazonaws.com",
+                      "events.amazonaws.com"
+                    ]
+                  }
+                }
+              ],
+              "Version": "2012-10-17"
+            },
+            "AttachedManagedPolicies": [],
+            "CreateDate": "2026-10-31 16:25:12.589000+00:00",
+            "InstanceProfileList": [],
+            "Path": "/",
+            "RoleId": "AROAHY4TSFA9Q1MTQEJJ",
+            "RoleName": "w3-msg-role",
+            "RolePolicyList": [],
+            "Tags": [
+              {
+                "Key": "Name",
+                "Value": "w3-messaging"
+              }
+            ]
+          }
+        ],
+        "UserDetailList": []
+      }
+    },
+    {
+      "params": {
+        "Filter": [
+          "LocalManagedPolicy",
+          "AWSManagedPolicy"
+        ]
+      },
+      "response": {
+        "GroupDetailList": [],
+        "IsTruncated": false,
+        "Policies": [],
+        "RoleDetailList": [
+          {
+            "Arn": "arn:aws:iam::000000000000:role/w3-cognito-auth",
+            "AssumeRolePolicyDocument": {
+              "Statement": [
+                {
+                  "Action": "sts:AssumeRoleWithWebIdentity",
+                  "Effect": "Allow",
+                  "Principal": {
+                    "Federated": "cognito-identity.amazonaws.com"
+                  }
+                }
+              ],
+              "Version": "2012-10-17"
+            },
+            "AttachedManagedPolicies": [],
+            "CreateDate": "2026-10-31 16:25:12.209000+00:00",
+            "InstanceProfileList": [],
+            "Path": "/",
+            "RoleId": "AROA9B4G5NO99CKM6SQ9",
+            "RoleName": "w3-cognito-auth",
+            "RolePolicyList": []
+          },
+          {
+            "Arn": "arn:aws:iam::000000000000:role/w3-config",
+            "AssumeRolePolicyDocument": {
+              "Statement": [
+                {
+                  "Action": "sts:AssumeRole",
+                  "Effect": "Allow",
+                  "Principal": {
+                    "Service": "config.amazonaws.com"
+                  }
+                }
+              ],
+              "Version": "2012-10-17"
+            },
+            "AttachedManagedPolicies": [],
+            "CreateDate": "2026-10-31 16:25:12.208000+00:00",
+            "InstanceProfileList": [],
+            "Path": "/",
+            "RoleId": "AROA6Q35FGNC9UWHL8AG",
+            "RoleName": "w3-config",
+            "RolePolicyList": []
+          },
+          {
+            "Arn": "arn:aws:iam::000000000000:role/w3-delivery-role",
+            "AssumeRolePolicyDocument": {
+              "Statement": [
+                {
+                  "Action": "sts:AssumeRole",
+                  "Effect": "Allow",
+                  "Principal": {
+                    "Service": [
+                      "codebuild.amazonaws.com",
+                      "codepipeline.amazonaws.com",
+                      "eks.amazonaws.com"
+                    ]
+                  }
+                }
+              ],
+              "Version": "2012-10-17"
+            },
+            "AttachedManagedPolicies": [],
+            "CreateDate": "2026-10-31 16:25:10.349000+00:00",
+            "InstanceProfileList": [],
+            "Path": "/",
+            "RoleId": "AROAAGERYIWIFVXPQT65",
+            "RoleName": "w3-delivery-role",
+            "RolePolicyList": []
+          },
+          {
+            "Arn": "arn:aws:iam::000000000000:role/w3-dm-role",
+            "AssumeRolePolicyDocument": {
+              "Statement": [
+                {
+                  "Action": "sts:AssumeRole",
+                  "Effect": "Allow",
+                  "Principal": {
+                    "Service": [
+                      "dms.amazonaws.com",
+                      "datasync.amazonaws.com",
+                      "glue.amazonaws.com",
+                      "transfer.amazonaws.com"
+                    ]
+                  }
+                }
+              ],
+              "Version": "2012-10-17"
+            },
+            "AttachedManagedPolicies": [],
+            "CreateDate": "2026-10-31 16:25:07.933000+00:00",
+            "InstanceProfileList": [],
+            "Path": "/",
+            "RoleId": "AROATZJZUN8QS63IL569",
+            "RoleName": "w3-dm-role",
+            "RolePolicyList": []
+          },
+          {
+            "Arn": "arn:aws:iam::000000000000:role/w3-edge-fn-role",
+            "AssumeRolePolicyDocument": {
+              "Statement": [
+                {
+                  "Action": "sts:AssumeRole",
+                  "Effect": "Allow",
+                  "Principal": {
+                    "Service": [
+                      "lambda.amazonaws.com",
+                      "edgelambda.amazonaws.com"
+                    ]
+                  }
+                }
+              ],
+              "Version": "2012-10-17"
+            },
+            "AttachedManagedPolicies": [],
+            "CreateDate": "2026-10-31 16:25:12+00:00",
+            "InstanceProfileList": [],
+            "Path": "/",
+            "RoleId": "AROAUBXA5BU3WBTW3EIX",
+            "RoleName": "w3-edge-fn-role",
+            "RolePolicyList": []
+          },
+          {
+            "Arn": "arn:aws:iam::000000000000:role/w3-msg-role",
+            "AssumeRolePolicyDocument": {
+              "Statement": [
+                {
+                  "Action": "sts:AssumeRole",
+                  "Effect": "Allow",
+                  "Principal": {
+                    "Service": [
+                      "lambda.amazonaws.com",
+                      "states.amazonaws.com",
+                      "events.amazonaws.com"
+                    ]
+                  }
+                }
+              ],
+              "Version": "2012-10-17"
+            },
+            "AttachedManagedPolicies": [],
+            "CreateDate": "2026-10-31 16:25:12.589000+00:00",
+            "InstanceProfileList": [],
+            "Path": "/",
+            "RoleId": "AROAHY4TSFA9Q1MTQEJJ",
+            "RoleName": "w3-msg-role",
+            "RolePolicyList": [],
+            "Tags": [
+              {
+                "Key": "Name",
+                "Value": "w3-messaging"
+              }
+            ]
+          }
+        ],
+        "UserDetailList": []
+      }
+    }
+  ]
+}

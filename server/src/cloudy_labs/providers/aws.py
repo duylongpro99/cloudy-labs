@@ -9,14 +9,16 @@ from typing import Any, Literal
 
 import boto3
 
-from ..config import ACCESS_KEY_ID, API_PORT, FLOCI_PORT, HOST, MOTO_PORT, REGION, SECRET_ACCESS_KEY, home
+from ..config import (
+    ACCESS_KEY_ID, API_PORT, DEFAULT_REGION, FLOCI_PORT, HOST, MOTO_PORT, MOTO_TAP_PORT, SECRET_ACCESS_KEY, home,
+)
 from ..emulator.docker import DockerError
 from ..emulator.stack import reachable, recreate_floci
 
 Emulator = Literal["floci", "moto"]
-# The learner's CLI and the checkers reach Floci through api-tap, so their calls show up in the
-# 3D scene; labctl's own calls and the collector go straight to Floci.
-PORTS: dict[str, int] = {"floci": API_PORT, "moto": MOTO_PORT}
+# The learner's CLI and the checkers reach each emulator through its own api-tap, so their calls
+# show up in the 3D scene; labctl's own calls and the collector go straight to the emulator.
+PORTS: dict[str, int] = {"floci": API_PORT, "moto": MOTO_TAP_PORT}
 DIRECT_PORTS: dict[str, int] = {"floci": FLOCI_PORT, "moto": MOTO_PORT}
 # After a reset, moto enforces IAM. labctl spends the unauthenticated calls it allows on
 # creating an admin user (CreateUser, PutUserPolicy, CreateAccessKey); the learner's CLI
@@ -33,8 +35,9 @@ def moto_credentials_file() -> Path:
 
 
 class AwsProvider:
-    def __init__(self, emulator: Emulator = "floci"):
+    def __init__(self, emulator: Emulator = "floci", region: str = DEFAULT_REGION):
         self.emulator = emulator
+        self.region = region
         self.endpoint = f"http://{HOST}:{PORTS[emulator]}"
         self.direct_endpoint = f"http://{HOST}:{DIRECT_PORTS[emulator]}"
 
@@ -49,31 +52,32 @@ class AwsProvider:
         return ACCESS_KEY_ID, SECRET_ACCESS_KEY
 
     def client(self, service: str, credentials: Credentials | None = None, *, direct: bool = False, config: Any = None,
-               session: boto3.session.Session | None = None) -> Any:
+               session: boto3.session.Session | None = None, region: str | None = None) -> Any:
         """`credentials` lets a checker act as another IAM user, for example one the learner created.
 
         `direct` bypasses api-tap, for reads that must not count as learner activity. `session` is
         for a caller off the main thread, since boto3 sessions (the default one too) are not thread-safe.
+        `region` reaches another region of the same emulator (a multi-region lab).
         """
         key, secret = credentials or self.credentials()
         return (session or boto3).client(
             service,
             endpoint_url=self.direct_endpoint if direct else self.endpoint,
-            region_name=REGION,
+            region_name=region or self.region,
             aws_access_key_id=key,
             aws_secret_access_key=secret,
             config=config,
         )
 
     def env(self) -> dict[str, str]:
-        key, secret = self.credentials()
-        return {
-            "AWS_ENDPOINT_URL": self.endpoint,
-            "AWS_ACCESS_KEY_ID": key,
-            "AWS_SECRET_ACCESS_KEY": secret,
-            "AWS_DEFAULT_REGION": REGION,
-            "AWS_PAGER": "",
-        }
+        """The shell variables that point the aws CLI at this lab's emulator. On moto the admin's keys
+        stay out of them (they would be printed): profile `lab` gets them through credential_process."""
+        if self.emulator == "moto":
+            auth = {"AWS_PROFILE": "lab"}
+        else:
+            key, secret = self.credentials()
+            auth = {"AWS_ACCESS_KEY_ID": key, "AWS_SECRET_ACCESS_KEY": secret}
+        return {"AWS_ENDPOINT_URL": self.endpoint, **auth, "AWS_DEFAULT_REGION": self.region, "AWS_PAGER": ""}
 
     def health(self) -> bool:
         return reachable(self.emulator)
@@ -91,7 +95,7 @@ class AwsProvider:
             self._create_moto_admin()
 
     def _create_moto_admin(self) -> None:
-        iam = self.client("iam", (ACCESS_KEY_ID, SECRET_ACCESS_KEY))  # within the unauthenticated calls
+        iam = self.client("iam", (ACCESS_KEY_ID, SECRET_ACCESS_KEY), direct=True)  # within the unauthenticated calls
         iam.create_user(UserName=MOTO_ADMIN_USER)
         iam.put_user_policy(UserName=MOTO_ADMIN_USER, PolicyName="admin", PolicyDocument=json.dumps(ADMIN_POLICY))
         key = iam.create_access_key(UserName=MOTO_ADMIN_USER)["AccessKey"]
@@ -104,7 +108,7 @@ class AwsProvider:
 
     def _moto_post(self, path: str, body: bytes, content_type: str) -> None:
         req = urllib.request.Request(
-            self.endpoint + path, data=body, method="POST", headers={"Content-Type": content_type}
+            self.direct_endpoint + path, data=body, method="POST", headers={"Content-Type": content_type}
         )
         try:
             with urllib.request.urlopen(req, timeout=10):

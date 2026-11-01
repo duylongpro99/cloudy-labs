@@ -1,0 +1,25 @@
+{
+  "calls": [
+    {
+      "params": {
+        "landingZoneIdentifier": "arn:aws:controltower:ap-southeast-2:000000000000:landingzone/196fad8790da"
+      },
+      "response": {
+        "landingZone": {
+          "arn": "arn:aws:controltower:ap-southeast-2:000000000000:landingzone/196fad8790da",
+          "driftStatus": {
+            "status": "IN_SYNC"
+          },
+          "latestAvailableVersion": "3.3",
+          "manifest": {
+            "governedRegions": [
+              "ap-southeast-2"
+            ]
+          },
+          "status": "ACTIVE",
+          "version": "3.3"
+        }
+      }
+    }
+  ]
+}

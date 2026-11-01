@@ -1,0 +1,28 @@
+{
+  "calls": [
+    {
+      "params": {
+        "ListenerArn": "arn:aws:elasticloadbalancing:ap-southeast-2:000000000000:listener/app/w3-edge-alb/69f799da92464b34/d283f3a73f4e40a9"
+      },
+      "response": {
+        "NextMarker": "",
+        "Rules": [
+          {
+            "Actions": [
+              {
+                "FixedResponseConfig": {
+                  "StatusCode": "200"
+                },
+                "Type": "fixed-response"
+              }
+            ],
+            "Conditions": [],
+            "IsDefault": true,
+            "Priority": "default",
+            "RuleArn": "arn:aws:elasticloadbalancing:ap-southeast-2:000000000000:listener-rule/app/w3-edge-alb/69f799da92464b34/d283f3a73f4e40a9/a57b25be32b04333"
+          }
+        ]
+      }
+    }
+  ]
+}

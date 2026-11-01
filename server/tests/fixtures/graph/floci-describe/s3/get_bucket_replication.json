@@ -1,0 +1,46 @@
+{
+  "calls": [
+    {
+      "error": "ReplicationConfigurationNotFoundError",
+      "params": {
+        "Bucket": "wave1-site"
+      }
+    },
+    {
+      "error": "ReplicationConfigurationNotFoundError",
+      "params": {
+        "Bucket": "wave1-dst"
+      }
+    },
+    {
+      "params": {
+        "Bucket": "wave1-src"
+      },
+      "response": {
+        "ReplicationConfiguration": {
+          "Role": "arn:aws:iam::000000000000:role/wave1-lambda-role",
+          "Rules": [
+            {
+              "DeleteMarkerReplication": {
+                "Status": "Disabled"
+              },
+              "Destination": {
+                "Bucket": "arn:aws:s3:::wave1-dst"
+              },
+              "Filter": {},
+              "ID": "all",
+              "Priority": 1,
+              "Status": "Enabled"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "error": "ReplicationConfigurationNotFoundError",
+      "params": {
+        "Bucket": "wave1-logs"
+      }
+    }
+  ]
+}

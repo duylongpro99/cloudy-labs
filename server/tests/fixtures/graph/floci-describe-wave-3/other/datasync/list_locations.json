@@ -1,0 +1,19 @@
+{
+  "calls": [
+    {
+      "params": {},
+      "response": {
+        "Locations": [
+          {
+            "LocationArn": "arn:aws:datasync:ap-southeast-2:000000000000:location/loc-8ed178c806cd0da13",
+            "LocationUri": "s3://w3-dm-bucket/in"
+          },
+          {
+            "LocationArn": "arn:aws:datasync:ap-southeast-2:000000000000:location/loc-a9b69b7c7a2f17dab",
+            "LocationUri": "s3://w3-dm-bucket/archive"
+          }
+        ]
+      }
+    }
+  ]
+}

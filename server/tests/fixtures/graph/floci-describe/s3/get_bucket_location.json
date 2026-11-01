@@ -1,0 +1,44 @@
+{
+  "calls": [
+    {
+      "params": {
+        "Bucket": "wave1-site"
+      },
+      "response": {
+        "LocationConstraint": "ap-southeast-2"
+      }
+    },
+    {
+      "params": {
+        "Bucket": "wave1-dst"
+      },
+      "response": {
+        "LocationConstraint": "ap-southeast-2"
+      }
+    },
+    {
+      "params": {
+        "Bucket": "wave1-src"
+      },
+      "response": {
+        "LocationConstraint": "ap-southeast-2"
+      }
+    },
+    {
+      "params": {
+        "Bucket": "wave1-logs"
+      },
+      "response": {
+        "LocationConstraint": "ap-southeast-2"
+      }
+    },
+    {
+      "params": {
+        "Bucket": "wave1-elsewhere"
+      },
+      "response": {
+        "LocationConstraint": null
+      }
+    }
+  ]
+}

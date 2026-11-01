@@ -1,0 +1,29 @@
+{
+  "calls": [
+    {
+      "params": {
+        "WorkGroup": "w3-dm-wg"
+      },
+      "response": {
+        "WorkGroup": {
+          "Configuration": {
+            "EnforceWorkGroupConfiguration": true,
+            "EngineVersion": {
+              "EffectiveEngineVersion": "Athena engine version 3",
+              "SelectedEngineVersion": "Athena engine version 3"
+            },
+            "PublishCloudWatchMetricsEnabled": false,
+            "RequesterPaysEnabled": false,
+            "ResultConfiguration": {
+              "OutputLocation": "s3://w3-dm-bucket/athena/"
+            }
+          },
+          "CreationTime": "2026-10-31 23:25:10+07:00",
+          "Description": "w3 data movement",
+          "Name": "w3-dm-wg",
+          "State": "ENABLED"
+        }
+      }
+    }
+  ]
+}

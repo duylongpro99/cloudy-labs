@@ -22,6 +22,18 @@ def test_env_prints_shell_exports(capsys):
     out = capsys.readouterr().out.splitlines()
     assert "export AWS_ENDPOINT_URL=http://127.0.0.1:4566" in out
     assert "export AWS_PAGER=''" in out
+    assert not any(line.startswith("unset") for line in out)  # Floci's keys are the public test pair
+
+
+def test_env_for_a_moto_lab_prints_no_keys_and_clears_old_ones(monkeypatch, capsys):
+    from cloudy_labs.providers.aws import AwsProvider
+    monkeypatch.setattr(AwsProvider, "credentials", lambda self: ("AKIAADMIN", "admin-secret"))
+    monkeypatch.setattr("cloudy_labs.cli.provider_for", lambda lab: AwsProvider("moto"))
+    assert main(["env"]) == 0
+    out = capsys.readouterr().out
+    assert "AKIAADMIN" not in out and "admin-secret" not in out
+    assert out.splitlines()[0] == "unset AWS_ACCESS_KEY_ID AWS_SECRET_ACCESS_KEY AWS_SESSION_TOKEN"
+    assert "export AWS_PROFILE=lab" in out.splitlines()
 
 
 def test_unknown_lab_is_a_clean_error(capsys, tmp_path, monkeypatch):

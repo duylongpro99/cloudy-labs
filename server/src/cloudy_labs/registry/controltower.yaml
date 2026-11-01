@@ -1,0 +1,23 @@
+# AWS Control Tower landing zones. ListLandingZones answers ARNs only; GetLandingZone adds the version,
+# status and the governed regions of the manifest.
+
+- kind: landing-zone
+  service: controltower
+  label: Control Tower Landing Zone
+  list: {method: list_landing_zones, items: landingZones}
+  enrich:
+    - {method: get_landing_zone, params: {landingZoneIdentifier: arn}, pick: landingZone, merge_as: _Lz}
+  id: arn
+  name: ["join(' ', ['Landing zone', not_null(_Lz.version, '')])"]
+  parent: [{kind: region}]
+  props:
+    version: _Lz.version
+    latestVersion: _Lz.latestAvailableVersion
+    status: _Lz.status
+    drift: _Lz.driftStatus.status
+    governedRegions: _Lz.manifest.governedRegions
+  chat_props: [version, latestVersion, status, drift, governedRegions]
+  caveats:
+    - {code: controltower-landing-zone-instant, prop: status, text: "Floci 2.3.0 makes a landing zone ACTIVE as soon as CreateLandingZone returns and sets up nothing behind it: no organization, OUs, accounts, trail or Config rules are created."}
+  floci: {status: control-plane-only, note: "Landing zones, baselines and controls are stored; nothing is governed."}
+  view: {role: block, category: management, icon: Arch_AWS-Control-Tower_48.svg, source: Architecture-Service-Icons_07312026/Arch_Management-Tools/48/Arch_AWS-Control-Tower_48.svg, height: 0.4, order: 726, actions: [LandingZone, EnabledControl, EnabledBaseline]}

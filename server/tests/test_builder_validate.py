@@ -8,7 +8,7 @@ from cloudy_labs.builder.validate import validate
 from cloudy_labs.graph.schema import ResourceGraph
 
 GOLDEN = ResourceGraph.model_validate_json((Path(__file__).parent / "fixtures" / "graph" / "lab-06-07.graph.json").read_text())
-AZS = ["us-east-1a", "us-east-1b", "us-east-1c"]
+AZS = ["ap-southeast-2a", "ap-southeast-2b", "ap-southeast-2c"]
 VPC, PUB_A, PRI_A = "vpc-149d0439", "subnet-83a1f79a", "subnet-e917cc42"
 IGW, NAT, EIP = "igw-34ddd4cd", "nat-235f142ec41b5d904", "eipalloc-2cc57421a05781343"
 RT_PUB, RT_PRI = "rtb-509e5b33", "rtb-02888668"
@@ -17,8 +17,9 @@ RT_PUB, RT_PRI = "rtb-509e5b33", "rtb-02888668"
 def graph(nodes, contains=(), edges=()) -> ResourceGraph:
     return ResourceGraph.model_validate({
         "takenAt": "2026-10-29T00:00:00Z",
-        "nodes": [{"id": "us-east-1", "kind": "region", "label": "us-east-1"}, *nodes],
-        "contains": list(contains),
+        "nodes": [{"id": "000000000000", "kind": "account", "label": "000000000000"},
+                  {"id": "ap-southeast-2", "kind": "region", "label": "ap-southeast-2"}, *nodes],
+        "contains": [{"parent": "000000000000", "child": "ap-southeast-2"}, *contains],
         "edges": list(edges),
     })
 
@@ -29,7 +30,7 @@ def problems(op: str, g: ResourceGraph = GOLDEN, **params) -> list[tuple[str, st
 
 
 def subnet(cidr: str, **over) -> list[tuple[str, str]]:
-    params = {"name": "s", "vpcId": VPC, "cidr": cidr, "az": "us-east-1a"} | over
+    params = {"name": "s", "vpcId": VPC, "cidr": cidr, "az": "ap-southeast-2a"} | over
     return problems("create-subnet", **params)
 
 
@@ -71,7 +72,7 @@ def test_container_of_the_wrong_kind():
 
 
 def test_az_must_belong_to_the_region():
-    assert subnet("10.0.3.0/24", az="us-west-2a") == [("az", "us-west-2a is not an Availability Zone of this region; choose one of us-east-1a, us-east-1b, us-east-1c")]
+    assert subnet("10.0.3.0/24", az="us-west-2a") == [("az", "us-west-2a is not an Availability Zone of this region; choose one of ap-southeast-2a, ap-southeast-2b, ap-southeast-2c")]
 
 
 def test_name_is_required_and_shorthand_safe():
@@ -81,7 +82,7 @@ def test_name_is_required_and_shorthand_safe():
 
 
 def test_az_is_refused_while_the_region_zones_are_unknown():
-    p = OPS["create-subnet"].params.model_validate({"name": "s", "vpcId": VPC, "cidr": "10.0.3.0/24", "az": "us-east-1a"})
+    p = OPS["create-subnet"].params.model_validate({"name": "s", "vpcId": VPC, "cidr": "10.0.3.0/24", "az": "ap-southeast-2a"})
     found = validate("create-subnet", p, GOLDEN, [])
     assert [x.field for x in found] == ["az"] and "could not read" in found[0].message
 
@@ -92,8 +93,8 @@ def test_igw_attach_rules():
          {"id": "vpc-2", "kind": "vpc", "label": "vpc-2", "props": {"cidr": "10.1.0.0/16"}},
          {"id": "igw-1", "kind": "igw", "label": "igw-1"},
          {"id": "igw-2", "kind": "igw", "label": "igw-2", "props": {"attachedVpc": "vpc-2"}}],
-        [{"parent": "us-east-1", "child": c} for c in ("vpc-1", "igw-1")] + [{"parent": "vpc-2", "child": "igw-2"},
-                                                                             {"parent": "us-east-1", "child": "vpc-2"}],
+        [{"parent": "ap-southeast-2", "child": c} for c in ("vpc-1", "igw-1")] + [{"parent": "vpc-2", "child": "igw-2"},
+                                                                             {"parent": "ap-southeast-2", "child": "vpc-2"}],
     )
     assert problems("attach-internet-gateway", g, igwId="igw-1", vpcId="vpc-1") == []
     already = problems("attach-internet-gateway", g, igwId="igw-2", vpcId="vpc-1")
@@ -107,7 +108,7 @@ def test_nat_needs_a_public_subnet_and_a_free_eip():
     fields = [f for f, _ in found]
     assert fields == ["subnetId", "allocationId"]
     assert "must sit in a public subnet" in found[0][1] and "already in use by nat-" in found[1][1]
-    empty = graph([{"id": "vpc-1", "kind": "vpc", "label": "v", "props": {"cidr": "10.0.0.0/16"}}], [{"parent": "us-east-1", "child": "vpc-1"}])
+    empty = graph([{"id": "vpc-1", "kind": "vpc", "label": "v", "props": {"cidr": "10.0.0.0/16"}}], [{"parent": "ap-southeast-2", "child": "vpc-1"}])
     assert problems("create-nat-gateway", empty, name="n", subnetId="", allocationId="") == [
         ("subnetId", "choose a subnet"), ("allocationId", "a NAT Gateway needs an Elastic IP; allocate one first")]
 
@@ -126,21 +127,21 @@ def test_route_rules():
 def test_route_to_unattached_igw_or_pending_nat():
     g = graph(
         [{"id": "vpc-1", "kind": "vpc", "label": "v", "props": {"cidr": "10.0.0.0/16"}},
-         {"id": "vpc-1/us-east-1a", "kind": "az", "label": "us-east-1a"},
+         {"id": "vpc-1/ap-southeast-2a", "kind": "az", "label": "ap-southeast-2a"},
          {"id": "subnet-1", "kind": "subnet-public", "label": "s", "props": {"cidr": "10.0.1.0/24"}},
          {"id": "nat-1", "kind": "nat", "label": "n", "props": {"state": "pending"}},
          {"id": "igw-1", "kind": "igw", "label": "i"},
          {"id": "rtb-1", "kind": "route-table", "label": "r"}],
-        [{"parent": "us-east-1", "child": "vpc-1"}, {"parent": "vpc-1", "child": "vpc-1/us-east-1a"},
-         {"parent": "vpc-1/us-east-1a", "child": "subnet-1"}, {"parent": "subnet-1", "child": "nat-1"},
-         {"parent": "us-east-1", "child": "igw-1"}, {"parent": "vpc-1", "child": "rtb-1"}],
+        [{"parent": "ap-southeast-2", "child": "vpc-1"}, {"parent": "vpc-1", "child": "vpc-1/ap-southeast-2a"},
+         {"parent": "vpc-1/ap-southeast-2a", "child": "subnet-1"}, {"parent": "subnet-1", "child": "nat-1"},
+         {"parent": "ap-southeast-2", "child": "igw-1"}, {"parent": "vpc-1", "child": "rtb-1"}],
     )
     assert "not attached to a VPC yet" in problems("create-route", g, routeTableId="rtb-1", destination="0.0.0.0/0", targetId="igw-1")[0][1]
     assert "is pending; wait until it is available" in problems("create-route", g, routeTableId="rtb-1", destination="0.0.0.0/0", targetId="nat-1")[0][1]
 
 
 def test_association_rules():
-    assert problems("associate-route-table", routeTableId="rtb-157470092a6fefa4a", subnetId="subnet-default-us-east-1-a")[0][1].endswith(
+    assert problems("associate-route-table", routeTableId="rtb-157470092a6fefa4a", subnetId="subnet-default-ap-southeast-2-a")[0][1].endswith(
         "a route table serves subnets of its own VPC")
     taken = problems("associate-route-table", routeTableId=RT_PUB, subnetId=PRI_A)
     assert taken == [("subnetId", f"lab06-private-a ({PRI_A}) already uses route table {RT_PRI}; a subnet is associated with one route table at a time")]
@@ -174,7 +175,7 @@ def test_create_security_group_rules():
     assert fields(sg(vpcId=PUB_A)) == ["vpcId"]
     assert "may not start with sg-" in sg(name="sg-web")[0][1]
     assert "already has a security group named lab07-web (sg-dbd2e6007fa2e7eef)" in sg(name="lab07-web")[0][1]
-    assert sg(name="lab07-web", vpcId="vpc-default-us-east-1") == []  # the name is free in another VPC
+    assert sg(name="lab07-web", vpcId="vpc-default-ap-southeast-2") == []  # the name is free in another VPC
     assert "AWS requires a description" in sg(description="  ")[0][1]
     assert fields(sg(description="Máy chủ web")) == ["description"]
     assert fields(sg(description="x" * 256)) == ["description"]
@@ -243,7 +244,7 @@ def test_run_instances_rules():
     assert run() == []
     assert run(keyName="", userData="") == []
     assert run(subnetId=PRI_A) == []  # later labs may need a private instance
-    assert "belongs to vpc-149d0439 but subnet-default-us-east-1-a is in vpc-default-us-east-1" in run(subnetId="subnet-default-us-east-1-a")[0][1]
+    assert "belongs to vpc-149d0439 but subnet-default-ap-southeast-2-a is in vpc-default-ap-southeast-2" in run(subnetId="subnet-default-ap-southeast-2-a")[0][1]
     assert "create one in this VPC first" in run(securityGroupId="")[0][1]
     assert "no key pair named nope" in run(keyName="nope")[0][1]
     assert "choose ami-amazonlinux2023-arm64" in run(imageId="ami-amazonlinux2023")[0][1]
@@ -260,7 +261,7 @@ def attach(g: ResourceGraph = GOLDEN, **over) -> list[tuple[str, str]]:
 def test_attach_security_group_rules():
     assert attach() == []
     assert "lab07-web (sg-dbd2e6007fa2e7eef) is already attached to lab07-web (i-fdb553d289095d128)" in attach(groupId=SG_WEB)[0][1]
-    assert "an instance can only use security groups of its own VPC" in attach(groupId="sg-default-us-east-1")[0][1]
+    assert "an instance can only use security groups of its own VPC" in attach(groupId="sg-default-ap-southeast-2")[0][1]
     assert fields(attach(instanceId=KEY)) == ["instanceId"]
     stopping = GOLDEN.model_copy(update={"nodes": [
         n.model_copy(update={"props": n.props | {"state": "shutting-down"}}) if n.id == INSTANCE else n for n in GOLDEN.nodes]})

@@ -1,0 +1,55 @@
+# Amazon EventBridge Scheduler. ListSchedules answers schedules of every group with their target ARN;
+# GetSchedule adds the expression, time window and role.
+
+- kind: schedule
+  service: scheduler
+  label: EventBridge Schedule
+  list: {method: list_schedules, items: Schedules}
+  enrich:
+    - {method: get_schedule, params: {Name: Name, GroupName: GroupName}, merge_as: _Detail}
+  id: Arn
+  name: [Name]
+  parent: [{kind: region}]
+  props:
+    group: GroupName
+    state: State
+    expression: _Detail.ScheduleExpression
+    timezone: _Detail.ScheduleExpressionTimezone
+    flexibleWindow: _Detail.FlexibleTimeWindow.Mode
+    target: Target.Arn
+    role: _Detail.Target.RoleArn
+    description: _Detail.Description
+  chat_props: [group, state, expression, timezone, flexibleWindow, target, role, description]
+  edges:
+    - {kind: targets, target: Target.Arn, to: [lambda-function, lambda-alias, lambda-version, event-bus, sqs-queue, sns-topic, kinesis-stream, state-machine], style: reference}
+    - {kind: execution-role, target: _Detail.Target.RoleArn, to: iam-role, style: reference}
+  caveats:
+    - {code: floci-schedule-no-jitter, prop: flexibleWindow, text: "Floci 2.3.0 fires every schedule exactly on time, checking about every 10 seconds: a FLEXIBLE time window adds no jitter."}
+    - {code: floci-target-role-not-assumed, prop: role, text: "Floci 2.3.0 stores the schedule's RoleArn but invokes the target without assuming it: a role missing permissions still works."}
+  builder: true
+  view: {role: block, category: app-integration, icon: Res_Amazon-EventBridge_Scheduler_48.svg, source: Resource-Icons_07312026/Res_Application-Integration/Res_Amazon-EventBridge_Scheduler_48.svg, height: 0.4, order: 412, actions: [Schedule]}
+  contract:
+    needs:
+      - {op: create-role, params: {RoleName: ct-sched-role, AssumeRolePolicyDocument: '{"Version": "2012-10-17", "Statement": [{"Effect": "Allow", "Principal": {"Service": "scheduler.amazonaws.com"}, "Action": "sts:AssumeRole"}]}'}, save: role}
+      - {op: create-event-bus, params: {Name: ct-sched-bus}, save: bus}
+    create: {op: create-schedule, params: {Name: ct-schedule, ScheduleExpression: rate(1 hour), FlexibleTimeWindow.Mode: "OFF", Target.Arn: "{bus}", Target.RoleArn: "{role}"}, save: schedule}
+    then:
+      - {op: delete-schedule, params: {Name: ct-schedule}}
+  ops:
+    - id: create-schedule
+      api: CreateSchedule
+      gesture: create
+      title: "Tạo EventBridge schedule"
+      fields: [Name, ScheduleExpression, ScheduleExpressionTimezone, FlexibleTimeWindow.Mode, {name: Target.Arn, placeholder: "arn:aws:lambda:ap-southeast-2:000000000000:function:my-fn"}, {name: Target.RoleArn, ref: iam-role}, {name: Target.Input, multiline: true}, State, Description, GroupName]
+      defaults: {ScheduleExpression: rate(5 minutes), FlexibleTimeWindow.Mode: "OFF"}
+      result_id: ScheduleArn
+      expect: {label: Name}
+      note: "Invoke a target on a schedule: rate(5 minutes), cron(0 8 * * ? *) or at(2026-12-31T23:00:00) for once. Target.RoleArn: a role scheduler.amazonaws.com may assume, allowed to call the target (lambda:InvokeFunction, events:PutEvents...)."
+    - id: delete-schedule
+      api: DeleteSchedule
+      gesture: delete
+      title: "Xoá schedule"
+      fields: [{name: Name, ref: schedule, ref_by: label}, GroupName]
+      targets: [schedule]
+      target_param: Name
+      note: "Delete a schedule; give GroupName when it is not in the default group."

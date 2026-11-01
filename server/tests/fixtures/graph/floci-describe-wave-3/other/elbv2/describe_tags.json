@@ -1,0 +1,19 @@
+{
+  "calls": [
+    {
+      "params": {
+        "ResourceArns": [
+          "arn:aws:elasticloadbalancing:ap-southeast-2:000000000000:loadbalancer/app/w3-edge-alb/69f799da92464b34"
+        ]
+      },
+      "response": {
+        "TagDescriptions": [
+          {
+            "ResourceArn": "arn:aws:elasticloadbalancing:ap-southeast-2:000000000000:loadbalancer/app/w3-edge-alb/69f799da92464b34",
+            "Tags": []
+          }
+        ]
+      }
+    }
+  ]
+}

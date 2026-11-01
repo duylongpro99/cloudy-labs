@@ -1,0 +1,156 @@
+{
+  "calls": [
+    {
+      "params": {},
+      "response": {
+        "Vpcs": [
+          {
+            "CidrBlock": "10.61.0.0/16",
+            "CidrBlockAssociationSet": [
+              {
+                "AssociationId": "vpc-cidr-assoc-8ba80cc3",
+                "CidrBlock": "10.61.0.0/16",
+                "CidrBlockState": {
+                  "State": "associated"
+                }
+              }
+            ],
+            "DhcpOptionsId": "dopt-default",
+            "InstanceTenancy": "default",
+            "Ipv6CidrBlockAssociationSet": [],
+            "IsDefault": false,
+            "OwnerId": "000000000000",
+            "State": "available",
+            "Tags": [
+              {
+                "Key": "Name",
+                "Value": "rx-b"
+              }
+            ],
+            "VpcId": "vpc-31a790ed"
+          },
+          {
+            "CidrBlock": "10.63.0.0/16",
+            "CidrBlockAssociationSet": [
+              {
+                "AssociationId": "vpc-cidr-assoc-f711648d",
+                "CidrBlock": "10.63.0.0/16",
+                "CidrBlockState": {
+                  "State": "associated"
+                }
+              }
+            ],
+            "DhcpOptionsId": "dopt-default",
+            "InstanceTenancy": "default",
+            "Ipv6CidrBlockAssociationSet": [],
+            "IsDefault": false,
+            "OwnerId": "000000000000",
+            "State": "available",
+            "Tags": [
+              {
+                "Key": "Name",
+                "Value": "rx-d"
+              }
+            ],
+            "VpcId": "vpc-c34cd66d"
+          },
+          {
+            "CidrBlock": "10.62.0.0/16",
+            "CidrBlockAssociationSet": [
+              {
+                "AssociationId": "vpc-cidr-assoc-20da6402",
+                "CidrBlock": "10.62.0.0/16",
+                "CidrBlockState": {
+                  "State": "associated"
+                }
+              }
+            ],
+            "DhcpOptionsId": "dopt-default",
+            "InstanceTenancy": "default",
+            "Ipv6CidrBlockAssociationSet": [],
+            "IsDefault": false,
+            "OwnerId": "000000000000",
+            "State": "available",
+            "Tags": [
+              {
+                "Key": "Name",
+                "Value": "rx-c"
+              }
+            ],
+            "VpcId": "vpc-5daae3bf"
+          },
+          {
+            "CidrBlock": "172.31.0.0/16",
+            "CidrBlockAssociationSet": [
+              {
+                "AssociationId": "vpc-cidr-assoc-default",
+                "CidrBlock": "172.31.0.0/16",
+                "CidrBlockState": {
+                  "State": "associated"
+                }
+              }
+            ],
+            "DhcpOptionsId": "dopt-default",
+            "InstanceTenancy": "default",
+            "Ipv6CidrBlockAssociationSet": [],
+            "IsDefault": true,
+            "OwnerId": "000000000000",
+            "State": "available",
+            "Tags": [],
+            "VpcId": "vpc-default-ap-southeast-2"
+          },
+          {
+            "CidrBlock": "10.60.0.0/16",
+            "CidrBlockAssociationSet": [
+              {
+                "AssociationId": "vpc-cidr-assoc-ace91d04",
+                "CidrBlock": "10.60.0.0/16",
+                "CidrBlockState": {
+                  "State": "associated"
+                }
+              }
+            ],
+            "DhcpOptionsId": "dopt-default",
+            "InstanceTenancy": "default",
+            "Ipv6CidrBlockAssociationSet": [],
+            "IsDefault": false,
+            "OwnerId": "000000000000",
+            "State": "available",
+            "Tags": [
+              {
+                "Key": "Name",
+                "Value": "rx-a"
+              }
+            ],
+            "VpcId": "vpc-ae467f29"
+          },
+          {
+            "CidrBlock": "10.64.0.0/16",
+            "CidrBlockAssociationSet": [
+              {
+                "AssociationId": "vpc-cidr-assoc-27c33990",
+                "CidrBlock": "10.64.0.0/16",
+                "CidrBlockState": {
+                  "State": "associated"
+                }
+              }
+            ],
+            "DhcpOptionsId": "dopt-default",
+            "InstanceTenancy": "default",
+            "Ipv6CidrBlockAssociationSet": [],
+            "IsDefault": false,
+            "OwnerId": "000000000000",
+            "State": "available",
+            "Tags": [
+              {
+                "Key": "Name",
+                "Value": "rx-e"
+              }
+            ],
+            "VpcId": "vpc-baf044cc"
+          }
+        ]
+      }
+    }
+  ]
+}
