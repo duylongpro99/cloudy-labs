@@ -25,7 +25,7 @@ Nội dung lab nằm ở `labs/lab-001/content/lab.md` (gitignored). File này c
 | Lần 1: builder | `/api/run` của `labctl serve` (subnet group, SG, ingress 3306 từ 10.1.0.0/16, MySQL gp3 20→100 GiB, cluster aurora-mysql, writer và reader, secret), rồi `aws rds failover-db-cluster` | `labctl check lab-001`: 12/12 đạt, cộng 1 INFO (`rds-mysql-gp3`). Thử âm tính: thêm 0.0.0.0/0 cổng 3306 làm `db-sg-not-open-to-world` FAIL (11/12). Thu hồi rule thì về lại 12/12. |
 | Lần 2: terminal | `labctl reset lab-001`, rồi chỉ dùng AWS CLI. Ingress 3306 lần này lấy từ `--source-group` của SG app. | 12/12 đạt, cộng 1 INFO. Twin: 13/13 node của target bind vào tài nguyên thật, 0 ghost. |
 | Reset | `labctl reset lab-001` rồi `labctl check` | 1/12 đạt (chỉ `network-ready`, do setup dựng). Không còn DB instance. |
-| Lần 3: chat | — | Không chạy: máy chưa cấu hình provider LLM (`load_settings` trả `Missing`). |
+| Lần 3: chat (2026-11-01) | `labctl start lab-001`, rồi 6 câu hỏi tiếng Việt viết lại từ task của `lab.yaml` qua `/api/chat` (model `ds/deepseek-v4-pro`), chạy mỗi chuỗi qua `/api/run`. Bước bị validate từ chối hoặc chạy lỗi thì gửi lại cho chat một lượt, như người học làm. | 12/12 đạt, cộng 1 INFO. Câu Aurora cần một lượt hỏi lại. Lần chạy trước còn có hai lỗi do model: mô tả secret có dấu tiếng Việt (validate chặn, đúng luật ký tự của AWS), và chuỗi Aurora thiếu `create-db-cluster` (`DBClusterNotFoundFault` khi chạy). 7 prompt gửi đi chỉ trùng trang lab đúng một cụm 8 từ, là tên tài nguyên `lab-001-dbsubnet-group`, không có câu văn nào của trang. |
 
 ### Đối chiếu với phần kiểm tra của lab
 
@@ -40,3 +40,7 @@ Nội dung lab nằm ở `labs/lab-001/content/lab.md` (gitignored). File này c
 Giới hạn của builder gặp lúc làm: op ingress SG chỉ nhận CIDR, chưa nhận SG nguồn. Builder chưa có op failover, nên bước này dùng terminal.
 
 Đã bổ sung sau (2026-11-01): op ingress nhận `sourceGroupId` (SG nguồn cùng VPC, thay cho CIDR) và registry có op `failover-db-cluster` (chọn reader làm writer, để trống thì RDS tự chọn). Chạy lại lab-001 hoàn toàn qua builder, ingress 3306 từ `lab-001-sg-app` và failover sang `lab-001-aurora-reader`: `labctl check lab-001` 12/12 đạt, cộng 1 INFO (`rds-mysql-gp3`).
+
+Lần chạy bằng chat còn tìm ra một lỗi code, đã sửa: sau khi tạo secret, prop `lastChanged` của node secret là `datetime` của botocore, nên `/api/chat` trả 500 ở câu kế tiếp (`json.dumps` không ghi được `datetime`). Prompt giờ ghi `datetime` dạng ISO, giống `/ws`.
+
+Còn mở: validate không kiểm `DBClusterIdentifier` của `create-db-instance` có trỏ tới cluster có thật hoặc tới một bước trước hay không, nên chuỗi thiếu `create-db-cluster` chỉ lộ ra lúc chạy.

@@ -60,4 +60,4 @@ Người dùng dán nội dung lab (bản đã đăng nhập) vào `labs/lab-001
 
 ## Kết quả
 
-Đã xong. Lab-001 cho `ready-with-caveats` và qua `labctl check` 12/12 (cộng 1 INFO) bằng builder và bằng terminal. Reset làm sạch. Twin bind đủ 13/13 node. Lần làm bằng chat chưa chạy vì máy chưa có provider LLM. Bước 2 không áp dụng vì lab không cài DB trên EC2. Hint không có: trang lab không có phần hint riêng. Chi tiết ở [notes/e2e-results.md](./notes/e2e-results.md#lab-001-rds-phase-11-bước-14).
+Đã xong. Lab-001 cho `ready-with-caveats` và qua `labctl check` 12/12 (cộng 1 INFO) bằng builder và bằng terminal. Reset làm sạch. Twin bind đủ 13/13 node. Lần làm bằng chat chạy ngày 2026-11-01 với provider của người dùng: 12/12 đạt, và prompt không chứa văn bản của trang lab. Bước 2 không áp dụng vì lab không cài DB trên EC2. Hint không có: trang lab không có phần hint riêng. Chi tiết ở [notes/e2e-results.md](./notes/e2e-results.md#lab-001-rds-phase-11-bước-14).

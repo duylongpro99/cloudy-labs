@@ -121,7 +121,7 @@ Với bất kỳ lab nào trong danh mục labaws.site:
 | 8 | [Dịch vụ đợt 1: VPC mở rộng, EBS, RDS/Aurora, S3, Lambda, IAM](./phase-08-service-wave-1.md) | Completed | 40h |
 | 9 | [Dịch vụ đợt 2: tần suất trung bình](./phase-09-service-wave-2.md) | Completed | 40h |
 | 10 | [Dịch vụ đợt 3: phần còn lại Floci hỗ trợ](./phase-10-service-wave-3.md) | Completed | 50h |
-| 11 | [Nghiệm thu với lab-001 RDS và cập nhật tài liệu](./phase-11-lab-001-acceptance-and-docs.md) | Completed (chat chưa chạy: chưa có provider) | 8h |
+| 11 | [Nghiệm thu với lab-001 RDS và cập nhật tài liệu](./phase-11-lab-001-acceptance-and-docs.md) | Completed (chat chạy 2026-11-01: 12/12) | 8h |
 
 Thứ tự phụ thuộc. Phase 2, 3, 4 và 5 cùng sửa `server/app.py` và `labs/schema.py`, nên chạy tuần tự, không song song.
 

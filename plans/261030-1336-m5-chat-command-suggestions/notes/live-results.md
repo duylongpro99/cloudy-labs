@@ -1,6 +1,6 @@
 # Bộ câu hỏi mẫu với LLM thật: kết quả
 
-**Chưa chạy.** Lúc làm M5 (2026-10-30), máy phát triển chưa cấu hình provider: `load_settings()` trả `Missing` với đủ bốn biến `LLM_BASE_URL`, `LLM_API_KEY`, `LLM_MODEL`, `LLM_API_FORMAT`. Agent không đọc hay đặt key thay người dùng, nên điều kiện qua mốc "chuỗi gợi ý chạy hết thì `labctl check` đạt" **chưa được chứng minh với LLM thật**. Docker 29.7.2 và aws CLI đã có; 18 test được thu thập và bỏ qua với lý do `no LLM provider set`.
+**Đã chạy 2026-11-01** với provider của người dùng (endpoint OpenAI-compatible, model `ds/deepseek-v4-pro`). Lúc làm M5 (2026-10-30) máy chưa có provider nên bộ câu hỏi chưa chạy được.
 
 ## Cách chạy
 
@@ -19,10 +19,12 @@ Câu trượt do model thì ghi vào bảng dưới, không sửa test hay câu 
 
 | Ngày | Model (`LLM_MODEL`) | Định dạng | fixture-lab-06 đạt | fixture-lab-07 đạt | `build` + `labctl check` |
 |---|---|---|---|---|---|
-| | | | /9 | /9 | 06: , 07: |
+| 2026-11-01, lần 1 | `ds/deepseek-v4-pro` | `openai` | 9/9 | 7/9 | 06: đạt, 07: đạt |
+| 2026-11-01, lần 2 (sau khi sửa test) | `ds/deepseek-v4-pro` | `openai` | 8/9 | 9/9 | 06: đạt, 07: đạt |
 
 ### Câu trượt
 
 | Test id | Lý do (trích lỗi assert) | Do model hay do code |
 |---|---|---|
-| | | |
+| `fixture-lab-07-*` (2 câu, lần 1) | `sourceGroupId:  is not in the scene` | Do test. Model để trống `sourceGroupId`, trường SG nguồn tuỳ chọn của rule inbound; server validate đạt và lệnh đúng (chỉ `IpRanges`). Test coi mọi tham số `*Id` phải có trong cảnh kể cả khi rỗng. Đã sửa test để bỏ qua giá trị rỗng. |
+| `fixture-lab-06-built1` (lần 2) | `expected ['create-subnet'], got []` | Do model. Lần 1 câu này đạt; lần 2 model trả lời không kèm bước nào. |
