@@ -1,0 +1,17 @@
+{
+  "calls": [
+    {
+      "params": {},
+      "response": {
+        "DashboardEntries": [
+          {
+            "DashboardArn": "arn:aws:cloudwatch::000000000000:dashboard/w2-dashboard",
+            "DashboardName": "w2-dashboard",
+            "LastModified": "2026-10-31 22:16:09+07:00",
+            "Size": 180
+          }
+        ]
+      }
+    }
+  ]
+}

@@ -1,0 +1,42 @@
+{
+  "calls": [
+    {
+      "params": {},
+      "response": {
+        "DBProxies": [
+          {
+            "Auth": [
+              {
+                "AuthScheme": "SECRETS",
+                "IAMAuth": "DISABLED",
+                "SecretArn": "arn:aws:secretsmanager:ap-southeast-2:000000000000:secret:wave1-db"
+              }
+            ],
+            "CreatedDate": "2026-10-31 14:41:17.897780+00:00",
+            "DBProxyArn": "arn:aws:rds:ap-southeast-2:000000000000:db-proxy:prx-dba5f314ff484958a",
+            "DBProxyName": "wave1-proxy",
+            "DebugLogging": false,
+            "DefaultAuthScheme": "NONE",
+            "Endpoint": "172.27.0.3",
+            "EndpointNetworkType": "IPV4",
+            "EngineFamily": "POSTGRESQL",
+            "IdleClientTimeout": 1800,
+            "RequireTLS": false,
+            "RoleArn": "arn:aws:iam::000000000000:role/wave1-lambda-role",
+            "Status": "available",
+            "TargetConnectionNetworkType": "IPV4",
+            "UpdatedDate": "2026-10-31 14:41:17.897780+00:00",
+            "VpcId": "vpc-03e9e3f9",
+            "VpcSecurityGroupIds": [
+              "sg-5271729b7a5ffc3e2"
+            ],
+            "VpcSubnetIds": [
+              "subnet-2b9c9233",
+              "subnet-4f1dede6"
+            ]
+          }
+        ]
+      }
+    }
+  ]
+}

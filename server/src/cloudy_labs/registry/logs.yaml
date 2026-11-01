@@ -1,0 +1,72 @@
+# Amazon CloudWatch Logs. Metric filters are listed per log group; they name their group only by name,
+# so they sit in the region and point at their group, matched by region and name.
+
+- kind: log-group
+  service: logs
+  label: Log Group
+  list: {method: describe_log_groups, items: logGroups}
+  id: ["logGroupArn", "arn"]
+  name: [logGroupName]
+  parent: [{kind: region}]
+  props:
+    retentionDays: retentionInDays
+    storedBytes: storedBytes
+    metricFilters: metricFilterCount
+    kmsKey: kmsKeyId
+    logGroupClass: logGroupClass
+    deletionProtection: deletionProtectionEnabled
+  chat_props: [retentionDays, storedBytes, metricFilters, kmsKey, logGroupClass, deletionProtection]
+  caveats:
+    - {code: floci-rds-log-groups, text: "Floci 2.3.0 makes a /aws/rds/instance/<id>/error log group for every DB instance, log exports enabled or not."}
+  builder: true
+  view: {role: block, category: management, icon: Res_Amazon-CloudWatch_Logs_48.svg, source: Resource-Icons_07312026/Res_Management-Governance/Res_Amazon-CloudWatch_Logs_48.svg, height: 0.4, order: 402, actions: [LogGroup, RetentionPolicy]}
+  contract:
+    create: {op: create-log-group, params: {logGroupName: ct-app-logs}, save: lg}
+    then:
+      - {op: put-retention-policy, params: {logGroupName: ct-app-logs, retentionInDays: "7"}}
+      - {op: put-metric-filter, params: {logGroupName: ct-app-logs, filterName: ct-errors, filterPattern: ERROR, metricTransformations: '[{"metricName": "AppErrors", "metricNamespace": "ct/Logs", "metricValue": "1", "defaultValue": 0}]'}}
+  ops:
+    - id: create-log-group
+      api: CreateLogGroup
+      gesture: create
+      title: "Tạo log group"
+      fields: [logGroupName, kmsKeyId]
+      expect: {label: logGroupName}
+      note: "Create a log group, e.g. app-web (the builder takes letters, digits, dots, dashes and underscores; services make paths like /aws/lambda/my-fn themselves). Logs are kept forever until a retention policy is set."
+    - id: put-retention-policy
+      api: PutRetentionPolicy
+      gesture: attribute
+      title: "Đặt thời gian giữ log"
+      fields: [{name: logGroupName, ref: log-group, ref_by: label}, retentionInDays]
+      defaults: {retentionInDays: 7}
+      targets: [log-group]
+      target_param: logGroupName
+      note: "Delete log events older than retentionInDays: 1, 3, 5, 7, 14, 30, 60, 90, 120, 150, 180, 365 and longer allowed values."
+    - id: put-metric-filter
+      api: PutMetricFilter
+      gesture: create
+      title: "Tạo metric filter"
+      fields: [{name: logGroupName, ref: log-group, ref_by: label}, filterName, filterPattern, {name: metricTransformations, multiline: true}]
+      defaults: {metricTransformations: '[{"metricName": "AppErrors", "metricNamespace": "MyApp", "metricValue": "1", "defaultValue": 0}]'}
+      creates: metric-filter
+      expect: {kind: metric-filter, label: filterName}
+      note: "Turn matching log events into a CloudWatch metric an alarm can watch. filterPattern: a term (ERROR), a JSON selector ({ $.level = \"error\" }) or empty for every event."
+
+- kind: metric-filter
+  service: logs
+  label: Metric Filter
+  list:
+    method: describe_metric_filters
+    items: metricFilters
+    scope: {parent_kind: log-group, param: logGroupName, field: logGroupName}
+  id: "join('', ['metric-filter:', not_null(_Region, ''), ':', logGroupName, ':', filterName])"
+  name: [filterName]
+  parent: [{kind: region}]
+  props:
+    logGroup: logGroupName
+    pattern: filterPattern
+    metrics: "metricTransformations[].{namespace: metricNamespace, name: metricName, value: metricValue, defaultValue: defaultValue}"
+  chat_props: [logGroup, pattern, metrics]
+  edges:
+    - {kind: filter-of, target: "join('|', [not_null(_Region, ''), logGroupName])", match: "join('|', [not_null(_Region, ''), logGroupName])", to: log-group, style: reference}
+  view: {role: block, category: management, icon: Res_Amazon-CloudWatch_Metrics-Insights_48.svg, source: Resource-Icons_07312026/Res_Management-Governance/Res_Amazon-CloudWatch_Metrics-Insights_48.svg, height: 0.3, order: 403, actions: [MetricFilter]}

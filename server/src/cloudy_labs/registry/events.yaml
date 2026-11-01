@@ -1,0 +1,107 @@
+# Amazon EventBridge. Rules are listed per event bus (ListRules takes the bus ARN) and sit in their bus;
+# a rule's targets, from ListTargetsByRule, are edges to the kinds the registry knows.
+
+- kind: event-bus
+  service: events
+  label: Event Bus
+  list: {method: list_event_buses, items: EventBuses}
+  id: Arn
+  name: [Name]
+  parent: [{kind: region}]
+  props:
+    description: Description
+    hasPolicy: "Policy && `true` || `false`"
+  chat_props: [description, hasPolicy]
+  builder: true
+  view: {role: block, category: app-integration, icon: Res_Amazon-EventBridge_Custom-Event-Bus_48.svg, source: Resource-Icons_07312026/Res_Application-Integration/Res_Amazon-EventBridge_Custom-Event-Bus_48.svg, height: 0.4, order: 410, actions: [EventBus]}
+  contract:
+    create: {op: create-event-bus, params: {Name: ct-bus, Description: contract test}, save: bus}
+  ops:
+    - id: create-event-bus
+      api: CreateEventBus
+      gesture: create
+      title: "Tạo event bus"
+      fields: [Name, Description]
+      result_id: EventBusArn
+      expect: {label: Name}
+      note: "Create a custom event bus for your application's events. Every account also has the bus named default, which receives AWS service events."
+
+- kind: event-rule
+  service: events
+  label: EventBridge Rule
+  list:
+    method: list_rules
+    items: Rules
+    scope: {parent_kind: event-bus, param: EventBusName, field: Arn}
+  enrich:
+    - {method: list_targets_by_rule, params: {Rule: Name, EventBusName: _Parent}, pick: Targets, merge_as: _Targets}
+  id: Arn
+  name: [Name]
+  parent: [{kind: event-bus, path: _Parent}]
+  props:
+    state: State
+    eventPattern: EventPattern
+    scheduleExpression: ScheduleExpression
+    description: Description
+    bus: EventBusName
+    targets: "_Targets[].Arn"
+    role: RoleArn
+    managedBy: ManagedBy
+  chat_props: [state, eventPattern, scheduleExpression, description, bus, targets, role, managedBy]
+  edges:
+    - {kind: targets, target: "_Targets[].Arn", to: [lambda-function, lambda-alias, lambda-version, event-bus, log-group, sqs-queue, sns-topic, kinesis-stream, state-machine], style: reference}
+    - {kind: execution-role, target: "_Targets[].RoleArn", to: iam-role, style: reference}
+    - {kind: execution-role, target: RoleArn, to: iam-role, style: reference}
+  caveats:
+    - {code: floci-no-logs-target, prop: targets, text: "Floci 2.3.0 accepts a CloudWatch Logs log group as a rule target but writes no event to it; Lambda, SQS, Step Functions and other buses do receive events."}
+    - {code: floci-target-role-not-assumed, prop: targets, text: "Floci 2.3.0 stores a target's RoleArn but delivers without assuming it: a role missing permissions still delivers."}
+  builder: true
+  view: {role: block, category: app-integration, icon: Res_Amazon-EventBridge_Rule_48.svg, source: Resource-Icons_07312026/Res_Application-Integration/Res_Amazon-EventBridge_Rule_48.svg, height: 0.3, order: 411, actions: [Rule, Targets]}
+  contract:
+    needs:
+      - {op: create-event-bus, params: {Name: ct-rule-bus}, save: bus}
+      - {op: create-log-group, params: {logGroupName: ct-rule-target-logs}, save: lg}
+    create: {op: put-rule, params: {Name: ct-rule, EventBusName: ct-rule-bus, EventPattern: '{"source": ["ct.app"]}'}, save: rule}
+    parent: bus
+    then:
+      - {op: put-targets, params: {Rule: ct-rule, EventBusName: ct-rule-bus, Targets: '[{"Id": "logs", "Arn": "{lg}"}]'}}
+      - {op: disable-rule, params: {Name: ct-rule, EventBusName: ct-rule-bus}}
+  ops:
+    - id: put-rule
+      api: PutRule
+      gesture: create
+      title: "Tạo EventBridge rule"
+      fields: [Name, {name: EventBusName, ref: event-bus, ref_by: label}, {name: EventPattern, multiline: true}, ScheduleExpression, State, Description]
+      defaults: {EventBusName: default}
+      container: {param: EventBusName, by: label}
+      result_id: RuleArn
+      expect: {label: Name}
+      note: "A rule on a bus matches events by EventPattern (JSON, e.g. {\"source\": [\"my.app\"], \"detail-type\": [\"OrderPlaced\"]}) or, on the default bus only, runs on a ScheduleExpression (rate(5 minutes), cron(...)). Add targets afterwards."
+    - id: put-targets
+      api: PutTargets
+      gesture: connect
+      title: "Gắn target cho rule"
+      fields: [{name: Rule, ref: event-rule, ref_by: label}, {name: EventBusName, ref: event-bus, ref_by: label}, {name: Targets, multiline: true}]
+      defaults: {EventBusName: default}
+      source: event-rule
+      source_param: Rule
+      targets: [lambda-function, lambda-alias, event-bus, log-group]
+      note: "Send matching events to targets. JSON [{\"Id\": \"fn\", \"Arn\": \"arn:aws:lambda:...\"}]; a Lambda target also needs add-permission for events.amazonaws.com, another bus or a log group needs RoleArn or a resource policy."
+    - id: disable-rule
+      api: DisableRule
+      gesture: attribute
+      title: "Tắt rule"
+      fields: [{name: Name, ref: event-rule, ref_by: label}, {name: EventBusName, ref: event-bus, ref_by: label}]
+      defaults: {EventBusName: default}
+      targets: [event-rule]
+      target_param: Name
+      note: "Stop the rule from matching events or running its schedule; its targets stay."
+    - id: enable-rule
+      api: EnableRule
+      gesture: attribute
+      title: "Bật rule"
+      fields: [{name: Name, ref: event-rule, ref_by: label}, {name: EventBusName, ref: event-bus, ref_by: label}]
+      defaults: {EventBusName: default}
+      targets: [event-rule]
+      target_param: Name
+      note: "Turn a disabled rule back on."

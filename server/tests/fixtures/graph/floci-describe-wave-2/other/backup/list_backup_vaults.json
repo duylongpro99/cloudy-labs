@@ -1,0 +1,19 @@
+{
+  "calls": [
+    {
+      "params": {},
+      "response": {
+        "BackupVaultList": [
+          {
+            "BackupVaultArn": "arn:aws:backup:ap-southeast-2:000000000000:backup-vault:w2-vault",
+            "BackupVaultName": "w2-vault",
+            "CreationDate": "2026-10-31 22:16:09+07:00",
+            "CreatorRequestId": "60a1e72e-48c0-4206-aed3-2fb83b4c5ba6",
+            "Locked": false,
+            "NumberOfRecoveryPoints": 0
+          }
+        ]
+      }
+    }
+  ]
+}

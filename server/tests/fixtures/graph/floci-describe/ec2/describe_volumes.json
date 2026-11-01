@@ -1,0 +1,73 @@
+{
+  "calls": [
+    {
+      "params": {},
+      "response": {
+        "NextToken": "",
+        "Volumes": [
+          {
+            "Attachments": [
+              {
+                "AttachTime": "2026-10-31 14:41:11.699000+00:00",
+                "DeleteOnTermination": false,
+                "Device": "/dev/sdf",
+                "InstanceId": "i-ebd18d4a95b4c15f4",
+                "State": "attached",
+                "VolumeId": "vol-b09fc864be62d0919"
+              }
+            ],
+            "AvailabilityZone": "ap-southeast-2a",
+            "CreateTime": "2026-10-31 14:41:10.387000+00:00",
+            "Encrypted": false,
+            "Size": 8,
+            "State": "in-use",
+            "Tags": [
+              {
+                "Key": "Name",
+                "Value": "wave1-data"
+              }
+            ],
+            "VolumeId": "vol-b09fc864be62d0919",
+            "VolumeType": "gp2"
+          },
+          {
+            "Attachments": [],
+            "AvailabilityZone": "ap-southeast-2b",
+            "CreateTime": "2026-10-31 14:41:10.586000+00:00",
+            "Encrypted": false,
+            "Size": 4,
+            "State": "available",
+            "Tags": [
+              {
+                "Key": "Name",
+                "Value": "wave1-spare"
+              }
+            ],
+            "VolumeId": "vol-0c91018448f66eb6a",
+            "VolumeType": "gp2"
+          },
+          {
+            "Attachments": [
+              {
+                "AttachTime": "2026-10-31 14:41:10.667000+00:00",
+                "DeleteOnTermination": true,
+                "Device": "/dev/xvda",
+                "InstanceId": "i-ebd18d4a95b4c15f4",
+                "State": "attached",
+                "VolumeId": "vol-0a128ed5485438720"
+              }
+            ],
+            "AvailabilityZone": "ap-southeast-2a",
+            "CreateTime": "2026-10-31 14:41:10.667000+00:00",
+            "Encrypted": false,
+            "Size": 8,
+            "State": "in-use",
+            "Tags": [],
+            "VolumeId": "vol-0a128ed5485438720",
+            "VolumeType": "gp2"
+          }
+        ]
+      }
+    }
+  ]
+}

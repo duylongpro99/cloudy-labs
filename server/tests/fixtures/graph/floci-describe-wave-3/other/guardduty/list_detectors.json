@@ -1,0 +1,12 @@
+{
+  "calls": [
+    {
+      "params": {},
+      "response": {
+        "DetectorIds": [
+          "3f82f0f4ab014996945ba0bb19cb348f"
+        ]
+      }
+    }
+  ]
+}

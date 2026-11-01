@@ -1,0 +1,23 @@
+# AWS Security Hub: the hub is the account's subscription in a region. DescribeHub fails while Security
+# Hub is off, so the hub is read through ListFindingAggregators (one item for the whole answer) and
+# DescribeHub enriches it: without a hub the enrichment fails quietly and the item has no id.
+
+- kind: securityhub-hub
+  service: securityhub
+  label: Security Hub
+  list: {method: list_finding_aggregators, items: "[@]", paginate: false}
+  enrich:
+    - {method: describe_hub, merge_as: _Hub}
+  id: _Hub.HubArn
+  name: ["join(' ', ['Security Hub', not_null(_Region, '')])"]
+  parent: [{kind: region}]
+  props:
+    subscribedAt: _Hub.SubscribedAt
+    autoEnableControls: _Hub.AutoEnableControls
+    controlFindingGenerator: _Hub.ControlFindingGenerator
+    findingAggregators: "FindingAggregators[].FindingAggregatorArn"
+  chat_props: [subscribedAt, autoEnableControls, controlFindingGenerator, findingAggregators]
+  caveats:
+    - {code: securityhub-no-findings, text: "Floci 2.3.0 has no findings or standards APIs (GetFindings, BatchImportFindings, GetEnabledStandards) and no DisableSecurityHub: once enabled, the hub stays on and holds no findings."}
+  floci: {status: control-plane-only, note: "The hub, its configuration policies and finding aggregators are stored; no check runs and there are no findings."}
+  view: {role: block, category: security, icon: Arch_AWS-Security-Hub_48.svg, source: Architecture-Service-Icons_07312026/Arch_Security-Identity/48/Arch_AWS-Security-Hub_48.svg, height: 0.4, order: 720, actions: [Hub, SecurityHub, FindingAggregator]}

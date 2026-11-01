@@ -1,0 +1,421 @@
+{
+  "calls": [
+    {
+      "params": {},
+      "response": {
+        "NetworkInterfaces": [
+          {
+            "Attachment": {
+              "AttachTime": "2026-10-31 14:34:04.252000+00:00",
+              "AttachmentId": "eni-attach-ddee61f237f7555de",
+              "DeleteOnTermination": true,
+              "DeviceIndex": 0,
+              "InstanceId": "i-0d0e81998ba9ee9ac",
+              "InstanceOwnerId": "000000000000",
+              "Status": "attached"
+            },
+            "AvailabilityZone": "ap-southeast-2a",
+            "Groups": [
+              {
+                "GroupId": "sg-0ce61b20372180cec",
+                "GroupName": "rx-sg-web"
+              }
+            ],
+            "InterfaceType": "interface",
+            "NetworkInterfaceId": "eni-abd8d2de65aff96e8",
+            "OwnerId": "000000000000",
+            "PrivateDnsName": "ip-10-60-1-12.ap-southeast-2.compute.internal",
+            "PrivateIpAddress": "10.60.1.12",
+            "PrivateIpAddresses": [
+              {
+                "Primary": true,
+                "PrivateDnsName": "ip-10-60-1-12.ap-southeast-2.compute.internal",
+                "PrivateIpAddress": "10.60.1.12"
+              }
+            ],
+            "RequesterManaged": false,
+            "SourceDestCheck": true,
+            "Status": "in-use",
+            "SubnetId": "subnet-aafaffcb",
+            "TagSet": [],
+            "VpcId": "vpc-ae467f29"
+          },
+          {
+            "AvailabilityZone": "ap-southeast-2b",
+            "Description": "rx-a2-host",
+            "Groups": [
+              {
+                "GroupId": "sg-5fbfd4cbc8e8a1dfa",
+                "GroupName": "rx-sg-open-a"
+              }
+            ],
+            "InterfaceType": "interface",
+            "MacAddress": "02:69:95:f0:a5:63",
+            "NetworkInterfaceId": "eni-ef16fbe0e1c318d2f",
+            "OwnerId": "000000000000",
+            "PrivateDnsName": "ip-10-60-3-10.ap-southeast-2.compute.internal",
+            "PrivateIpAddress": "10.60.3.10",
+            "PrivateIpAddresses": [
+              {
+                "Primary": true,
+                "PrivateDnsName": "ip-10-60-3-10.ap-southeast-2.compute.internal",
+                "PrivateIpAddress": "10.60.3.10"
+              }
+            ],
+            "RequesterManaged": false,
+            "SourceDestCheck": true,
+            "Status": "available",
+            "SubnetId": "subnet-7322989f",
+            "TagSet": [
+              {
+                "Key": "Name",
+                "Value": "rx-a2-host"
+              }
+            ],
+            "VpcId": "vpc-ae467f29"
+          },
+          {
+            "AvailabilityZone": "ap-southeast-2a",
+            "Description": "rx-b-host",
+            "Groups": [
+              {
+                "GroupId": "sg-e948d1b67b6f8f893",
+                "GroupName": "rx-sg-open-b"
+              }
+            ],
+            "InterfaceType": "interface",
+            "MacAddress": "02:45:9f:20:f7:a1",
+            "NetworkInterfaceId": "eni-275fbb08fa88e5174",
+            "OwnerId": "000000000000",
+            "PrivateDnsName": "ip-10-61-1-10.ap-southeast-2.compute.internal",
+            "PrivateIpAddress": "10.61.1.10",
+            "PrivateIpAddresses": [
+              {
+                "Primary": true,
+                "PrivateDnsName": "ip-10-61-1-10.ap-southeast-2.compute.internal",
+                "PrivateIpAddress": "10.61.1.10"
+              }
+            ],
+            "RequesterManaged": false,
+            "SourceDestCheck": true,
+            "Status": "available",
+            "SubnetId": "subnet-2f462cc2",
+            "TagSet": [
+              {
+                "Key": "Name",
+                "Value": "rx-b-host"
+              }
+            ],
+            "VpcId": "vpc-31a790ed"
+          },
+          {
+            "AvailabilityZone": "ap-southeast-2a",
+            "Description": "rx-app",
+            "Groups": [
+              {
+                "GroupId": "sg-bfa31ef62fd0ba111",
+                "GroupName": "rx-sg-app"
+              }
+            ],
+            "InterfaceType": "interface",
+            "MacAddress": "02:12:4e:96:ec:9d",
+            "NetworkInterfaceId": "eni-3f13fcf7d37be8603",
+            "OwnerId": "000000000000",
+            "PrivateDnsName": "ip-10-60-2-10.ap-southeast-2.compute.internal",
+            "PrivateIpAddress": "10.60.2.10",
+            "PrivateIpAddresses": [
+              {
+                "Primary": true,
+                "PrivateDnsName": "ip-10-60-2-10.ap-southeast-2.compute.internal",
+                "PrivateIpAddress": "10.60.2.10"
+              }
+            ],
+            "RequesterManaged": false,
+            "SourceDestCheck": true,
+            "Status": "available",
+            "SubnetId": "subnet-5bfd1da3",
+            "TagSet": [
+              {
+                "Key": "Name",
+                "Value": "rx-app"
+              }
+            ],
+            "VpcId": "vpc-ae467f29"
+          },
+          {
+            "AvailabilityZone": "ap-southeast-2a",
+            "Description": "rx-locked",
+            "Groups": [
+              {
+                "GroupId": "sg-b517f156cc2fe5286",
+                "GroupName": "rx-sg-locked"
+              }
+            ],
+            "InterfaceType": "interface",
+            "MacAddress": "02:fb:5d:10:84:14",
+            "NetworkInterfaceId": "eni-4d6804dc04e93dc0d",
+            "OwnerId": "000000000000",
+            "PrivateDnsName": "ip-10-60-2-11.ap-southeast-2.compute.internal",
+            "PrivateIpAddress": "10.60.2.11",
+            "PrivateIpAddresses": [
+              {
+                "Primary": true,
+                "PrivateDnsName": "ip-10-60-2-11.ap-southeast-2.compute.internal",
+                "PrivateIpAddress": "10.60.2.11"
+              }
+            ],
+            "RequesterManaged": false,
+            "SourceDestCheck": true,
+            "Status": "available",
+            "SubnetId": "subnet-5bfd1da3",
+            "TagSet": [
+              {
+                "Key": "Name",
+                "Value": "rx-locked"
+              }
+            ],
+            "VpcId": "vpc-ae467f29"
+          },
+          {
+            "AvailabilityZone": "ap-southeast-2a",
+            "Description": "rx-nacl-host",
+            "Groups": [
+              {
+                "GroupId": "sg-5fbfd4cbc8e8a1dfa",
+                "GroupName": "rx-sg-open-a"
+              }
+            ],
+            "InterfaceType": "interface",
+            "MacAddress": "02:cd:8d:1f:4e:39",
+            "NetworkInterfaceId": "eni-d915aba4ed6d7342a",
+            "OwnerId": "000000000000",
+            "PrivateDnsName": "ip-10-60-4-10.ap-southeast-2.compute.internal",
+            "PrivateIpAddress": "10.60.4.10",
+            "PrivateIpAddresses": [
+              {
+                "Primary": true,
+                "PrivateDnsName": "ip-10-60-4-10.ap-southeast-2.compute.internal",
+                "PrivateIpAddress": "10.60.4.10"
+              }
+            ],
+            "RequesterManaged": false,
+            "SourceDestCheck": true,
+            "Status": "available",
+            "SubnetId": "subnet-493dd311",
+            "TagSet": [
+              {
+                "Key": "Name",
+                "Value": "rx-nacl-host"
+              }
+            ],
+            "VpcId": "vpc-ae467f29"
+          },
+          {
+            "AvailabilityZone": "ap-southeast-2a",
+            "Description": "rx-c-host",
+            "Groups": [
+              {
+                "GroupId": "sg-7edce1892523fe1e9",
+                "GroupName": "rx-sg-open-c"
+              }
+            ],
+            "InterfaceType": "interface",
+            "MacAddress": "02:8c:06:6e:9e:04",
+            "NetworkInterfaceId": "eni-d7837bd9f72f8a6e7",
+            "OwnerId": "000000000000",
+            "PrivateDnsName": "ip-10-62-1-10.ap-southeast-2.compute.internal",
+            "PrivateIpAddress": "10.62.1.10",
+            "PrivateIpAddresses": [
+              {
+                "Primary": true,
+                "PrivateDnsName": "ip-10-62-1-10.ap-southeast-2.compute.internal",
+                "PrivateIpAddress": "10.62.1.10"
+              }
+            ],
+            "RequesterManaged": false,
+            "SourceDestCheck": true,
+            "Status": "available",
+            "SubnetId": "subnet-31cd668d",
+            "TagSet": [
+              {
+                "Key": "Name",
+                "Value": "rx-c-host"
+              }
+            ],
+            "VpcId": "vpc-5daae3bf"
+          },
+          {
+            "AvailabilityZone": "ap-southeast-2a",
+            "Description": "rx-loop-host",
+            "Groups": [
+              {
+                "GroupId": "sg-5fbfd4cbc8e8a1dfa",
+                "GroupName": "rx-sg-open-a"
+              }
+            ],
+            "InterfaceType": "interface",
+            "MacAddress": "02:5a:24:c3:c7:e7",
+            "NetworkInterfaceId": "eni-e5a2cd12f7eed322c",
+            "OwnerId": "000000000000",
+            "PrivateDnsName": "ip-10-60-6-10.ap-southeast-2.compute.internal",
+            "PrivateIpAddress": "10.60.6.10",
+            "PrivateIpAddresses": [
+              {
+                "Primary": true,
+                "PrivateDnsName": "ip-10-60-6-10.ap-southeast-2.compute.internal",
+                "PrivateIpAddress": "10.60.6.10"
+              }
+            ],
+            "RequesterManaged": false,
+            "SourceDestCheck": true,
+            "Status": "available",
+            "SubnetId": "subnet-6ab9f4ac",
+            "TagSet": [
+              {
+                "Key": "Name",
+                "Value": "rx-loop-host"
+              }
+            ],
+            "VpcId": "vpc-ae467f29"
+          },
+          {
+            "AvailabilityZone": "ap-southeast-2a",
+            "Description": "rx-e-host",
+            "Groups": [
+              {
+                "GroupId": "sg-79dcb28955f68a0b5",
+                "GroupName": "rx-sg-open-e"
+              }
+            ],
+            "InterfaceType": "interface",
+            "MacAddress": "02:d5:64:90:a9:45",
+            "NetworkInterfaceId": "eni-56408eecb75c42d28",
+            "OwnerId": "000000000000",
+            "PrivateDnsName": "ip-10-64-1-10.ap-southeast-2.compute.internal",
+            "PrivateIpAddress": "10.64.1.10",
+            "PrivateIpAddresses": [
+              {
+                "Primary": true,
+                "PrivateDnsName": "ip-10-64-1-10.ap-southeast-2.compute.internal",
+                "PrivateIpAddress": "10.64.1.10"
+              }
+            ],
+            "RequesterManaged": false,
+            "SourceDestCheck": true,
+            "Status": "available",
+            "SubnetId": "subnet-028bf74f",
+            "TagSet": [
+              {
+                "Key": "Name",
+                "Value": "rx-e-host"
+              }
+            ],
+            "VpcId": "vpc-baf044cc"
+          },
+          {
+            "AvailabilityZone": "ap-southeast-2a",
+            "Description": "rx-d-host",
+            "Groups": [
+              {
+                "GroupId": "sg-5d404ff822f69b2d4",
+                "GroupName": "rx-sg-open-d"
+              }
+            ],
+            "InterfaceType": "interface",
+            "MacAddress": "02:1d:41:28:7e:83",
+            "NetworkInterfaceId": "eni-8b9180ca05798b7bf",
+            "OwnerId": "000000000000",
+            "PrivateDnsName": "ip-10-63-1-10.ap-southeast-2.compute.internal",
+            "PrivateIpAddress": "10.63.1.10",
+            "PrivateIpAddresses": [
+              {
+                "Primary": true,
+                "PrivateDnsName": "ip-10-63-1-10.ap-southeast-2.compute.internal",
+                "PrivateIpAddress": "10.63.1.10"
+              }
+            ],
+            "RequesterManaged": false,
+            "SourceDestCheck": true,
+            "Status": "available",
+            "SubnetId": "subnet-ae000fb0",
+            "TagSet": [
+              {
+                "Key": "Name",
+                "Value": "rx-d-host"
+              }
+            ],
+            "VpcId": "vpc-c34cd66d"
+          },
+          {
+            "AvailabilityZone": "ap-southeast-2a",
+            "Description": "rx-black-host",
+            "Groups": [
+              {
+                "GroupId": "sg-5fbfd4cbc8e8a1dfa",
+                "GroupName": "rx-sg-open-a"
+              }
+            ],
+            "InterfaceType": "interface",
+            "MacAddress": "02:6a:36:26:83:4f",
+            "NetworkInterfaceId": "eni-e5ce758093a527b05",
+            "OwnerId": "000000000000",
+            "PrivateDnsName": "ip-10-60-5-10.ap-southeast-2.compute.internal",
+            "PrivateIpAddress": "10.60.5.10",
+            "PrivateIpAddresses": [
+              {
+                "Primary": true,
+                "PrivateDnsName": "ip-10-60-5-10.ap-southeast-2.compute.internal",
+                "PrivateIpAddress": "10.60.5.10"
+              }
+            ],
+            "RequesterManaged": false,
+            "SourceDestCheck": true,
+            "Status": "available",
+            "SubnetId": "subnet-7514dc44",
+            "TagSet": [
+              {
+                "Key": "Name",
+                "Value": "rx-black-host"
+              }
+            ],
+            "VpcId": "vpc-ae467f29"
+          },
+          {
+            "AvailabilityZone": "ap-southeast-2a",
+            "Description": "rx-loop-hop",
+            "Groups": [
+              {
+                "GroupId": "sg-5fbfd4cbc8e8a1dfa",
+                "GroupName": "rx-sg-open-a"
+              }
+            ],
+            "InterfaceType": "interface",
+            "MacAddress": "02:e8:fb:da:59:7c",
+            "NetworkInterfaceId": "eni-2c5dc67ab1739edfb",
+            "OwnerId": "000000000000",
+            "PrivateDnsName": "ip-10-60-6-11.ap-southeast-2.compute.internal",
+            "PrivateIpAddress": "10.60.6.11",
+            "PrivateIpAddresses": [
+              {
+                "Primary": true,
+                "PrivateDnsName": "ip-10-60-6-11.ap-southeast-2.compute.internal",
+                "PrivateIpAddress": "10.60.6.11"
+              }
+            ],
+            "RequesterManaged": false,
+            "SourceDestCheck": true,
+            "Status": "available",
+            "SubnetId": "subnet-6ab9f4ac",
+            "TagSet": [
+              {
+                "Key": "Name",
+                "Value": "rx-loop-hop"
+              }
+            ],
+            "VpcId": "vpc-ae467f29"
+          }
+        ]
+      }
+    }
+  ]
+}

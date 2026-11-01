@@ -1,8 +1,9 @@
 # Local emulator stack for labctl. Ports bind to 127.0.0.1 only.
 # Tags checked on Docker Hub 2026-10-28 (python: 2026-10-29); all digests are multi-arch index
 # digests (amd64 + arm64).
-# The learner's CLI reaches Floci through api-tap on 4566; labctl and the collector use Floci's
-# own host port 4567 so their reads never show up as learner activity.
+# The learner's CLI reaches Floci through api-tap on 4566 and moto through api-tap-moto on 4569;
+# labctl and the collector use each emulator's own host port (4567, 5050) so their reads never
+# show up as learner activity.
 name: cloudy-labs
 services:
   api-tap:
@@ -20,6 +21,28 @@ services:
         condition: service_healthy
     healthcheck:
       test: ["CMD", "python", "-c", "import urllib.request as u; u.urlopen('http://127.0.0.1:4568/health', timeout=2)"]
+      interval: 2s
+      timeout: 3s
+      retries: 30
+
+  api-tap-moto:
+    image: python:3.12.16-slim@sha256:aa943ce411423c7582288f18707ff66eddcbaeb510502d747a72aeb34f30d159
+    command: ["python", "-u", "/app/api_tap.py"]
+    ports:
+      - "127.0.0.1:4569:4569"
+      - "127.0.0.1:4570:4570" # Server-Sent Events of write calls, for `labctl serve`
+    environment:
+      TAP_UPSTREAM: http://moto:5000
+      TAP_PORT: "4569"
+      TAP_EVENTS_PORT: "4570"
+      TAP_HEALTH_PATH: /moto-api/
+    volumes:
+      - ../tap/api_tap.py:/app/api_tap.py:ro
+    depends_on:
+      moto:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request as u; u.urlopen('http://127.0.0.1:4570/health', timeout=2)"]
       interval: 2s
       timeout: 3s
       retries: 30

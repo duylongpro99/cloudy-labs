@@ -1,0 +1,133 @@
+{
+  "calls": [
+    {
+      "params": {},
+      "response": {
+        "DBClusterParameterGroups": [
+          {
+            "DBClusterParameterGroupName": "default.aurora-mysql5.7",
+            "DBParameterGroupFamily": "aurora-mysql5.7",
+            "Description": "Default cluster parameter group"
+          },
+          {
+            "DBClusterParameterGroupName": "default.aurora-mysql8.0",
+            "DBParameterGroupFamily": "aurora-mysql8.0",
+            "Description": "Default cluster parameter group"
+          },
+          {
+            "DBClusterParameterGroupName": "default.aurora-mysql8.4",
+            "DBParameterGroupFamily": "aurora-mysql8.4",
+            "Description": "Default cluster parameter group"
+          },
+          {
+            "DBClusterParameterGroupName": "default.aurora-postgresql11",
+            "DBParameterGroupFamily": "aurora-postgresql11",
+            "Description": "Default cluster parameter group"
+          },
+          {
+            "DBClusterParameterGroupName": "default.aurora-postgresql12",
+            "DBParameterGroupFamily": "aurora-postgresql12",
+            "Description": "Default cluster parameter group"
+          },
+          {
+            "DBClusterParameterGroupName": "default.aurora-postgresql13",
+            "DBParameterGroupFamily": "aurora-postgresql13",
+            "Description": "Default cluster parameter group"
+          },
+          {
+            "DBClusterParameterGroupName": "default.aurora-postgresql14",
+            "DBParameterGroupFamily": "aurora-postgresql14",
+            "Description": "Default cluster parameter group"
+          },
+          {
+            "DBClusterParameterGroupName": "default.aurora-postgresql15",
+            "DBParameterGroupFamily": "aurora-postgresql15",
+            "Description": "Default cluster parameter group"
+          },
+          {
+            "DBClusterParameterGroupName": "default.aurora-postgresql16",
+            "DBParameterGroupFamily": "aurora-postgresql16",
+            "Description": "Default cluster parameter group"
+          },
+          {
+            "DBClusterParameterGroupName": "default.aurora-postgresql17",
+            "DBParameterGroupFamily": "aurora-postgresql17",
+            "Description": "Default cluster parameter group"
+          },
+          {
+            "DBClusterParameterGroupName": "default.aurora-postgresql18",
+            "DBParameterGroupFamily": "aurora-postgresql18",
+            "Description": "Default cluster parameter group"
+          },
+          {
+            "DBClusterParameterGroupName": "default.mysql8.0",
+            "DBParameterGroupFamily": "mysql8.0",
+            "Description": "Default cluster parameter group"
+          },
+          {
+            "DBClusterParameterGroupName": "default.mysql8.4",
+            "DBParameterGroupFamily": "mysql8.4",
+            "Description": "Default cluster parameter group"
+          },
+          {
+            "DBClusterParameterGroupName": "default.postgres13",
+            "DBParameterGroupFamily": "postgres13",
+            "Description": "Default cluster parameter group"
+          },
+          {
+            "DBClusterParameterGroupName": "default.postgres14",
+            "DBParameterGroupFamily": "postgres14",
+            "Description": "Default cluster parameter group"
+          },
+          {
+            "DBClusterParameterGroupName": "default.postgres15",
+            "DBParameterGroupFamily": "postgres15",
+            "Description": "Default cluster parameter group"
+          },
+          {
+            "DBClusterParameterGroupName": "default.postgres16",
+            "DBParameterGroupFamily": "postgres16",
+            "Description": "Default cluster parameter group"
+          },
+          {
+            "DBClusterParameterGroupName": "default.postgres17",
+            "DBParameterGroupFamily": "postgres17",
+            "Description": "Default cluster parameter group"
+          },
+          {
+            "DBClusterParameterGroupName": "default.postgres18",
+            "DBParameterGroupFamily": "postgres18",
+            "Description": "Default cluster parameter group"
+          },
+          {
+            "DBClusterParameterGroupName": "default.docdb3.6",
+            "DBParameterGroupFamily": "docdb3.6",
+            "Description": "Default cluster parameter group"
+          },
+          {
+            "DBClusterParameterGroupName": "default.docdb4.0",
+            "DBParameterGroupFamily": "docdb4.0",
+            "Description": "Default cluster parameter group"
+          },
+          {
+            "DBClusterParameterGroupName": "default.docdb5.0",
+            "DBParameterGroupFamily": "docdb5.0",
+            "Description": "Default cluster parameter group"
+          },
+          {
+            "DBClusterParameterGroupName": "default.docdb8.0",
+            "DBParameterGroupFamily": "docdb8.0",
+            "Description": "Default cluster parameter group"
+          },
+          {
+            "DBClusterParameterGroupArn": "arn:aws:rds:ap-southeast-2:000000000000:cluster-pg:wave1-aurora-pg16",
+            "DBClusterParameterGroupName": "wave1-aurora-pg16",
+            "DBParameterGroupFamily": "aurora-postgresql16",
+            "Description": "wave1"
+          }
+        ],
+        "Marker": ""
+      }
+    }
+  ]
+}

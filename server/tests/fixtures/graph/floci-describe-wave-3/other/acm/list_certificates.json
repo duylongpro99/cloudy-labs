@@ -1,0 +1,48 @@
+{
+  "calls": [
+    {
+      "params": {
+        "Includes": {
+          "keyTypes": [
+            "RSA_1024",
+            "RSA_2048",
+            "RSA_3072",
+            "RSA_4096",
+            "EC_prime256v1",
+            "EC_secp384r1",
+            "EC_secp521r1"
+          ]
+        }
+      },
+      "response": {
+        "CertificateSummaryList": [
+          {
+            "CertificateArn": "arn:aws:acm:ap-southeast-2:000000000000:certificate/7a4702a0-cfe3-4fff-8947-03af3fb36b4e",
+            "CreatedAt": "2026-10-31 23:25:11.987000+07:00",
+            "DomainName": "w3-edge.example.com",
+            "ExtendedKeyUsages": [
+              "TLS_WEB_SERVER_AUTHENTICATION",
+              "TLS_WEB_CLIENT_AUTHENTICATION"
+            ],
+            "HasAdditionalSubjectAlternativeNames": false,
+            "InUse": false,
+            "IssuedAt": "2026-10-31 23:25:11.987000+07:00",
+            "KeyAlgorithm": "RSA-2048",
+            "KeyUsages": [
+              "DIGITAL_SIGNATURE",
+              "KEY_ENCIPHERMENT"
+            ],
+            "NotAfter": "2027-10-31 23:25:11+07:00",
+            "NotBefore": "2026-10-31 23:25:11+07:00",
+            "RenewalEligibility": "INELIGIBLE",
+            "Status": "ISSUED",
+            "SubjectAlternativeNameSummaries": [
+              "w3-edge.example.com"
+            ],
+            "Type": "AMAZON_ISSUED"
+          }
+        ]
+      }
+    }
+  ]
+}

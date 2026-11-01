@@ -1,0 +1,61 @@
+# AWS Global Accelerator: global, drawn under the global group. An accelerator owns two static anycast
+# IPs; its listeners take ports and their endpoint groups send traffic to load balancers or instances.
+# It must be disabled before it can be deleted, and its listeners deleted first.
+
+- kind: global-accelerator
+  service: globalaccelerator
+  label: Global Accelerator
+  scope: global
+  list: {method: list_accelerators, items: Accelerators}
+  enrich:
+    - {method: list_listeners, params: {AcceleratorArn: AcceleratorArn}, pick: Listeners, merge_as: _Listeners}
+    - {method: list_tags_for_resource, params: {ResourceArn: AcceleratorArn}, pick: Tags, merge_as: _Tags}
+  id: AcceleratorArn
+  name: [Name, AcceleratorArn]
+  parent: [{kind: global}]
+  props:
+    enabled: Enabled
+    status: Status
+    dnsName: DnsName
+    ipAddressType: IpAddressType
+    ips: "IpSets[].IpAddresses[]"
+    listeners: "sort_by(_Listeners || `[]`, &ListenerArn)[].{protocol: Protocol, ports: PortRanges[].join('-', [to_string(FromPort), to_string(ToPort)]), clientAffinity: ClientAffinity}"
+    tags: {hook: common.tags, args: {field: _Tags}}
+  chat_props: [enabled, status, dnsName, ipAddressType, ips, listeners]
+  caveats:
+    - {code: globalaccelerator-config-only, prop: ips, text: "Floci 2.3.0 stores accelerators, listeners and endpoint groups but carries no traffic: the static IPs and DNS name answer nothing, and an endpoint group accepts any endpoint id, even one that does not exist, and reports it HEALTHY. Check the configuration."}
+  floci: {status: control-plane-only, note: "Accelerators, listeners and endpoint groups are stored; no traffic is routed."}
+  builder: true
+  view: {role: block, category: networking, icon: Arch_AWS-Global-Accelerator_48.svg, source: Architecture-Service-Icons_07312026/Arch_Networking-Content-Delivery/48/Arch_AWS-Global-Accelerator_48.svg, height: 0.6, order: 510, actions: [Accelerator, AcceleratorAttributes]}
+  contract:
+    create: {op: create-accelerator, params: {Name: ct-accelerator}, save: accelerator}
+    then:
+      - {op: update-accelerator, params: {AcceleratorArn: "{accelerator}", Enabled: "false"}}
+      - {op: delete-accelerator, params: {AcceleratorArn: "{accelerator}"}}
+  ops:
+    - id: create-accelerator
+      api: CreateAccelerator
+      gesture: create
+      title: "Tạo Global Accelerator"
+      fields: [Name, IpAddressType, Enabled]
+      choices: {IpAddressType: [IPV4, DUAL_STACK]}
+      defaults: {IpAddressType: IPV4}
+      result_id: Accelerator.AcceleratorArn
+      expect: {label: Name}
+      note: "Create an accelerator with two static anycast IPs. Then add a listener (ports, TCP or UDP) and an endpoint group per region pointing at load balancers or instances (aws globalaccelerator create-listener, create-endpoint-group)."
+    - id: update-accelerator
+      api: UpdateAccelerator
+      gesture: attribute
+      title: "Sửa Global Accelerator"
+      fields: [{name: AcceleratorArn, ref: global-accelerator}, Name, Enabled, IpAddressType]
+      choices: {IpAddressType: [IPV4, DUAL_STACK]}
+      target_param: AcceleratorArn
+      note: "Rename the accelerator, or enable or disable it (Enabled false stops traffic; it must be disabled before delete-accelerator)."
+    - id: delete-accelerator
+      api: DeleteAccelerator
+      gesture: delete
+      title: "Xoá Global Accelerator"
+      fields: [{name: AcceleratorArn, ref: global-accelerator}]
+      targets: [global-accelerator]
+      target_param: AcceleratorArn
+      note: "Delete the accelerator and release its IPs. Disable it first and delete its endpoint groups and listeners."

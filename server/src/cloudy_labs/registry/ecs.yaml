@@ -1,0 +1,54 @@
+# Amazon ECS. ListClusters answers ARNs only; DescribeClusters gives the counts and settings.
+# Floci runs a task as a real Docker container, so a service with a desired count above 0 starts
+# containers; a cluster on its own runs nothing.
+
+- kind: ecs-cluster
+  service: ecs
+  label: ECS Cluster
+  list: {method: list_clusters, items: "clusterArns[].{clusterArn: @}"}
+  enrich:
+    - {method: describe_clusters, params: {clusters: "[clusterArn]"}, const: {include: [SETTINGS]}, pick: "clusters[0]", merge_as: _Cluster}
+  id: clusterArn
+  name: [_Cluster.clusterName]
+  parent: [{kind: region}]
+  props:
+    status: _Cluster.status
+    containerInsights: "_Cluster.settings[?name=='containerInsights'].value | [0]"
+    activeServices: _Cluster.activeServicesCount
+    runningTasks: _Cluster.runningTasksCount
+    pendingTasks: _Cluster.pendingTasksCount
+    containerInstances: _Cluster.registeredContainerInstancesCount
+    capacityProviders: _Cluster.capacityProviders
+  chat_props: [status, containerInsights, activeServices, runningTasks, pendingTasks, containerInstances, capacityProviders]
+  builder: true
+  view: {role: block, category: containers, icon: Arch_Amazon-Elastic-Container-Service_48.svg, source: Architecture-Service-Icons_07312026/Arch_Containers/48/Arch_Amazon-Elastic-Container-Service_48.svg, height: 0.6, order: 605, actions: [Cluster, ClusterSettings, ClusterCapacityProviders]}
+  contract:
+    create: {op: create-ecs-cluster, params: {clusterName: ct-ecs-cluster}, save: cluster}
+    then:
+      - {op: update-ecs-cluster-settings, params: {cluster: "{cluster}", settings: '[{"name": "containerInsights", "value": "enabled"}]'}}
+      - {op: delete-ecs-cluster, params: {cluster: "{cluster}"}}
+  ops:
+    - id: create-ecs-cluster
+      api: CreateCluster
+      gesture: create
+      title: "Tạo ECS cluster"
+      fields: [{name: clusterName, placeholder: my-cluster}, {name: settings, multiline: true, placeholder: '[{"name": "containerInsights", "value": "enabled"}]'}, capacityProviders]
+      result_id: cluster.clusterArn
+      expect: {label: clusterName}
+      note: "Create a cluster for tasks and services. Fargate needs no instances: give capacityProviders FARGATE (and FARGATE_SPOT) or run tasks with launch type FARGATE."
+    - id: update-ecs-cluster-settings
+      api: UpdateClusterSettings
+      gesture: attribute
+      title: "Đổi cài đặt ECS cluster"
+      fields: [{name: cluster, ref: ecs-cluster}, {name: settings, multiline: true, placeholder: '[{"name": "containerInsights", "value": "enabled"}]'}]
+      targets: [ecs-cluster]
+      target_param: cluster
+      note: "Turn CloudWatch Container Insights on or off: [{\"name\": \"containerInsights\", \"value\": \"enabled\"}]."
+    - id: delete-ecs-cluster
+      api: DeleteCluster
+      gesture: delete
+      title: "Xoá ECS cluster"
+      fields: [{name: cluster, ref: ecs-cluster}]
+      targets: [ecs-cluster]
+      target_param: cluster
+      note: "Delete an empty cluster. Delete its services, stop its tasks and deregister its container instances first."

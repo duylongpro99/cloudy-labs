@@ -1,0 +1,10 @@
+{
+  "calls": [
+    {
+      "error": "NoSuchWebsiteConfiguration",
+      "params": {
+        "Bucket": "w2-backup-src"
+      }
+    }
+  ]
+}

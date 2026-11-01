@@ -1,0 +1,122 @@
+{
+  "calls": [
+    {
+      "params": {
+        "CacheClusterId": "w3-dm-redis-001"
+      },
+      "response": {
+        "CacheClusters": [
+          {
+            "AtRestEncryptionEnabled": false,
+            "AuthTokenEnabled": false,
+            "AutoMinorVersionUpgrade": true,
+            "CacheClusterId": "w3-dm-redis-001",
+            "CacheClusterStatus": "available",
+            "CacheNodeType": "cache.t3.micro",
+            "CacheSubnetGroupName": "w3-dm-csg",
+            "Engine": "valkey",
+            "EngineVersion": "8.1",
+            "NumCacheNodes": 1,
+            "ReplicationGroupId": "w3-dm-redis",
+            "TransitEncryptionEnabled": false
+          }
+        ],
+        "Marker": ""
+      }
+    },
+    {
+      "params": {
+        "ShowCacheNodeInfo": true
+      },
+      "response": {
+        "CacheClusters": [
+          {
+            "ARN": "arn:aws:elasticache:ap-southeast-2:000000000000:cluster:w3-dm-memcached",
+            "CacheClusterCreateTime": "2026-10-31 16:25:10.255416+00:00",
+            "CacheClusterId": "w3-dm-memcached",
+            "CacheClusterStatus": "available",
+            "CacheNodeType": "cache.t3.micro",
+            "CacheNodes": [
+              {
+                "CacheNodeCreateTime": "2026-10-31 16:25:10.255416+00:00",
+                "CacheNodeId": "0001",
+                "CacheNodeStatus": "available",
+                "CustomerAvailabilityZone": "ap-southeast-2a",
+                "Endpoint": {
+                  "Address": "172.27.0.8",
+                  "Port": 11211
+                },
+                "ParameterGroupStatus": "in-sync"
+              }
+            ],
+            "CacheSubnetGroupName": "w3-dm-csg",
+            "ConfigurationEndpoint": {
+              "Address": "172.27.0.8",
+              "Port": 11211
+            },
+            "Engine": "memcached",
+            "EngineVersion": "1.6.22",
+            "NetworkType": "ipv4",
+            "NumCacheNodes": 1,
+            "PreferredAvailabilityZone": "ap-southeast-2a",
+            "SecurityGroups": [
+              {
+                "SecurityGroupId": "sg-6ab169e1e9cfbb053",
+                "Status": "active"
+              }
+            ]
+          },
+          {
+            "AtRestEncryptionEnabled": false,
+            "AuthTokenEnabled": false,
+            "AutoMinorVersionUpgrade": true,
+            "CacheClusterId": "w3-dm-redis-001",
+            "CacheClusterStatus": "available",
+            "CacheNodeType": "cache.t3.micro",
+            "CacheNodes": [
+              {
+                "CacheNodeId": "0001",
+                "CacheNodeStatus": "available",
+                "Endpoint": {
+                  "Address": "localhost",
+                  "Port": 6379
+                }
+              }
+            ],
+            "CacheSubnetGroupName": "w3-dm-csg",
+            "Engine": "valkey",
+            "EngineVersion": "8.1",
+            "NumCacheNodes": 1,
+            "ReplicationGroupId": "w3-dm-redis",
+            "TransitEncryptionEnabled": false
+          },
+          {
+            "AtRestEncryptionEnabled": false,
+            "AuthTokenEnabled": false,
+            "AutoMinorVersionUpgrade": true,
+            "CacheClusterId": "w3-dm-redis-002",
+            "CacheClusterStatus": "available",
+            "CacheNodeType": "cache.t3.micro",
+            "CacheNodes": [
+              {
+                "CacheNodeId": "0001",
+                "CacheNodeStatus": "available",
+                "Endpoint": {
+                  "Address": "localhost",
+                  "Port": 6379
+                }
+              }
+            ],
+            "CacheSubnetGroupName": "w3-dm-csg",
+            "Engine": "valkey",
+            "EngineVersion": "8.1",
+            "NumCacheNodes": 1,
+            "ReplicationGroupId": "w3-dm-redis",
+            "TransitEncryptionEnabled": false
+          }
+        ],
+        "Marker": ""
+      }
+    }
+  ]
+}

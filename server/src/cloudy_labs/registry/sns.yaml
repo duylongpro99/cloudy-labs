@@ -1,0 +1,119 @@
+# Amazon SNS. ListTopics answers topic ARNs only: GetTopicAttributes adds the settings and the name is
+# the ARN's last segment. Subscriptions sit in their topic and point at the queue or function they
+# deliver to (the endpoint ARN); email, SMS and HTTP endpoints have no node to point at.
+
+- kind: sns-topic
+  service: sns
+  label: SNS Topic
+  list: {method: list_topics, items: Topics}
+  enrich:
+    - {method: get_topic_attributes, params: {TopicArn: TopicArn}, pick: Attributes, merge_as: _Attr}
+    - {hook: common.last_segment, args: {field: TopicArn, sep: ":"}}
+  id: TopicArn
+  name: [_Name, TopicArn]
+  parent: [{kind: region}]
+  props:
+    displayName: _Attr.DisplayName
+    fifo: "_Attr.FifoTopic == 'true'"
+    contentBasedDeduplication: _Attr.ContentBasedDeduplication
+    kmsKey: _Attr.KmsMasterKeyId
+    subscriptionsConfirmed: _Attr.SubscriptionsConfirmed
+    subscriptionsPending: _Attr.SubscriptionsPending
+  chat_props: [displayName, fifo, contentBasedDeduplication, kmsKey, subscriptionsConfirmed, subscriptionsPending]
+  caveats:
+    - {code: floci-sns-email-pending, text: "Floci 2.3.0 keeps an email subscription pending (PendingConfirmation true, counted in SubscriptionsPending) and the lab has no inbox to confirm it from; SQS subscriptions are confirmed at once and receive messages."}
+    - {code: floci-sns-no-queue-policy, text: "Floci 2.3.0 delivers to an SQS subscription even when the queue policy does not allow sns.amazonaws.com to send; AWS drops those messages."}
+  builder: true
+  view: {role: block, category: app-integration, icon: Res_Amazon-Simple-Notification-Service_Topic_48.svg, source: Resource-Icons_07312026/Res_Application-Integration/Res_Amazon-Simple-Notification-Service_Topic_48.svg, height: 0.4, order: 560, actions: [Topic, TopicAttributes]}
+  contract:
+    create: {op: create-topic, params: {Name: ct-topic}, save: topic}
+    then:
+      - {op: set-topic-attributes, params: {TopicArn: "{topic}", AttributeName: DisplayName, AttributeValue: ct-alerts}}
+  ops:
+    - id: create-topic
+      api: CreateTopic
+      gesture: create
+      title: "Tạo SNS topic"
+      fields: [Name, {name: Attributes, placeholder: '{"FifoTopic": "true", "ContentBasedDeduplication": "true"}'}]
+      result_id: TopicArn
+      expect: {label: Name}
+      note: "Create a topic that fans each published message out to its subscriptions. A FIFO topic needs a name ending in .fifo and Attributes {\"FifoTopic\": \"true\"}; it can only deliver to SQS FIFO queues."
+    - id: set-topic-attributes
+      api: SetTopicAttributes
+      gesture: attribute
+      title: "Đổi thuộc tính topic"
+      fields: [{name: TopicArn, ref: sns-topic}, {name: AttributeName, choices: [DisplayName, Policy, DeliveryPolicy, KmsMasterKeyId]}, {name: AttributeValue, multiline: true}]
+      targets: [sns-topic]
+      target_param: TopicArn
+      note: "Change one topic attribute: DisplayName (the sender name of SMS and email), Policy (who may publish, e.g. events.amazonaws.com or cloudwatch.amazonaws.com), DeliveryPolicy or KmsMasterKeyId."
+    - id: delete-topic
+      api: DeleteTopic
+      gesture: delete
+      title: "Xoá topic"
+      fields: [{name: TopicArn, ref: sns-topic}]
+      targets: [sns-topic]
+      target_param: TopicArn
+      note: "Delete the topic and all of its subscriptions."
+
+- kind: sns-subscription
+  service: sns
+  label: SNS Subscription
+  list: {method: list_subscriptions, items: Subscriptions}
+  # An email subscription waiting for confirmation is listed with SubscriptionArn "PendingConfirmation".
+  filter: {path: "starts_with(SubscriptionArn, 'arn:')", in: [true]}
+  enrich:
+    - {method: get_subscription_attributes, params: {SubscriptionArn: SubscriptionArn}, pick: Attributes, merge_as: _Attr}
+    - {hook: common.last_segment, args: {field: Endpoint, sep: ":", as: _Target}}
+  id: SubscriptionArn
+  name: ["join(': ', [Protocol, _Target || ''])"]
+  parent: [{kind: sns-topic, path: TopicArn}]
+  props:
+    protocol: Protocol
+    endpoint: Endpoint
+    filterPolicy: _Attr.FilterPolicy
+    filterPolicyScope: _Attr.FilterPolicyScope
+    rawMessageDelivery: _Attr.RawMessageDelivery
+    pendingConfirmation: _Attr.PendingConfirmation
+    redrivePolicy: _Attr.RedrivePolicy
+  chat_props: [protocol, endpoint, filterPolicy, filterPolicyScope, rawMessageDelivery, pendingConfirmation, redrivePolicy]
+  edges:
+    - {kind: delivers-to, target: Endpoint, to: [sqs-queue, lambda-function, lambda-alias, lambda-version], style: reference}
+  builder: true
+  view: {role: block, category: app-integration, icon: Res_Amazon-Simple-Notification-Service_HTTP-Notification_48.svg, source: Resource-Icons_07312026/Res_Application-Integration/Res_Amazon-Simple-Notification-Service_HTTP-Notification_48.svg, height: 0.25, order: 561, actions: [Subscription, SubscriptionAttributes]}
+  contract:
+    needs:
+      - {op: create-topic, params: {Name: ct-sub-topic}, save: topic}
+      - {op: create-queue, params: {QueueName: ct-sub-queue}, save: queue}
+    create: {op: subscribe, params: {TopicArn: "{topic}", Protocol: sqs, Endpoint: "{queue}"}, save: sub}
+    parent: topic
+    then:
+      - {op: set-subscription-attributes, params: {SubscriptionArn: "{sub}", AttributeName: FilterPolicy, AttributeValue: '{"type": ["order"]}'}}
+      - {op: unsubscribe, params: {SubscriptionArn: "{sub}"}}
+    max_seconds: 5
+  ops:
+    - id: subscribe
+      api: Subscribe
+      gesture: create
+      title: "Đăng ký vào topic"
+      fields: [{name: TopicArn, ref: sns-topic}, {name: Protocol, choices: [sqs, lambda, email, email-json, http, https, sms]}, {name: Endpoint, placeholder: "arn:aws:sqs:ap-southeast-2:000000000000:my-queue"}, {name: Attributes, placeholder: '{"FilterPolicy": "{\"type\": [\"order\"]}", "RawMessageDelivery": "true"}'}, ReturnSubscriptionArn]
+      defaults: {Protocol: sqs, ReturnSubscriptionArn: "true"}
+      container: {param: TopicArn}
+      creates: sns-subscription
+      result_id: SubscriptionArn
+      note: "Deliver the topic's messages to an endpoint: a queue ARN (sqs; the queue policy must let sns.amazonaws.com send), a function ARN (lambda; add-permission for sns.amazonaws.com), an email address or a URL. Attributes may set a FilterPolicy so only matching messages arrive."
+    - id: set-subscription-attributes
+      api: SetSubscriptionAttributes
+      gesture: attribute
+      title: "Đổi thuộc tính subscription"
+      fields: [{name: SubscriptionArn, ref: sns-subscription}, {name: AttributeName, choices: [FilterPolicy, FilterPolicyScope, RawMessageDelivery, RedrivePolicy, DeliveryPolicy]}, {name: AttributeValue, multiline: true}]
+      targets: [sns-subscription]
+      target_param: SubscriptionArn
+      note: "Change one subscription attribute, most often FilterPolicy: JSON such as {\"type\": [\"order\"]} keeps only messages whose attribute type is order (FilterPolicyScope MessageBody filters on the message JSON instead)."
+    - id: unsubscribe
+      api: Unsubscribe
+      gesture: delete
+      title: "Huỷ subscription"
+      fields: [{name: SubscriptionArn, ref: sns-subscription}]
+      targets: [sns-subscription]
+      target_param: SubscriptionArn
+      note: "Stop delivering the topic's messages to this endpoint."

@@ -1,0 +1,92 @@
+{
+  "calls": [
+    {
+      "params": {},
+      "response": {
+        "DistributionList": {
+          "IsTruncated": false,
+          "Items": [
+            {
+              "ARN": "arn:aws:cloudfront::000000000000:distribution/ESUZGTI490RL77",
+              "Aliases": {
+                "Items": [
+                  "w3-edge.example.com"
+                ],
+                "Quantity": 1
+              },
+              "Comment": "w3-edge-cf",
+              "DomainName": "esuzgti490rl77.cloudfront.net",
+              "Enabled": true,
+              "HttpVersion": "http2",
+              "Id": "ESUZGTI490RL77",
+              "IsIPV6Enabled": true,
+              "LastModifiedTime": "2026-10-31 16:25:12.052183+00:00",
+              "OriginGroups": {
+                "Quantity": 0
+              },
+              "Origins": {
+                "Items": [
+                  {
+                    "ConnectionAttempts": 3,
+                    "ConnectionTimeout": 10,
+                    "CustomHeaders": {
+                      "Quantity": 0
+                    },
+                    "DomainName": "w3-edge-origin.s3.ap-southeast-2.amazonaws.com",
+                    "Id": "s3",
+                    "OriginPath": "",
+                    "ResponseCompletionTimeout": 0,
+                    "S3OriginConfig": {
+                      "OriginAccessIdentity": ""
+                    }
+                  },
+                  {
+                    "ConnectionAttempts": 3,
+                    "ConnectionTimeout": 10,
+                    "CustomHeaders": {
+                      "Quantity": 0
+                    },
+                    "CustomOriginConfig": {
+                      "HTTPPort": 80,
+                      "HTTPSPort": 443,
+                      "OriginKeepaliveTimeout": 5,
+                      "OriginProtocolPolicy": "https-only",
+                      "OriginReadTimeout": 30,
+                      "OriginSslProtocols": {
+                        "Items": [
+                          "TLSv1.2"
+                        ],
+                        "Quantity": 1
+                      }
+                    },
+                    "DomainName": "w3-edge-alb-69f799da92464b34.elb.localhost.floci.io",
+                    "Id": "alb",
+                    "OriginPath": "",
+                    "ResponseCompletionTimeout": 0
+                  }
+                ],
+                "Quantity": 2
+              },
+              "PriceClass": "PriceClass_All",
+              "Restrictions": {
+                "GeoRestriction": {
+                  "Quantity": 0,
+                  "RestrictionType": "none"
+                }
+              },
+              "Status": "Deployed",
+              "ViewerCertificate": {
+                "ACMCertificateArn": "arn:aws:acm:ap-southeast-2:000000000000:certificate/7a4702a0-cfe3-4fff-8947-03af3fb36b4e",
+                "MinimumProtocolVersion": "TLSv1.2_2021",
+                "SSLSupportMethod": "sni-only"
+              }
+            }
+          ],
+          "Marker": "",
+          "MaxItems": 100,
+          "Quantity": 1
+        }
+      }
+    }
+  ]
+}

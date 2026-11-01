@@ -1,0 +1,25 @@
+{
+  "calls": [
+    {
+      "params": {},
+      "response": {
+        "ScalingPolicies": [
+          {
+            "AutoScalingGroupName": "w2-asg",
+            "Cooldown": 300,
+            "PolicyARN": "arn:aws:autoscaling:ap-southeast-2:000000000000:scalingPolicy:w2-asg:w2-cpu50",
+            "PolicyName": "w2-cpu50",
+            "PolicyType": "TargetTrackingScaling",
+            "ScalingAdjustment": 0,
+            "TargetTrackingConfiguration": {
+              "PredefinedMetricSpecification": {
+                "PredefinedMetricType": "ASGAverageCPUUtilization"
+              },
+              "TargetValue": 50.0
+            }
+          }
+        ]
+      }
+    }
+  ]
+}

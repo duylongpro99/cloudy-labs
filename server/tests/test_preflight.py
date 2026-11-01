@@ -7,7 +7,7 @@ INSPECT = (
     "bridge\t172.17.0.0/16 \n"
     "host\t\n"
     "cloudy-labs_default\t172.19.0.0/16 fd00::/64 \n"
-    "floci-aws-vpc-4566-us-east-1-vpc-1\t10.0.0.0/16 \n"
+    "floci-aws-vpc-4566-ap-southeast-2-vpc-1\t10.0.0.0/16 \n"
     "corp\t10.0.0.0/8 \n"
 )
 

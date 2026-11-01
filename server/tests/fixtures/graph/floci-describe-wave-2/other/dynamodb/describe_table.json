@@ -1,0 +1,88 @@
+{
+  "calls": [
+    {
+      "params": {
+        "TableName": "w2-orders"
+      },
+      "response": {
+        "Table": {
+          "AttributeDefinitions": [
+            {
+              "AttributeName": "pk",
+              "AttributeType": "S"
+            },
+            {
+              "AttributeName": "status",
+              "AttributeType": "S"
+            }
+          ],
+          "BillingModeSummary": {
+            "BillingMode": "PAY_PER_REQUEST",
+            "LastUpdateToPayPerRequestDateTime": "2026-10-31 22:16:09+07:00"
+          },
+          "CreationDateTime": "2026-10-31 22:16:09+07:00",
+          "DeletionProtectionEnabled": false,
+          "GlobalSecondaryIndexes": [
+            {
+              "IndexArn": "arn:aws:dynamodb:ap-southeast-2:000000000000:table/w2-orders/index/by-status",
+              "IndexName": "by-status",
+              "IndexSizeBytes": 0,
+              "IndexStatus": "ACTIVE",
+              "ItemCount": 0,
+              "KeySchema": [
+                {
+                  "AttributeName": "status",
+                  "KeyType": "HASH"
+                }
+              ],
+              "Projection": {
+                "ProjectionType": "ALL"
+              },
+              "ProvisionedThroughput": {
+                "NumberOfDecreasesToday": 0,
+                "ReadCapacityUnits": 0,
+                "WriteCapacityUnits": 0
+              }
+            }
+          ],
+          "ItemCount": 0,
+          "KeySchema": [
+            {
+              "AttributeName": "pk",
+              "KeyType": "HASH"
+            }
+          ],
+          "LatestStreamArn": "arn:aws:dynamodb:ap-southeast-2:000000000000:table/w2-orders/stream/2026-10-31T15:16:09.221",
+          "LatestStreamLabel": "2026-10-31T15:16:09.221",
+          "ProvisionedThroughput": {
+            "NumberOfDecreasesToday": 0,
+            "ReadCapacityUnits": 0,
+            "WriteCapacityUnits": 0
+          },
+          "SSEDescription": {
+            "KMSMasterKeyArn": "arn:aws:kms:ap-southeast-2:000000000000:key/b13ec560-c4f7-420a-9463-c4bddbe501c1",
+            "SSEType": "KMS",
+            "Status": "ENABLED"
+          },
+          "StreamSpecification": {
+            "StreamEnabled": true,
+            "StreamViewType": "NEW_AND_OLD_IMAGES"
+          },
+          "TableArn": "arn:aws:dynamodb:ap-southeast-2:000000000000:table/w2-orders",
+          "TableClassSummary": {
+            "TableClass": "STANDARD"
+          },
+          "TableId": "221187b5-fa0b-40ae-986a-9882f7fbb751",
+          "TableName": "w2-orders",
+          "TableSizeBytes": 0,
+          "TableStatus": "ACTIVE",
+          "WarmThroughput": {
+            "ReadUnitsPerSecond": 0,
+            "Status": "ACTIVE",
+            "WriteUnitsPerSecond": 0
+          }
+        }
+      }
+    }
+  ]
+}

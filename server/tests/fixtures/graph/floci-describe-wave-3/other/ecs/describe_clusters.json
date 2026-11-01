@@ -1,0 +1,34 @@
+{
+  "calls": [
+    {
+      "params": {
+        "clusters": [
+          "arn:aws:ecs:ap-southeast-2:000000000000:cluster/w3-delivery"
+        ],
+        "include": [
+          "SETTINGS"
+        ]
+      },
+      "response": {
+        "clusters": [
+          {
+            "activeServicesCount": 0,
+            "clusterArn": "arn:aws:ecs:ap-southeast-2:000000000000:cluster/w3-delivery",
+            "clusterName": "w3-delivery",
+            "pendingTasksCount": 0,
+            "registeredContainerInstancesCount": 0,
+            "runningTasksCount": 0,
+            "settings": [
+              {
+                "name": "containerInsights",
+                "value": "enabled"
+              }
+            ],
+            "status": "ACTIVE"
+          }
+        ],
+        "failures": []
+      }
+    }
+  ]
+}

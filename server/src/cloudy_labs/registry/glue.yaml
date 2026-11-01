@@ -1,0 +1,102 @@
+# AWS Glue Data Catalog. A database groups table definitions; a crawler reads S3 paths (or JDBC
+# sources) with an IAM role and writes the tables it finds into one database.
+
+- kind: glue-database
+  service: glue
+  label: Glue Database
+  list: {method: get_databases, items: DatabaseList}
+  enrich:
+    - {hook: common.s3_uri_bucket, args: {field: LocationUri}}
+  # GetDatabases answers no ARN: build the one IAM policies use.
+  id: ["join('', ['arn:aws:glue:', not_null(_Region, ''), ':', CatalogId, ':database/', Name])"]
+  name: [Name]
+  parent: [{kind: region}]
+  props:
+    description: Description
+    locationUri: LocationUri
+  chat_props: [description, locationUri]
+  edges:
+    - {kind: located-in, target: _Buckets, to: s3-bucket, style: reference}
+  builder: true
+  view: {role: block, category: analytics, icon: Res_AWS-Glue_Data-Catalog_48.svg, source: Resource-Icons_07312026/Res_Analytics/Res_AWS-Glue_Data-Catalog_48.svg, height: 0.4, order: 670}
+  contract:
+    create: {op: create-glue-database, params: {DatabaseInput.Name: ct_glue_db, DatabaseInput.Description: contract test}}
+    then:
+      - {op: delete-glue-database, params: {Name: ct_glue_db}}
+  ops:
+    - id: create-glue-database
+      api: CreateDatabase
+      gesture: create
+      title: "Tạo Glue database"
+      fields: [DatabaseInput.Name, DatabaseInput.Description, DatabaseInput.LocationUri]
+      expect: {label: DatabaseInput.Name}
+      note: "A Data Catalog database for crawlers and Athena to put tables in. Use lowercase letters, digits and underscores (Athena reads names in lowercase)."
+    - id: delete-glue-database
+      api: DeleteDatabase
+      gesture: delete
+      title: "Xoá Glue database"
+      fields: [{name: Name, ref: glue-database, ref_by: label}]
+      targets: [glue-database]
+      target_param: Name
+      note: "Delete the database and every table in it."
+
+- kind: glue-crawler
+  service: glue
+  label: Glue Crawler
+  list: {method: get_crawlers, items: Crawlers}
+  enrich:
+    - {hook: common.s3_uri_bucket, args: {field: "Targets.S3Targets[].Path"}}
+  id: ["join('', ['glue-crawler:', not_null(_Region, ''), ':', Name])"]  # GetCrawlers answers no ARN or account
+  name: [Name]
+  parent: [{kind: region}]
+  props:
+    state: State
+    database: DatabaseName
+    role: Role
+    s3Paths: "Targets.S3Targets && sort(Targets.S3Targets[].Path)"
+    schedule: Schedule.ScheduleExpression
+    tablePrefix: TablePrefix
+    lastCrawl: LastCrawl.Status
+  chat_props: [state, database, role, s3Paths, schedule, tablePrefix, lastCrawl]
+  edges:
+    - {kind: crawls-into, target: DatabaseName, match: Name, to: glue-database, style: reference}
+    - {kind: crawls, target: _Buckets, to: s3-bucket, style: reference}
+    # Role is a role name or ARN.
+    - {kind: execution-role, target: Role, match: "[RoleName, Arn]", to: iam-role, style: reference}
+  caveats:
+    - {code: glue-crawler-finds-no-tables, prop: lastCrawl, text: "Floci 2.3.0 runs a crawler to SUCCEEDED without reading its S3 paths: no tables appear in the database. Check the crawler's targets, role and database, not the tables."}
+  floci: {status: control-plane-only, note: "Floci 2.3.0 stores crawlers and moves them through a run, but a run reads no data and writes no tables."}
+  builder: true
+  view: {role: block, category: analytics, icon: Res_AWS-Glue_Crawler_48.svg, source: Resource-Icons_07312026/Res_Analytics/Res_AWS-Glue_Crawler_48.svg, height: 0.4, order: 671, actions: [Crawler, Crawlers]}
+  contract:
+    needs:
+      - {op: create-role, params: {RoleName: ct-glue-role, AssumeRolePolicyDocument: '{"Version": "2012-10-17", "Statement": [{"Effect": "Allow", "Principal": {"Service": "glue.amazonaws.com"}, "Action": "sts:AssumeRole"}]}'}, save: role}
+      - {op: create-glue-database, params: {DatabaseInput.Name: ct_glue_crawl_db}}
+    create: {op: create-crawler, params: {Name: ct-glue-crawler, Role: "{role}", DatabaseName: ct_glue_crawl_db, Targets: '{"S3Targets": [{"Path": "s3://ct-glue-data/in/"}]}'}}
+    then:
+      - {op: update-crawler, params: {Name: ct-glue-crawler, Schedule: "cron(0 2 * * ? *)"}}
+      - {op: delete-crawler, params: {Name: ct-glue-crawler}}
+  ops:
+    - id: create-crawler
+      api: CreateCrawler
+      gesture: create
+      title: "Tạo Glue crawler"
+      fields: [Name, {name: Role, ref: iam-role}, {name: DatabaseName, ref: glue-database, ref_by: label}, {name: Targets, multiline: true, placeholder: '{"S3Targets": [{"Path": "s3://my-bucket/data/"}]}'}, Schedule, TablePrefix, Description]
+      expect: {label: Name}
+      note: "Read data at S3 paths (Targets JSON) and write the tables found into DatabaseName. Role: a role glue.amazonaws.com may assume, allowed to read the paths. Schedule: cron(...) to run it regularly; run it now with aws glue start-crawler."
+    - id: update-crawler
+      api: UpdateCrawler
+      gesture: attribute
+      title: "Đổi lịch Glue crawler"
+      fields: [{name: Name, ref: glue-crawler, ref_by: label}, Schedule, {name: Targets, multiline: true}, {name: DatabaseName, ref: glue-database, ref_by: label}, {name: Role, ref: iam-role}]
+      targets: [glue-crawler]
+      target_param: Name
+      note: "Change the crawler's schedule (cron(0 2 * * ? *)), S3 paths, database or role."
+    - id: delete-crawler
+      api: DeleteCrawler
+      gesture: delete
+      title: "Xoá Glue crawler"
+      fields: [{name: Name, ref: glue-crawler, ref_by: label}]
+      targets: [glue-crawler]
+      target_param: Name
+      note: "Delete the crawler; the tables it wrote stay."

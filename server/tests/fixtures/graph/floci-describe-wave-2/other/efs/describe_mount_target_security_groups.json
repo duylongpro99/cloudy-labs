@@ -1,0 +1,14 @@
+{
+  "calls": [
+    {
+      "params": {
+        "MountTargetId": "fsmt-01d42c19e91d48119"
+      },
+      "response": {
+        "SecurityGroups": [
+          "sg-bb3624e3b61656762"
+        ]
+      }
+    }
+  ]
+}

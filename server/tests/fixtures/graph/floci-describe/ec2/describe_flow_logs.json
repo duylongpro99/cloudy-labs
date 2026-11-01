@@ -1,0 +1,23 @@
+{
+  "calls": [
+    {
+      "params": {},
+      "response": {
+        "FlowLogs": [
+          {
+            "CreationTime": "2026-10-31 14:41:10.371000+00:00",
+            "DeliverLogsStatus": "SUCCESS",
+            "FlowLogId": "fl-77c5d028459bcbdff",
+            "FlowLogStatus": "ACTIVE",
+            "LogDestination": "arn:aws:s3:::wave1-logs",
+            "LogDestinationType": "s3",
+            "LogFormat": "${version} ${account-id} ${interface-id} ${srcaddr} ${dstaddr} ${srcport} ${dstport} ${protocol} ${packets} ${bytes} ${start} ${end} ${action} ${log-status}",
+            "MaxAggregationInterval": 600,
+            "ResourceId": "vpc-03e9e3f9",
+            "TrafficType": "REJECT"
+          }
+        ]
+      }
+    }
+  ]
+}

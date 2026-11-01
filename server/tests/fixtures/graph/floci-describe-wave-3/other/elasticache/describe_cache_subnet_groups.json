@@ -1,0 +1,80 @@
+{
+  "calls": [
+    {
+      "params": {
+        "CacheSubnetGroupName": "w3-dm-csg"
+      },
+      "response": {
+        "CacheSubnetGroups": [
+          {
+            "ARN": "arn:aws:elasticache:ap-southeast-2:000000000000:subnetgroup:w3-dm-csg",
+            "CacheSubnetGroupDescription": "w3 data movement",
+            "CacheSubnetGroupName": "w3-dm-csg",
+            "Subnets": [
+              {
+                "SubnetAvailabilityZone": {
+                  "Name": "ap-southeast-2a"
+                },
+                "SubnetIdentifier": "subnet-85834620",
+                "SupportedNetworkTypes": [
+                  "ipv4"
+                ]
+              },
+              {
+                "SubnetAvailabilityZone": {
+                  "Name": "ap-southeast-2b"
+                },
+                "SubnetIdentifier": "subnet-1f1f0b5e",
+                "SupportedNetworkTypes": [
+                  "ipv4"
+                ]
+              }
+            ],
+            "SupportedNetworkTypes": [
+              "ipv4"
+            ],
+            "VpcId": "vpc-51ff849d"
+          }
+        ]
+      }
+    },
+    {
+      "params": {
+        "CacheSubnetGroupName": "w3-dm-csg"
+      },
+      "response": {
+        "CacheSubnetGroups": [
+          {
+            "ARN": "arn:aws:elasticache:ap-southeast-2:000000000000:subnetgroup:w3-dm-csg",
+            "CacheSubnetGroupDescription": "w3 data movement",
+            "CacheSubnetGroupName": "w3-dm-csg",
+            "Subnets": [
+              {
+                "SubnetAvailabilityZone": {
+                  "Name": "ap-southeast-2a"
+                },
+                "SubnetIdentifier": "subnet-85834620",
+                "SupportedNetworkTypes": [
+                  "ipv4"
+                ]
+              },
+              {
+                "SubnetAvailabilityZone": {
+                  "Name": "ap-southeast-2b"
+                },
+                "SubnetIdentifier": "subnet-1f1f0b5e",
+                "SupportedNetworkTypes": [
+                  "ipv4"
+                ]
+              }
+            ],
+            "SupportedNetworkTypes": [
+              "ipv4"
+            ],
+            "VpcId": "vpc-51ff849d"
+          }
+        ]
+      }
+    }
+  ]
+}

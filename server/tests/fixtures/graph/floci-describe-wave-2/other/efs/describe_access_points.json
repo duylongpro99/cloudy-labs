@@ -1,0 +1,33 @@
+{
+  "calls": [
+    {
+      "params": {},
+      "response": {
+        "AccessPoints": [
+          {
+            "AccessPointArn": "arn:aws:elasticfilesystem:ap-southeast-2:000000000000:access-point/fsap-55193c50dc8a47628",
+            "AccessPointId": "fsap-55193c50dc8a47628",
+            "ClientToken": "9a533ca6-636d-4b9e-81b2-17c1a1dac7bc",
+            "FileSystemId": "fs-52d5401d27744359b",
+            "LifeCycleState": "available",
+            "Name": "w2-efs-ap",
+            "OwnerId": "000000000000",
+            "PosixUser": {
+              "Gid": 1000,
+              "Uid": 1000
+            },
+            "RootDirectory": {
+              "Path": "/app"
+            },
+            "Tags": [
+              {
+                "Key": "Name",
+                "Value": "w2-efs-ap"
+              }
+            ]
+          }
+        ]
+      }
+    }
+  ]
+}

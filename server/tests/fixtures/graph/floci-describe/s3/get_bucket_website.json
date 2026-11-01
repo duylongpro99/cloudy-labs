@@ -1,0 +1,32 @@
+{
+  "calls": [
+    {
+      "params": {
+        "Bucket": "wave1-site"
+      },
+      "response": {
+        "IndexDocument": {
+          "Suffix": "index.html"
+        }
+      }
+    },
+    {
+      "error": "NoSuchWebsiteConfiguration",
+      "params": {
+        "Bucket": "wave1-dst"
+      }
+    },
+    {
+      "error": "NoSuchWebsiteConfiguration",
+      "params": {
+        "Bucket": "wave1-src"
+      }
+    },
+    {
+      "error": "NoSuchWebsiteConfiguration",
+      "params": {
+        "Bucket": "wave1-logs"
+      }
+    }
+  ]
+}

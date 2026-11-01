@@ -1,0 +1,34 @@
+{
+  "calls": [
+    {
+      "params": {
+        "Bucket": "wave1-site"
+      },
+      "response": {}
+    },
+    {
+      "params": {
+        "Bucket": "wave1-dst"
+      },
+      "response": {
+        "Status": "Enabled"
+      }
+    },
+    {
+      "params": {
+        "Bucket": "wave1-src"
+      },
+      "response": {
+        "Status": "Enabled"
+      }
+    },
+    {
+      "params": {
+        "Bucket": "wave1-logs"
+      },
+      "response": {
+        "Status": "Enabled"
+      }
+    }
+  ]
+}

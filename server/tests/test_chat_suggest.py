@@ -26,7 +26,7 @@ def ask(*answers, lab=LAB06):
         answer = answers[len(calls) - 1]
         return answer if isinstance(answer, str) else json.dumps(answer)
 
-    result = asyncio.run(suggest(QUESTION, lab=lab, graph=GOLDEN, azs=["us-east-1a", "us-east-1b"],
+    result = asyncio.run(suggest(QUESTION, lab=lab, graph=GOLDEN, azs=["ap-southeast-2a", "ap-southeast-2b"],
                                  choices=choices("arm64"), settings=SETTINGS, complete=complete))
     return result, calls
 
@@ -40,7 +40,7 @@ def fields(step):
 
 
 def test_two_steps_with_a_ref():
-    result, calls = ask(answer(("create-subnet", {"name": "lab06-public-c", "vpcId": VPC, "cidr": "10.0.3.0/24", "az": "us-east-1a"}),
+    result, calls = ask(answer(("create-subnet", {"name": "lab06-public-c", "vpcId": VPC, "cidr": "10.0.3.0/24", "az": "ap-southeast-2a"}),
                                ("create-route-table", {"name": "lab06-rt-c", "vpcId": VPC}),
                                ("associate-route-table", {"routeTableId": {"ref": 2}, "subnetId": {"ref": 1}})))
     first, second, third = result.steps
@@ -79,9 +79,9 @@ def test_broken_twice():
 
 
 def test_unknown_op_is_kept_with_a_problem():
-    result, _ = ask(answer(("create-bucket", {"name": "b"})))
+    result, _ = ask(answer(("create-warp-drive", {"name": "b"})))
     [step] = result.steps
-    assert step.op == "create-bucket" and step.command == "" and "not a builder op" in step.problems[0].message
+    assert step.op == "create-warp-drive" and step.command == "" and "not a builder op" in step.problems[0].message
 
 
 def test_op_outside_the_palette():
@@ -90,7 +90,7 @@ def test_op_outside_the_palette():
 
 
 def test_missing_and_extra_params():
-    result, _ = ask(answer(("create-vpc", {"name": "v", "region": "us-east-1"})))
+    result, _ = ask(answer(("create-vpc", {"name": "v", "region": "ap-southeast-2"})))
     step = result.steps[0]
     assert sorted(fields(step)) == ["cidr", "region"] and step.command == ""
 
@@ -103,12 +103,12 @@ def test_ref_to_a_later_step_or_itself():
 
 def test_ref_to_a_step_that_creates_nothing():
     result, _ = ask(answer(("modify-vpc-attribute", {"vpcId": VPC}),
-                           ("create-subnet", {"name": "s", "vpcId": {"ref": 1}, "cidr": "10.0.9.0/24", "az": "us-east-1a"})))
+                           ("create-subnet", {"name": "s", "vpcId": {"ref": 1}, "cidr": "10.0.9.0/24", "az": "ap-southeast-2a"})))
     assert fields(result.steps[1]) == ["vpcId"] and "creates nothing" in result.steps[1].problems[0].message
 
 
 def test_overlapping_cidr_is_caught_by_validate():
-    result, _ = ask(answer(("create-subnet", {"name": "s", "vpcId": VPC, "cidr": "10.0.1.0/25", "az": "us-east-1a"})))
+    result, _ = ask(answer(("create-subnet", {"name": "s", "vpcId": VPC, "cidr": "10.0.1.0/25", "az": "ap-southeast-2a"})))
     assert fields(result.steps[0]) == ["cidr"] and "overlaps" in result.steps[0].problems[0].message
 
 

@@ -1,0 +1,126 @@
+# AWS DataSync. A location is one end of a transfer (an S3 bucket and prefix, an NFS or SMB share, an EFS
+# file system...); a task copies from a source location to a destination location. ListLocations answers
+# only the ARN and URI of each; DescribeLocationS3 adds an S3 location's storage class and bucket role,
+# and refuses any other type (the collector then leaves those props out).
+
+- kind: datasync-location
+  service: datasync
+  label: DataSync Location
+  list: {method: list_locations, items: Locations}
+  enrich:
+    - {method: describe_location_s3, params: {LocationArn: LocationArn}, merge_as: _S3}
+    - {hook: common.s3_uri_bucket, args: {field: LocationUri}}
+  id: LocationArn
+  name: [LocationUri, LocationArn]
+  parent: [{kind: region}]
+  props:
+    uri: LocationUri
+    storageClass: _S3.S3StorageClass
+    accessRole: _S3.S3Config.BucketAccessRoleArn
+  chat_props: [uri, storageClass, accessRole]
+  edges:
+    - {kind: execution-role, target: _S3.S3Config.BucketAccessRoleArn, to: iam-role, style: reference}
+    - {kind: uses-bucket, target: _Buckets, to: s3-bucket, style: reference}
+  floci: {status: control-plane-only, note: "Floci 2.3.0 stores locations and tasks but cannot run a task (no StartTaskExecution): nothing is copied."}
+  builder: true
+  view: {role: block, category: storage, icon: Res_AWS-DataSync_Discovery_48.svg, source: Resource-Icons_07312026/Res_Migration-Modernization/Res_AWS-DataSync_Discovery_48.svg, height: 0.3, order: 655, actions: [LocationS3]}
+  contract:
+    needs:
+      - {op: create-role, params: {RoleName: ct-ds-loc-role, AssumeRolePolicyDocument: '{"Version": "2012-10-17", "Statement": [{"Effect": "Allow", "Principal": {"Service": "datasync.amazonaws.com"}, "Action": "sts:AssumeRole"}]}'}, save: role}
+      - {op: create-bucket, params: {Bucket: ct-ds-loc-bucket, CreateBucketConfiguration.LocationConstraint: "{region}"}, save: bucket}
+    create: {op: create-location-s3, params: {S3BucketArn: "{bucket}", Subdirectory: /in, S3Config.BucketAccessRoleArn: "{role}"}, save: loc}
+    then:
+      - {op: update-location-s3, params: {LocationArn: "{loc}", S3StorageClass: STANDARD_IA}}
+      - {op: delete-datasync-location, params: {LocationArn: "{loc}"}}
+  ops:
+    - id: create-location-s3
+      api: CreateLocationS3
+      gesture: create
+      title: "Tạo DataSync location S3"
+      fields: [{name: S3BucketArn, ref: s3-bucket}, Subdirectory, {name: S3Config.BucketAccessRoleArn, ref: iam-role}, S3StorageClass]
+      choices: {S3StorageClass: [STANDARD, STANDARD_IA, ONEZONE_IA, INTELLIGENT_TIERING, GLACIER_INSTANT_RETRIEVAL, DEEP_ARCHIVE]}
+      defaults: {S3StorageClass: STANDARD}
+      result_id: LocationArn
+      note: "An S3 bucket (and prefix in Subdirectory) as a DataSync source or destination. S3Config.BucketAccessRoleArn: a role datasync.amazonaws.com may assume, allowed to list, read and write the bucket."
+    - id: update-location-s3
+      api: UpdateLocationS3
+      gesture: attribute
+      title: "Sửa DataSync location S3"
+      fields: [{name: LocationArn, ref: datasync-location}, S3StorageClass, Subdirectory, {name: S3Config.BucketAccessRoleArn, ref: iam-role}]
+      choices: {S3StorageClass: [STANDARD, STANDARD_IA, ONEZONE_IA, INTELLIGENT_TIERING, GLACIER_INSTANT_RETRIEVAL, DEEP_ARCHIVE]}
+      targets: [datasync-location]
+      target_param: LocationArn
+      note: "Change the storage class objects are written with, the prefix, or the role DataSync uses for the bucket."
+    - id: delete-datasync-location
+      api: DeleteLocation
+      gesture: delete
+      title: "Xoá DataSync location"
+      fields: [{name: LocationArn, ref: datasync-location}]
+      targets: [datasync-location]
+      target_param: LocationArn
+      note: "Delete a location. Delete the tasks that use it first."
+
+- kind: datasync-task
+  service: datasync
+  label: DataSync Task
+  list: {method: list_tasks, items: Tasks}
+  enrich:
+    - {method: describe_task, params: {TaskArn: TaskArn}, merge_as: _Detail}
+  id: TaskArn
+  name: [Name, TaskArn]
+  parent: [{kind: region}]
+  props:
+    status: Status
+    taskMode: _Detail.TaskMode
+    schedule: _Detail.Schedule.ScheduleExpression
+    verifyMode: _Detail.Options.VerifyMode
+    overwriteMode: _Detail.Options.OverwriteMode
+    transferMode: _Detail.Options.TransferMode
+    logGroup: _Detail.CloudWatchLogGroupArn
+  chat_props: [status, taskMode, schedule, verifyMode, overwriteMode, transferMode, logGroup]
+  edges:
+    - {kind: copies-from, target: _Detail.SourceLocationArn, to: datasync-location, style: reference}
+    - {kind: copies-to, target: _Detail.DestinationLocationArn, to: datasync-location, style: reference}
+  caveats:
+    - {code: datasync-task-never-runs, prop: schedule, text: "Floci 2.3.0 stores a task's schedule but never starts an execution, and has no StartTaskExecution: check the task's locations, options and schedule, not copied files."}
+  floci: {status: control-plane-only, note: "Floci 2.3.0 has no task executions: a task is stored and never copies anything."}
+  builder: true
+  view: {role: block, category: storage, icon: Arch_AWS-DataSync_48.svg, source: Architecture-Service-Icons_07312026/Arch_Migration-Modernization/48/Arch_AWS-DataSync_48.svg, height: 0.4, order: 656}
+  contract:
+    needs:
+      - {op: create-role, params: {RoleName: ct-ds-task-role, AssumeRolePolicyDocument: '{"Version": "2012-10-17", "Statement": [{"Effect": "Allow", "Principal": {"Service": "datasync.amazonaws.com"}, "Action": "sts:AssumeRole"}]}'}, save: role}
+      - {op: create-bucket, params: {Bucket: ct-ds-task-src, CreateBucketConfiguration.LocationConstraint: "{region}"}, save: srcBucket}
+      - {op: create-bucket, params: {Bucket: ct-ds-task-dst, CreateBucketConfiguration.LocationConstraint: "{region}"}, save: dstBucket}
+      - {op: create-location-s3, params: {S3BucketArn: "{srcBucket}", S3Config.BucketAccessRoleArn: "{role}"}, save: src}
+      - {op: create-location-s3, params: {S3BucketArn: "{dstBucket}", S3Config.BucketAccessRoleArn: "{role}"}, save: dst}
+    create: {op: create-datasync-task, params: {Name: ct-ds-task, SourceLocationArn: "{src}", DestinationLocationArn: "{dst}"}, save: task}
+    then:
+      - {op: update-datasync-task, params: {TaskArn: "{task}", Schedule.ScheduleExpression: rate(1 hour)}}
+      - {op: delete-datasync-task, params: {TaskArn: "{task}"}}
+  ops:
+    - id: create-datasync-task
+      api: CreateTask
+      gesture: create
+      title: "Tạo DataSync task"
+      fields: [Name, {name: SourceLocationArn, ref: datasync-location}, {name: DestinationLocationArn, ref: datasync-location}, Schedule.ScheduleExpression, Options.VerifyMode, Options.OverwriteMode, Options.TransferMode]
+      choices: {Options.VerifyMode: [POINT_IN_TIME_CONSISTENT, ONLY_FILES_TRANSFERRED, NONE], Options.OverwriteMode: [ALWAYS, NEVER], Options.TransferMode: [CHANGED, ALL]}
+      result_id: TaskArn
+      expect: {label: Name}
+      note: "Copy from a source location to a destination location. Schedule.ScheduleExpression (e.g. rate(1 hour) or cron(0 2 * * ? *)) runs it on a schedule; TransferMode CHANGED copies only what changed."
+    - id: update-datasync-task
+      api: UpdateTask
+      gesture: attribute
+      title: "Đổi lịch DataSync task"
+      fields: [{name: TaskArn, ref: datasync-task}, Schedule.ScheduleExpression, Name, Options.VerifyMode, Options.OverwriteMode, Options.TransferMode]
+      choices: {Options.VerifyMode: [POINT_IN_TIME_CONSISTENT, ONLY_FILES_TRANSFERRED, NONE], Options.OverwriteMode: [ALWAYS, NEVER], Options.TransferMode: [CHANGED, ALL]}
+      targets: [datasync-task]
+      target_param: TaskArn
+      note: "Change the task's schedule (rate(...) or cron(...)), name or options."
+    - id: delete-datasync-task
+      api: DeleteTask
+      gesture: delete
+      title: "Xoá DataSync task"
+      fields: [{name: TaskArn, ref: datasync-task}]
+      targets: [datasync-task]
+      target_param: TaskArn
+      note: "Delete the task; its locations stay."

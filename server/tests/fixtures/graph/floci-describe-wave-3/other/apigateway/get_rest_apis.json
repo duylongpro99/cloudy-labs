@@ -1,0 +1,26 @@
+{
+  "calls": [
+    {
+      "params": {},
+      "response": {
+        "items": [
+          {
+            "apiKeySource": "HEADER",
+            "apiStatus": "AVAILABLE",
+            "createdDate": "2026-10-31 23:25:12+07:00",
+            "disableExecuteApiEndpoint": false,
+            "endpointConfiguration": {
+              "types": [
+                "REGIONAL"
+              ],
+              "vpcEndpointIds": []
+            },
+            "id": "d997462cf0",
+            "name": "w3-edge-rest",
+            "rootResourceId": "a5393f89"
+          }
+        ]
+      }
+    }
+  ]
+}

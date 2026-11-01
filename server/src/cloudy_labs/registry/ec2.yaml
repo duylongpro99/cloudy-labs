@@ -1,0 +1,821 @@
+# EC2 and VPC. Labels try the Name tag first, then the paths after it.
+- kind: vpc
+  service: ec2
+  label: VPC
+  list: {method: describe_vpcs, items: Vpcs}
+  enrich:
+    # describe_vpcs leaves enableDnsHostnames out; one call per VPC. A VPC deleted in between keeps no prop.
+    - {method: describe_vpc_attribute, params: {VpcId: VpcId}, const: {Attribute: enableDnsHostnames}, pick: EnableDnsHostnames.Value, merge_as: _DnsHostnames}
+  id: VpcId
+  name: ["Tags[?Key=='Name'].Value | [0]", VpcId]
+  parent: [{kind: region}]
+  props:
+    cidr: CidrBlock
+    isDefault: "IsDefault || `null`"
+    enableDnsHostnames: _DnsHostnames
+    tags: {hook: common.tags}
+  chat_props: [cidr, isDefault, enableDnsHostnames]
+  builder: true
+  view: {role: tray-badge, category: vpc, icon: Virtual-private-cloud-VPC_32.svg, source: Architecture-Group-Icons_07312026/Virtual-private-cloud-VPC_32.svg, order: 10, group: true, actions: [Vpc, DefaultVpc]}
+  contract:
+    create: {op: create-vpc, params: {name: ct-vpc, cidr: 10.70.0.0/16}, save: vpc}
+    then: [{op: modify-vpc-attribute, params: {vpcId: "{vpc}"}}]
+  ops:  # hand-written commands and checks (builder/ops.py, validate.py)
+    - id: create-vpc
+      api: CreateVpc
+      gesture: create
+      argv: create-vpc
+      title: "Tạo VPC"
+      note: "Create a VPC. cidr: an IPv4 block between /16 and /28, e.g. 10.0.0.0/16."
+      fields:
+        - {name: "name", label: "Name (tag)"}
+        - {name: "cidr", label: "CIDR", placeholder: "10.0.1.0/24", free: true}
+    - id: modify-vpc-attribute
+      api: ModifyVpcAttribute
+      gesture: attribute
+      argv: modify-vpc-attribute
+      title: "Bật DNS hostnames cho VPC"
+      note: "Turn on DNS hostnames for a VPC."
+      fields:
+        - {name: "vpcId", label: "VPC", ref: "vpc"}
+
+- kind: az
+  service: ec2
+  label: Availability Zone
+  list: {hook: ec2.az_groups}
+  id: Id
+  name: ZoneName
+  parent: [{kind: vpc, path: VpcId}]
+  view: {role: outline-only, category: region, order: 20, group: true, stack: true}  # AWS draws an AZ as a dashed border, no icon
+
+- kind: subnet-public
+  service: ec2
+  label: Subnet công khai
+  list: {method: describe_subnets, items: Subnets}
+  filter: {hook: ec2.subnet_visibility, args: {public: true}}
+  id: SubnetId
+  name: ["Tags[?Key=='Name'].Value | [0]", SubnetId]
+  parent: [{kind: az, template: "{VpcId}/{AvailabilityZone}"}]
+  props: &subnet-props
+    cidr: CidrBlock
+    az: AvailabilityZone
+    mapPublicIpOnLaunch: MapPublicIpOnLaunch
+    tags: {hook: common.tags}
+  chat_props: [cidr, az, mapPublicIpOnLaunch]
+  builder: true
+  view: {role: tray-badge, category: subnet-public, icon: Public-subnet_32.svg, source: Architecture-Group-Icons_07312026/Public-subnet_32.svg, order: 30, group: true, actions: [Subnet]}
+  contract:  # a new subnet is private until a route to an IGW serves it; either kind counts
+    needs: [{op: create-vpc, params: {name: ct-subnet-vpc, cidr: 10.71.0.0/16}, save: vpc}]
+    create: {op: create-subnet, params: {name: ct-subnet, vpcId: "{vpc}", cidr: 10.71.1.0/24, az: "{az}"}, save: subnet}
+    parent: vpc
+    then: [{op: modify-subnet-attribute, params: {subnetId: "{subnet}"}}]
+  ops:  # hand-written commands and checks (builder/ops.py, validate.py)
+    - id: create-subnet
+      api: CreateSubnet
+      gesture: create
+      argv: create-subnet
+      title: "Tạo subnet"
+      note: "Create a subnet in a VPC. vpcId: the VPC id; cidr: a block inside the VPC's cidr that overlaps no other subnet of that VPC; az: one of the Availability Zones listed below."
+      fields:
+        - {name: "name", label: "Name (tag)"}
+        - {name: "vpcId", label: "VPC", ref: "vpc"}
+        - {name: "cidr", label: "CIDR", placeholder: "10.0.1.0/24", free: true}
+        - {name: "az", label: "Availability Zone", source: "azs"}
+    - id: modify-subnet-attribute
+      api: ModifySubnetAttribute
+      gesture: attribute
+      argv: modify-subnet-attribute
+      title: "Tự gán IP public trong subnet"
+      note: "Make a subnet give instances a public IP on launch."
+      fields:
+        - {name: "subnetId", label: "Subnet", ref: "subnet"}
+
+- kind: subnet-private
+  service: ec2
+  label: Subnet riêng tư
+  list: {method: describe_subnets, items: Subnets}
+  filter: {hook: ec2.subnet_visibility, args: {public: false}}
+  id: SubnetId
+  name: ["Tags[?Key=='Name'].Value | [0]", SubnetId]
+  parent: [{kind: az, template: "{VpcId}/{AvailabilityZone}"}]
+  props: *subnet-props
+  chat_props: [cidr, az, mapPublicIpOnLaunch]
+  builder: true
+  view: {role: tray-badge, category: subnet-private, icon: Private-subnet_32.svg, source: Architecture-Group-Icons_07312026/Private-subnet_32.svg, order: 31, group: true, actions: [Subnet]}
+
+- kind: igw
+  service: ec2
+  label: Internet Gateway
+  list: {method: describe_internet_gateways, items: InternetGateways}
+  id: InternetGatewayId
+  name: ["Tags[?Key=='Name'].Value | [0]", InternetGatewayId]
+  # An attached IGW sits in its VPC; one not attached yet sits in the region.
+  parent: [{kind: vpc, path: "Attachments[].VpcId"}, {kind: region}]
+  props:
+    attachedVpc: "Attachments[].VpcId | [0]"
+    tags: {hook: common.tags}
+  chat_props: [attachedVpc]
+  builder: true
+  view: {role: block, category: networking, icon: Res_Amazon-VPC_Internet-Gateway_48.svg, source: Resource-Icons_07312026/Res_Networking-Content-Delivery/Res_Amazon-VPC_Internet-Gateway_48.svg, height: 0.6, order: 40, actions: [InternetGateway]}
+  contract:
+    needs: [{op: create-vpc, params: {name: ct-igw-vpc, cidr: 10.72.0.0/16}, save: vpc}]
+    create: {op: create-internet-gateway, params: {name: ct-igw}, save: igw}
+    then: [{op: attach-internet-gateway, params: {igwId: "{igw}", vpcId: "{vpc}"}}]
+  ops:  # hand-written commands and checks (builder/ops.py, validate.py)
+    - id: create-internet-gateway
+      api: CreateInternetGateway
+      gesture: create
+      argv: create-internet-gateway
+      title: "Tạo Internet Gateway"
+      note: "Create an Internet Gateway (not attached yet)."
+      fields:
+        - {name: "name", label: "Name (tag)"}
+    - id: attach-internet-gateway
+      api: AttachInternetGateway
+      gesture: connect
+      argv: attach-internet-gateway
+      title: "Gắn Internet Gateway vào VPC"
+      note: "Attach an Internet Gateway to a VPC. A VPC has at most one, and an IGW serves one VPC."
+      fields:
+        - {name: "igwId", label: "Internet Gateway", ref: "igw"}
+        - {name: "vpcId", label: "VPC", ref: "vpc"}
+
+- kind: nat
+  service: ec2
+  label: NAT Gateway
+  list: {method: describe_nat_gateways, items: NatGateways}
+  filter: {path: State, not_in: [deleted, deleting, failed]}
+  id: NatGatewayId
+  name: ["Tags[?Key=='Name'].Value | [0]", NatGatewayId]
+  parent: [{kind: subnet, path: SubnetId}]
+  props:
+    state: State
+    publicIp: "NatGatewayAddresses[?PublicIp].PublicIp | [0]"
+    tags: {hook: common.tags}
+  chat_props: [state, publicIp]
+  builder: true
+  view: {role: block, category: networking, icon: Res_Amazon-VPC_NAT-Gateway_48.svg, source: Resource-Icons_07312026/Res_Networking-Content-Delivery/Res_Amazon-VPC_NAT-Gateway_48.svg, height: 0.6, order: 41, host: true, actions: [NatGateway]}
+  contract:
+    needs:
+      - {op: create-vpc, params: {name: ct-nat-vpc, cidr: 10.73.0.0/16}, save: vpc}
+      # A NAT Gateway must sit in a public subnet, so the subnet gets a route to an IGW first.
+      - {op: create-subnet, params: {name: ct-nat-subnet, vpcId: "{vpc}", cidr: 10.73.1.0/24, az: "{az}"}, save: subnet}
+      - {op: create-internet-gateway, params: {name: ct-nat-igw}, save: igw}
+      - {op: attach-internet-gateway, params: {igwId: "{igw}", vpcId: "{vpc}"}}
+      - {op: create-route-table, params: {name: ct-nat-rt, vpcId: "{vpc}"}, save: rt}
+      - {op: create-route, params: {routeTableId: "{rt}", destination: 0.0.0.0/0, targetId: "{igw}"}}
+      - {op: associate-route-table, params: {routeTableId: "{rt}", subnetId: "{subnet}"}}
+      - {op: allocate-address, params: {name: ct-nat-eip}, save: eip}
+    create: {op: create-nat-gateway, params: {name: ct-nat, subnetId: "{subnet}", allocationId: "{eip}"}, save: nat}
+    parent: subnet
+  ops:  # hand-written commands and checks (builder/ops.py, validate.py)
+    - id: create-nat-gateway
+      api: CreateNatGateway
+      gesture: create
+      argv: create-nat-gateway
+      title: "Tạo NAT Gateway"
+      note: "Create a NAT Gateway in a public subnet. subnetId: a subnet-public; allocationId: an unused Elastic IP id."
+      fields:
+        - {name: "name", label: "Name (tag)"}
+        - {name: "subnetId", label: "Subnet", ref: "subnet"}
+        - {name: "allocationId", label: "Elastic IP", ref: "elastic-ip"}
+
+- kind: route-table
+  service: ec2
+  label: Route Table
+  list: {method: describe_route_tables, items: RouteTables}
+  id: RouteTableId
+  name: ["Tags[?Key=='Name'].Value | [0]", RouteTableId]
+  parent: [{kind: vpc, path: VpcId}]
+  props:
+    main: "(Associations[?Main] | [0]) && `true` || `null`"
+    # Every route, the local one too: reachability reads the table as AWS evaluates it.
+    routes: "sort_by(Routes, &(DestinationCidrBlock || DestinationIpv6CidrBlock || DestinationPrefixListId || ''))[].{destination: DestinationCidrBlock || DestinationIpv6CidrBlock || DestinationPrefixListId, target: GatewayId || NatGatewayId || VpcPeeringConnectionId || TransitGatewayId || NetworkInterfaceId || InstanceId || EgressOnlyInternetGatewayId, state: State}"
+    associations: "sort_by(Associations, &(SubnetId || ''))[].{subnet: SubnetId || `null`, main: Main}"
+    tags: {hook: common.tags}
+  chat_props: [main, routes, associations]
+  edges:
+    # route: route table -> its targets, labelled with the destination; the local route is skipped.
+    - {kind: route, each: "Routes[]", target: "(GatewayId != 'local' && GatewayId) || NatGatewayId || VpcPeeringConnectionId || TransitGatewayId || NetworkInterfaceId", label: "DestinationCidrBlock || DestinationIpv6CidrBlock || DestinationPrefixListId || ''", to: [igw, nat, vpc-peering, transit-gateway, network-interface, vpc-endpoint], style: route}
+    - {kind: association, each: "Associations[]", target: SubnetId, to: subnet, style: association}
+  builder: true
+  view: {role: block, category: networking, icon: Res_Amazon-VPC_Router_48.svg, source: Resource-Icons_07312026/Res_Networking-Content-Delivery/Res_Amazon-VPC_Router_48.svg, height: 0.4, order: 42, actions: [Route]}
+  contract:
+    needs:
+      - {op: create-vpc, params: {name: ct-rt-vpc, cidr: 10.74.0.0/16}, save: vpc}
+      - {op: create-internet-gateway, params: {name: ct-rt-igw}, save: igw}
+      - {op: attach-internet-gateway, params: {igwId: "{igw}", vpcId: "{vpc}"}}
+      - {op: create-subnet, params: {name: ct-rt-subnet, vpcId: "{vpc}", cidr: 10.74.1.0/24, az: "{az}"}, save: subnet}
+    create: {op: create-route-table, params: {name: ct-rt, vpcId: "{vpc}"}, save: rt}
+    parent: vpc
+    then:
+      - {op: create-route, params: {routeTableId: "{rt}", destination: 0.0.0.0/0, targetId: "{igw}"}}
+      - {op: associate-route-table, params: {routeTableId: "{rt}", subnetId: "{subnet}"}}
+  ops:  # hand-written commands and checks (builder/ops.py, validate.py)
+    - id: create-route-table
+      api: CreateRouteTable
+      gesture: create
+      argv: create-route-table
+      title: "Tạo Route Table"
+      note: "Create a route table in a VPC."
+      fields:
+        - {name: "name", label: "Name (tag)"}
+        - {name: "vpcId", label: "VPC", ref: "vpc"}
+    - id: create-route
+      api: CreateRoute
+      gesture: connect
+      argv: create-route
+      title: "Thêm route"
+      note: "Add a route to a route table. destination: a CIDR such as 0.0.0.0/0; targetId: an Internet Gateway attached to the table's VPC (igw-...) or an available NAT Gateway (nat-...) of that VPC."
+      fields:
+        - {name: "routeTableId", label: "Route Table", ref: "route-table"}
+        - {name: "destination", label: "Dải đích (CIDR)", placeholder: "0.0.0.0/0", free: true}
+        - {name: "targetId", label: "Đích (IGW hoặc NAT)"}
+    - id: associate-route-table
+      api: AssociateRouteTable
+      gesture: connect
+      argv: associate-route-table
+      title: "Gắn Route Table vào subnet"
+      note: "Associate a route table with a subnet of the same VPC that has no route table yet. A subnet is public when its route table routes 0.0.0.0/0 to an Internet Gateway."
+      fields:
+        - {name: "routeTableId", label: "Route Table", ref: "route-table"}
+        - {name: "subnetId", label: "Subnet", ref: "subnet"}
+
+- kind: security-group
+  service: ec2
+  label: Security Group
+  list: {method: describe_security_groups, items: SecurityGroups}
+  id: GroupId
+  name: ["Tags[?Key=='Name'].Value | [0]", GroupName, GroupId]
+  parent: [{kind: vpc, path: VpcId}]
+  props:
+    groupName: GroupName
+    ingress: {hook: ec2.sg_ingress}
+    egress: {hook: ec2.sg_egress}
+    tags: {hook: common.tags}
+  chat_props: [groupName, ingress, egress]
+  builder: true
+  view: {role: attach-badge, category: security, icon: Security-Group-Shield_48.svg, order: 50, actions: [SecurityGroup]}  # self-drawn: the package has no SG icon
+  contract:
+    needs: [{op: create-vpc, params: {name: ct-sg-vpc, cidr: 10.75.0.0/16}, save: vpc}]
+    create: {op: create-security-group, params: {name: ct-sg, vpcId: "{vpc}", description: contract test}, save: sg}
+    parent: vpc
+    then: [{op: authorize-security-group-ingress, params: {groupId: "{sg}", protocol: tcp, port: "80", cidr: 0.0.0.0/0}}]
+  ops:  # hand-written commands and checks (builder/ops.py, validate.py)
+    - id: create-security-group
+      api: CreateSecurityGroup
+      gesture: create
+      argv: create-security-group
+      title: "Tạo Security Group"
+      note: "Create a security group in a VPC. name: not starting with sg-, unique in the VPC; description: plain ASCII text."
+      fields:
+        - {name: "name", label: "Name (tag)"}
+        - {name: "vpcId", label: "VPC", ref: "vpc"}
+        - {name: "description", label: "Mô tả"}
+    - id: authorize-security-group-ingress
+      api: AuthorizeSecurityGroupIngress
+      gesture: attribute
+      argv: authorize-security-group-ingress
+      title: "Thêm rule inbound"
+      note: "Add one inbound rule. protocol: tcp, udp, icmp or -1 (all traffic); port: one port number (any value for icmp and -1); cidr: the source block. Never open port 22 or all traffic to 0.0.0.0/0; use one address with /32."
+      fields:
+        - {name: "groupId", label: "Security Group", ref: "security-group"}
+        - {name: "protocol", label: "Giao thức", choices: ["tcp", "udp", "icmp", "-1"], free: true}
+        - {name: "port", label: "Cổng (một số, ví dụ 80)", placeholder: "80", free: true}
+        - {name: "cidr", label: "CIDR", placeholder: "10.0.1.0/24", free: true}
+    - id: modify-instance-attribute
+      api: ModifyInstanceAttribute
+      gesture: connect
+      argv: modify-instance-attribute
+      title: "Gắn Security Group vào instance"
+      note: "Attach one more security group to an instance; the groups it has are kept."
+      fields:
+        - {name: "instanceId", label: "EC2 Instance", ref: "instance"}
+        - {name: "groupId", label: "Security Group", ref: "security-group"}
+
+- kind: key-pair
+  service: ec2
+  label: Key Pair
+  list: {method: describe_key_pairs, items: KeyPairs}
+  id: [KeyPairId, KeyName]
+  name: KeyName
+  parent: [{kind: region}]
+  props:
+    fingerprint: KeyFingerprint
+    tags: {hook: common.tags}
+  chat_props: []
+  builder: true
+  view: {role: block, category: security, icon: Res_AWS-Identity-Access-Management_Long-Term-Security-Credential_48.svg, source: Resource-Icons_07312026/Res_Security-Identity/Res_AWS-Identity-Access-Management_Long-Term-Security-Credential_48.svg, height: 0.4, order: 51, actions: [KeyPair]}  # no Key Pair icon; the IAM credential is closest
+  contract:
+    create: {op: create-key-pair, params: {name: ct-key}}
+  ops:  # hand-written commands and checks (builder/ops.py, validate.py)
+    - id: create-key-pair
+      api: CreateKeyPair
+      gesture: create
+      argv: create-key-pair
+      title: "Tạo Key Pair"
+      note: "Create a key pair. name is the key name used by run-instances keyName."
+      fields:
+        - {name: "name", label: "Name (tag)"}
+
+- kind: instance
+  service: ec2
+  label: EC2 Instance
+  list: {method: describe_instances, items: "Reservations[].Instances[]"}
+  filter: {path: State.Name, not_in: [terminated, shutting-down]}
+  enrich: {hook: ec2.user_data}
+  id: InstanceId
+  name: ["Tags[?Key=='Name'].Value | [0]", InstanceId]
+  parent: [{kind: subnet, path: SubnetId}]
+  props:
+    state: State.Name
+    instanceType: InstanceType
+    imageId: ImageId
+    privateIp: PrivateIpAddress
+    keyName: KeyName
+    tags: {hook: common.tags}
+    publicIp: {hook: ec2.public_ip}
+    privateIpOutOfCidr: {hook: ec2.private_ip_guard}
+    note: {hook: ec2.user_data_note}
+  chat_props: [state, instanceType, imageId, privateIp, keyName, publicIp, hostPorts]
+  edges:
+    - {kind: attached, target: "SecurityGroups[].GroupId", to: security-group, reverse: true, style: attach}
+    - {kind: uses-key, target: KeyName, to: key-pair, match: KeyName, style: reference}
+    - {kind: instance-profile, target: IamInstanceProfile.Arn, to: iam-instance-profile, style: reference}
+  builder: true
+  view: {role: block, category: compute, icon: Res_Amazon-EC2_Instance_48.svg, source: Resource-Icons_07312026/Res_Compute/Res_Amazon-EC2_Instance_48.svg, height: 0.9, order: 60, host: true, actions: [Instance]}
+  contract:  # Floci runs the instance as a container, so it takes longer to show
+    needs:
+      - {op: create-vpc, params: {name: ct-ec2-vpc, cidr: 10.76.0.0/16}, save: vpc}
+      - {op: create-subnet, params: {name: ct-ec2-subnet, vpcId: "{vpc}", cidr: 10.76.1.0/24, az: "{az}"}, save: subnet}
+      - {op: create-security-group, params: {name: ct-ec2-sg, vpcId: "{vpc}", description: contract test}, save: sg}
+      - {op: create-security-group, params: {name: ct-ec2-sg2, vpcId: "{vpc}", description: contract test}, save: sg2}
+    create:
+      op: run-instances
+      params: {name: ct-ec2, subnetId: "{subnet}", imageId: "{image}", instanceType: "{instanceType}", securityGroupId: "{sg}", keyName: "", userData: ""}
+      save: instance
+    parent: subnet
+    then: [{op: modify-instance-attribute, params: {instanceId: "{instance}", groupId: "{sg2}"}}]
+    max_seconds: 30
+  ops:  # hand-written commands and checks (builder/ops.py, validate.py)
+    - id: run-instances
+      api: RunInstances
+      gesture: create
+      argv: run-instances
+      title: "Chạy EC2 Instance"
+      note: "Launch one instance. subnetId; imageId and instanceType from the lists below; securityGroupId: a group in the subnet's VPC; keyName: a key pair's name, or empty for none; userData: a script, or empty for none."
+      fields:
+        - {name: "name", label: "Name (tag)"}
+        - {name: "subnetId", label: "Subnet", ref: "subnet"}
+        - {name: "imageId", label: "AMI", source: "images"}
+        - {name: "instanceType", label: "Instance type", source: "instanceTypes"}
+        - {name: "securityGroupId", label: "Security Group", ref: "security-group"}
+        - {name: "keyName", label: "Key Pair", ref: "key-pair", ref_by: "label", required: false}
+        - {name: "userData", label: "UserData", multiline: true, required: false}
+
+- kind: elastic-ip
+  service: ec2
+  label: Elastic IP
+  list: {method: describe_addresses, items: Addresses}
+  id: [AllocationId, PublicIp]
+  name: ["Tags[?Key=='Name'].Value | [0]", PublicIp, AllocationId]
+  parent: [{kind: region}]
+  props:
+    publicIp: PublicIp
+    tags: {hook: common.tags}
+  chat_props: [publicIp]
+  edges:
+    - {kind: attached, target: InstanceId, to: instance, style: attach}
+    - {kind: attached, target: "!InstanceId && AllocationId", to: nat, match: "NatGatewayAddresses[].AllocationId", style: attach}  # an instance association wins
+  builder: true
+  view: {role: attach-badge, category: compute, icon: Res_Amazon-EC2_Elastic-IP-Address_48.svg, source: Resource-Icons_07312026/Res_Compute/Res_Amazon-EC2_Elastic-IP-Address_48.svg, order: 61, actions: [Address]}
+  contract:
+    create: {op: allocate-address, params: {name: ct-eip}}
+  ops:  # hand-written commands and checks (builder/ops.py, validate.py)
+    - id: allocate-address
+      api: AllocateAddress
+      gesture: create
+      argv: allocate-address
+      title: "Cấp Elastic IP"
+      note: "Allocate an Elastic IP. Its id (eipalloc-...) is the allocationId of a NAT Gateway."
+      fields:
+        - {name: "name", label: "Name (tag)"}
+
+# Network extras. Floci keeps Name tags only where noted in docs/emulator-differences.md.
+- kind: network-acl
+  service: ec2
+  label: Network ACL
+  list: {method: describe_network_acls, items: NetworkAcls}
+  id: NetworkAclId
+  name: ["Tags[?Key=='Name'].Value | [0]", NetworkAclId]
+  parent: [{kind: vpc, path: VpcId}]
+  props:
+    isDefault: IsDefault
+    # Entries in the order AWS evaluates them (lowest rule number first); the * rule is 32767.
+    # Ingress first, then egress (sort_by is stable).
+    entries: "sort_by(sort_by(Entries, &RuleNumber), &to_string(Egress))[].{rule_number: RuleNumber, egress: Egress, protocol: Protocol, port_range: PortRange && [PortRange.From, PortRange.To] || `null`, cidr: CidrBlock || Ipv6CidrBlock, action: RuleAction}"
+    associations: "sort(Associations[].SubnetId)"
+    tags: {hook: common.tags}
+  chat_props: [isDefault, entries, associations]
+  edges:
+    - {kind: nacl-association, target: "Associations[].SubnetId", to: subnet, style: association}
+  builder: true
+  view: {role: block, category: security, icon: Res_Amazon-VPC_Network-Access-Control-List_48.svg, source: Resource-Icons_07312026/Res_Networking-Content-Delivery/Res_Amazon-VPC_Network-Access-Control-List_48.svg, height: 0.4, order: 52, actions: [NetworkAcl]}
+  contract:
+    needs: [{op: create-vpc, params: {name: ct-acl-vpc, cidr: 10.77.0.0/16}, save: vpc}]
+    create: {op: create-network-acl, params: {VpcId: "{vpc}"}, save: acl}
+    parent: vpc
+    then: [{op: create-network-acl-entry, params: {NetworkAclId: "{acl}", RuleNumber: "100", Protocol: "6", RuleAction: allow, Egress: "false", CidrBlock: 0.0.0.0/0, PortRange: '{"From": 443, "To": 443}'}}]
+  ops:
+    - id: create-network-acl
+      api: CreateNetworkAcl
+      gesture: create
+      title: "Tạo Network ACL"
+      fields: [{name: VpcId, ref: vpc}]
+      container: {param: VpcId}
+      result_id: NetworkAcl.NetworkAclId
+      note: "Create a network ACL in a VPC. A new ACL denies everything until entries allow traffic."
+    - id: create-network-acl-entry
+      api: CreateNetworkAclEntry
+      gesture: attribute
+      title: "Thêm rule cho Network ACL"
+      fields: [{name: NetworkAclId, ref: network-acl}, RuleNumber, Egress, Protocol, RuleAction, CidrBlock, PortRange]
+      choices: {Protocol: ["6", "17", "1", "-1"]}
+      targets: [network-acl]
+      target_param: NetworkAclId
+      note: "Add one rule. RuleNumber 1-32766, lower is evaluated first; Protocol 6 (tcp), 17 (udp), 1 (icmp) or -1 (all); PortRange as JSON {\"From\": 443, \"To\": 443} for tcp and udp; RuleAction allow or deny."
+    - id: replace-network-acl-association
+      api: ReplaceNetworkAclAssociation
+      gesture: connect
+      title: "Gắn Network ACL vào subnet"
+      fields: [{name: AssociationId, label: "Association hiện tại (aclassoc-...)"}, {name: NetworkAclId, ref: network-acl}]
+      source: network-acl
+      source_param: NetworkAclId
+      targets: [subnet]
+      note: "Move a subnet to another network ACL of its VPC. AssociationId: the subnet's current association (aclassoc-...), shown in the ACL that holds it now."
+
+- kind: vpc-endpoint
+  service: ec2
+  label: VPC Endpoint
+  list: {method: describe_vpc_endpoints, items: VpcEndpoints}
+  filter: {path: State, not_in: [deleted, deleting, failed, rejected, expired]}
+  id: VpcEndpointId
+  name: ["Tags[?Key=='Name'].Value | [0]", VpcEndpointId]
+  parent: [{kind: vpc, path: VpcId}]
+  props:
+    type: VpcEndpointType
+    serviceName: ServiceName
+    state: State
+    routeTables: "RouteTableIds && sort(RouteTableIds)"
+    subnets: "SubnetIds && sort(SubnetIds)"
+    tags: {hook: common.tags}
+  chat_props: [type, serviceName, state, routeTables, subnets]
+  edges:
+    # A gateway endpoint is a route target in the tables it names; an interface endpoint has an ENI per subnet.
+    - {kind: endpoint-route, target: "RouteTableIds", to: route-table, reverse: true, style: route}
+    - {kind: endpoint-subnet, target: "SubnetIds", to: subnet, style: association}
+    - {kind: attached, target: "Groups[].GroupId", to: security-group, reverse: true, style: attach}
+  builder: true
+  view: {role: block, category: networking, icon: Res_Amazon-VPC_Endpoints_48.svg, source: Resource-Icons_07312026/Res_Networking-Content-Delivery/Res_Amazon-VPC_Endpoints_48.svg, height: 0.5, order: 43, host: true, actions: [VpcEndpoint]}
+  contract:
+    needs:
+      - {op: create-vpc, params: {name: ct-vpce-vpc, cidr: 10.78.0.0/16}, save: vpc}
+      - {op: create-route-table, params: {name: ct-vpce-rt, vpcId: "{vpc}"}, save: rt}
+    create: {op: create-vpc-endpoint, params: {VpcId: "{vpc}", ServiceName: "com.amazonaws.{region}.s3", VpcEndpointType: Gateway, RouteTableIds: "{rt}"}, save: vpce}
+    parent: vpc
+  ops:
+    - id: create-vpc-endpoint
+      api: CreateVpcEndpoint
+      gesture: create
+      title: "Tạo VPC Endpoint"
+      fields: [{name: VpcId, ref: vpc}, ServiceName, VpcEndpointType, RouteTableIds, SubnetIds, SecurityGroupIds]
+      defaults: {VpcEndpointType: Gateway}
+      container: {param: VpcId}
+      result_id: VpcEndpoint.VpcEndpointId
+      note: "Create a VPC endpoint. ServiceName: com.amazonaws.<region>.s3 or .dynamodb for a Gateway endpoint (give RouteTableIds), other services as Interface (give SubnetIds, one per AZ, and SecurityGroupIds)."
+
+- kind: vpc-peering
+  service: ec2
+  label: VPC Peering
+  list: {method: describe_vpc_peering_connections, items: VpcPeeringConnections}
+  filter: {path: Status.Code, not_in: [deleted, rejected, failed, expired, deleting]}
+  id: VpcPeeringConnectionId
+  name: ["Tags[?Key=='Name'].Value | [0]", VpcPeeringConnectionId]
+  parent: [{kind: region}]
+  props:
+    status: Status.Code
+    requesterVpc: RequesterVpcInfo.VpcId
+    requesterCidr: RequesterVpcInfo.CidrBlock
+    accepterVpc: AccepterVpcInfo.VpcId
+    accepterCidr: AccepterVpcInfo.CidrBlock
+    accepterRegion: AccepterVpcInfo.Region
+    tags: {hook: common.tags}
+  chat_props: [status, requesterVpc, requesterCidr, accepterVpc, accepterCidr, accepterRegion]
+  edges:
+    - {kind: peering, target: "[RequesterVpcInfo.VpcId, AccepterVpcInfo.VpcId]", to: vpc, style: association}
+  builder: true
+  view: {role: block, category: networking, icon: Res_Amazon-VPC_Peering-Connection_48.svg, source: Resource-Icons_07312026/Res_Networking-Content-Delivery/Res_Amazon-VPC_Peering-Connection_48.svg, height: 0.5, order: 44, actions: [VpcPeeringConnection]}
+  contract:
+    needs:
+      - {op: create-vpc, params: {name: ct-pcx-a, cidr: 10.79.0.0/16}, save: a}
+      - {op: create-vpc, params: {name: ct-pcx-b, cidr: 10.82.0.0/16}, save: b}
+    create: {op: create-vpc-peering-connection, params: {VpcId: "{a}", PeerVpcId: "{b}"}, save: pcx}
+    then: [{op: accept-vpc-peering-connection, params: {VpcPeeringConnectionId: "{pcx}"}}]
+  ops:
+    - id: create-vpc-peering-connection
+      api: CreateVpcPeeringConnection
+      gesture: create
+      title: "Tạo VPC Peering"
+      fields: [{name: VpcId, ref: vpc}, {name: PeerVpcId, ref: vpc}, PeerRegion]
+      result_id: VpcPeeringConnection.VpcPeeringConnectionId
+      note: "Request a peering between two VPCs whose CIDRs do not overlap. It stays pending-acceptance until accepted; routes in both VPCs' tables must point at it."
+    - id: accept-vpc-peering-connection
+      api: AcceptVpcPeeringConnection
+      gesture: attribute
+      title: "Chấp nhận VPC Peering"
+      fields: [{name: VpcPeeringConnectionId, ref: vpc-peering}]
+      targets: [vpc-peering]
+      target_param: VpcPeeringConnectionId
+      note: "Accept a pending peering request."
+
+- kind: flow-log
+  service: ec2
+  label: Flow Log
+  list: {method: describe_flow_logs, items: FlowLogs}
+  id: FlowLogId
+  name: ["Tags[?Key=='Name'].Value | [0]", FlowLogId]
+  parent: [{kind: network-interface, path: ResourceId}, {kind: subnet, path: ResourceId}, {kind: vpc, path: ResourceId}]
+  props:
+    trafficType: TrafficType
+    destinationType: LogDestinationType
+    destination: LogDestination || LogGroupName
+    status: FlowLogStatus
+    tags: {hook: common.tags}
+  chat_props: [trafficType, destinationType, destination, status]
+  builder: true
+  view: {role: block, category: networking, icon: Res_Amazon-VPC_Flow-Logs_48.svg, source: Resource-Icons_07312026/Res_Networking-Content-Delivery/Res_Amazon-VPC_Flow-Logs_48.svg, height: 0.3, order: 49, actions: [FlowLogs]}
+  contract:
+    needs: [{op: create-vpc, params: {name: ct-fl-vpc, cidr: 10.83.0.0/16}, save: vpc}]
+    create: {op: create-flow-logs, params: {ResourceIds: "{vpc}", ResourceType: VPC, TrafficType: ALL, LogDestinationType: s3, LogDestination: "arn:aws:s3:::ct-flow-logs"}}
+    parent: vpc
+  ops:
+    - id: create-flow-logs
+      api: CreateFlowLogs
+      gesture: create
+      title: "Bật Flow Log"
+      fields: [ResourceIds, ResourceType, TrafficType, LogDestinationType, LogDestination, LogGroupName]
+      defaults: {ResourceType: VPC, TrafficType: ALL, LogDestinationType: s3}
+      result_id: FlowLogIds.0
+      note: "Log the traffic of a VPC, subnet or ENI. ResourceIds: its id; ResourceType VPC, Subnet or NetworkInterface; LogDestination: an S3 bucket ARN (arn:aws:s3:::name) for s3, or LogGroupName for cloud-watch-logs."
+
+- kind: transit-gateway
+  service: ec2
+  label: Transit Gateway
+  list: {method: describe_transit_gateways, items: TransitGateways}
+  filter: {path: State, not_in: [deleted, deleting]}
+  id: TransitGatewayId
+  name: ["Tags[?Key=='Name'].Value | [0]", TransitGatewayId]
+  parent: [{kind: region}]
+  props:
+    state: State
+    asn: Options.AmazonSideAsn
+    defaultRouteTable: Options.AssociationDefaultRouteTableId
+    tags: {hook: common.tags}
+  chat_props: [state, asn, defaultRouteTable]
+  builder: true
+  view: {role: block, category: networking, icon: Arch_AWS-Transit-Gateway_48.svg, source: Architecture-Service-Icons_07312026/Arch_Networking-Content-Delivery/48/Arch_AWS-Transit-Gateway_48.svg, height: 0.7, order: 45, actions: [TransitGateway]}
+  contract:
+    create: {op: create-transit-gateway, params: {Description: contract test}, save: tgw}
+  ops:
+    - id: create-transit-gateway
+      api: CreateTransitGateway
+      gesture: create
+      title: "Tạo Transit Gateway"
+      fields: [Description]
+      result_id: TransitGateway.TransitGatewayId
+      note: "Create a Transit Gateway in the region. It has a default route table that attachments join."
+
+- kind: tgw-attachment
+  service: ec2
+  label: Transit Gateway Attachment
+  list: {method: describe_transit_gateway_vpc_attachments, items: TransitGatewayVpcAttachments}
+  filter: {path: State, not_in: [deleted, deleting, failed, rejected]}
+  enrich:
+    - {method: describe_transit_gateway_attachments, params: {TransitGatewayAttachmentIds: "[TransitGatewayAttachmentId]"}, pick: "TransitGatewayAttachments[0].Association.TransitGatewayRouteTableId", merge_as: _RouteTable}
+  id: TransitGatewayAttachmentId
+  name: ["Tags[?Key=='Name'].Value | [0]", TransitGatewayAttachmentId]
+  parent: [{kind: vpc, path: VpcId}]
+  props:
+    state: State
+    subnets: "SubnetIds && sort(SubnetIds)"
+    routeTable: _RouteTable
+    tags: {hook: common.tags}
+  chat_props: [state, subnets]
+  edges:
+    - {kind: tgw-attached, target: TransitGatewayId, to: transit-gateway, style: association}
+    - {kind: tgw-subnet, target: SubnetIds, to: subnet, style: reference}
+  builder: true
+  view: {role: block, category: networking, icon: Res_AWS-Transit-Gateway_Attachment_48.svg, source: Resource-Icons_07312026/Res_Networking-Content-Delivery/Res_AWS-Transit-Gateway_Attachment_48.svg, height: 0.4, order: 46, actions: [TransitGatewayVpcAttachment]}
+  contract:
+    needs:
+      - {op: create-vpc, params: {name: ct-tgwa-vpc, cidr: 10.84.0.0/16}, save: vpc}
+      - {op: create-subnet, params: {name: ct-tgwa-subnet, vpcId: "{vpc}", cidr: 10.84.1.0/24, az: "{az}"}, save: subnet}
+      - {op: create-transit-gateway, params: {Description: contract test}, save: tgw}
+    create: {op: create-transit-gateway-vpc-attachment, params: {TransitGatewayId: "{tgw}", VpcId: "{vpc}", SubnetIds: "{subnet}"}, save: att}
+    parent: vpc
+  ops:
+    - id: create-transit-gateway-vpc-attachment
+      api: CreateTransitGatewayVpcAttachment
+      gesture: create
+      title: "Gắn VPC vào Transit Gateway"
+      fields: [{name: TransitGatewayId, ref: transit-gateway}, {name: VpcId, ref: vpc}, SubnetIds]
+      container: {param: VpcId}
+      result_id: TransitGatewayVpcAttachment.TransitGatewayAttachmentId
+      note: "Attach a VPC to a Transit Gateway through one subnet per AZ. Route tables of the VPC then need routes to the TGW."
+
+- kind: tgw-route-table
+  service: ec2
+  label: Transit Gateway Route Table
+  list: {method: describe_transit_gateway_route_tables, items: TransitGatewayRouteTables}
+  filter: {path: State, not_in: [deleted, deleting]}
+  enrich:
+    - {method: search_transit_gateway_routes, params: {TransitGatewayRouteTableId: TransitGatewayRouteTableId}, const: {Filters: [{Name: state, Values: [active, blackhole]}]}, pick: Routes, merge_as: _Routes}
+  id: TransitGatewayRouteTableId
+  name: ["Tags[?Key=='Name'].Value | [0]", TransitGatewayRouteTableId]
+  parent: [{kind: region}]
+  props:
+    state: State
+    defaultAssociation: DefaultAssociationRouteTable
+    routes: "sort_by(_Routes, &DestinationCidrBlock)[].{destination: DestinationCidrBlock, attachment: TransitGatewayAttachments[0].TransitGatewayAttachmentId, type: Type, state: State}"
+    tags: {hook: common.tags}
+  chat_props: [state, defaultAssociation]
+  edges:
+    - {kind: tgw-route-table-of, target: TransitGatewayId, to: transit-gateway, style: reference}
+  builder: true
+  view: {role: block, category: networking, icon: Res_AWS-Cloud-WAN_Transit-Gateway-Route-Table-Attachment_48.svg, source: Resource-Icons_07312026/Res_Networking-Content-Delivery/Res_AWS-Cloud-WAN_Transit-Gateway-Route-Table-Attachment_48.svg, height: 0.4, order: 47, actions: [TransitGatewayRouteTable]}
+  contract:
+    needs: [{op: create-transit-gateway, params: {Description: contract test}, save: tgw}]
+    create: {op: create-transit-gateway-route-table, params: {TransitGatewayId: "{tgw}"}}
+  ops:
+    - id: create-transit-gateway-route-table
+      api: CreateTransitGatewayRouteTable
+      gesture: create
+      title: "Tạo TGW Route Table"
+      fields: [{name: TransitGatewayId, ref: transit-gateway}]
+      result_id: TransitGatewayRouteTable.TransitGatewayRouteTableId
+      note: "Create one more route table on a Transit Gateway."
+
+- kind: network-interface
+  service: ec2
+  label: Network Interface (ENI)
+  list: {method: describe_network_interfaces, items: NetworkInterfaces}
+  # An instance's own interface (device 0) is the instance; one AWS manages for a service (endpoint, NAT, RDS) is that service.
+  filter:
+    - {path: "Attachment.DeviceIndex == `0` && Attachment.InstanceId != null", not_in: [true]}
+    - {path: "RequesterManaged", not_in: [true]}
+  id: NetworkInterfaceId
+  name: ["TagSet[?Key=='Name'].Value | [0]", Description, NetworkInterfaceId]
+  parent: [{kind: subnet, path: SubnetId}]
+  props:
+    status: Status
+    privateIp: PrivateIpAddress
+    type: InterfaceType
+    tags: {hook: common.tags, args: {field: TagSet}}
+  chat_props: [status, privateIp, type]
+  edges:
+    - {kind: attached, target: Attachment.InstanceId, to: instance, style: attach}
+    - {kind: attached, target: "Groups[].GroupId", to: security-group, reverse: true, style: attach}
+  builder: true
+  view: {role: attach-badge, category: networking, icon: Res_Amazon-VPC_Elastic-Network-Interface_48.svg, source: Resource-Icons_07312026/Res_Networking-Content-Delivery/Res_Amazon-VPC_Elastic-Network-Interface_48.svg, order: 62, host: true, actions: [NetworkInterface]}
+  contract:
+    needs:
+      - {op: create-vpc, params: {name: ct-eni-vpc, cidr: 10.85.0.0/16}, save: vpc}
+      - {op: create-subnet, params: {name: ct-eni-subnet, vpcId: "{vpc}", cidr: 10.85.1.0/24, az: "{az}"}, save: subnet}
+    create: {op: create-network-interface, params: {SubnetId: "{subnet}", Description: contract test}, save: eni}
+    parent: subnet
+  ops:
+    - id: create-network-interface
+      api: CreateNetworkInterface
+      gesture: create
+      title: "Tạo ENI"
+      fields: [{name: SubnetId, ref: subnet}, Description, Groups, PrivateIpAddress]
+      container: {param: SubnetId}
+      result_id: NetworkInterface.NetworkInterfaceId
+      note: "Create a network interface in a subnet. Groups: security group ids of the subnet's VPC."
+    - id: attach-network-interface
+      api: AttachNetworkInterface
+      gesture: connect
+      title: "Gắn ENI vào instance"
+      fields: [{name: NetworkInterfaceId, ref: network-interface}, {name: InstanceId, ref: instance}, DeviceIndex]
+      defaults: {DeviceIndex: "1"}
+      source: network-interface
+      source_param: NetworkInterfaceId
+      targets: [instance]
+      target_param: InstanceId
+      note: "Attach an ENI to an instance in the same AZ. DeviceIndex 1 or more (0 is the instance's own)."
+
+- kind: ebs-volume
+  service: ec2
+  label: EBS Volume
+  list: {method: describe_volumes, items: Volumes}
+  filter:
+    - {path: State, not_in: [deleted, deleting, error]}
+    # The root volume AWS makes with an instance is drawn as part of the instance.
+    - {path: "Attachments[?Device=='/dev/xvda' || Device=='/dev/sda1'] | length(@) > `0`", not_in: [true]}
+  id: VolumeId
+  name: ["Tags[?Key=='Name'].Value | [0]", VolumeId]
+  parent: [{kind: region}]
+  props:
+    size: Size
+    volumeType: VolumeType
+    az: AvailabilityZone
+    state: State
+    encrypted: Encrypted
+    device: "Attachments[0].Device"
+    tags: {hook: common.tags}
+  chat_props: [size, volumeType, az, state, encrypted, device]
+  edges:
+    - {kind: attached, target: "Attachments[].InstanceId", to: instance, style: attach}
+  builder: true
+  view: {role: attach-badge, category: storage, icon: Res_Amazon-Elastic-Block-Store_Volume_48.svg, source: Resource-Icons_07312026/Res_Storage/Res_Amazon-Elastic-Block-Store_Volume_48.svg, order: 63, actions: [Volume]}
+  contract:
+    create: {op: create-volume, params: {AvailabilityZone: "{az}", Size: "8"}, save: vol}
+  ops:
+    - id: create-volume
+      api: CreateVolume
+      gesture: create
+      title: "Tạo EBS Volume"
+      fields: [{name: AvailabilityZone, source: azs}, Size, VolumeType, Encrypted]
+      defaults: {Size: "8", VolumeType: gp3}
+      result_id: VolumeId
+      note: "Create a volume in one AZ; it can only attach to an instance in that AZ. Size in GiB."
+    - id: attach-volume
+      api: AttachVolume
+      gesture: connect
+      title: "Gắn volume vào instance"
+      fields: [{name: VolumeId, ref: ebs-volume}, {name: InstanceId, ref: instance}, Device]
+      defaults: {Device: /dev/sdf}
+      source: ebs-volume
+      source_param: VolumeId
+      targets: [instance]
+      target_param: InstanceId
+      note: "Attach an available volume to a running instance in the same AZ. Device: /dev/sdf to /dev/sdp."
+  caveats:
+    - {code: ebs-snapshot-missing, text: "Floci 2.3.0 has no CreateSnapshot or CopySnapshot: an EBS snapshot step cannot run."}
+
+- kind: launch-template
+  service: ec2
+  label: Launch Template
+  list: {method: describe_launch_templates, items: LaunchTemplates}
+  id: LaunchTemplateId
+  name: ["Tags[?Key=='Name'].Value | [0]", LaunchTemplateName, LaunchTemplateId]
+  parent: [{kind: region}]
+  props:
+    defaultVersion: DefaultVersionNumber
+    latestVersion: LatestVersionNumber
+    tags: {hook: common.tags}
+  chat_props: [defaultVersion, latestVersion]
+  builder: true
+  view: {role: block, category: compute, icon: Res_Amazon-EC2_AMI_48.svg, source: Resource-Icons_07312026/Res_Compute/Res_Amazon-EC2_AMI_48.svg, height: 0.4, order: 64, actions: [LaunchTemplate]}
+  contract:
+    create: {op: create-launch-template, params: {LaunchTemplateName: ct-lt, LaunchTemplateData: '{"InstanceType": "t3.micro"}'}, save: lt}
+  ops:
+    - id: create-launch-template
+      api: CreateLaunchTemplate
+      gesture: create
+      title: "Tạo Launch Template"
+      fields: [LaunchTemplateName, {name: LaunchTemplateData, multiline: true}]
+      result_id: LaunchTemplate.LaunchTemplateId
+      expect: {label: LaunchTemplateName}
+      note: "Create a launch template. LaunchTemplateData as JSON, e.g. {\"InstanceType\": \"t3.micro\", \"ImageId\": \"ami-...\"}."
+
+- kind: prefix-list
+  service: ec2
+  label: Prefix List
+  list: {method: describe_managed_prefix_lists, items: PrefixLists}
+  filter: {path: OwnerId, not_in: [AWS]}  # AWS's own lists (S3, DynamoDB) are not the learner's
+  enrich:
+    - {method: get_managed_prefix_list_entries, params: {PrefixListId: PrefixListId}, pick: "Entries[].Cidr", merge_as: _Cidrs}
+  id: PrefixListId
+  name: ["Tags[?Key=='Name'].Value | [0]", PrefixListName, PrefixListId]
+  parent: [{kind: region}]
+  props:
+    cidrs: "_Cidrs && sort(_Cidrs)"
+    maxEntries: MaxEntries
+    addressFamily: AddressFamily
+    tags: {hook: common.tags}
+  chat_props: [cidrs, maxEntries, addressFamily]
+  builder: true
+  view: {role: block, category: networking, icon: Res_Amazon-VPC_Network-Access-Control-List_48.svg, source: Resource-Icons_07312026/Res_Networking-Content-Delivery/Res_Amazon-VPC_Network-Access-Control-List_48.svg, height: 0.3, order: 48, actions: [ManagedPrefixList]}
+  contract:
+    create: {op: create-managed-prefix-list, params: {PrefixListName: ct-pl, MaxEntries: "5", AddressFamily: IPv4, Entries: '[{"Cidr": "203.0.113.0/24"}]'}, save: pl}
+  ops:
+    - id: create-managed-prefix-list
+      api: CreateManagedPrefixList
+      gesture: create
+      title: "Tạo Prefix List"
+      fields: [PrefixListName, AddressFamily, MaxEntries, Entries]
+      defaults: {AddressFamily: IPv4, MaxEntries: "5"}
+      result_id: PrefixList.PrefixListId
+      expect: {label: PrefixListName}
+      note: "Create a managed prefix list: CIDRs that security group rules and routes can name as one. Entries as JSON [{\"Cidr\": \"203.0.113.0/24\"}]."

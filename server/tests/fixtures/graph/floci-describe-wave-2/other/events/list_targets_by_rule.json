@@ -1,0 +1,33 @@
+{
+  "calls": [
+    {
+      "params": {
+        "EventBusName": "arn:aws:events:ap-southeast-2:000000000000:event-bus/default",
+        "Rule": "w2-hourly"
+      },
+      "response": {
+        "Targets": [
+          {
+            "Arn": "arn:aws:events:ap-southeast-2:000000000000:event-bus/w2-bus",
+            "Id": "bus",
+            "RoleArn": "arn:aws:iam::000000000000:role/w2-mon-role"
+          }
+        ]
+      }
+    },
+    {
+      "params": {
+        "EventBusName": "arn:aws:events:ap-southeast-2:000000000000:event-bus/w2-bus",
+        "Rule": "w2-orders"
+      },
+      "response": {
+        "Targets": [
+          {
+            "Arn": "arn:aws:logs:ap-southeast-2:000000000000:log-group:w2-rule-target",
+            "Id": "logs"
+          }
+        ]
+      }
+    }
+  ]
+}

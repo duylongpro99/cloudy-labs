@@ -50,7 +50,7 @@
             ]
         },
         {
-            "GroupId": "sg-default-us-east-1",
+            "GroupId": "sg-default-ap-southeast-2",
             "IpPermissionsEgress": [
                 {
                     "IpProtocol": "-1",
@@ -65,7 +65,7 @@
                 }
             ],
             "Tags": [],
-            "VpcId": "vpc-default-us-east-1",
+            "VpcId": "vpc-default-ap-southeast-2",
             "OwnerId": "000000000000",
             "GroupName": "default",
             "Description": "default VPC security group",

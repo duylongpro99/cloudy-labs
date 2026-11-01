@@ -1,0 +1,16 @@
+{
+  "calls": [
+    {
+      "params": {},
+      "response": {
+        "EventBuses": [
+          {
+            "Arn": "arn:aws:events:ap-southeast-2:000000000000:event-bus/default",
+            "CreationTime": "2026-10-31 23:25:12+07:00",
+            "Name": "default"
+          }
+        ]
+      }
+    }
+  ]
+}

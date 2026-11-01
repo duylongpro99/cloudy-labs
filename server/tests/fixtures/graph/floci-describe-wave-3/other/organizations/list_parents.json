@@ -1,0 +1,30 @@
+{
+  "calls": [
+    {
+      "params": {
+        "ChildId": "000000000000"
+      },
+      "response": {
+        "Parents": [
+          {
+            "Id": "r-gt0v",
+            "Type": "ROOT"
+          }
+        ]
+      }
+    },
+    {
+      "params": {
+        "ChildId": "381802961456"
+      },
+      "response": {
+        "Parents": [
+          {
+            "Id": "ou-gt0v-tp01c9ap",
+            "Type": "ORGANIZATIONAL_UNIT"
+          }
+        ]
+      }
+    }
+  ]
+}

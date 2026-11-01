@@ -1,0 +1,14 @@
+{
+  "calls": [
+    {
+      "params": {
+        "Resource": "arn:aws:cloudfront::000000000000:distribution/ESUZGTI490RL77"
+      },
+      "response": {
+        "Tags": {
+          "Items": []
+        }
+      }
+    }
+  ]
+}

@@ -1,0 +1,37 @@
+{
+  "calls": [
+    {
+      "params": {
+        "EventBusName": "arn:aws:events:ap-southeast-2:000000000000:event-bus/default"
+      },
+      "response": {
+        "Rules": [
+          {
+            "Arn": "arn:aws:events:ap-southeast-2:000000000000:rule/w2-hourly",
+            "EventBusName": "default",
+            "Name": "w2-hourly",
+            "ScheduleExpression": "rate(1 hour)",
+            "State": "DISABLED"
+          }
+        ]
+      }
+    },
+    {
+      "params": {
+        "EventBusName": "arn:aws:events:ap-southeast-2:000000000000:event-bus/w2-bus"
+      },
+      "response": {
+        "Rules": [
+          {
+            "Arn": "arn:aws:events:ap-southeast-2:000000000000:rule/w2-bus/w2-orders",
+            "Description": "w2 orders",
+            "EventBusName": "w2-bus",
+            "EventPattern": "{\"source\": [\"w2.app\"]}",
+            "Name": "w2-orders",
+            "State": "ENABLED"
+          }
+        ]
+      }
+    }
+  ]
+}

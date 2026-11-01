@@ -1,0 +1,36 @@
+{
+  "calls": [
+    {
+      "params": {},
+      "response": {
+        "Parameters": [
+          {
+            "DataType": "text",
+            "KeyId": "b13ec560-c4f7-420a-9463-c4bddbe501c1",
+            "LastModifiedDate": "2026-10-31 22:16:09.231000+07:00",
+            "Name": "/w2/app/api-token",
+            "Tier": "Standard",
+            "Type": "SecureString",
+            "Version": 1
+          },
+          {
+            "DataType": "text",
+            "LastModifiedDate": "2026-10-31 22:16:09.229000+07:00",
+            "Name": "/w2/app/db-host",
+            "Tier": "Standard",
+            "Type": "String",
+            "Version": 1
+          },
+          {
+            "DataType": "text",
+            "LastModifiedDate": "2026-10-31 22:16:09.248000+07:00",
+            "Name": "/w2/cfn/param",
+            "Tier": "Standard",
+            "Type": "String",
+            "Version": 1
+          }
+        ]
+      }
+    }
+  ]
+}

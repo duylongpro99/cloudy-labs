@@ -1,0 +1,17 @@
+{
+  "calls": [
+    {
+      "params": {
+        "Bucket": "w2-backup-src"
+      },
+      "response": {
+        "PublicAccessBlockConfiguration": {
+          "BlockPublicAcls": true,
+          "BlockPublicPolicy": true,
+          "IgnorePublicAcls": true,
+          "RestrictPublicBuckets": true
+        }
+      }
+    }
+  ]
+}

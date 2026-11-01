@@ -1,0 +1,14 @@
+{
+  "calls": [
+    {
+      "params": {
+        "Attribute": "userData",
+        "InstanceId": "i-ebd18d4a95b4c15f4"
+      },
+      "response": {
+        "InstanceId": "i-ebd18d4a95b4c15f4",
+        "UserData": {}
+      }
+    }
+  ]
+}

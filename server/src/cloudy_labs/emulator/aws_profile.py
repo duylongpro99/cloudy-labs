@@ -9,11 +9,13 @@ file before the first change, and refuses to take over a `[profile lab]` someone
 import functools
 import os
 import re
+import shlex
 import shutil
 import subprocess
+import sys
 from pathlib import Path
 
-from ..config import ACCESS_KEY_ID, API_PORT, HOST, REGION, SECRET_ACCESS_KEY
+from ..config import ACCESS_KEY_ID, API_PORT, DEFAULT_REGION, HOST, MOTO_TAP_PORT, SECRET_ACCESS_KEY
 
 PROFILE = "lab"
 HEADER = f"[profile {PROFILE}]"
@@ -30,15 +32,26 @@ def config_path() -> Path:
     return Path(os.environ.get("AWS_CONFIG_FILE") or Path.home() / ".aws" / "config").expanduser()
 
 
-def profile_block() -> str:
-    # Fake emulator keys (NFR6); endpoint_url is api-tap, so the learner's calls show in the scene.
+TAP_PORTS = {"floci": API_PORT, "moto": MOTO_TAP_PORT}  # the api-tap in front of each emulator
+
+
+def credential_command() -> str:
+    """What the profile runs to get moto's admin keys. They change on every reset, so they are read
+    when the CLI needs them and never written into the config."""
+    return shlex.join([sys.executable, "-m", "cloudy_labs.cli", "credentials", "moto"])
+
+
+def profile_block(emulator: str = "floci", region: str = DEFAULT_REGION) -> str:
+    # endpoint_url is the emulator's api-tap, so the learner's calls show in the scene. Floci takes
+    # its fake keys (NFR6); moto enforces IAM after a reset, so its keys come from labctl.
+    keys = ([f"credential_process = {credential_command()}"] if emulator == "moto" else
+            [f"aws_access_key_id = {ACCESS_KEY_ID}", f"aws_secret_access_key = {SECRET_ACCESS_KEY}"])
     return "\n".join([
         HEADER,
         MARK,
-        f"endpoint_url = http://{HOST}:{API_PORT}",
-        f"region = {REGION}",
-        f"aws_access_key_id = {ACCESS_KEY_ID}",
-        f"aws_secret_access_key = {SECRET_ACCESS_KEY}",
+        f"endpoint_url = http://{HOST}:{TAP_PORTS[emulator]}",
+        f"region = {region}",
+        *keys,
         "output = json",
         "cli_pager =",
     ]) + "\n"
@@ -62,11 +75,11 @@ def _find(lines: list[str]) -> tuple[int, int] | None:
     return None
 
 
-def render(text: str) -> str:
+def render(text: str, emulator: str = "floci", region: str = DEFAULT_REGION) -> str:
     """`text` with the lab profile written in. Raises ProfileError for a lab profile labctl did not write."""
     lines = text.splitlines(keepends=True)
     found = _find(lines)
-    block = profile_block()
+    block = profile_block(emulator, region)
     if found is None:
         sep = "" if not text else "\n" if text.endswith("\n") else "\n\n"
         return text + sep + block if text.strip() else block
@@ -79,12 +92,12 @@ def render(text: str) -> str:
     return "".join(lines[:start]) + block + "".join(lines[end:])
 
 
-def ensure_lab_profile() -> str:
-    """Write the lab profile if needed. Returns "created", "updated" or "unchanged"."""
+def ensure_lab_profile(emulator: str = "floci", region: str = DEFAULT_REGION) -> str:
+    """Write the lab profile for this emulator and region if needed. Returns "created", "updated" or "unchanged"."""
     # Write through a symlink (dotfiles managers link ~/.aws/config), never replace the link itself.
     path = config_path().resolve()
     old = path.read_text(encoding="utf-8") if path.exists() else ""
-    new = render(old)
+    new = render(old, emulator, region)
     if new == old:
         return "unchanged"
     backup = path.with_name(path.name + BACKUP_SUFFIX)
@@ -101,12 +114,12 @@ def ensure_lab_profile() -> str:
     return "updated" if old and _find(old.splitlines()) else "created"
 
 
-def lab_profile_ok() -> bool:
-    """Whether the config holds the lab profile exactly as labctl writes it."""
+def lab_profile_ok(emulator: str = "floci", region: str = DEFAULT_REGION) -> bool:
+    """Whether the config holds the lab profile exactly as labctl writes it for this emulator and region."""
     path = config_path()
     try:
         text = path.read_text(encoding="utf-8")
-        return render(text) == text
+        return render(text, emulator, region) == text
     except (OSError, ProfileError):
         return False
 

@@ -1,0 +1,220 @@
+# Elastic Load Balancing v2 (ALB, NLB). A load balancer spans subnets of one VPC, so it sits in the VPC;
+# listeners and their rules are listed per load balancer and per listener and point at target groups.
+
+- kind: load-balancer
+  service: elbv2
+  label: Load Balancer
+  list: {method: describe_load_balancers, items: LoadBalancers}
+  enrich:
+    - {method: describe_tags, params: {ResourceArns: "[LoadBalancerArn]"}, pick: "TagDescriptions[0].Tags", merge_as: _Tags}
+  id: LoadBalancerArn
+  name: [LoadBalancerName]
+  parent: [{kind: vpc, path: VpcId}]
+  props:
+    type: Type
+    scheme: Scheme
+    state: State.Code
+    dnsName: DNSName
+    ipAddressType: IpAddressType
+    subnets: "sort(AvailabilityZones[].SubnetId)"
+    azs: "sort(AvailabilityZones[].ZoneName)"
+    securityGroups: "SecurityGroups && sort(SecurityGroups)"
+    tags: {hook: common.tags, args: {field: _Tags}}
+  chat_props: [type, scheme, state, dnsName, ipAddressType, subnets, azs, securityGroups]
+  edges:
+    - {kind: lb-subnet, target: "AvailabilityZones[].SubnetId", to: subnet, style: association}
+    - {kind: attached, target: SecurityGroups, to: security-group, reverse: true, style: attach}
+  caveats:
+    - {code: elb-http-only, text: "Floci 2.3.0 forwards HTTP listener traffic to healthy targets: an instance reaches the listener at the load balancer's DNS name, but the listener port is not published to the host, and NLB/TCP or HTTPS forwarding is not emulated. Check the listener, rules and target health."}
+  builder: true
+  view: {role: block, category: networking, icon: Arch_Elastic-Load-Balancing_48.svg, source: Architecture-Service-Icons_07312026/Arch_Networking-Content-Delivery/48/Arch_Elastic-Load-Balancing_48.svg, height: 0.6, order: 55, host: true, actions: [LoadBalancer, SecurityGroups, Subnets]}
+  contract:
+    needs:
+      - {op: create-vpc, params: {name: ct-lb-vpc, cidr: 10.89.0.0/16}, save: vpc}
+      - {op: create-subnet, params: {name: ct-lb-a, vpcId: "{vpc}", cidr: 10.89.1.0/24, az: "{region}a"}, save: a}
+      - {op: create-subnet, params: {name: ct-lb-b, vpcId: "{vpc}", cidr: 10.89.2.0/24, az: "{region}b"}, save: b}
+      - {op: create-security-group, params: {name: ct-lb-sg, vpcId: "{vpc}", description: contract test}, save: sg}
+      - {op: create-security-group, params: {name: ct-lb-sg-2, vpcId: "{vpc}", description: contract test}, save: sg2}
+    create: {op: create-load-balancer, params: {Name: ct-alb, Subnets: "{a},{b}", SecurityGroups: "{sg}"}, save: lb}
+    parent: vpc
+    then: [{op: set-security-groups, params: {LoadBalancerArn: "{lb}", SecurityGroups: "{sg2}"}}]  # a different group, so the graph changes
+  ops:
+    - id: create-load-balancer
+      api: CreateLoadBalancer
+      gesture: create
+      title: "Tạo Load Balancer"
+      fields: [Name, Type, Scheme, Subnets, SecurityGroups, IpAddressType]
+      choices: {Type: [application, network], Scheme: [internet-facing, internal], IpAddressType: [ipv4, dualstack]}
+      defaults: {Type: application, Scheme: internet-facing}
+      result_id: LoadBalancers.0.LoadBalancerArn
+      expect: {label: Name}
+      note: "Create an ALB or NLB across at least two subnets in different AZs of one VPC (Subnets: comma-separated). An internet-facing one needs public subnets; an ALB takes security groups. Then add a target group and a listener."
+    - id: set-security-groups
+      api: SetSecurityGroups
+      gesture: attribute
+      title: "Đổi security group của Load Balancer"
+      fields: [{name: LoadBalancerArn, ref: load-balancer}, SecurityGroups]
+      target_param: LoadBalancerArn
+      note: "Replace the load balancer's security groups (comma-separated). They must allow the listener ports from the clients."
+    - id: set-subnets
+      api: SetSubnets
+      gesture: attribute
+      title: "Đổi subnet của Load Balancer"
+      fields: [{name: LoadBalancerArn, ref: load-balancer}, Subnets]
+      target_param: LoadBalancerArn
+      note: "Replace the subnets (one per AZ, comma-separated) the load balancer has nodes in."
+
+- kind: target-group
+  service: elbv2
+  label: Target Group
+  list: {method: describe_target_groups, items: TargetGroups}
+  enrich:
+    - {method: describe_target_health, params: {TargetGroupArn: TargetGroupArn}, pick: TargetHealthDescriptions, merge_as: _Targets}
+    - {method: describe_tags, params: {ResourceArns: "[TargetGroupArn]"}, pick: "TagDescriptions[0].Tags", merge_as: _Tags}
+  id: TargetGroupArn
+  name: [TargetGroupName]
+  parent: [{kind: vpc, path: VpcId}, {kind: region}]
+  props:
+    protocol: Protocol
+    port: Port
+    targetType: TargetType
+    healthCheck: "{protocol: HealthCheckProtocol, port: HealthCheckPort, path: HealthCheckPath, interval: HealthCheckIntervalSeconds, healthy: HealthyThresholdCount, unhealthy: UnhealthyThresholdCount, matcher: Matcher.HttpCode}"
+    loadBalancers: "LoadBalancerArns && sort(LoadBalancerArns)"
+    targets: "sort_by(_Targets || `[]`, &Target.Id)[].{id: Target.Id, port: Target.Port, health: TargetHealth.State, reason: TargetHealth.Reason}"
+    tags: {hook: common.tags, args: {field: _Tags}}
+  chat_props: [protocol, port, targetType, healthCheck, loadBalancers, targets]
+  edges:
+    - {kind: uses-target-group, target: LoadBalancerArns, to: load-balancer, reverse: true, style: reference}
+    - {kind: registered-target, target: "_Targets[].Target.Id", to: [instance, lambda-function], style: reference}
+  caveats:
+    - {code: elb-accepts-unknown-targets, prop: targets, text: "Floci 2.3.0 registers any instance id, even one that does not exist; its health stays initial or unhealthy. Check the target's health, not that it was registered."}
+  builder: true
+  view: {role: block, category: networking, icon: Res_Servers_48_Light.svg, source: Resource-Icons_07312026/Res_General-Icons/Res_48_Light/Res_Servers_48_Light.svg, height: 0.4, order: 56, actions: [TargetGroup, Targets, TargetHealth]}
+  contract:
+    needs:
+      - {op: create-vpc, params: {name: ct-tg-vpc, cidr: 10.92.0.0/16}, save: vpc}
+    create: {op: create-target-group, params: {Name: ct-tg, Protocol: HTTP, Port: "80", VpcId: "{vpc}"}, save: tg}
+    parent: vpc
+    then: [{op: modify-target-group, params: {TargetGroupArn: "{tg}", HealthCheckPath: /health}}]
+  ops:
+    - id: create-target-group
+      api: CreateTargetGroup
+      gesture: create
+      title: "Tạo Target Group"
+      fields: [Name, Protocol, Port, {name: VpcId, ref: vpc}, TargetType, HealthCheckPath, HealthCheckPort]
+      choices: {Protocol: [HTTP, HTTPS, TCP, UDP, TLS], TargetType: [instance, ip, lambda]}
+      defaults: {Protocol: HTTP, Port: "80", TargetType: instance, HealthCheckPath: /}
+      container: {param: VpcId}
+      result_id: TargetGroups.0.TargetGroupArn
+      expect: {label: Name}
+      note: "Create the pool a listener forwards to. Instances are checked on HealthCheckPath and get traffic once healthy. A lambda target group takes no protocol, port or VPC."
+    - id: register-targets
+      api: RegisterTargets
+      gesture: attribute
+      title: "Đăng ký target"
+      fields: [{name: TargetGroupArn, ref: target-group}, {name: Targets, multiline: true}]
+      target_param: TargetGroupArn
+      note: "Add targets as JSON, e.g. [{\"Id\": \"i-...\", \"Port\": 80}]. Their security groups must allow the target port from the load balancer."
+    - id: deregister-targets
+      api: DeregisterTargets
+      gesture: attribute
+      title: "Gỡ target"
+      fields: [{name: TargetGroupArn, ref: target-group}, {name: Targets, multiline: true}]
+      target_param: TargetGroupArn
+      note: "Remove targets, given as JSON like [{\"Id\": \"i-...\"}]."
+    - id: modify-target-group
+      api: ModifyTargetGroup
+      gesture: attribute
+      title: "Đổi health check"
+      fields: [{name: TargetGroupArn, ref: target-group}, HealthCheckPath, HealthCheckPort, HealthCheckIntervalSeconds, HealthyThresholdCount, UnhealthyThresholdCount, Matcher.HttpCode]
+      target_param: TargetGroupArn
+      note: "Change how targets are health-checked: path, port, interval, thresholds and the HTTP codes that count as healthy (Matcher.HttpCode, e.g. 200-299)."
+
+- kind: listener
+  service: elbv2
+  label: Listener
+  list: {method: describe_listeners, items: Listeners, scope: {parent_kind: load-balancer, param: LoadBalancerArn, field: LoadBalancerArn}}
+  id: ListenerArn
+  name: ["join(':', [Protocol, to_string(Port)])", ListenerArn]
+  parent: [{kind: region}]
+  props:
+    protocol: Protocol
+    port: Port
+    defaultActions: "DefaultActions[].{type: Type, targetGroup: TargetGroupArn, redirect: RedirectConfig, fixedResponse: FixedResponseConfig.StatusCode}"
+    sslPolicy: SslPolicy
+  chat_props: [protocol, port, defaultActions, sslPolicy]
+  edges:
+    - {kind: listener-of, target: _Parent, to: load-balancer, style: reference}
+    - {kind: forwards-to, target: "DefaultActions[].[TargetGroupArn, ForwardConfig.TargetGroups[].TargetGroupArn][][]", to: target-group, style: reference}
+  builder: true
+  view: {role: block, category: networking, icon: Res_Data-Stream_48_Light.svg, source: Resource-Icons_07312026/Res_General-Icons/Res_48_Light/Res_Data-Stream_48_Light.svg, height: 0.3, order: 57, actions: [Listener]}
+  contract:
+    needs:
+      - {op: create-vpc, params: {name: ct-lis-vpc, cidr: 10.93.0.0/16}, save: vpc}
+      - {op: create-subnet, params: {name: ct-lis-a, vpcId: "{vpc}", cidr: 10.93.1.0/24, az: "{region}a"}, save: a}
+      - {op: create-subnet, params: {name: ct-lis-b, vpcId: "{vpc}", cidr: 10.93.2.0/24, az: "{region}b"}, save: b}
+      - {op: create-load-balancer, params: {Name: ct-lis-alb, Subnets: "{a},{b}"}, save: lb}
+      - {op: create-target-group, params: {Name: ct-lis-tg, Protocol: HTTP, Port: "80", VpcId: "{vpc}"}, save: tg}
+    create: {op: create-listener, params: {LoadBalancerArn: "{lb}", Protocol: HTTP, Port: "18081", DefaultActions: '[{"Type": "forward", "TargetGroupArn": "{tg}"}]'}, save: listener}
+    then: [{op: modify-listener, params: {ListenerArn: "{listener}", Port: "18082"}}]
+  ops:
+    - id: create-listener
+      api: CreateListener
+      gesture: create
+      title: "Tạo Listener"
+      fields: [{name: LoadBalancerArn, ref: load-balancer}, Protocol, Port, {name: DefaultActions, multiline: true, placeholder: '[{"Type": "forward", "TargetGroupArn": "arn:aws:elasticloadbalancing:..."}]'}, SslPolicy]
+      choices: {Protocol: [HTTP, HTTPS, TCP, UDP, TLS]}
+      defaults: {Protocol: HTTP, Port: "80"}
+      result_id: Listeners.0.ListenerArn
+      note: "Listen on a port of the load balancer and send requests to its default action, e.g. [{\"Type\": \"forward\", \"TargetGroupArn\": \"...\"}] or a fixed-response. Add rules to route by path or host."
+    - id: modify-listener
+      api: ModifyListener
+      gesture: attribute
+      title: "Sửa Listener"
+      fields: [{name: ListenerArn, ref: listener}, Port, Protocol, {name: DefaultActions, multiline: true}]
+      target_param: ListenerArn
+      note: "Change the listener's port, protocol or default action (JSON, as for create-listener)."
+
+- kind: listener-rule
+  service: elbv2
+  label: Listener Rule
+  list: {method: describe_rules, items: Rules, scope: {parent_kind: listener, param: ListenerArn, field: ListenerArn}}
+  filter: {path: IsDefault, not_in: [true]}  # the listener's default action, shown on the listener
+  id: RuleArn
+  name: ["join(' ', ['priority', Priority])", RuleArn]
+  parent: [{kind: region}]
+  props:
+    priority: Priority
+    conditions: "Conditions[].{field: Field, values: Values || PathPatternConfig.Values || HostHeaderConfig.Values}"
+    actions: "Actions[].{type: Type, targetGroup: TargetGroupArn}"
+  chat_props: [priority, conditions, actions]
+  edges:
+    - {kind: rule-of, target: _Parent, to: listener, style: reference}
+    - {kind: forwards-to, target: "Actions[].[TargetGroupArn, ForwardConfig.TargetGroups[].TargetGroupArn][][]", to: target-group, style: reference}
+  builder: true
+  view: {role: block, category: networking, icon: Res_Document_48_Light.svg, source: Resource-Icons_07312026/Res_General-Icons/Res_48_Light/Res_Document_48_Light.svg, height: 0.2, order: 58, actions: [Rule, RulePriorities]}
+  contract:
+    needs:
+      - {op: create-vpc, params: {name: ct-rule-vpc, cidr: 10.94.0.0/16}, save: vpc}
+      - {op: create-subnet, params: {name: ct-rule-a, vpcId: "{vpc}", cidr: 10.94.1.0/24, az: "{region}a"}, save: a}
+      - {op: create-subnet, params: {name: ct-rule-b, vpcId: "{vpc}", cidr: 10.94.2.0/24, az: "{region}b"}, save: b}
+      - {op: create-load-balancer, params: {Name: ct-rule-alb, Subnets: "{a},{b}"}, save: lb}
+      - {op: create-target-group, params: {Name: ct-rule-tg, Protocol: HTTP, Port: "80", VpcId: "{vpc}"}, save: tg}
+      - {op: create-listener, params: {LoadBalancerArn: "{lb}", Protocol: HTTP, Port: "18083", DefaultActions: '[{"Type": "fixed-response", "FixedResponseConfig": {"StatusCode": "404"}}]'}, save: listener}
+    create: {op: create-rule, params: {ListenerArn: "{listener}", Priority: "10", Conditions: '[{"Field": "path-pattern", "Values": ["/api/*"]}]', Actions: '[{"Type": "forward", "TargetGroupArn": "{tg}"}]'}, save: rule}
+  ops:
+    - id: create-rule
+      api: CreateRule
+      gesture: create
+      title: "Tạo Listener Rule"
+      fields: [{name: ListenerArn, ref: listener}, Priority, {name: Conditions, multiline: true}, {name: Actions, multiline: true}]
+      defaults: {Conditions: '[{"Field": "path-pattern", "Values": ["/api/*"]}]'}
+      result_id: Rules.0.RuleArn
+      note: "Route matching requests before the default action; the lowest Priority wins. Conditions e.g. [{\"Field\": \"path-pattern\", \"Values\": [\"/api/*\"]}] or host-header; Actions as for a listener."
+    - id: modify-rule
+      api: ModifyRule
+      gesture: attribute
+      title: "Sửa Listener Rule"
+      fields: [{name: RuleArn, ref: listener-rule}, {name: Conditions, multiline: true}, {name: Actions, multiline: true}]
+      target_param: RuleArn
+      note: "Replace the rule's conditions or actions (JSON, as for create-rule)."

@@ -1,0 +1,28 @@
+{
+  "calls": [
+    {
+      "params": {},
+      "response": {
+        "Stacks": [
+          {
+            "Capabilities": [],
+            "CreationTime": "2026-10-31 15:16:09.245770+00:00",
+            "EnableTerminationProtection": false,
+            "LastUpdatedTime": "2026-10-31 15:16:09.248908+00:00",
+            "Outputs": [],
+            "Parameters": [],
+            "StackId": "arn:aws:cloudformation:ap-southeast-2:000000000000:stack/w2-stack/ddaa2528-cfe7-45aa-8b6a-2fcce41f32cc",
+            "StackName": "w2-stack",
+            "StackStatus": "CREATE_COMPLETE",
+            "Tags": [
+              {
+                "Key": "lab",
+                "Value": "w2"
+              }
+            ]
+          }
+        ]
+      }
+    }
+  ]
+}

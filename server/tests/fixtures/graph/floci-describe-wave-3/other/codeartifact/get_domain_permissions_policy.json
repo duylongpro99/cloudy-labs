@@ -1,0 +1,10 @@
+{
+  "calls": [
+    {
+      "error": "ResourceNotFoundException",
+      "params": {
+        "domain": "w3-delivery"
+      }
+    }
+  ]
+}

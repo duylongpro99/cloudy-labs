@@ -1,0 +1,40 @@
+{
+  "calls": [
+    {
+      "params": {
+        "Attribute": "enableDnsHostnames",
+        "VpcId": "vpc-03e9e3f9"
+      },
+      "response": {
+        "EnableDnsHostnames": {
+          "Value": false
+        },
+        "VpcId": "vpc-03e9e3f9"
+      }
+    },
+    {
+      "params": {
+        "Attribute": "enableDnsHostnames",
+        "VpcId": "vpc-29250840"
+      },
+      "response": {
+        "EnableDnsHostnames": {
+          "Value": false
+        },
+        "VpcId": "vpc-29250840"
+      }
+    },
+    {
+      "params": {
+        "Attribute": "enableDnsHostnames",
+        "VpcId": "vpc-default-ap-southeast-2"
+      },
+      "response": {
+        "EnableDnsHostnames": {
+          "Value": false
+        },
+        "VpcId": "vpc-default-ap-southeast-2"
+      }
+    }
+  ]
+}

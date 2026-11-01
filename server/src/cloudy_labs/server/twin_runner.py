@@ -37,7 +37,7 @@ def run_lab_checks(loaded: LoadedLab) -> list[CheckResult]:
     activity, with the collector's short timeouts so a hung emulator cannot stall the runner.
     Raises EmulatorSlow when any request timed out or lost its connection, like the hub, which
     does not take one slow describe for a down emulator."""
-    provider = get_provider(loaded.lab.provider, loaded.lab.emulator)
+    provider = get_provider(loaded.lab.provider, loaded.lab.emulator, loaded.lab.region)
     if not provider.health():
         raise ConnectionError(DOWN)
     session = boto3.session.Session()  # this turn's thread only: the default session is the collector's
@@ -125,7 +125,7 @@ class TwinRunner:
         loaded, attempt = current
         last = self.state
         if not force and last is not None and (last.lab, last.attempt) == (loaded.lab.id, attempt.id) \
-                and all(c.status == "passed" for c in last.checks):
+                and all(c.status in ("passed", "info") for c in last.checks):
             return None  # nothing left to reach; a write or a reset changes the graph and forces a turn
         graph = self._hub.graph
         if graph is None or graph.status != "ok":

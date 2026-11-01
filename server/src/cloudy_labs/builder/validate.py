@@ -7,7 +7,7 @@ are written for the learner: what is wrong and why, not just "invalid". M5's cha
 """
 
 import re
-from dataclasses import dataclass
+from collections.abc import Callable
 from ipaddress import IPv4Network, ip_network
 
 from ..graph.schema import Node, ResourceGraph
@@ -19,25 +19,14 @@ from .ops import (
     ModifySubnetAttribute, ModifyVpcAttribute, Named, Params, CreateRouteTable, RunInstances,
 )
 
+from .sanitize import DESCRIPTION, DESCRIPTION_MAX, FILE_PREFIX, NAME, Problem
+
 MIN_PREFIX, MAX_PREFIX = 16, 28  # AWS's limits for VPC and subnet blocks
-# Name tags go into the CLI's shorthand syntax, where commas, brackets and spaces have meaning.
-NAME = re.compile(r"[A-Za-z0-9._-]{1,64}")  # used with fullmatch: `$` would let a trailing newline in
 PROTOCOLS = ("tcp", "udp", "icmp", "-1")
 SSH_PORT, WORLD = 22, "0.0.0.0/0"
-DESCRIPTION_MAX = 255
-# The characters AWS accepts in a security group description (VPC groups).
-DESCRIPTION = re.compile(rf"[A-Za-z0-9 ._\-:/()#,@\[\]+=&;{{}}!$*]{{1,{DESCRIPTION_MAX}}}")
 PORT = re.compile(r"[0-9]{1,5}")  # str.isdigit() also takes digits like ², which int() refuses
-# The aws CLI replaces a value with this prefix by the contents of that file, whatever the parameter.
-FILE_PREFIXES = ("file://", "fileb://")
 MAX_GROUPS_PER_INSTANCE = 5  # AWS's default quota of security groups per network interface
 GONE_INSTANCE_STATES = ("terminated", "shutting-down")
-
-
-@dataclass(frozen=True)
-class Problem:
-    field: str  # the param it is about, camelCase like the browser's form; "" for the op as a whole
-    message: str
 
 
 class _Graph:
@@ -63,6 +52,12 @@ class _Graph:
 
     def edges_from(self, kind: str, src: str) -> list:
         return [e for e in self.edges if e.kind == kind and e.from_ == src]
+
+
+# Checks of generated ops that the shape and the scene cannot express, named by a registry op's
+# `validator`: fn(request, graph) -> problems, where `request` is the API request (member names).
+Validator = Callable[[dict, ResourceGraph], list[Problem]]
+VALIDATORS: dict[str, Validator] = {}
 
 
 def attached_groups(graph: ResourceGraph, instance_id: str) -> tuple[str, ...]:
@@ -131,7 +126,7 @@ def validate(op_name: str, params: Params, graph: ResourceGraph, azs: list[str],
     g = _Graph(graph)
     problems: list[Problem] = []
     for field, value in params.model_dump(by_alias=True).items():
-        if isinstance(value, str) and value.lstrip().lower().startswith(FILE_PREFIXES):
+        if isinstance(value, str) and FILE_PREFIX.match(value):
             problems.append(Problem(field, "a value may not start with file:// or fileb://: the aws CLI would read "
                                            "that file from this machine instead of using the text"))
 

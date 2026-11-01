@@ -1,0 +1,168 @@
+# Amazon S3 buckets. ListBuckets is account-wide: s3.in_region keeps the buckets of the region being read.
+# Each Get* call that finds nothing configured answers an error, which leaves that prop out.
+
+- kind: s3-bucket
+  service: s3
+  label: S3 Bucket
+  list: {method: list_buckets, items: Buckets}
+  filter:
+    - {path: "starts_with(Name, 'awslambda-')", not_in: [true]}  # Floci's own bucket for Lambda code
+    - {hook: s3.in_region}
+  enrich:
+    - {method: get_bucket_versioning, params: {Bucket: Name}, merge_as: _Versioning}
+    - {method: get_bucket_encryption, params: {Bucket: Name}, pick: "ServerSideEncryptionConfiguration.Rules[0].ApplyServerSideEncryptionByDefault", merge_as: _Encryption}
+    - {method: get_public_access_block, params: {Bucket: Name}, pick: PublicAccessBlockConfiguration, merge_as: _PAB}
+    - {method: get_bucket_policy, params: {Bucket: Name}, pick: Policy, merge_as: _Policy}
+    - {method: get_bucket_lifecycle_configuration, params: {Bucket: Name}, pick: Rules, merge_as: _Lifecycle}
+    - {method: get_bucket_website, params: {Bucket: Name}, merge_as: _Website}
+    - {method: get_bucket_replication, params: {Bucket: Name}, pick: ReplicationConfiguration, merge_as: _Replication}
+    - {method: get_bucket_notification_configuration, params: {Bucket: Name}, merge_as: _Notification}
+    - {method: list_objects_v2, params: {Bucket: Name}, const: {MaxKeys: 1000}, pick: "{count: KeyCount, truncated: IsTruncated}", merge_as: _Objects}
+  id: "join('', ['arn:aws:s3:::', Name])"
+  name: [Name]
+  parent: [{kind: region}]
+  props:
+    versioning: "_Versioning.Status || 'Disabled'"
+    encryption: "_Encryption.SSEAlgorithm"
+    kmsKey: "_Encryption.KMSMasterKeyID"
+    publicAccessBlock: _PAB
+    hasPolicy: "_Policy && `true` || `false`"
+    lifecycleRules: "_Lifecycle && length(_Lifecycle) || `0`"
+    lifecycle: "_Lifecycle[].{id: ID, status: Status, prefix: Filter.Prefix || Prefix, expirationDays: Expiration.Days, transitions: Transitions[].{days: Days, storageClass: StorageClass}, abortIncompleteDays: AbortIncompleteMultipartUpload.DaysAfterInitiation}"
+    website: "_Website && {index: _Website.IndexDocument.Suffix, error: _Website.ErrorDocument.Key, redirect: _Website.RedirectAllRequestsTo.HostName} || `null`"
+    replication: "_Replication.Rules[].{id: ID, status: Status, destination: Destination.Bucket, storageClass: Destination.StorageClass}"
+    notifications: "_Notification && sum([length(not_null(_Notification.LambdaFunctionConfigurations, `[]`)), length(not_null(_Notification.QueueConfigurations, `[]`)), length(not_null(_Notification.TopicConfigurations, `[]`))]) || `0`"
+    objects: "_Objects.count"
+    objectsTruncated: "_Objects.truncated"
+  chat_props: [versioning, encryption, publicAccessBlock, hasPolicy, lifecycleRules, lifecycle, website, replication, notifications, objects, objectsTruncated]
+  edges:
+    - {kind: replicates-to, target: "_Replication.Rules[?Status=='Enabled'].Destination.Bucket", to: s3-bucket, style: replica}
+    - {kind: notifies, target: "_Notification.LambdaFunctionConfigurations[].LambdaFunctionArn", to: [lambda-function, lambda-version, lambda-alias], style: reference}
+    - {kind: execution-role, target: "_Replication.Role", to: iam-role, style: reference}
+  caveats:
+    - {code: control-plane-only, prop: replication, text: "Floci 2.3.0 stores the replication rule but copies no object: check the rule, not the destination's objects."}
+    - {code: s3-default-encryption, prop: encryption, text: "Floci 2.3.0 reports AES256 encryption and a full public access block on every bucket, configured or not."}
+  builder: true
+  view: {role: block, category: storage, icon: Res_Amazon-Simple-Storage-Service_Bucket_48.svg, source: Resource-Icons_07312026/Res_Storage/Res_Amazon-Simple-Storage-Service_Bucket_48.svg, height: 0.6, order: 80, curve_segments: 3, actions: [Bucket]}
+  contract:
+    create: {op: create-bucket, params: {Bucket: ct-bucket-contract, CreateBucketConfiguration.LocationConstraint: "{region}"}}
+    then:
+      - {op: put-bucket-versioning, params: {Bucket: ct-bucket-contract, VersioningConfiguration.Status: Enabled}}
+  ops:
+    - id: create-bucket
+      api: CreateBucket
+      gesture: create
+      title: "Tạo S3 bucket"
+      fields: [Bucket, CreateBucketConfiguration.LocationConstraint]
+      expect: {label: Bucket}
+      note: "Create a bucket. The name is unique across all of AWS: 3-63 lowercase letters, digits, dots and hyphens. LocationConstraint: the region (leave empty for us-east-1)."
+    - id: put-bucket-versioning
+      api: PutBucketVersioning
+      gesture: attribute
+      title: "Bật versioning"
+      fields: [{name: Bucket, ref: s3-bucket, ref_by: label}, VersioningConfiguration.Status]
+      choices: {VersioningConfiguration.Status: [Enabled, Suspended]}
+      defaults: {VersioningConfiguration.Status: Enabled}
+      targets: [s3-bucket]
+      target_param: Bucket
+      note: "Keep every version of each object. Once enabled it can only be suspended, not turned off."
+    - id: put-bucket-encryption
+      api: PutBucketEncryption
+      gesture: attribute
+      title: "Đặt mã hoá mặc định"
+      fields: [{name: Bucket, ref: s3-bucket, ref_by: label}, {name: ServerSideEncryptionConfiguration, multiline: true}]
+      defaults: {ServerSideEncryptionConfiguration: '{"Rules": [{"ApplyServerSideEncryptionByDefault": {"SSEAlgorithm": "AES256"}}]}'}
+      targets: [s3-bucket]
+      target_param: Bucket
+      note: "Encrypt new objects by default: SSEAlgorithm AES256 (S3-managed) or aws:kms with KMSMasterKeyID."
+    - id: put-public-access-block
+      api: PutPublicAccessBlock
+      gesture: attribute
+      title: "Chặn truy cập công khai"
+      fields: [{name: Bucket, ref: s3-bucket, ref_by: label}, PublicAccessBlockConfiguration.BlockPublicAcls, PublicAccessBlockConfiguration.IgnorePublicAcls, PublicAccessBlockConfiguration.BlockPublicPolicy, PublicAccessBlockConfiguration.RestrictPublicBuckets]
+      targets: [s3-bucket]
+      target_param: Bucket
+      note: "Four switches that override ACLs and policies granting public access. A public website needs BlockPublicPolicy and RestrictPublicBuckets off."
+    - id: put-bucket-policy
+      api: PutBucketPolicy
+      gesture: attribute
+      title: "Gắn bucket policy"
+      fields: [{name: Bucket, ref: s3-bucket, ref_by: label}, {name: Policy, multiline: true}]
+      targets: [s3-bucket]
+      target_param: Bucket
+      note: "A resource policy (JSON) on who may do what with the bucket and its objects."
+    - id: put-bucket-lifecycle-configuration
+      api: PutBucketLifecycleConfiguration
+      gesture: attribute
+      title: "Đặt lifecycle"
+      fields: [{name: Bucket, ref: s3-bucket, ref_by: label}, {name: LifecycleConfiguration, multiline: true}]
+      targets: [s3-bucket]
+      target_param: Bucket
+      note: "Rules that move objects to cheaper storage classes or expire them, e.g. {\"Rules\": [{\"ID\": \"old\", \"Status\": \"Enabled\", \"Filter\": {\"Prefix\": \"logs/\"}, \"Expiration\": {\"Days\": 30}}]}."
+    - id: put-bucket-website
+      api: PutBucketWebsite
+      gesture: attribute
+      title: "Bật static website"
+      fields: [{name: Bucket, ref: s3-bucket, ref_by: label}, WebsiteConfiguration.IndexDocument.Suffix, WebsiteConfiguration.ErrorDocument.Key]
+      defaults: {WebsiteConfiguration.IndexDocument.Suffix: index.html}
+      targets: [s3-bucket]
+      target_param: Bucket
+      note: "Serve the bucket as a website. Visitors also need a policy allowing s3:GetObject."
+    - id: put-bucket-replication
+      api: PutBucketReplication
+      gesture: connect
+      title: "Đặt replication"
+      fields: [{name: Bucket, ref: s3-bucket, ref_by: label}, {name: ReplicationConfiguration, multiline: true}]
+      source: s3-bucket
+      source_param: Bucket
+      targets: [s3-bucket]
+      note: "Copy new objects to another bucket; both need versioning. JSON {\"Role\": \"arn:aws:iam::...:role/...\", \"Rules\": [{\"ID\": \"all\", \"Priority\": 1, \"Filter\": {}, \"Status\": \"Enabled\", \"Destination\": {\"Bucket\": \"arn:aws:s3:::dest\"}, \"DeleteMarkerReplication\": {\"Status\": \"Disabled\"}}]}."
+    - id: put-bucket-notification-configuration
+      api: PutBucketNotificationConfiguration
+      gesture: connect
+      title: "Gửi sự kiện tới Lambda"
+      fields: [{name: Bucket, ref: s3-bucket, ref_by: label}, {name: NotificationConfiguration, multiline: true}]
+      source: s3-bucket
+      source_param: Bucket
+      targets: [lambda-function, lambda-alias]
+      note: "Invoke a function on object events. JSON {\"LambdaFunctionConfigurations\": [{\"LambdaFunctionArn\": \"arn:aws:lambda:...\", \"Events\": [\"s3:ObjectCreated:*\"]}]}; the function also needs a permission for s3.amazonaws.com."
+
+- kind: s3-multipart-upload
+  service: s3
+  label: Multipart Upload
+  list:
+    method: list_multipart_uploads
+    items: Uploads
+    scope: {parent_kind: s3-bucket, param: Bucket, field: Name}
+  id: UploadId
+  name: [Key]
+  parent: [{kind: region}]
+  props:
+    key: Key
+    initiated: Initiated
+    storageClass: StorageClass
+  chat_props: [key, initiated, storageClass]
+  edges:
+    - {kind: upload-to, target: "join('', ['arn:aws:s3:::', _Parent])", to: s3-bucket, style: reference}
+  builder: true
+  view: {role: block, category: storage, icon: Res_Amazon-Simple-Storage-Service_Object_48.svg, source: Resource-Icons_07312026/Res_Storage/Res_Amazon-Simple-Storage-Service_Object_48.svg, height: 0.3, order: 81, actions: [MultipartUpload]}
+  contract:
+    needs:
+      - {op: create-bucket, params: {Bucket: ct-mpu-bucket, CreateBucketConfiguration.LocationConstraint: "{region}"}}
+    create: {op: create-multipart-upload, params: {Bucket: ct-mpu-bucket, Key: big.bin}}
+  ops:
+    - id: create-multipart-upload
+      api: CreateMultipartUpload
+      gesture: create
+      title: "Bắt đầu multipart upload"
+      fields: [{name: Bucket, ref: s3-bucket, ref_by: label}, Key]
+      result_id: UploadId
+      note: "Start an upload in parts. Until it is completed or aborted the parts are stored, and billed, but no object appears; a lifecycle rule with AbortIncompleteMultipartUpload cleans such uploads up."
+    - id: abort-multipart-upload
+      api: AbortMultipartUpload
+      gesture: delete
+      title: "Huỷ multipart upload"
+      fields: [{name: Bucket, ref: s3-bucket, ref_by: label}, Key, {name: UploadId, ref: s3-multipart-upload}]
+      targets: [s3-multipart-upload]
+      target_param: UploadId
+      note: "Abort an incomplete upload and free its stored parts."

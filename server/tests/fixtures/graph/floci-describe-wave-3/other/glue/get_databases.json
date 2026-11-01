@@ -1,0 +1,16 @@
+{
+  "calls": [
+    {
+      "params": {},
+      "response": {
+        "DatabaseList": [
+          {
+            "CatalogId": "000000000000",
+            "Description": "w3 data movement",
+            "Name": "w3_dm_db"
+          }
+        ]
+      }
+    }
+  ]
+}

@@ -1,0 +1,28 @@
+{
+  "calls": [
+    {
+      "error": "NoSuchBucketPolicy",
+      "params": {
+        "Bucket": "w3-governance-logs"
+      }
+    },
+    {
+      "error": "NoSuchBucketPolicy",
+      "params": {
+        "Bucket": "w3-delivery-artifacts"
+      }
+    },
+    {
+      "error": "NoSuchBucketPolicy",
+      "params": {
+        "Bucket": "w3-dm-bucket"
+      }
+    },
+    {
+      "error": "NoSuchBucketPolicy",
+      "params": {
+        "Bucket": "w3-edge-origin"
+      }
+    }
+  ]
+}

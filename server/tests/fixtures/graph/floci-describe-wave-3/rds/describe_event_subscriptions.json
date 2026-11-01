@@ -1,0 +1,25 @@
+{
+  "calls": [
+    {
+      "params": {},
+      "response": {
+        "EventSubscriptionsList": [
+          {
+            "CustSubscriptionId": "w3-dm-db-events",
+            "CustomerAwsId": "000000000000",
+            "Enabled": true,
+            "EventCategoriesList": [],
+            "EventSubscriptionArn": "arn:aws:rds:ap-southeast-2:000000000000:es:w3-dm-db-events",
+            "SnsTopicArn": "arn:aws:sns:ap-southeast-2:000000000000:w3-dm-events",
+            "SourceIdsList": [
+              "w3-dm-db"
+            ],
+            "SourceType": "db-instance",
+            "Status": "active",
+            "SubscriptionCreationTime": "2026-10-31T16:25:10.337489919Z"
+          }
+        ]
+      }
+    }
+  ]
+}

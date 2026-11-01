@@ -1,0 +1,15 @@
+{
+  "calls": [
+    {
+      "params": {
+        "ResourceType": "APPLICATION_LOAD_BALANCER",
+        "WebACLArn": "arn:aws:wafv2:ap-southeast-2:000000000000:regional/webacl/w3-edge-acl/6fdea9e8-028a-4786-9398-70895c9cb7e1"
+      },
+      "response": {
+        "ResourceArns": [
+          "arn:aws:elasticloadbalancing:ap-southeast-2:000000000000:loadbalancer/app/w3-edge-alb/69f799da92464b34"
+        ]
+      }
+    }
+  ]
+}

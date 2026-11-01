@@ -1,0 +1,19 @@
+{
+  "calls": [
+    {
+      "params": {},
+      "response": {
+        "pipelines": [
+          {
+            "created": "2026-10-31 23:25:11.339000+07:00",
+            "executionMode": "SUPERSEDED",
+            "name": "w3-delivery-pipeline",
+            "pipelineType": "V1",
+            "updated": "2026-10-31 23:25:11.339000+07:00",
+            "version": 1
+          }
+        ]
+      }
+    }
+  ]
+}

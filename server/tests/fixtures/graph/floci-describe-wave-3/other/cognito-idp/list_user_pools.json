@@ -1,0 +1,21 @@
+{
+  "calls": [
+    {
+      "params": {
+        "MaxResults": 60
+      },
+      "response": {
+        "UserPools": [
+          {
+            "CreationDate": "2026-10-31 23:25:12+07:00",
+            "Id": "ap-southeast-2_52b1a1ca3",
+            "LambdaConfig": {},
+            "LastModifiedDate": "2026-10-31 23:25:12+07:00",
+            "Name": "w3-users",
+            "Status": "Enabled"
+          }
+        ]
+      }
+    }
+  ]
+}

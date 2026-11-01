@@ -1,0 +1,33 @@
+{
+  "calls": [
+    {
+      "params": {
+        "MaxResults": 20
+      },
+      "response": {
+        "Accounts": [
+          {
+            "Arn": "arn:aws:organizations::000000000000:account/o-1pln15fyv4/000000000000",
+            "Email": "master@000000000000.example.com",
+            "Id": "000000000000",
+            "JoinedMethod": "INVITED",
+            "JoinedTimestamp": "2026-10-31 23:25:12.527000+07:00",
+            "Name": "management-account",
+            "State": "ACTIVE",
+            "Status": "ACTIVE"
+          },
+          {
+            "Arn": "arn:aws:organizations::000000000000:account/o-1pln15fyv4/381802961456",
+            "Email": "w3-member@example.invalid",
+            "Id": "381802961456",
+            "JoinedMethod": "CREATED",
+            "JoinedTimestamp": "2026-10-31 23:25:12.534000+07:00",
+            "Name": "w3-member",
+            "State": "ACTIVE",
+            "Status": "ACTIVE"
+          }
+        ]
+      }
+    }
+  ]
+}

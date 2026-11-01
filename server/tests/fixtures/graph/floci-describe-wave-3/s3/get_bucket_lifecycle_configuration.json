@@ -1,0 +1,28 @@
+{
+  "calls": [
+    {
+      "error": "NoSuchLifecycleConfiguration",
+      "params": {
+        "Bucket": "w3-governance-logs"
+      }
+    },
+    {
+      "error": "NoSuchLifecycleConfiguration",
+      "params": {
+        "Bucket": "w3-delivery-artifacts"
+      }
+    },
+    {
+      "error": "NoSuchLifecycleConfiguration",
+      "params": {
+        "Bucket": "w3-dm-bucket"
+      }
+    },
+    {
+      "error": "NoSuchLifecycleConfiguration",
+      "params": {
+        "Bucket": "w3-edge-origin"
+      }
+    }
+  ]
+}

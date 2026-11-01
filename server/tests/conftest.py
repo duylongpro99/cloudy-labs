@@ -33,3 +33,22 @@ def make_lab(tmp_path):
         return tmp_path / "labs"
 
     return make
+
+
+REGISTRY_FIXTURES = Path(__file__).parent / "fixtures" / "registry"
+
+
+@pytest.fixture
+def extra_registry(monkeypatch):
+    """Load the registry with an extra fixture directory (e.g. "test-only") for the rest of the test."""
+    from cloudy_labs.registry import default_registry
+
+    def use(*names: str):
+        import os
+
+        monkeypatch.setenv("CLOUDY_LABS_REGISTRY_EXTRA", os.pathsep.join(str(REGISTRY_FIXTURES / n) for n in names))
+        default_registry.cache_clear()
+        return default_registry()
+
+    yield use
+    default_registry.cache_clear()

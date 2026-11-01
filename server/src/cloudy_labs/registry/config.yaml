@@ -1,0 +1,139 @@
+# AWS Config: the configuration recorder of a region (with its delivery channel, which has no node of
+# its own) and the Config rules that evaluate recorded resources.
+
+- kind: config-recorder
+  service: config
+  label: Config Recorder
+  list: {method: describe_configuration_recorders, items: ConfigurationRecorders}
+  enrich:
+    - {method: describe_configuration_recorder_status, params: {ConfigurationRecorderNames: "[name]"}, pick: "ConfigurationRecordersStatus[0]", merge_as: _Status}
+    # A region has at most one delivery channel; the recorder delivers through it.
+    - {method: describe_delivery_channels, pick: "DeliveryChannels[0]", merge_as: _Channel}
+  id: "join('', ['config-recorder/', not_null(_Region, ''), '/', name])"
+  name: [name]
+  parent: [{kind: region}]
+  props:
+    recording: _Status.recording
+    lastStatus: _Status.lastStatus
+    role: roleARN
+    allSupported: recordingGroup.allSupported
+    globalResourceTypes: recordingGroup.includeGlobalResourceTypes
+    resourceTypes: recordingGroup.resourceTypes
+    deliveryChannel: _Channel.name
+    deliveryBucket: _Channel.s3BucketName
+    deliveryPrefix: _Channel.s3KeyPrefix
+    deliveryTopic: _Channel.snsTopicARN
+  chat_props: [recording, lastStatus, role, allSupported, globalResourceTypes, resourceTypes, deliveryChannel, deliveryBucket, deliveryPrefix, deliveryTopic]
+  edges:
+    - {kind: execution-role, target: roleARN, to: iam-role, style: reference}
+    - {kind: delivers-to, target: "_Channel.s3BucketName && join('', ['arn:aws:s3:::', _Channel.s3BucketName])", to: s3-bucket, style: reference}
+  caveats:
+    - {code: config-starts-without-channel, prop: recording, text: "Floci 2.3.0 starts a recorder that has no delivery channel; AWS refuses StartConfigurationRecorder until PutDeliveryChannel has run."}
+    - {code: config-no-snapshots, prop: deliveryBucket, text: "Floci 2.3.0 stores the recorder and its delivery channel but records no configuration items and writes nothing to the bucket."}
+  floci: {status: control-plane-only, note: "The recorder, its status and the delivery channel are stored; no resource configuration is recorded."}
+  builder: true
+  view: {role: block, category: management, icon: Arch_AWS-Config_48.svg, source: Architecture-Service-Icons_07312026/Arch_Management-Tools/48/Arch_AWS-Config_48.svg, height: 0.4, order: 702, curve_segments: 3, actions: [ConfigurationRecorder, DeliveryChannel]}
+  contract:
+    needs:
+      - {op: create-role, params: {RoleName: ct-config-role, AssumeRolePolicyDocument: '{"Version": "2012-10-17", "Statement": [{"Effect": "Allow", "Principal": {"Service": "config.amazonaws.com"}, "Action": "sts:AssumeRole"}]}'}, save: role}
+      - {op: create-bucket, params: {Bucket: ct-config-bucket, CreateBucketConfiguration.LocationConstraint: "{region}"}, save: bucket}
+    create: {op: put-configuration-recorder, params: {ConfigurationRecorder.name: ct-recorder, ConfigurationRecorder.roleARN: "{role}"}, save: recorder}
+    then:
+      - {op: put-delivery-channel, params: {DeliveryChannel.name: ct-channel, DeliveryChannel.s3BucketName: ct-config-bucket}}
+      - {op: start-configuration-recorder, params: {ConfigurationRecorderName: ct-recorder}}
+      - {op: delete-configuration-recorder, params: {ConfigurationRecorderName: ct-recorder}}
+  ops:
+    - id: put-configuration-recorder
+      api: PutConfigurationRecorder
+      gesture: create
+      title: "Tạo Config recorder"
+      fields: [ConfigurationRecorder.name, {name: ConfigurationRecorder.roleARN, ref: iam-role}, ConfigurationRecorder.recordingGroup.allSupported, ConfigurationRecorder.recordingGroup.includeGlobalResourceTypes]
+      defaults: {ConfigurationRecorder.name: default, ConfigurationRecorder.recordingGroup.allSupported: true}
+      expect: {label: ConfigurationRecorder.name}
+      note: "Make the region's one configuration recorder (AWS allows one per region; the console names it default). roleARN: a role config.amazonaws.com may assume, with the AWS_ConfigRole managed policy. It records nothing until a delivery channel exists and StartConfigurationRecorder runs."
+    - id: put-delivery-channel
+      api: PutDeliveryChannel
+      gesture: connect
+      title: "Gắn delivery channel (S3) cho Config"
+      fields: [DeliveryChannel.name, {name: DeliveryChannel.s3BucketName, ref: s3-bucket, ref_by: label}, DeliveryChannel.s3KeyPrefix, DeliveryChannel.snsTopicARN]
+      defaults: {DeliveryChannel.name: default}
+      source: config-recorder
+      targets: [s3-bucket]
+      target_param: DeliveryChannel.s3BucketName
+      note: "Tell AWS Config where to deliver configuration snapshots and history: an S3 bucket whose policy lets config.amazonaws.com GetBucketAcl and PutObject. One delivery channel per region; it must exist before the recorder starts."
+    - id: start-configuration-recorder
+      api: StartConfigurationRecorder
+      gesture: attribute
+      title: "Bật ghi cấu hình (Config recorder)"
+      fields: [{name: ConfigurationRecorderName, ref: config-recorder, ref_by: label}]
+      targets: [config-recorder]
+      target_param: ConfigurationRecorderName
+      note: "Start recording configuration changes; StopConfigurationRecorder pauses it."
+    - id: delete-configuration-recorder
+      api: DeleteConfigurationRecorder
+      gesture: delete
+      title: "Xoá Config recorder"
+      fields: [{name: ConfigurationRecorderName, ref: config-recorder, ref_by: label}]
+      targets: [config-recorder]
+      target_param: ConfigurationRecorderName
+      note: "Delete the recorder. Configuration items already delivered stay in the bucket; the delivery channel is deleted separately."
+
+- kind: config-rule
+  service: config
+  label: Config Rule
+  list: {method: describe_config_rules, items: ConfigRules}
+  enrich:
+    - {method: describe_config_rule_evaluation_status, params: {ConfigRuleNames: "[ConfigRuleName]"}, pick: "ConfigRulesEvaluationStatus[0]", merge_as: _Eval}
+    - {method: describe_compliance_by_config_rule, params: {ConfigRuleNames: "[ConfigRuleName]"}, pick: "ComplianceByConfigRules[0].Compliance", merge_as: _Compliance}
+  id: ConfigRuleArn
+  name: [ConfigRuleName]
+  parent: [{kind: region}]
+  props:
+    owner: Source.Owner
+    sourceIdentifier: Source.SourceIdentifier
+    description: Description
+    state: ConfigRuleState
+    ruleInput: InputParameters
+    resourceTypes: Scope.ComplianceResourceTypes
+    frequency: MaximumExecutionFrequency
+    compliance: _Compliance.ComplianceType
+    lastEvaluation: _Eval.LastSuccessfulEvaluationTime
+  chat_props: [owner, sourceIdentifier, description, state, ruleInput, resourceTypes, frequency, compliance, lastEvaluation]
+  edges:
+    - {kind: invokes, target: "Source.Owner == 'CUSTOM_LAMBDA' && Source.SourceIdentifier || `null`", to: lambda-function, style: reference}
+  caveats:
+    - {code: config-rules-never-evaluate, prop: compliance, text: "Floci 2.3.0 never evaluates a rule: compliance stays INSUFFICIENT_DATA and there are no evaluation results; StartConfigRulesEvaluation only updates lastEvaluation."}
+    - {code: config-rule-tags-ignored, text: "Floci 2.3.0 ignores Tags on PutConfigRule; ListTagsForResource answers none."}
+  floci: {status: control-plane-only, note: "Rules are stored; no resource is ever evaluated."}
+  builder: true
+  view: {role: block, category: management, icon: Res_Documents_48_Light.svg, source: Resource-Icons_07312026/Res_General-Icons/Res_48_Light/Res_Documents_48_Light.svg, height: 0.3, order: 703, actions: [ConfigRule, ConfigRulesEvaluation]}
+  contract:
+    create: {op: put-config-rule, params: {ConfigRule.ConfigRuleName: ct-config-rule, ConfigRule.Source.Owner: AWS, ConfigRule.Source.SourceIdentifier: S3_BUCKET_VERSIONING_ENABLED}, save: rule}
+    then:
+      - {op: start-config-rules-evaluation, params: {ConfigRuleNames: ct-config-rule}}
+      - {op: delete-config-rule, params: {ConfigRuleName: ct-config-rule}}
+  ops:
+    - id: put-config-rule
+      api: PutConfigRule
+      gesture: create
+      title: "Tạo Config rule"
+      fields: [ConfigRule.ConfigRuleName, {name: ConfigRule.Source.Owner, choices: [AWS, CUSTOM_LAMBDA, CUSTOM_POLICY]}, ConfigRule.Source.SourceIdentifier, ConfigRule.Description, {name: ConfigRule.InputParameters, multiline: true}, ConfigRule.Scope.ComplianceResourceTypes, ConfigRule.MaximumExecutionFrequency]
+      defaults: {ConfigRule.Source.Owner: AWS, ConfigRule.Source.SourceIdentifier: S3_BUCKET_VERSIONING_ENABLED}
+      expect: {label: ConfigRule.ConfigRuleName}
+      note: "Check recorded resources against a rule. Owner AWS uses a managed rule named by SourceIdentifier (S3_BUCKET_VERSIONING_ENABLED, RESTRICTED_INCOMING_TRAFFIC, REQUIRED_TAGS with InputParameters {\"tag1Key\": \"Owner\"}); CUSTOM_LAMBDA takes a Lambda function ARN there. Scope.ComplianceResourceTypes limits it, e.g. AWS::S3::Bucket."
+    - id: start-config-rules-evaluation
+      api: StartConfigRulesEvaluation
+      gesture: attribute
+      title: "Chạy đánh giá Config rule"
+      fields: [{name: ConfigRuleNames, ref: config-rule, ref_by: label}]
+      targets: [config-rule]
+      target_param: ConfigRuleNames
+      note: "Evaluate the rules now instead of waiting for a change or the periodic run."
+    - id: delete-config-rule
+      api: DeleteConfigRule
+      gesture: delete
+      title: "Xoá Config rule"
+      fields: [{name: ConfigRuleName, ref: config-rule, ref_by: label}]
+      targets: [config-rule]
+      target_param: ConfigRuleName
+      note: "Delete the rule and its evaluation results."

@@ -2,7 +2,7 @@
 
 The model returns JSON naming ops and params. Each step is checked here exactly as a builder
 request would be: the op must be in the lab's palette, the params must fit the op, and the
-command is built by `Op.argv` and checked by `validate()`. A step that fails keeps its problems
+command is built and checked by the builder's `prepare`. A step that fails keeps its problems
 and is still shown, never dropped, so the learner sees what the model got wrong. Nothing runs.
 """
 
@@ -13,9 +13,9 @@ from typing import Any
 
 from pydantic import BaseModel, ConfigDict, ValidationError, field_validator
 
+from ..builder.catalog import BuilderOp, OpError, op_named, practice_expectation, prepare, server_field_problem
 from ..builder.ec2_choices import Choices
-from ..builder.ops import OPS, ModifyInstanceAttribute, display, practice_expectation
-from ..builder.validate import Problem, attached_groups, validate
+from ..builder.sanitize import Problem
 from ..graph.schema import ResourceGraph
 from ..labs.schema import Lab
 from . import provider
@@ -46,11 +46,28 @@ class RawStep(_Strict):
     @field_validator("params", mode="before")
     @classmethod
     def _numbers_as_text(cls, v: Any) -> Any:
-        """Models often write a port as 80, or null for "none"; every op param is text, "" meaning none."""
+        """Models often write a port as 80, true for a flag, or null for "none"; every op param is
+        text, "" meaning none."""
         if isinstance(v, dict):
-            return {k: "" if x is None else str(x) if isinstance(x, int | float) and not isinstance(x, bool) else x
-                    for k, x in v.items()}
+            return {k: _as_text(x) for k, x in v.items()}
         return v
+
+
+def _as_text(x: Any) -> Any:
+    if x is None:
+        return ""
+    if isinstance(x, bool):
+        return "true" if x else "false"
+    if isinstance(x, int | float):
+        return str(x)
+    return x
+
+
+def _ref_fields(op: BuilderOp) -> set[str]:
+    """Params that take a resource id, which an earlier step's new resource may fill."""
+    if op.legacy:
+        return {f.alias or n for n, f in op.legacy.params.model_fields.items() if (f.alias or n).endswith("Id")}
+    return {f.name for f in op.fields() if f.ref and f.ref_by == "id"}
 
 
 class Reply(BaseModel):
@@ -111,16 +128,17 @@ def check_step(n: int, raw: RawStep, earlier: list[RawStep], lab: Lab, graph: Re
     """Step `n` (1-based), given the steps before it."""
     params_out = {k: v.model_dump() if isinstance(v, Ref) else v for k, v in raw.params.items()}
     step = Step(raw.op, params_out, raw.explanation)
-    op = OPS.get(raw.op)
+    op = op_named(raw.op)
     if op is None:
         step.problems.append(Problem("", f"{raw.op} is not a builder op; this answer cannot be run"))
         return step
     if op.palette_kind() not in lab.builder.palette:
         step.problems.append(Problem("", f"{lab.id} does not offer {op.name} in its builder"))
-    server_fields = {*op.server_fields, *(name for name, f in op.params.model_fields.items() if f.alias in op.server_fields)}
-    for name in sorted(server_fields & set(raw.params)):
+    server_fields = set(server_field_problem(op, raw.params))
+    for name in sorted(server_fields):
         step.problems.append(Problem(name, "the server fills this in from the scene"))
 
+    ref_fields = _ref_fields(op)
     values: dict[str, str] = {}
     for name, value in raw.params.items():
         if name in server_fields:
@@ -129,31 +147,35 @@ def check_step(n: int, raw: RawStep, earlier: list[RawStep], lab: Lab, graph: Re
             values[name] = value
             continue
         target = earlier[value.ref - 1] if 1 <= value.ref < n else None
-        if not name.endswith("Id"):
+        if name not in ref_fields:
             step.problems.append(Problem(name, "takes a name, not an id; write the name instead of a ref"))
         elif target is None:
             step.problems.append(Problem(name, f"refers to step {value.ref}, but a step can only use an earlier step"))
-        elif (made := OPS.get(target.op)) is None or made.gesture != "create":
+        elif (made := op_named(target.op)) is None or made.gesture != "create":
             step.problems.append(Problem(name, f"refers to step {value.ref}, which creates nothing to take an id from"))
         else:
             step.refs.append(value.ref)
         values[name] = placeholder(value.ref)
     step.refs = sorted(set(step.refs))
 
-    try:
-        params = op.params.model_validate(values)
-    except ValidationError as e:
-        explain = {"missing": "this parameter is missing", "extra_forbidden": f"not a parameter of {op.name}"}
-        for err in e.errors():
-            step.problems.append(Problem(".".join(map(str, err["loc"])), explain.get(err["type"], err["msg"])))
-        return step
+    if op.legacy:
+        try:
+            op.legacy.params.model_validate(values)
+        except ValidationError as e:
+            explain = {"missing": "this parameter is missing", "extra_forbidden": f"not a parameter of {op.name}"}
+            for err in e.errors():
+                step.problems.append(Problem(".".join(map(str, err["loc"])), explain.get(err["type"], err["msg"])))
+            return step
     step.deferred = any(isinstance(v, Ref) for v in raw.params.values())
-    if isinstance(params, ModifyInstanceAttribute) and not step.deferred:
-        params = params.model_copy(update={"current_groups": attached_groups(graph, params.instance_id)})
-    step.command = display(op.argv(params, lab.builder.tags))
-    step.practice_expect = practice_expectation(op, params)
-    if not step.deferred:
-        step.problems += validate(op.name, params, graph, azs, choices)
+    try:
+        prepared = prepare(op, values, graph=graph, azs=azs, choices=choices, tags=lab.builder.tags,
+                           check=not step.deferred)
+    except OpError as e:
+        step.problems.append(Problem("", str(e)))
+        return step
+    step.command = prepared.command
+    step.practice_expect = practice_expectation(prepared)
+    step.problems += prepared.problems
     return step
 
 

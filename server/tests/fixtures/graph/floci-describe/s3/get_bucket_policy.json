@@ -1,0 +1,30 @@
+{
+  "calls": [
+    {
+      "params": {
+        "Bucket": "wave1-site"
+      },
+      "response": {
+        "Policy": "{\"Version\": \"2012-10-17\", \"Statement\": [{\"Effect\": \"Allow\", \"Principal\": \"*\", \"Action\": \"s3:GetObject\", \"Resource\": \"arn:aws:s3:::wave1-site/*\"}]}"
+      }
+    },
+    {
+      "error": "NoSuchBucketPolicy",
+      "params": {
+        "Bucket": "wave1-dst"
+      }
+    },
+    {
+      "error": "NoSuchBucketPolicy",
+      "params": {
+        "Bucket": "wave1-src"
+      }
+    },
+    {
+      "error": "NoSuchBucketPolicy",
+      "params": {
+        "Bucket": "wave1-logs"
+      }
+    }
+  ]
+}

@@ -1,0 +1,122 @@
+# AWS CodeArtifact domains and the package repositories in them. ListRepositories leaves out the
+# upstreams and external connections, so DescribeRepository adds them; DescribeDomain gives the domain
+# ARN a repository sits under.
+
+- kind: codeartifact-domain
+  service: codeartifact
+  label: CodeArtifact Domain
+  list: {method: list_domains, items: domains}
+  enrich:
+    - {method: describe_domain, params: {domain: name}, pick: domain, merge_as: _Domain}
+    - {method: get_domain_permissions_policy, params: {domain: name}, pick: "policy.resourceArn", merge_as: _PolicyOn}
+  id: arn
+  name: [name]
+  parent: [{kind: region}]
+  props:
+    status: status
+    owner: owner
+    encryptionKey: encryptionKey
+    repositories: _Domain.repositoryCount
+    assetSizeBytes: _Domain.assetSizeBytes
+    hasPolicy: "_PolicyOn != null"
+  chat_props: [status, owner, encryptionKey, repositories, assetSizeBytes, hasPolicy]
+  edges:
+    - {kind: encrypted-by, target: encryptionKey, to: [kms-key, kms-alias], style: reference}
+  builder: true
+  view: {role: block, category: developer-tools, icon: Arch_AWS-CodeArtifact_48.svg, source: Architecture-Service-Icons_07312026/Arch_Developer-Tools/48/Arch_AWS-CodeArtifact_48.svg, height: 0.4, order: 635, actions: [Domain, DomainPermissionsPolicy]}
+  contract:
+    create: {op: create-codeartifact-domain, params: {domain: ct-ca-domain}, save: domain}
+    then:
+      - {op: put-codeartifact-domain-policy, params: {domain: ct-ca-domain, policyDocument: '{"Version": "2012-10-17", "Statement": [{"Effect": "Allow", "Principal": {"AWS": "arn:aws:iam::000000000000:root"}, "Action": "codeartifact:GetAuthorizationToken", "Resource": "*"}]}'}}
+      - {op: delete-codeartifact-domain, params: {domain: ct-ca-domain}}
+  ops:
+    - id: create-codeartifact-domain
+      api: CreateDomain
+      gesture: create
+      title: "Tạo CodeArtifact domain"
+      fields: [{name: domain, placeholder: my-company}, encryptionKey]
+      result_id: domain.arn
+      expect: {label: domain}
+      note: "Create a domain: it stores the packages once for all its repositories. encryptionKey is a KMS key ARN; aws/codeartifact when empty."
+    - id: put-codeartifact-domain-policy
+      api: PutDomainPermissionsPolicy
+      gesture: attribute
+      title: "Gắn policy cho CodeArtifact domain"
+      fields: [{name: domain, ref: codeartifact-domain, ref_by: label}, {name: policyDocument, multiline: true}]
+      targets: [codeartifact-domain]
+      target_param: domain
+      note: "Allow other accounts or roles to use the domain: a resource policy JSON, e.g. codeartifact:GetAuthorizationToken for another account's root."
+    - id: delete-codeartifact-domain
+      api: DeleteDomain
+      gesture: delete
+      title: "Xoá CodeArtifact domain"
+      fields: [{name: domain, ref: codeartifact-domain, ref_by: label}]
+      targets: [codeartifact-domain]
+      target_param: domain
+      note: "Delete the domain. Delete its repositories first."
+
+- kind: codeartifact-repository
+  service: codeartifact
+  label: CodeArtifact Repository
+  list: {method: list_repositories, items: repositories}
+  enrich:
+    - {method: describe_domain, params: {domain: domainName}, pick: domain.arn, merge_as: _DomainArn}
+    - {method: describe_repository, params: {domain: domainName, repository: name}, pick: repository, merge_as: _Repo}
+  id: arn
+  name: [name]
+  parent: [{kind: codeartifact-domain, path: _DomainArn}, {kind: region}]
+  props:
+    domain: domainName
+    description: description
+    upstreams: "_Repo.upstreams[].repositoryName"
+    externalConnections: "_Repo.externalConnections[].externalConnectionName"
+  chat_props: [domain, description, upstreams, externalConnections]
+  edges:
+    - {kind: upstream, target: "_Repo.upstreams[].repositoryName", match: name, to: codeartifact-repository, style: route}
+  builder: true
+  view: {role: block, category: developer-tools, icon: Arch_AWS-CodeArtifact_48.svg, source: Architecture-Service-Icons_07312026/Arch_Developer-Tools/48/Arch_AWS-CodeArtifact_48.svg, height: 0.3, order: 636, actions: [Repository, ExternalConnection, RepositoryPermissionsPolicy]}
+  contract:
+    needs:
+      - {op: create-codeartifact-domain, params: {domain: ct-ca-repo-domain}, save: domain}
+      - {op: create-codeartifact-repository, params: {domain: ct-ca-repo-domain, repository: ct-ca-upstream}, save: upstream}
+    create: {op: create-codeartifact-repository, params: {domain: ct-ca-repo-domain, repository: ct-ca-repo, description: contract test}, save: repo}
+    parent: domain
+    then:
+      - {op: update-codeartifact-repository, params: {domain: ct-ca-repo-domain, repository: ct-ca-repo, upstreams: '[{"repositoryName": "ct-ca-upstream"}]'}}
+      - {op: delete-codeartifact-repository, params: {domain: ct-ca-repo-domain, repository: ct-ca-repo}}
+  ops:
+    - id: create-codeartifact-repository
+      api: CreateRepository
+      gesture: create
+      title: "Tạo CodeArtifact repository"
+      fields:
+        - {name: domain, ref: codeartifact-domain, ref_by: label}
+        - {name: repository, placeholder: my-repo}
+        - description
+        - {name: upstreams, multiline: true, placeholder: '[{"repositoryName": "npm-store"}]'}
+      container: {param: domain, by: label}
+      result_id: repository.arn
+      expect: {label: repository}
+      note: "Create a package repository in a domain. upstreams (JSON) lists repositories of the same domain it falls back to; connect a public registry with an external connection on an upstream repository."
+    - id: update-codeartifact-repository
+      api: UpdateRepository
+      gesture: attribute
+      title: "Đổi upstream CodeArtifact repository"
+      fields:
+        - {name: domain, ref: codeartifact-domain, ref_by: label}
+        - {name: repository, ref: codeartifact-repository, ref_by: label}
+        - description
+        - {name: upstreams, multiline: true, placeholder: '[{"repositoryName": "npm-store"}]'}
+      targets: [codeartifact-repository]
+      target_param: repository
+      note: "Change the description or the upstream repositories (the whole list; an empty list [] removes them)."
+    - id: delete-codeartifact-repository
+      api: DeleteRepository
+      gesture: delete
+      title: "Xoá CodeArtifact repository"
+      fields:
+        - {name: domain, ref: codeartifact-domain, ref_by: label}
+        - {name: repository, ref: codeartifact-repository, ref_by: label}
+      targets: [codeartifact-repository]
+      target_param: repository
+      note: "Delete the repository and its package versions."

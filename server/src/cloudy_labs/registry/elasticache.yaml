@@ -1,0 +1,130 @@
+# Amazon ElastiCache. A replication group is a Redis/Valkey primary with its replicas (its member
+# clusters); a cache cluster on its own is a Memcached cluster or a single-node Redis. Both sit in the VPC
+# of their cache subnet group. Member clusters of a replication group are shown on the group, not twice.
+
+- kind: elasticache-replication-group
+  service: elasticache
+  label: ElastiCache Replication Group
+  list: {method: describe_replication_groups, items: ReplicationGroups}
+  enrich:
+    # The group answers no subnet group or security groups: read them from its first member cluster.
+    - {method: describe_cache_clusters, params: {CacheClusterId: "MemberClusters[0] || ReplicationGroupId"}, pick: "CacheClusters[0]", merge_as: _Member}
+    - {method: describe_cache_subnet_groups, params: {CacheSubnetGroupName: "_Member.CacheSubnetGroupName || 'default'"}, pick: "CacheSubnetGroups[0]", merge_as: _SubnetGroup}
+  id: ARN
+  name: [ReplicationGroupId]
+  parent: [{kind: vpc, path: _SubnetGroup.VpcId}, {kind: region}]
+  props:
+    description: Description
+    status: Status
+    engine: _Member.Engine
+    engineVersion: _Member.EngineVersion
+    nodeType: CacheNodeType
+    members: "MemberClusters && sort(MemberClusters)"
+    automaticFailover: AutomaticFailover
+    multiAz: MultiAZ
+    clusterMode: ClusterEnabled
+    primaryEndpoint: "NodeGroups[0].PrimaryEndpoint.Address"
+    port: "NodeGroups[0].PrimaryEndpoint.Port"
+    snapshotRetention: SnapshotRetentionLimit
+    subnetGroup: _Member.CacheSubnetGroupName
+    transitEncryption: TransitEncryptionEnabled
+    atRestEncryption: AtRestEncryptionEnabled
+  chat_props: [description, status, engine, engineVersion, nodeType, members, automaticFailover, multiAz, clusterMode, primaryEndpoint, port, snapshotRetention, subnetGroup, transitEncryption, atRestEncryption]
+  edges:
+    - {kind: attached, target: "_Member.SecurityGroups[].SecurityGroupId", to: security-group, reverse: true, style: attach}
+    - {kind: subnet-group-member, target: "_SubnetGroup.Subnets[].SubnetIdentifier", to: subnet, style: reference}
+  caveats:
+    - {code: elasticache-endpoint-not-published, prop: primaryEndpoint, text: "Floci 2.3.0 runs a real Valkey container for the group but reports a localhost address and port (6379, 6380...) that the lab stack does not publish: redis-cli from the host is refused. Check the group's settings, not a connection."}
+    - {code: elasticache-node-type-ignored, prop: nodeType, text: "Floci 2.3.0 accepts a new CacheNodeType in ModifyReplicationGroup but keeps the old one."}
+    - {code: elasticache-no-security-groups, text: "Floci 2.3.0 answers no security groups for a replication group's member clusters, so the group shows none even when SecurityGroupIds was given."}
+    - {code: flag-only, prop: multiAz, text: "Floci 2.3.0 keeps Multi-AZ and automatic failover as flags: one container runs and a failover moves nothing. Check the flag, not a failover."}
+  builder: true
+  view: {role: block, category: database, icon: Res_Amazon-ElastiCache_ElastiCache-for-Redis_48.svg, source: Resource-Icons_07312026/Res_Databases/Res_Amazon-ElastiCache_ElastiCache-for-Redis_48.svg, height: 0.6, order: 660, host: true, actions: [ReplicationGroup, ReplicationGroups]}
+  contract:
+    create: {op: create-replication-group, params: {ReplicationGroupId: ct-cache-rg, ReplicationGroupDescription: contract test, Engine: valkey, CacheNodeType: cache.t3.micro, NumCacheClusters: "2"}, save: rg}
+    then:
+      - {op: modify-replication-group, params: {ReplicationGroupId: ct-cache-rg, SnapshotRetentionLimit: "5", ApplyImmediately: "true"}}
+      - {op: delete-replication-group, params: {ReplicationGroupId: ct-cache-rg}}
+    max_seconds: 10
+  ops:
+    - id: create-replication-group
+      api: CreateReplicationGroup
+      gesture: create
+      title: "Tạo ElastiCache replication group"
+      fields: [ReplicationGroupId, ReplicationGroupDescription, Engine, CacheNodeType, NumCacheClusters, AutomaticFailoverEnabled, MultiAZEnabled, CacheSubnetGroupName, SecurityGroupIds, SnapshotRetentionLimit]
+      choices: {Engine: [valkey, redis], CacheNodeType: [cache.t3.micro, cache.t3.small, cache.t3.medium, cache.r6g.large]}
+      defaults: {Engine: valkey, CacheNodeType: cache.t3.micro, NumCacheClusters: "2"}
+      result_id: ReplicationGroup.ARN
+      expect: {label: ReplicationGroupId}
+      note: "Create a Redis/Valkey primary with replicas (NumCacheClusters counts the primary). AutomaticFailoverEnabled needs at least two; CacheSubnetGroupName puts it in a VPC and its security groups must allow port 6379 from the clients."
+    - id: modify-replication-group
+      api: ModifyReplicationGroup
+      gesture: attribute
+      title: "Sửa ElastiCache replication group"
+      fields: [{name: ReplicationGroupId, ref: elasticache-replication-group, ref_by: label}, SnapshotRetentionLimit, AutomaticFailoverEnabled, MultiAZEnabled, CacheNodeType, SecurityGroupIds, ApplyImmediately]
+      defaults: {ApplyImmediately: "true"}
+      targets: [elasticache-replication-group]
+      target_param: ReplicationGroupId
+      note: "Change the group: daily snapshots kept (SnapshotRetentionLimit, 0 turns them off), automatic failover, Multi-AZ, node type or security groups."
+    - id: delete-replication-group
+      api: DeleteReplicationGroup
+      gesture: delete
+      title: "Xoá ElastiCache replication group"
+      fields: [{name: ReplicationGroupId, ref: elasticache-replication-group, ref_by: label}, FinalSnapshotIdentifier]
+      targets: [elasticache-replication-group]
+      target_param: ReplicationGroupId
+      note: "Delete the group and its member clusters; FinalSnapshotIdentifier keeps a last snapshot."
+
+- kind: elasticache-cache-cluster
+  service: elasticache
+  label: ElastiCache Cluster
+  list: {method: describe_cache_clusters, items: CacheClusters, params: {ShowCacheNodeInfo: true}}
+  filter: {path: ReplicationGroupId, in: [null]}  # members of a replication group are drawn on the group
+  enrich:
+    - {method: describe_cache_subnet_groups, params: {CacheSubnetGroupName: "CacheSubnetGroupName || 'default'"}, pick: "CacheSubnetGroups[0]", merge_as: _SubnetGroup}
+  id: ARN
+  name: [CacheClusterId]
+  parent: [{kind: vpc, path: _SubnetGroup.VpcId}, {kind: region}]
+  props:
+    engine: Engine
+    engineVersion: EngineVersion
+    status: CacheClusterStatus
+    nodeType: CacheNodeType
+    nodes: NumCacheNodes
+    az: PreferredAvailabilityZone
+    endpoint: "ConfigurationEndpoint.Address || CacheNodes[0].Endpoint.Address"
+    port: "ConfigurationEndpoint.Port || CacheNodes[0].Endpoint.Port"
+    subnetGroup: CacheSubnetGroupName
+    securityGroups: "SecurityGroups && sort(SecurityGroups[].SecurityGroupId)"
+  chat_props: [engine, engineVersion, status, nodeType, nodes, az, endpoint, port, subnetGroup, securityGroups]
+  edges:
+    - {kind: attached, target: "SecurityGroups[].SecurityGroupId", to: security-group, reverse: true, style: attach}
+    - {kind: subnet-group-member, target: "_SubnetGroup.Subnets[].SubnetIdentifier", to: subnet, style: reference}
+  caveats:
+    - {code: elasticache-endpoint-not-published, prop: endpoint, text: "Floci 2.3.0 runs a real Memcached or Valkey container for the cluster but reports an address on the lab's Docker network, not published to the host: a client on the host cannot connect. Check the cluster's settings, not a connection."}
+  builder: true
+  view: {role: block, category: database, icon: Res_Amazon-ElastiCache_ElastiCache-for-Memcached_48.svg, source: Resource-Icons_07312026/Res_Databases/Res_Amazon-ElastiCache_ElastiCache-for-Memcached_48.svg, height: 0.5, order: 661, host: true, actions: [CacheCluster, CacheClusters]}
+  contract:
+    create: {op: create-cache-cluster, params: {CacheClusterId: ct-cache-mc, Engine: memcached, CacheNodeType: cache.t3.micro, NumCacheNodes: "1"}, save: cluster}
+    then:
+      - {op: delete-cache-cluster, params: {CacheClusterId: ct-cache-mc}}
+    max_seconds: 10
+  ops:
+    - id: create-cache-cluster
+      api: CreateCacheCluster
+      gesture: create
+      title: "Tạo ElastiCache cluster"
+      fields: [CacheClusterId, Engine, CacheNodeType, NumCacheNodes, CacheSubnetGroupName, SecurityGroupIds, PreferredAvailabilityZone]
+      choices: {Engine: [memcached, redis, valkey], CacheNodeType: [cache.t3.micro, cache.t3.small, cache.t3.medium, cache.r6g.large]}
+      defaults: {Engine: memcached, CacheNodeType: cache.t3.micro, NumCacheNodes: "1"}
+      result_id: CacheCluster.ARN
+      expect: {label: CacheClusterId}
+      note: "Create a Memcached cluster (NumCacheNodes nodes, port 11211) or a single-node Redis/Valkey. CacheSubnetGroupName puts it in a VPC; its security groups must allow the port from the clients. For Redis with replicas use create-replication-group."
+    - id: delete-cache-cluster
+      api: DeleteCacheCluster
+      gesture: delete
+      title: "Xoá ElastiCache cluster"
+      fields: [{name: CacheClusterId, ref: elasticache-cache-cluster, ref_by: label}]
+      targets: [elasticache-cache-cluster]
+      target_param: CacheClusterId
+      note: "Delete a cluster that is not part of a replication group."

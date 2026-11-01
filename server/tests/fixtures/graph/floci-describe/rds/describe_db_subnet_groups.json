@@ -1,0 +1,65 @@
+{
+  "calls": [
+    {
+      "params": {},
+      "response": {
+        "DBSubnetGroups": [
+          {
+            "DBSubnetGroupArn": "arn:aws:rds:ap-southeast-2:000000000000:subgrp:default",
+            "DBSubnetGroupDescription": "default subnet group",
+            "DBSubnetGroupName": "default",
+            "SubnetGroupStatus": "Complete",
+            "Subnets": [
+              {
+                "SubnetAvailabilityZone": {
+                  "Name": "ap-southeast-2a"
+                },
+                "SubnetIdentifier": "subnet-default-ap-southeast-2-a",
+                "SubnetStatus": "Active"
+              },
+              {
+                "SubnetAvailabilityZone": {
+                  "Name": "ap-southeast-2b"
+                },
+                "SubnetIdentifier": "subnet-default-ap-southeast-2-b",
+                "SubnetStatus": "Active"
+              },
+              {
+                "SubnetAvailabilityZone": {
+                  "Name": "ap-southeast-2c"
+                },
+                "SubnetIdentifier": "subnet-default-ap-southeast-2-c",
+                "SubnetStatus": "Active"
+              }
+            ],
+            "VpcId": "vpc-default-ap-southeast-2"
+          },
+          {
+            "DBSubnetGroupArn": "arn:aws:rds:ap-southeast-2:000000000000:subgrp:wave1-db",
+            "DBSubnetGroupDescription": "wave1",
+            "DBSubnetGroupName": "wave1-db",
+            "SubnetGroupStatus": "Complete",
+            "Subnets": [
+              {
+                "SubnetAvailabilityZone": {
+                  "Name": "ap-southeast-2a"
+                },
+                "SubnetIdentifier": "subnet-2b9c9233",
+                "SubnetStatus": "Active"
+              },
+              {
+                "SubnetAvailabilityZone": {
+                  "Name": "ap-southeast-2b"
+                },
+                "SubnetIdentifier": "subnet-4f1dede6",
+                "SubnetStatus": "Active"
+              }
+            ],
+            "VpcId": "vpc-03e9e3f9"
+          }
+        ],
+        "Marker": ""
+      }
+    }
+  ]
+}

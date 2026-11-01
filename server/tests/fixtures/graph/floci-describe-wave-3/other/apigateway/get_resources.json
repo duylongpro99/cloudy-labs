@@ -1,0 +1,45 @@
+{
+  "calls": [
+    {
+      "params": {
+        "embed": [
+          "methods"
+        ],
+        "limit": 500,
+        "restApiId": "d997462cf0"
+      },
+      "response": {
+        "items": [
+          {
+            "id": "a5393f89",
+            "path": "/"
+          },
+          {
+            "id": "b57aa69d",
+            "parentId": "a5393f89",
+            "path": "/items",
+            "pathPart": "items",
+            "resourceMethods": {
+              "GET": {
+                "apiKeyRequired": false,
+                "authorizationType": "NONE",
+                "httpMethod": "GET",
+                "methodIntegration": {
+                  "cacheKeyParameters": [],
+                  "cacheNamespace": "b57aa69d",
+                  "connectionType": "INTERNET",
+                  "httpMethod": "POST",
+                  "passthroughBehavior": "WHEN_NO_MATCH",
+                  "responseTransferMode": "BUFFERED",
+                  "timeoutInMillis": 29000,
+                  "type": "AWS_PROXY",
+                  "uri": "arn:aws:apigateway:ap-southeast-2:lambda:path/2015-03-31/functions/arn:aws:lambda:ap-southeast-2:000000000000:function:w3-edge-fn/invocations"
+                }
+              }
+            }
+          }
+        ]
+      }
+    }
+  ]
+}

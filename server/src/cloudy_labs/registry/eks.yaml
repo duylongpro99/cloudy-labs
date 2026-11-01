@@ -1,0 +1,60 @@
+# Amazon EKS clusters. ListClusters answers names only; DescribeCluster gives the rest. Floci runs
+# each cluster as a real k3s container (its API server answers kubectl on the cluster endpoint) and
+# removes the container when the cluster is deleted. A cluster sits in its VPC when it names one.
+
+- kind: eks-cluster
+  service: eks
+  label: EKS Cluster
+  list: {method: list_clusters, items: "clusters[].{name: @}"}
+  enrich:
+    - {method: describe_cluster, params: {name: name}, pick: cluster, merge_as: _Cluster}
+  id: _Cluster.arn
+  name: [name]
+  parent: [{kind: vpc, path: _Cluster.resourcesVpcConfig.vpcId}, {kind: region}]
+  props:
+    status: _Cluster.status
+    version: _Cluster.version
+    platformVersion: _Cluster.platformVersion
+    endpoint: _Cluster.endpoint
+    role: _Cluster.roleArn
+    subnets: "_Cluster.resourcesVpcConfig.subnetIds && sort(_Cluster.resourcesVpcConfig.subnetIds)"
+    securityGroups: "_Cluster.resourcesVpcConfig.securityGroupIds && sort(_Cluster.resourcesVpcConfig.securityGroupIds)"
+    clusterSecurityGroup: _Cluster.resourcesVpcConfig.clusterSecurityGroupId
+    publicEndpoint: _Cluster.resourcesVpcConfig.endpointPublicAccess
+    privateEndpoint: _Cluster.resourcesVpcConfig.endpointPrivateAccess
+    logging: "sort(_Cluster.logging.clusterLogging[?enabled].types[] || `[]`)"
+    authenticationMode: _Cluster.accessConfig.authenticationMode
+    tags: _Cluster.tags
+  chat_props: [status, version, platformVersion, endpoint, role, subnets, securityGroups, clusterSecurityGroup, publicEndpoint, privateEndpoint, logging, authenticationMode]
+  edges:
+    - {kind: execution-role, target: _Cluster.roleArn, to: iam-role, style: reference}
+    - {kind: attached, target: _Cluster.resourcesVpcConfig.securityGroupIds, to: security-group, reverse: true, style: attach}
+  caveats:
+    - {code: eks-no-cluster-update, text: "Floci 2.3.0 refuses UpdateClusterConfig and UpdateClusterVersion: endpoint access, logging and the Kubernetes version stay as the cluster was created."}
+  builder: true
+  view: {role: block, category: containers, icon: Arch_Amazon-Elastic-Kubernetes-Service_48.svg, source: Architecture-Service-Icons_07312026/Arch_Containers/48/Arch_Amazon-Elastic-Kubernetes-Service_48.svg, height: 0.6, order: 610, host: true, actions: [Cluster, ClusterConfig, ClusterVersion]}
+  contract:
+    needs:
+      - {op: create-role, params: {RoleName: ct-eks-role, AssumeRolePolicyDocument: '{"Version": "2012-10-17", "Statement": [{"Effect": "Allow", "Principal": {"Service": "eks.amazonaws.com"}, "Action": "sts:AssumeRole"}]}'}, save: role}
+    create: {op: create-eks-cluster, params: {name: ct-eks, roleArn: "{role}"}, save: cluster}
+    then:
+      - {op: delete-eks-cluster, params: {name: ct-eks}}
+    max_seconds: 5
+  ops:
+    - id: create-eks-cluster
+      api: CreateCluster
+      gesture: create
+      title: "Tạo EKS cluster"
+      fields: [{name: name, placeholder: my-cluster}, {name: roleArn, ref: iam-role}, version, resourcesVpcConfig.subnetIds, resourcesVpcConfig.securityGroupIds, resourcesVpcConfig.endpointPublicAccess, resourcesVpcConfig.endpointPrivateAccess]
+      defaults: {resourcesVpcConfig.endpointPublicAccess: "true"}
+      result_id: cluster.arn
+      expect: {label: name}
+      note: "Create a Kubernetes control plane. roleArn: a role eks.amazonaws.com may assume. subnetIds: at least two subnets in different AZs (comma-separated). The cluster is CREATING, then ACTIVE; add a node group or Fargate profile to run pods."
+    - id: delete-eks-cluster
+      api: DeleteCluster
+      gesture: delete
+      title: "Xoá EKS cluster"
+      fields: [{name: name, ref: eks-cluster, ref_by: label}]
+      targets: [eks-cluster]
+      target_param: name
+      note: "Delete the cluster. Delete its node groups and Fargate profiles first."

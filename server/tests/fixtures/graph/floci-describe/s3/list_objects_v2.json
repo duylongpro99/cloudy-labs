@@ -1,0 +1,83 @@
+{
+  "calls": [
+    {
+      "params": {
+        "Bucket": "wave1-site",
+        "MaxKeys": 1000
+      },
+      "response": {
+        "EncodingType": "url",
+        "IsTruncated": false,
+        "KeyCount": 0,
+        "MaxKeys": 1000,
+        "Name": "wave1-site",
+        "Prefix": ""
+      }
+    },
+    {
+      "params": {
+        "Bucket": "wave1-dst",
+        "MaxKeys": 1000
+      },
+      "response": {
+        "EncodingType": "url",
+        "IsTruncated": false,
+        "KeyCount": 0,
+        "MaxKeys": 1000,
+        "Name": "wave1-dst",
+        "Prefix": ""
+      }
+    },
+    {
+      "params": {
+        "Bucket": "wave1-src",
+        "MaxKeys": 1000
+      },
+      "response": {
+        "EncodingType": "url",
+        "IsTruncated": false,
+        "KeyCount": 0,
+        "MaxKeys": 1000,
+        "Name": "wave1-src",
+        "Prefix": ""
+      }
+    },
+    {
+      "params": {
+        "Bucket": "wave1-logs",
+        "MaxKeys": 1000
+      },
+      "response": {
+        "Contents": [
+          {
+            "ETag": "\"9dd4e461268c8034f5c8564e155c67a6\"",
+            "Key": "tmp/0.txt",
+            "LastModified": "2026-10-31 14:41:11+00:00",
+            "Size": 1,
+            "StorageClass": "STANDARD"
+          },
+          {
+            "ETag": "\"9dd4e461268c8034f5c8564e155c67a6\"",
+            "Key": "tmp/1.txt",
+            "LastModified": "2026-10-31 14:41:12+00:00",
+            "Size": 1,
+            "StorageClass": "STANDARD"
+          },
+          {
+            "ETag": "\"9dd4e461268c8034f5c8564e155c67a6\"",
+            "Key": "tmp/2.txt",
+            "LastModified": "2026-10-31 14:41:12+00:00",
+            "Size": 1,
+            "StorageClass": "STANDARD"
+          }
+        ],
+        "EncodingType": "url",
+        "IsTruncated": false,
+        "KeyCount": 3,
+        "MaxKeys": 1000,
+        "Name": "wave1-logs",
+        "Prefix": ""
+      }
+    }
+  ]
+}

@@ -1,0 +1,83 @@
+{
+  "calls": [
+    {
+      "params": {
+        "Filters": [
+          {
+            "Name": "state",
+            "Values": [
+              "active",
+              "blackhole"
+            ]
+          }
+        ],
+        "TransitGatewayRouteTableId": "tgw-rtb-86dc7719c9a3ca559"
+      },
+      "response": {
+        "AdditionalRoutesAvailable": false,
+        "Routes": [
+          {
+            "DestinationCidrBlock": "10.63.0.0/16",
+            "State": "active",
+            "TransitGatewayAttachments": [
+              {
+                "ResourceId": "vpc-c34cd66d",
+                "ResourceType": "vpc",
+                "TransitGatewayAttachmentId": "tgw-attach-5cfaf68c6d1f51594"
+              }
+            ],
+            "Type": "static"
+          }
+        ]
+      }
+    },
+    {
+      "params": {
+        "Filters": [
+          {
+            "Name": "state",
+            "Values": [
+              "active",
+              "blackhole"
+            ]
+          }
+        ],
+        "TransitGatewayRouteTableId": "tgw-rtb-8b7af86b3565e0be4"
+      },
+      "response": {
+        "AdditionalRoutesAvailable": false,
+        "Routes": [
+          {
+            "DestinationCidrBlock": "10.99.0.0/16",
+            "State": "active",
+            "TransitGatewayAttachments": [
+              {
+                "ResourceId": "vpc-c34cd66d",
+                "ResourceType": "vpc",
+                "TransitGatewayAttachmentId": "tgw-attach-5cfaf68c6d1f51594"
+              }
+            ],
+            "Type": "static"
+          },
+          {
+            "DestinationCidrBlock": "10.65.0.0/16",
+            "State": "blackhole",
+            "Type": "static"
+          },
+          {
+            "DestinationCidrBlock": "10.64.0.0/16",
+            "State": "active",
+            "TransitGatewayAttachments": [
+              {
+                "ResourceId": "vpc-baf044cc",
+                "ResourceType": "vpc",
+                "TransitGatewayAttachmentId": "tgw-attach-066615616db99ef61"
+              }
+            ],
+            "Type": "static"
+          }
+        ]
+      }
+    }
+  ]
+}

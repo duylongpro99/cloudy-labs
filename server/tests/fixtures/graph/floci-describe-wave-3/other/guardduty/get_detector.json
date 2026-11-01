@@ -1,0 +1,16 @@
+{
+  "calls": [
+    {
+      "params": {
+        "DetectorId": "3f82f0f4ab014996945ba0bb19cb348f"
+      },
+      "response": {
+        "CreatedAt": "2026-10-31T16:25:12.548Z",
+        "FindingPublishingFrequency": "FIFTEEN_MINUTES",
+        "ServiceRole": "arn:aws:iam::000000000000:role/aws-service-role/guardduty.amazonaws.com/AWSServiceRoleForAmazonGuardDuty",
+        "Status": "ENABLED",
+        "UpdatedAt": "2026-10-31T16:25:12.548Z"
+      }
+    }
+  ]
+}

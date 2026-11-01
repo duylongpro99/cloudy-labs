@@ -1,0 +1,15 @@
+{
+  "calls": [
+    {
+      "params": {},
+      "response": {
+        "DeliveryChannels": [
+          {
+            "name": "w3-channel",
+            "s3BucketName": "w3-governance-logs"
+          }
+        ]
+      }
+    }
+  ]
+}

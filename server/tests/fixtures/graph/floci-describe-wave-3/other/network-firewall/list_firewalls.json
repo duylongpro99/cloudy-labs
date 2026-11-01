@@ -1,0 +1,15 @@
+{
+  "calls": [
+    {
+      "params": {},
+      "response": {
+        "Firewalls": [
+          {
+            "FirewallArn": "arn:aws:network-firewall:ap-southeast-2:000000000000:firewall/w3-firewall",
+            "FirewallName": "w3-firewall"
+          }
+        ]
+      }
+    }
+  ]
+}

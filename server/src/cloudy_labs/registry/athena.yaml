@@ -1,0 +1,61 @@
+# Amazon Athena. A workgroup holds query settings: where results go, whether its settings override the
+# client's, the engine version. ListWorkGroups answers only name and state; GetWorkGroup the rest.
+# Every account has the `primary` workgroup; it is not the learner's and is hidden.
+
+- kind: athena-workgroup
+  service: athena
+  label: Athena Workgroup
+  list: {method: list_work_groups, items: WorkGroups}
+  filter: {path: Name, not_in: [primary]}
+  enrich:
+    - {method: get_work_group, params: {WorkGroup: Name}, pick: WorkGroup, merge_as: _Detail}
+    - {hook: common.s3_uri_bucket, args: {field: _Detail.Configuration.ResultConfiguration.OutputLocation}}
+  # Workgroups have ARNs only in IAM policies; the API answers none, so the node id is made unique per region.
+  id: ["join('', ['athena-workgroup:', not_null(_Region, ''), ':', Name])"]
+  name: [Name]
+  parent: [{kind: region}]
+  props:
+    state: State
+    description: "_Detail.Description || Description"
+    outputLocation: _Detail.Configuration.ResultConfiguration.OutputLocation
+    enforceConfiguration: _Detail.Configuration.EnforceWorkGroupConfiguration
+    engineVersion: _Detail.Configuration.EngineVersion.EffectiveEngineVersion
+    bytesScannedCutoff: _Detail.Configuration.BytesScannedCutoffPerQuery
+  chat_props: [state, description, outputLocation, enforceConfiguration, engineVersion, bytesScannedCutoff]
+  edges:
+    - {kind: delivers-to, target: _Buckets, to: s3-bucket, style: reference}
+  caveats:
+    - {code: athena-query-results-fail, prop: outputLocation, text: "Floci 2.3.0 runs a query on a DuckDB container it starts, but that container cannot write the results to the S3 output location of the lab stack (it cannot reach localhost.floci.io): the query ends FAILED. Check the workgroup's settings and state, not query results."}
+  builder: true
+  view: {role: block, category: analytics, icon: Arch_Amazon-Athena_48.svg, source: Architecture-Service-Icons_07312026/Arch_Analytics/48/Arch_Amazon-Athena_48.svg, height: 0.4, order: 665, actions: [WorkGroup, WorkGroups]}
+  contract:
+    create: {op: create-work-group, params: {Name: ct-athena-wg, Description: contract test, Configuration.ResultConfiguration.OutputLocation: "s3://ct-athena-results/"}}
+    then:
+      - {op: update-work-group, params: {WorkGroup: ct-athena-wg, State: DISABLED}}
+      - {op: delete-work-group, params: {WorkGroup: ct-athena-wg, RecursiveDeleteOption: "true"}}
+  ops:
+    - id: create-work-group
+      api: CreateWorkGroup
+      gesture: create
+      title: "Tạo Athena workgroup"
+      fields: [Name, Description, Configuration.ResultConfiguration.OutputLocation, Configuration.EnforceWorkGroupConfiguration, Configuration.BytesScannedCutoffPerQuery]
+      expect: {label: Name}
+      note: "Group queries with their own settings. Configuration.ResultConfiguration.OutputLocation is where results go (s3://bucket/prefix/); EnforceWorkGroupConfiguration makes those settings override the client's; BytesScannedCutoffPerQuery cancels a query scanning more."
+    - id: update-work-group
+      api: UpdateWorkGroup
+      gesture: attribute
+      title: "Sửa Athena workgroup"
+      fields: [{name: WorkGroup, ref: athena-workgroup, ref_by: label}, State, Description]
+      choices: {State: [ENABLED, DISABLED]}
+      targets: [athena-workgroup]
+      target_param: WorkGroup
+      note: "Enable or disable the workgroup (a disabled one runs no queries) or change its description."
+    - id: delete-work-group
+      api: DeleteWorkGroup
+      gesture: delete
+      title: "Xoá Athena workgroup"
+      fields: [{name: WorkGroup, ref: athena-workgroup, ref_by: label}, RecursiveDeleteOption]
+      defaults: {RecursiveDeleteOption: "true"}
+      targets: [athena-workgroup]
+      target_param: WorkGroup
+      note: "Delete the workgroup; RecursiveDeleteOption true also deletes its saved queries."

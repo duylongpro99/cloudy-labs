@@ -1,0 +1,20 @@
+{
+  "calls": [
+    {
+      "params": {},
+      "response": {
+        "LaunchTemplates": [
+          {
+            "CreateTime": "2026-10-31 14:41:10.644000+00:00",
+            "CreatedBy": "arn:aws:iam::000000000000:root",
+            "DefaultVersionNumber": 1,
+            "LatestVersionNumber": 1,
+            "LaunchTemplateId": "lt-c812f7451d6cc16ed",
+            "LaunchTemplateName": "wave1-lt",
+            "Tags": []
+          }
+        ]
+      }
+    }
+  ]
+}

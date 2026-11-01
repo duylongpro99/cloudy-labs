@@ -1,0 +1,120 @@
+{
+  "calls": [
+    {
+      "params": {},
+      "response": {
+        "Marker": "",
+        "OptionGroupsList": [
+          {
+            "AllowsVpcAndNonVpcInstanceMemberships": true,
+            "EngineName": "mariadb",
+            "MajorEngineVersion": "10.11",
+            "OptionGroupArn": "arn:aws:rds:ap-southeast-2:000000000000:og:default:mariadb-10-11",
+            "OptionGroupDescription": "Default option group for mariadb 10.11",
+            "OptionGroupName": "default:mariadb-10-11",
+            "Options": []
+          },
+          {
+            "AllowsVpcAndNonVpcInstanceMemberships": true,
+            "EngineName": "mariadb",
+            "MajorEngineVersion": "11.2",
+            "OptionGroupArn": "arn:aws:rds:ap-southeast-2:000000000000:og:default:mariadb-11-2",
+            "OptionGroupDescription": "Default option group for mariadb 11.2",
+            "OptionGroupName": "default:mariadb-11-2",
+            "Options": []
+          },
+          {
+            "AllowsVpcAndNonVpcInstanceMemberships": true,
+            "EngineName": "mariadb",
+            "MajorEngineVersion": "11.4",
+            "OptionGroupArn": "arn:aws:rds:ap-southeast-2:000000000000:og:default:mariadb-11-4",
+            "OptionGroupDescription": "Default option group for mariadb 11.4",
+            "OptionGroupName": "default:mariadb-11-4",
+            "Options": []
+          },
+          {
+            "AllowsVpcAndNonVpcInstanceMemberships": true,
+            "EngineName": "mysql",
+            "MajorEngineVersion": "8.0",
+            "OptionGroupArn": "arn:aws:rds:ap-southeast-2:000000000000:og:default:mysql-8-0",
+            "OptionGroupDescription": "Default option group for mysql 8.0",
+            "OptionGroupName": "default:mysql-8-0",
+            "Options": []
+          },
+          {
+            "AllowsVpcAndNonVpcInstanceMemberships": true,
+            "EngineName": "mysql",
+            "MajorEngineVersion": "8.4",
+            "OptionGroupArn": "arn:aws:rds:ap-southeast-2:000000000000:og:default:mysql-8-4",
+            "OptionGroupDescription": "Default option group for mysql 8.4",
+            "OptionGroupName": "default:mysql-8-4",
+            "Options": []
+          },
+          {
+            "AllowsVpcAndNonVpcInstanceMemberships": true,
+            "EngineName": "postgres",
+            "MajorEngineVersion": "13",
+            "OptionGroupArn": "arn:aws:rds:ap-southeast-2:000000000000:og:default:postgres-13",
+            "OptionGroupDescription": "Default option group for postgres 13",
+            "OptionGroupName": "default:postgres-13",
+            "Options": []
+          },
+          {
+            "AllowsVpcAndNonVpcInstanceMemberships": true,
+            "EngineName": "postgres",
+            "MajorEngineVersion": "14",
+            "OptionGroupArn": "arn:aws:rds:ap-southeast-2:000000000000:og:default:postgres-14",
+            "OptionGroupDescription": "Default option group for postgres 14",
+            "OptionGroupName": "default:postgres-14",
+            "Options": []
+          },
+          {
+            "AllowsVpcAndNonVpcInstanceMemberships": true,
+            "EngineName": "postgres",
+            "MajorEngineVersion": "15",
+            "OptionGroupArn": "arn:aws:rds:ap-southeast-2:000000000000:og:default:postgres-15",
+            "OptionGroupDescription": "Default option group for postgres 15",
+            "OptionGroupName": "default:postgres-15",
+            "Options": []
+          },
+          {
+            "AllowsVpcAndNonVpcInstanceMemberships": true,
+            "EngineName": "postgres",
+            "MajorEngineVersion": "16",
+            "OptionGroupArn": "arn:aws:rds:ap-southeast-2:000000000000:og:default:postgres-16",
+            "OptionGroupDescription": "Default option group for postgres 16",
+            "OptionGroupName": "default:postgres-16",
+            "Options": []
+          },
+          {
+            "AllowsVpcAndNonVpcInstanceMemberships": true,
+            "EngineName": "postgres",
+            "MajorEngineVersion": "17",
+            "OptionGroupArn": "arn:aws:rds:ap-southeast-2:000000000000:og:default:postgres-17",
+            "OptionGroupDescription": "Default option group for postgres 17",
+            "OptionGroupName": "default:postgres-17",
+            "Options": []
+          },
+          {
+            "AllowsVpcAndNonVpcInstanceMemberships": true,
+            "EngineName": "postgres",
+            "MajorEngineVersion": "18",
+            "OptionGroupArn": "arn:aws:rds:ap-southeast-2:000000000000:og:default:postgres-18",
+            "OptionGroupDescription": "Default option group for postgres 18",
+            "OptionGroupName": "default:postgres-18",
+            "Options": []
+          },
+          {
+            "AllowsVpcAndNonVpcInstanceMemberships": true,
+            "EngineName": "postgres",
+            "MajorEngineVersion": "16",
+            "OptionGroupArn": "arn:aws:rds:ap-southeast-2:000000000000:og:wave1-og",
+            "OptionGroupDescription": "wave1",
+            "OptionGroupName": "wave1-og",
+            "Options": []
+          }
+        ]
+      }
+    }
+  ]
+}

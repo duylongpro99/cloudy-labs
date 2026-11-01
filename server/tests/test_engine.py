@@ -62,7 +62,7 @@ def setup(make_lab, tmp_path):
     engine = Engine(
         Progress(tmp_path / "state" / "p.db"),
         labs_root=root,
-        providers=lambda name, emulator: provider,
+        providers=lambda name, emulator, region=None: provider,
         networks=lambda: [("corp", Net("10.0.0.0/8"))],
         log=logs.append,
     )

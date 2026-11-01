@@ -1,0 +1,12 @@
+{
+  "calls": [
+    {
+      "params": {
+        "TargetGroupArn": "arn:aws:elasticloadbalancing:ap-southeast-2:000000000000:targetgroup/w2-tg/d4fadde448d443e1"
+      },
+      "response": {
+        "TargetHealthDescriptions": []
+      }
+    }
+  ]
+}

@@ -1,0 +1,33 @@
+{
+  "calls": [
+    {
+      "params": {
+        "IncludeDeleted": false
+      },
+      "response": {
+        "Environments": [
+          {
+            "AbortableOperationInProgress": false,
+            "ApplicationName": "w3-delivery-web",
+            "CNAME": "w3-delivery-web-dev.elasticbeanstalk.local",
+            "DateCreated": "2026-10-31 16:25:11.292000+00:00",
+            "DateUpdated": "2026-10-31 16:25:11.292000+00:00",
+            "EndpointURL": "awseb-e-6bed9wc573.ap-southeast-2.elasticbeanstalk.local",
+            "EnvironmentArn": "arn:aws:elasticbeanstalk:ap-southeast-2:000000000000:environment/w3-delivery-web/w3-delivery-web-dev",
+            "EnvironmentId": "e-6bed9wc573",
+            "EnvironmentName": "w3-delivery-web-dev",
+            "Health": "Green",
+            "HealthStatus": "Ok",
+            "SolutionStackName": "64bit Amazon Linux 2023 v4.3.0 running Docker",
+            "Status": "Ready",
+            "Tier": {
+              "Name": "WebServer",
+              "Type": "Standard",
+              "Version": "1.0"
+            }
+          }
+        ]
+      }
+    }
+  ]
+}

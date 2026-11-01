@@ -1,0 +1,21 @@
+{
+  "calls": [
+    {
+      "params": {},
+      "response": {
+        "Servers": [
+          {
+            "Arn": "arn:aws:transfer:ap-southeast-2:000000000000:server/s-5f25bf4cc12f4b3bb",
+            "Domain": "S3",
+            "EndpointType": "VPC",
+            "IdentityProviderType": "SERVICE_MANAGED",
+            "LoggingRole": "arn:aws:iam::000000000000:role/w3-dm-role",
+            "ServerId": "s-5f25bf4cc12f4b3bb",
+            "State": "ONLINE",
+            "UserCount": 0
+          }
+        ]
+      }
+    }
+  ]
+}

@@ -1,0 +1,12 @@
+{
+  "calls": [
+    {
+      "params": {},
+      "response": {
+        "clusters": [
+          "w3-delivery"
+        ]
+      }
+    }
+  ]
+}

@@ -1,0 +1,40 @@
+{
+  "calls": [
+    {
+      "params": {
+        "Filters": [
+          {
+            "Name": "state",
+            "Values": [
+              "active",
+              "blackhole"
+            ]
+          }
+        ],
+        "TransitGatewayRouteTableId": "tgw-rtb-94e55f216fa9ff145"
+      },
+      "response": {
+        "AdditionalRoutesAvailable": false,
+        "Routes": []
+      }
+    },
+    {
+      "params": {
+        "Filters": [
+          {
+            "Name": "state",
+            "Values": [
+              "active",
+              "blackhole"
+            ]
+          }
+        ],
+        "TransitGatewayRouteTableId": "tgw-rtb-91762891d9f9209f7"
+      },
+      "response": {
+        "AdditionalRoutesAvailable": false,
+        "Routes": []
+      }
+    }
+  ]
+}

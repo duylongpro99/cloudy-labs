@@ -1,0 +1,22 @@
+{
+  "calls": [
+    {
+      "params": {},
+      "response": {
+        "ReplicationTasks": [
+          {
+            "MigrationType": "full-load",
+            "ReplicationInstanceArn": "arn:aws:dms:ap-southeast-2:000000000000:rep:JSOZ6ALQRNR7ME3KTCOCFMLKL5",
+            "ReplicationTaskArn": "arn:aws:dms:ap-southeast-2:000000000000:task:LIZ5P75OCMWZK7OHFMLARUXPQ3",
+            "ReplicationTaskCreationDate": "2026-10-31 23:25:09.925000+07:00",
+            "ReplicationTaskIdentifier": "w3-dm-task",
+            "SourceEndpointArn": "arn:aws:dms:ap-southeast-2:000000000000:endpoint:5BMIDRU5MGUNHOIU4HK5QBWASA",
+            "Status": "ready",
+            "TableMappings": "{\"rules\": [{\"rule-type\": \"selection\", \"rule-id\": \"1\", \"rule-name\": \"all\", \"object-locator\": {\"schema-name\": \"%\", \"table-name\": \"%\"}, \"rule-action\": \"include\"}]}",
+            "TargetEndpointArn": "arn:aws:dms:ap-southeast-2:000000000000:endpoint:74ETK3CSBCD7IVPEGCR7KR7ZAS"
+          }
+        ]
+      }
+    }
+  ]
+}

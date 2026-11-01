@@ -1,0 +1,1855 @@
+{
+  "contains": [
+    {
+      "child": "acl-3014564bc9c904cad",
+      "parent": "vpc-03e9e3f9"
+    },
+    {
+      "child": "acl-3048f0353af957cb2",
+      "parent": "vpc-03e9e3f9"
+    },
+    {
+      "child": "acl-a6283b9187233a8f2",
+      "parent": "vpc-29250840"
+    },
+    {
+      "child": "acl-default",
+      "parent": "vpc-default-ap-southeast-2"
+    },
+    {
+      "child": "ap-southeast-2",
+      "parent": "000000000000"
+    },
+    {
+      "child": "arn:aws:iam::000000000000:group/wave1-devs",
+      "parent": "global"
+    },
+    {
+      "child": "arn:aws:iam::000000000000:instance-profile/wave1-web-profile",
+      "parent": "global"
+    },
+    {
+      "child": "arn:aws:iam::000000000000:policy/wave1-read",
+      "parent": "global"
+    },
+    {
+      "child": "arn:aws:iam::000000000000:role/wave1-lambda-role",
+      "parent": "global"
+    },
+    {
+      "child": "arn:aws:iam::000000000000:role/wave1-ops",
+      "parent": "global"
+    },
+    {
+      "child": "arn:aws:iam::000000000000:user/wave1-dev",
+      "parent": "global"
+    },
+    {
+      "child": "arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole",
+      "parent": "global"
+    },
+    {
+      "child": "arn:aws:lambda:ap-southeast-2:000000000000:function:wave1-fn",
+      "parent": "ap-southeast-2"
+    },
+    {
+      "child": "arn:aws:lambda:ap-southeast-2:000000000000:function:wave1-fn:1",
+      "parent": "ap-southeast-2"
+    },
+    {
+      "child": "arn:aws:lambda:ap-southeast-2:000000000000:function:wave1-fn:live",
+      "parent": "ap-southeast-2"
+    },
+    {
+      "child": "arn:aws:lambda:ap-southeast-2:000000000000:function:wave1-vpc-fn",
+      "parent": "subnet-4f1dede6"
+    },
+    {
+      "child": "arn:aws:lambda:ap-southeast-2:000000000000:layer:wave1-layer",
+      "parent": "ap-southeast-2"
+    },
+    {
+      "child": "arn:aws:rds:ap-southeast-2:000000000000:cluster-pg:wave1-aurora-pg16",
+      "parent": "ap-southeast-2"
+    },
+    {
+      "child": "arn:aws:rds:ap-southeast-2:000000000000:cluster-snapshot:wave1-aurora-snap",
+      "parent": "ap-southeast-2"
+    },
+    {
+      "child": "arn:aws:rds:ap-southeast-2:000000000000:cluster:wave1-aurora",
+      "parent": "arn:aws:rds:ap-southeast-2:000000000000:subgrp:wave1-db"
+    },
+    {
+      "child": "arn:aws:rds:ap-southeast-2:000000000000:db-proxy:prx-dba5f314ff484958a",
+      "parent": "vpc-03e9e3f9"
+    },
+    {
+      "child": "arn:aws:rds:ap-southeast-2:000000000000:db:wave1-aurora-1",
+      "parent": "arn:aws:rds:ap-southeast-2:000000000000:cluster:wave1-aurora"
+    },
+    {
+      "child": "arn:aws:rds:ap-southeast-2:000000000000:db:wave1-pg",
+      "parent": "arn:aws:rds:ap-southeast-2:000000000000:subgrp:wave1-db"
+    },
+    {
+      "child": "arn:aws:rds:ap-southeast-2:000000000000:db:wave1-pg-rr",
+      "parent": "arn:aws:rds:ap-southeast-2:000000000000:subgrp:wave1-db"
+    },
+    {
+      "child": "arn:aws:rds:ap-southeast-2:000000000000:og:wave1-og",
+      "parent": "ap-southeast-2"
+    },
+    {
+      "child": "arn:aws:rds:ap-southeast-2:000000000000:pg:wave1-pg16",
+      "parent": "ap-southeast-2"
+    },
+    {
+      "child": "arn:aws:rds:ap-southeast-2:000000000000:snapshot:wave1-pg-snap",
+      "parent": "ap-southeast-2"
+    },
+    {
+      "child": "arn:aws:rds:ap-southeast-2:000000000000:subgrp:wave1-db",
+      "parent": "vpc-03e9e3f9"
+    },
+    {
+      "child": "arn:aws:s3:::wave1-dst",
+      "parent": "ap-southeast-2"
+    },
+    {
+      "child": "arn:aws:s3:::wave1-logs",
+      "parent": "ap-southeast-2"
+    },
+    {
+      "child": "arn:aws:s3:::wave1-site",
+      "parent": "ap-southeast-2"
+    },
+    {
+      "child": "arn:aws:s3:::wave1-src",
+      "parent": "ap-southeast-2"
+    },
+    {
+      "child": "e9c9b6d0-a862-4051-9e65-a3aba9ac0099",
+      "parent": "ap-southeast-2"
+    },
+    {
+      "child": "eni-afbe03abb99391253",
+      "parent": "subnet-4f1dede6"
+    },
+    {
+      "child": "fl-77c5d028459bcbdff",
+      "parent": "vpc-03e9e3f9"
+    },
+    {
+      "child": "global",
+      "parent": "000000000000"
+    },
+    {
+      "child": "i-ebd18d4a95b4c15f4",
+      "parent": "subnet-2b9c9233"
+    },
+    {
+      "child": "igw-8a9d8e36",
+      "parent": "vpc-03e9e3f9"
+    },
+    {
+      "child": "igw-default",
+      "parent": "vpc-default-ap-southeast-2"
+    },
+    {
+      "child": "lt-c812f7451d6cc16ed",
+      "parent": "ap-southeast-2"
+    },
+    {
+      "child": "pcx-d3e890e91e4299b2d",
+      "parent": "ap-southeast-2"
+    },
+    {
+      "child": "pl-403ec40bdb5e527f2",
+      "parent": "ap-southeast-2"
+    },
+    {
+      "child": "rtb-5394e655",
+      "parent": "vpc-03e9e3f9"
+    },
+    {
+      "child": "rtb-6d078619c8d3b6df5",
+      "parent": "vpc-03e9e3f9"
+    },
+    {
+      "child": "rtb-944fdcaad287b433a",
+      "parent": "vpc-29250840"
+    },
+    {
+      "child": "rtb-default",
+      "parent": "vpc-default-ap-southeast-2"
+    },
+    {
+      "child": "sg-16d87565cacd7efa0",
+      "parent": "vpc-03e9e3f9"
+    },
+    {
+      "child": "sg-2559a8642555f05e7",
+      "parent": "vpc-29250840"
+    },
+    {
+      "child": "sg-5271729b7a5ffc3e2",
+      "parent": "vpc-03e9e3f9"
+    },
+    {
+      "child": "sg-cc2f2105a40fceb16",
+      "parent": "vpc-03e9e3f9"
+    },
+    {
+      "child": "sg-default-ap-southeast-2",
+      "parent": "vpc-default-ap-southeast-2"
+    },
+    {
+      "child": "subnet-2b9c9233",
+      "parent": "vpc-03e9e3f9/ap-southeast-2a"
+    },
+    {
+      "child": "subnet-4f1dede6",
+      "parent": "vpc-03e9e3f9/ap-southeast-2b"
+    },
+    {
+      "child": "subnet-b7bc84c2",
+      "parent": "vpc-29250840/ap-southeast-2a"
+    },
+    {
+      "child": "subnet-default-ap-southeast-2-a",
+      "parent": "vpc-default-ap-southeast-2/ap-southeast-2a"
+    },
+    {
+      "child": "subnet-default-ap-southeast-2-b",
+      "parent": "vpc-default-ap-southeast-2/ap-southeast-2b"
+    },
+    {
+      "child": "subnet-default-ap-southeast-2-c",
+      "parent": "vpc-default-ap-southeast-2/ap-southeast-2c"
+    },
+    {
+      "child": "tgw-694378cffac133fc8",
+      "parent": "ap-southeast-2"
+    },
+    {
+      "child": "tgw-attach-2fc188cb4468af231",
+      "parent": "vpc-29250840"
+    },
+    {
+      "child": "tgw-rtb-91762891d9f9209f7",
+      "parent": "ap-southeast-2"
+    },
+    {
+      "child": "tgw-rtb-94e55f216fa9ff145",
+      "parent": "ap-southeast-2"
+    },
+    {
+      "child": "vol-0c91018448f66eb6a",
+      "parent": "ap-southeast-2"
+    },
+    {
+      "child": "vol-b09fc864be62d0919",
+      "parent": "ap-southeast-2"
+    },
+    {
+      "child": "vpc-03e9e3f9",
+      "parent": "ap-southeast-2"
+    },
+    {
+      "child": "vpc-03e9e3f9/ap-southeast-2a",
+      "parent": "vpc-03e9e3f9"
+    },
+    {
+      "child": "vpc-03e9e3f9/ap-southeast-2b",
+      "parent": "vpc-03e9e3f9"
+    },
+    {
+      "child": "vpc-29250840",
+      "parent": "ap-southeast-2"
+    },
+    {
+      "child": "vpc-29250840/ap-southeast-2a",
+      "parent": "vpc-29250840"
+    },
+    {
+      "child": "vpc-default-ap-southeast-2",
+      "parent": "ap-southeast-2"
+    },
+    {
+      "child": "vpc-default-ap-southeast-2/ap-southeast-2a",
+      "parent": "vpc-default-ap-southeast-2"
+    },
+    {
+      "child": "vpc-default-ap-southeast-2/ap-southeast-2b",
+      "parent": "vpc-default-ap-southeast-2"
+    },
+    {
+      "child": "vpc-default-ap-southeast-2/ap-southeast-2c",
+      "parent": "vpc-default-ap-southeast-2"
+    },
+    {
+      "child": "vpce-479cfb7293de52075",
+      "parent": "vpc-03e9e3f9"
+    },
+    {
+      "child": "vpce-db941ac67c6e58118",
+      "parent": "vpc-03e9e3f9"
+    }
+  ],
+  "edges": [
+    {
+      "from": "arn:aws:lambda:ap-southeast-2:000000000000:function:wave1-fn:live",
+      "id": "alias-of:arn:aws:lambda:ap-southeast-2:000000000000:function:wave1-fn:live->arn:aws:lambda:ap-southeast-2:000000000000:function:wave1-fn:1",
+      "kind": "alias-of",
+      "label": "",
+      "to": "arn:aws:lambda:ap-southeast-2:000000000000:function:wave1-fn:1"
+    },
+    {
+      "from": "rtb-5394e655",
+      "id": "association:rtb-5394e655->subnet-2b9c9233",
+      "kind": "association",
+      "label": "",
+      "to": "subnet-2b9c9233"
+    },
+    {
+      "from": "arn:aws:iam::000000000000:user/wave1-dev",
+      "id": "assume-role:arn:aws:iam::000000000000:user/wave1-dev->arn:aws:iam::000000000000:role/wave1-ops",
+      "kind": "assume-role",
+      "label": "",
+      "to": "arn:aws:iam::000000000000:role/wave1-ops"
+    },
+    {
+      "from": "arn:aws:iam::000000000000:group/wave1-devs",
+      "id": "attached-policy:arn:aws:iam::000000000000:group/wave1-devs->arn:aws:iam::000000000000:policy/wave1-read",
+      "kind": "attached-policy",
+      "label": "",
+      "to": "arn:aws:iam::000000000000:policy/wave1-read"
+    },
+    {
+      "from": "arn:aws:iam::000000000000:role/wave1-lambda-role",
+      "id": "attached-policy:arn:aws:iam::000000000000:role/wave1-lambda-role->arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole",
+      "kind": "attached-policy",
+      "label": "",
+      "to": "arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole"
+    },
+    {
+      "from": "arn:aws:iam::000000000000:role/wave1-ops",
+      "id": "attached-policy:arn:aws:iam::000000000000:role/wave1-ops->arn:aws:iam::000000000000:policy/wave1-read",
+      "kind": "attached-policy",
+      "label": "",
+      "to": "arn:aws:iam::000000000000:policy/wave1-read"
+    },
+    {
+      "from": "sg-16d87565cacd7efa0",
+      "id": "attached:sg-16d87565cacd7efa0->i-ebd18d4a95b4c15f4",
+      "kind": "attached",
+      "label": "",
+      "to": "i-ebd18d4a95b4c15f4"
+    },
+    {
+      "from": "sg-5271729b7a5ffc3e2",
+      "id": "attached:sg-5271729b7a5ffc3e2->arn:aws:lambda:ap-southeast-2:000000000000:function:wave1-vpc-fn",
+      "kind": "attached",
+      "label": "",
+      "to": "arn:aws:lambda:ap-southeast-2:000000000000:function:wave1-vpc-fn"
+    },
+    {
+      "from": "sg-5271729b7a5ffc3e2",
+      "id": "attached:sg-5271729b7a5ffc3e2->arn:aws:rds:ap-southeast-2:000000000000:db-proxy:prx-dba5f314ff484958a",
+      "kind": "attached",
+      "label": "",
+      "to": "arn:aws:rds:ap-southeast-2:000000000000:db-proxy:prx-dba5f314ff484958a"
+    },
+    {
+      "from": "sg-5271729b7a5ffc3e2",
+      "id": "attached:sg-5271729b7a5ffc3e2->arn:aws:rds:ap-southeast-2:000000000000:db:wave1-pg",
+      "kind": "attached",
+      "label": "",
+      "to": "arn:aws:rds:ap-southeast-2:000000000000:db:wave1-pg"
+    },
+    {
+      "from": "sg-5271729b7a5ffc3e2",
+      "id": "attached:sg-5271729b7a5ffc3e2->arn:aws:rds:ap-southeast-2:000000000000:db:wave1-pg-rr",
+      "kind": "attached",
+      "label": "",
+      "to": "arn:aws:rds:ap-southeast-2:000000000000:db:wave1-pg-rr"
+    },
+    {
+      "from": "sg-5271729b7a5ffc3e2",
+      "id": "attached:sg-5271729b7a5ffc3e2->eni-afbe03abb99391253",
+      "kind": "attached",
+      "label": "",
+      "to": "eni-afbe03abb99391253"
+    },
+    {
+      "from": "sg-5271729b7a5ffc3e2",
+      "id": "attached:sg-5271729b7a5ffc3e2->vpce-db941ac67c6e58118",
+      "kind": "attached",
+      "label": "",
+      "to": "vpce-db941ac67c6e58118"
+    },
+    {
+      "from": "vol-b09fc864be62d0919",
+      "id": "attached:vol-b09fc864be62d0919->i-ebd18d4a95b4c15f4",
+      "kind": "attached",
+      "label": "",
+      "to": "i-ebd18d4a95b4c15f4"
+    },
+    {
+      "from": "rtb-5394e655",
+      "id": "endpoint-route:rtb-5394e655->vpce-479cfb7293de52075",
+      "kind": "endpoint-route",
+      "label": "",
+      "to": "vpce-479cfb7293de52075"
+    },
+    {
+      "from": "vpce-db941ac67c6e58118",
+      "id": "endpoint-subnet:vpce-db941ac67c6e58118->subnet-4f1dede6",
+      "kind": "endpoint-subnet",
+      "label": "",
+      "to": "subnet-4f1dede6"
+    },
+    {
+      "from": "arn:aws:lambda:ap-southeast-2:000000000000:function:wave1-fn",
+      "id": "execution-role:arn:aws:lambda:ap-southeast-2:000000000000:function:wave1-fn->arn:aws:iam::000000000000:role/wave1-lambda-role",
+      "kind": "execution-role",
+      "label": "",
+      "to": "arn:aws:iam::000000000000:role/wave1-lambda-role"
+    },
+    {
+      "from": "arn:aws:lambda:ap-southeast-2:000000000000:function:wave1-vpc-fn",
+      "id": "execution-role:arn:aws:lambda:ap-southeast-2:000000000000:function:wave1-vpc-fn->arn:aws:iam::000000000000:role/wave1-lambda-role",
+      "kind": "execution-role",
+      "label": "",
+      "to": "arn:aws:iam::000000000000:role/wave1-lambda-role"
+    },
+    {
+      "from": "arn:aws:rds:ap-southeast-2:000000000000:db-proxy:prx-dba5f314ff484958a",
+      "id": "execution-role:arn:aws:rds:ap-southeast-2:000000000000:db-proxy:prx-dba5f314ff484958a->arn:aws:iam::000000000000:role/wave1-lambda-role",
+      "kind": "execution-role",
+      "label": "",
+      "to": "arn:aws:iam::000000000000:role/wave1-lambda-role"
+    },
+    {
+      "from": "arn:aws:s3:::wave1-src",
+      "id": "execution-role:arn:aws:s3:::wave1-src->arn:aws:iam::000000000000:role/wave1-lambda-role",
+      "kind": "execution-role",
+      "label": "",
+      "to": "arn:aws:iam::000000000000:role/wave1-lambda-role"
+    },
+    {
+      "from": "arn:aws:iam::000000000000:user/wave1-dev",
+      "id": "member-of:arn:aws:iam::000000000000:user/wave1-dev->arn:aws:iam::000000000000:group/wave1-devs",
+      "kind": "member-of",
+      "label": "",
+      "to": "arn:aws:iam::000000000000:group/wave1-devs"
+    },
+    {
+      "from": "acl-3014564bc9c904cad",
+      "id": "nacl-association:acl-3014564bc9c904cad->subnet-2b9c9233",
+      "kind": "nacl-association",
+      "label": "",
+      "to": "subnet-2b9c9233"
+    },
+    {
+      "from": "acl-3048f0353af957cb2",
+      "id": "nacl-association:acl-3048f0353af957cb2->subnet-4f1dede6",
+      "kind": "nacl-association",
+      "label": "",
+      "to": "subnet-4f1dede6"
+    },
+    {
+      "from": "acl-a6283b9187233a8f2",
+      "id": "nacl-association:acl-a6283b9187233a8f2->subnet-b7bc84c2",
+      "kind": "nacl-association",
+      "label": "",
+      "to": "subnet-b7bc84c2"
+    },
+    {
+      "from": "acl-default",
+      "id": "nacl-association:acl-default->subnet-default-ap-southeast-2-a",
+      "kind": "nacl-association",
+      "label": "",
+      "to": "subnet-default-ap-southeast-2-a"
+    },
+    {
+      "from": "acl-default",
+      "id": "nacl-association:acl-default->subnet-default-ap-southeast-2-b",
+      "kind": "nacl-association",
+      "label": "",
+      "to": "subnet-default-ap-southeast-2-b"
+    },
+    {
+      "from": "acl-default",
+      "id": "nacl-association:acl-default->subnet-default-ap-southeast-2-c",
+      "kind": "nacl-association",
+      "label": "",
+      "to": "subnet-default-ap-southeast-2-c"
+    },
+    {
+      "from": "arn:aws:s3:::wave1-src",
+      "id": "notifies:arn:aws:s3:::wave1-src->arn:aws:lambda:ap-southeast-2:000000000000:function:wave1-fn",
+      "kind": "notifies",
+      "label": "",
+      "to": "arn:aws:lambda:ap-southeast-2:000000000000:function:wave1-fn"
+    },
+    {
+      "from": "pcx-d3e890e91e4299b2d",
+      "id": "peering:pcx-d3e890e91e4299b2d->vpc-03e9e3f9",
+      "kind": "peering",
+      "label": "",
+      "to": "vpc-03e9e3f9"
+    },
+    {
+      "from": "pcx-d3e890e91e4299b2d",
+      "id": "peering:pcx-d3e890e91e4299b2d->vpc-29250840",
+      "kind": "peering",
+      "label": "",
+      "to": "vpc-29250840"
+    },
+    {
+      "from": "arn:aws:iam::000000000000:instance-profile/wave1-web-profile",
+      "id": "profile-role:arn:aws:iam::000000000000:instance-profile/wave1-web-profile->arn:aws:iam::000000000000:role/wave1-ops",
+      "kind": "profile-role",
+      "label": "",
+      "to": "arn:aws:iam::000000000000:role/wave1-ops"
+    },
+    {
+      "from": "arn:aws:rds:ap-southeast-2:000000000000:db-proxy:prx-dba5f314ff484958a",
+      "id": "proxy-target:arn:aws:rds:ap-southeast-2:000000000000:db-proxy:prx-dba5f314ff484958a->arn:aws:rds:ap-southeast-2:000000000000:db:wave1-pg",
+      "kind": "proxy-target",
+      "label": "",
+      "to": "arn:aws:rds:ap-southeast-2:000000000000:db:wave1-pg"
+    },
+    {
+      "from": "arn:aws:rds:ap-southeast-2:000000000000:db:wave1-pg-rr",
+      "id": "replica-of:arn:aws:rds:ap-southeast-2:000000000000:db:wave1-pg-rr->arn:aws:rds:ap-southeast-2:000000000000:db:wave1-pg",
+      "kind": "replica-of",
+      "label": "",
+      "to": "arn:aws:rds:ap-southeast-2:000000000000:db:wave1-pg"
+    },
+    {
+      "from": "arn:aws:s3:::wave1-src",
+      "id": "replicates-to:arn:aws:s3:::wave1-src->arn:aws:s3:::wave1-dst",
+      "kind": "replicates-to",
+      "label": "",
+      "to": "arn:aws:s3:::wave1-dst"
+    },
+    {
+      "from": "rtb-5394e655",
+      "id": "route:rtb-5394e655->igw-8a9d8e36:0.0.0.0/0",
+      "kind": "route",
+      "label": "0.0.0.0/0",
+      "to": "igw-8a9d8e36"
+    },
+    {
+      "from": "rtb-5394e655",
+      "id": "route:rtb-5394e655->pcx-d3e890e91e4299b2d:10.81.0.0/16",
+      "kind": "route",
+      "label": "10.81.0.0/16",
+      "to": "pcx-d3e890e91e4299b2d"
+    },
+    {
+      "from": "rtb-default",
+      "id": "route:rtb-default->igw-default:0.0.0.0/0",
+      "kind": "route",
+      "label": "0.0.0.0/0",
+      "to": "igw-default"
+    },
+    {
+      "from": "arn:aws:rds:ap-southeast-2:000000000000:cluster-snapshot:wave1-aurora-snap",
+      "id": "snapshot-of:arn:aws:rds:ap-southeast-2:000000000000:cluster-snapshot:wave1-aurora-snap->arn:aws:rds:ap-southeast-2:000000000000:cluster:wave1-aurora",
+      "kind": "snapshot-of",
+      "label": "",
+      "to": "arn:aws:rds:ap-southeast-2:000000000000:cluster:wave1-aurora"
+    },
+    {
+      "from": "arn:aws:rds:ap-southeast-2:000000000000:snapshot:wave1-pg-snap",
+      "id": "snapshot-of:arn:aws:rds:ap-southeast-2:000000000000:snapshot:wave1-pg-snap->arn:aws:rds:ap-southeast-2:000000000000:db:wave1-pg",
+      "kind": "snapshot-of",
+      "label": "",
+      "to": "arn:aws:rds:ap-southeast-2:000000000000:db:wave1-pg"
+    },
+    {
+      "from": "arn:aws:rds:ap-southeast-2:000000000000:subgrp:wave1-db",
+      "id": "subnet-group-member:arn:aws:rds:ap-southeast-2:000000000000:subgrp:wave1-db->subnet-2b9c9233",
+      "kind": "subnet-group-member",
+      "label": "",
+      "to": "subnet-2b9c9233"
+    },
+    {
+      "from": "arn:aws:rds:ap-southeast-2:000000000000:subgrp:wave1-db",
+      "id": "subnet-group-member:arn:aws:rds:ap-southeast-2:000000000000:subgrp:wave1-db->subnet-4f1dede6",
+      "kind": "subnet-group-member",
+      "label": "",
+      "to": "subnet-4f1dede6"
+    },
+    {
+      "from": "tgw-attach-2fc188cb4468af231",
+      "id": "tgw-attached:tgw-attach-2fc188cb4468af231->tgw-694378cffac133fc8",
+      "kind": "tgw-attached",
+      "label": "",
+      "to": "tgw-694378cffac133fc8"
+    },
+    {
+      "from": "tgw-rtb-91762891d9f9209f7",
+      "id": "tgw-route-table-of:tgw-rtb-91762891d9f9209f7->tgw-694378cffac133fc8",
+      "kind": "tgw-route-table-of",
+      "label": "",
+      "to": "tgw-694378cffac133fc8"
+    },
+    {
+      "from": "tgw-rtb-94e55f216fa9ff145",
+      "id": "tgw-route-table-of:tgw-rtb-94e55f216fa9ff145->tgw-694378cffac133fc8",
+      "kind": "tgw-route-table-of",
+      "label": "",
+      "to": "tgw-694378cffac133fc8"
+    },
+    {
+      "from": "tgw-attach-2fc188cb4468af231",
+      "id": "tgw-subnet:tgw-attach-2fc188cb4468af231->subnet-b7bc84c2",
+      "kind": "tgw-subnet",
+      "label": "",
+      "to": "subnet-b7bc84c2"
+    },
+    {
+      "from": "e9c9b6d0-a862-4051-9e65-a3aba9ac0099",
+      "id": "upload-to:e9c9b6d0-a862-4051-9e65-a3aba9ac0099->arn:aws:s3:::wave1-logs",
+      "kind": "upload-to",
+      "label": "",
+      "to": "arn:aws:s3:::wave1-logs"
+    },
+    {
+      "from": "arn:aws:lambda:ap-southeast-2:000000000000:function:wave1-fn",
+      "id": "uses-layer:arn:aws:lambda:ap-southeast-2:000000000000:function:wave1-fn->arn:aws:lambda:ap-southeast-2:000000000000:layer:wave1-layer",
+      "kind": "uses-layer",
+      "label": "",
+      "to": "arn:aws:lambda:ap-southeast-2:000000000000:layer:wave1-layer"
+    },
+    {
+      "from": "arn:aws:rds:ap-southeast-2:000000000000:db:wave1-pg",
+      "id": "uses-option-group:arn:aws:rds:ap-southeast-2:000000000000:db:wave1-pg->arn:aws:rds:ap-southeast-2:000000000000:og:wave1-og",
+      "kind": "uses-option-group",
+      "label": "",
+      "to": "arn:aws:rds:ap-southeast-2:000000000000:og:wave1-og"
+    },
+    {
+      "from": "arn:aws:rds:ap-southeast-2:000000000000:db:wave1-pg-rr",
+      "id": "uses-option-group:arn:aws:rds:ap-southeast-2:000000000000:db:wave1-pg-rr->arn:aws:rds:ap-southeast-2:000000000000:og:wave1-og",
+      "kind": "uses-option-group",
+      "label": "",
+      "to": "arn:aws:rds:ap-southeast-2:000000000000:og:wave1-og"
+    },
+    {
+      "from": "arn:aws:rds:ap-southeast-2:000000000000:db:wave1-pg",
+      "id": "uses-parameter-group:arn:aws:rds:ap-southeast-2:000000000000:db:wave1-pg->arn:aws:rds:ap-southeast-2:000000000000:pg:wave1-pg16",
+      "kind": "uses-parameter-group",
+      "label": "",
+      "to": "arn:aws:rds:ap-southeast-2:000000000000:pg:wave1-pg16"
+    },
+    {
+      "from": "arn:aws:rds:ap-southeast-2:000000000000:db:wave1-pg-rr",
+      "id": "uses-parameter-group:arn:aws:rds:ap-southeast-2:000000000000:db:wave1-pg-rr->arn:aws:rds:ap-southeast-2:000000000000:pg:wave1-pg16",
+      "kind": "uses-parameter-group",
+      "label": "",
+      "to": "arn:aws:rds:ap-southeast-2:000000000000:pg:wave1-pg16"
+    },
+    {
+      "from": "arn:aws:lambda:ap-southeast-2:000000000000:function:wave1-fn:1",
+      "id": "version-of:arn:aws:lambda:ap-southeast-2:000000000000:function:wave1-fn:1->arn:aws:lambda:ap-southeast-2:000000000000:function:wave1-fn",
+      "kind": "version-of",
+      "label": "",
+      "to": "arn:aws:lambda:ap-southeast-2:000000000000:function:wave1-fn"
+    }
+  ],
+  "emulator": "floci",
+  "nodes": [
+    {
+      "id": "000000000000",
+      "kind": "account",
+      "label": "000000000000",
+      "props": {}
+    },
+    {
+      "id": "acl-3014564bc9c904cad",
+      "kind": "network-acl",
+      "label": "acl-3014564bc9c904cad",
+      "props": {
+        "associations": [
+          "subnet-2b9c9233"
+        ],
+        "entries": [
+          {
+            "action": "allow",
+            "cidr": "0.0.0.0/0",
+            "egress": false,
+            "port_range": null,
+            "protocol": "-1",
+            "rule_number": 100
+          },
+          {
+            "action": "deny",
+            "cidr": "0.0.0.0/0",
+            "egress": false,
+            "port_range": null,
+            "protocol": "-1",
+            "rule_number": 32767
+          },
+          {
+            "action": "allow",
+            "cidr": "0.0.0.0/0",
+            "egress": true,
+            "port_range": null,
+            "protocol": "-1",
+            "rule_number": 100
+          },
+          {
+            "action": "deny",
+            "cidr": "0.0.0.0/0",
+            "egress": true,
+            "port_range": null,
+            "protocol": "-1",
+            "rule_number": 32767
+          }
+        ],
+        "isDefault": true
+      }
+    },
+    {
+      "id": "acl-3048f0353af957cb2",
+      "kind": "network-acl",
+      "label": "acl-3048f0353af957cb2",
+      "props": {
+        "associations": [
+          "subnet-4f1dede6"
+        ],
+        "entries": [
+          {
+            "action": "allow",
+            "cidr": "0.0.0.0/0",
+            "egress": false,
+            "port_range": [
+              443,
+              443
+            ],
+            "protocol": "6",
+            "rule_number": 100
+          },
+          {
+            "action": "deny",
+            "cidr": "0.0.0.0/0",
+            "egress": false,
+            "port_range": [
+              22,
+              22
+            ],
+            "protocol": "6",
+            "rule_number": 110
+          },
+          {
+            "action": "deny",
+            "cidr": "0.0.0.0/0",
+            "egress": false,
+            "port_range": null,
+            "protocol": "-1",
+            "rule_number": 32767
+          },
+          {
+            "action": "allow",
+            "cidr": "0.0.0.0/0",
+            "egress": true,
+            "port_range": null,
+            "protocol": "-1",
+            "rule_number": 100
+          },
+          {
+            "action": "deny",
+            "cidr": "0.0.0.0/0",
+            "egress": true,
+            "port_range": null,
+            "protocol": "-1",
+            "rule_number": 32767
+          }
+        ],
+        "isDefault": false
+      }
+    },
+    {
+      "id": "acl-a6283b9187233a8f2",
+      "kind": "network-acl",
+      "label": "acl-a6283b9187233a8f2",
+      "props": {
+        "associations": [
+          "subnet-b7bc84c2"
+        ],
+        "entries": [
+          {
+            "action": "allow",
+            "cidr": "0.0.0.0/0",
+            "egress": false,
+            "port_range": null,
+            "protocol": "-1",
+            "rule_number": 100
+          },
+          {
+            "action": "deny",
+            "cidr": "0.0.0.0/0",
+            "egress": false,
+            "port_range": null,
+            "protocol": "-1",
+            "rule_number": 32767
+          },
+          {
+            "action": "allow",
+            "cidr": "0.0.0.0/0",
+            "egress": true,
+            "port_range": null,
+            "protocol": "-1",
+            "rule_number": 100
+          },
+          {
+            "action": "deny",
+            "cidr": "0.0.0.0/0",
+            "egress": true,
+            "port_range": null,
+            "protocol": "-1",
+            "rule_number": 32767
+          }
+        ],
+        "isDefault": true
+      }
+    },
+    {
+      "id": "acl-default",
+      "kind": "network-acl",
+      "label": "acl-default",
+      "props": {
+        "associations": [
+          "subnet-default-ap-southeast-2-a",
+          "subnet-default-ap-southeast-2-b",
+          "subnet-default-ap-southeast-2-c"
+        ],
+        "entries": [
+          {
+            "action": "allow",
+            "cidr": "0.0.0.0/0",
+            "egress": false,
+            "port_range": null,
+            "protocol": "-1",
+            "rule_number": 100
+          },
+          {
+            "action": "deny",
+            "cidr": "0.0.0.0/0",
+            "egress": false,
+            "port_range": null,
+            "protocol": "-1",
+            "rule_number": 32767
+          },
+          {
+            "action": "allow",
+            "cidr": "0.0.0.0/0",
+            "egress": true,
+            "port_range": null,
+            "protocol": "-1",
+            "rule_number": 100
+          },
+          {
+            "action": "deny",
+            "cidr": "0.0.0.0/0",
+            "egress": true,
+            "port_range": null,
+            "protocol": "-1",
+            "rule_number": 32767
+          }
+        ],
+        "isDefault": true
+      }
+    },
+    {
+      "id": "ap-southeast-2",
+      "kind": "region",
+      "label": "ap-southeast-2",
+      "props": {}
+    },
+    {
+      "id": "arn:aws:iam::000000000000:group/wave1-devs",
+      "kind": "iam-group",
+      "label": "wave1-devs",
+      "props": {
+        "managedPolicies": [
+          "wave1-read"
+        ],
+        "path": "/"
+      }
+    },
+    {
+      "id": "arn:aws:iam::000000000000:instance-profile/wave1-web-profile",
+      "kind": "iam-instance-profile",
+      "label": "wave1-web-profile",
+      "props": {
+        "roles": [
+          "wave1-ops"
+        ]
+      }
+    },
+    {
+      "id": "arn:aws:iam::000000000000:policy/wave1-read",
+      "kind": "iam-policy",
+      "label": "wave1-read",
+      "props": {
+        "attachments": 2,
+        "awsManaged": false,
+        "defaultVersion": "v1",
+        "statements": [
+          {
+            "Action": "s3:GetObject",
+            "Effect": "Allow",
+            "Resource": "*"
+          }
+        ]
+      }
+    },
+    {
+      "id": "arn:aws:iam::000000000000:role/wave1-lambda-role",
+      "kind": "iam-role",
+      "label": "wave1-lambda-role",
+      "props": {
+        "managedPolicies": [
+          "AWSLambdaBasicExecutionRole"
+        ],
+        "path": "/",
+        "trustedServices": [
+          "lambda.amazonaws.com"
+        ]
+      }
+    },
+    {
+      "id": "arn:aws:iam::000000000000:role/wave1-ops",
+      "kind": "iam-role",
+      "label": "wave1-ops",
+      "props": {
+        "managedPolicies": [
+          "wave1-read"
+        ],
+        "path": "/",
+        "trustedPrincipals": [
+          "arn:aws:iam::000000000000:user/wave1-dev"
+        ]
+      }
+    },
+    {
+      "id": "arn:aws:iam::000000000000:user/wave1-dev",
+      "kind": "iam-user",
+      "label": "wave1-dev",
+      "props": {
+        "groups": [
+          "wave1-devs"
+        ],
+        "path": "/"
+      }
+    },
+    {
+      "id": "arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole",
+      "kind": "iam-policy",
+      "label": "AWSLambdaBasicExecutionRole",
+      "props": {
+        "attachments": 1,
+        "awsManaged": true,
+        "defaultVersion": "v1",
+        "statements": [
+          {
+            "Action": [
+              "logs:CreateLogGroup",
+              "logs:CreateLogStream",
+              "logs:PutLogEvents"
+            ],
+            "Effect": "Allow",
+            "Resource": "*"
+          }
+        ]
+      }
+    },
+    {
+      "id": "arn:aws:lambda:ap-southeast-2:000000000000:function:wave1-fn",
+      "kind": "lambda-function",
+      "label": "wave1-fn",
+      "props": {
+        "architectures": [
+          "x86_64"
+        ],
+        "handler": "lambda_function.lambda_handler",
+        "layers": [
+          "arn:aws:lambda:ap-southeast-2:000000000000:layer:wave1-layer:1"
+        ],
+        "memory": 128,
+        "packageType": "Zip",
+        "role": "arn:aws:iam::000000000000:role/wave1-lambda-role",
+        "runtime": "python3.12",
+        "state": "Active",
+        "timeout": 3
+      }
+    },
+    {
+      "id": "arn:aws:lambda:ap-southeast-2:000000000000:function:wave1-fn:1",
+      "kind": "lambda-version",
+      "label": "wave1-fn:1",
+      "props": {
+        "runtime": "python3.12",
+        "version": "1"
+      }
+    },
+    {
+      "id": "arn:aws:lambda:ap-southeast-2:000000000000:function:wave1-fn:live",
+      "kind": "lambda-alias",
+      "label": "live",
+      "props": {
+        "version": "1"
+      }
+    },
+    {
+      "id": "arn:aws:lambda:ap-southeast-2:000000000000:function:wave1-vpc-fn",
+      "kind": "lambda-function",
+      "label": "wave1-vpc-fn",
+      "props": {
+        "architectures": [
+          "x86_64"
+        ],
+        "handler": "lambda_function.lambda_handler",
+        "memory": 128,
+        "packageType": "Zip",
+        "role": "arn:aws:iam::000000000000:role/wave1-lambda-role",
+        "runtime": "python3.12",
+        "state": "Active",
+        "subnets": [
+          "subnet-4f1dede6"
+        ],
+        "timeout": 3,
+        "vpc": "vpc-03e9e3f9"
+      }
+    },
+    {
+      "id": "arn:aws:lambda:ap-southeast-2:000000000000:layer:wave1-layer",
+      "kind": "lambda-layer",
+      "label": "wave1-layer",
+      "props": {
+        "description": "",
+        "latestVersion": 1,
+        "runtimes": [
+          "python3.12"
+        ]
+      }
+    },
+    {
+      "id": "arn:aws:rds:ap-southeast-2:000000000000:cluster-pg:wave1-aurora-pg16",
+      "kind": "db-cluster-parameter-group",
+      "label": "wave1-aurora-pg16",
+      "props": {
+        "description": "wave1",
+        "family": "aurora-postgresql16"
+      }
+    },
+    {
+      "id": "arn:aws:rds:ap-southeast-2:000000000000:cluster-snapshot:wave1-aurora-snap",
+      "kind": "db-cluster-snapshot",
+      "label": "wave1-aurora-snap",
+      "props": {
+        "cluster": "wave1-aurora",
+        "engine": "aurora-postgresql",
+        "status": "available",
+        "type": "manual"
+      }
+    },
+    {
+      "id": "arn:aws:rds:ap-southeast-2:000000000000:cluster:wave1-aurora",
+      "kind": "db-cluster",
+      "label": "wave1-aurora",
+      "props": {
+        "endpoint": "172.27.0.3",
+        "engine": "aurora-postgresql",
+        "engineVersion": "16.3",
+        "members": [
+          {
+            "instance": "wave1-aurora-1",
+            "writer": true
+          }
+        ],
+        "multiAz": false,
+        "port": 7003,
+        "readerEndpoint": "172.27.0.3",
+        "status": "available"
+      }
+    },
+    {
+      "id": "arn:aws:rds:ap-southeast-2:000000000000:db-proxy:prx-dba5f314ff484958a",
+      "kind": "db-proxy",
+      "label": "wave1-proxy",
+      "props": {
+        "endpoint": "172.27.0.3",
+        "engineFamily": "POSTGRESQL",
+        "requireTls": false,
+        "status": "available",
+        "subnets": [
+          "subnet-2b9c9233",
+          "subnet-4f1dede6"
+        ],
+        "targets": [
+          {
+            "health": "AVAILABLE",
+            "resource": "wave1-pg",
+            "type": "RDS_INSTANCE"
+          }
+        ]
+      }
+    },
+    {
+      "id": "arn:aws:rds:ap-southeast-2:000000000000:db:wave1-aurora-1",
+      "kind": "db-instance",
+      "label": "wave1-aurora-1",
+      "props": {
+        "az": "ap-southeast-2b",
+        "backupRetention": 1,
+        "endpoint": "172.27.0.3",
+        "engine": "aurora-postgresql",
+        "engineVersion": "16.3",
+        "instanceClass": "db.t3.medium",
+        "multiAz": false,
+        "port": 7004,
+        "publiclyAccessible": false,
+        "status": "available",
+        "storage": 20
+      }
+    },
+    {
+      "id": "arn:aws:rds:ap-southeast-2:000000000000:db:wave1-pg",
+      "kind": "db-instance",
+      "label": "wave1-pg",
+      "props": {
+        "az": "ap-southeast-2b",
+        "backupRetention": 1,
+        "endpoint": "172.27.0.3",
+        "engine": "postgres",
+        "engineVersion": "16.3",
+        "instanceClass": "db.t3.micro",
+        "multiAz": true,
+        "port": 7001,
+        "publiclyAccessible": false,
+        "replicas": [
+          "wave1-pg-rr"
+        ],
+        "status": "available",
+        "storage": 20
+      }
+    },
+    {
+      "id": "arn:aws:rds:ap-southeast-2:000000000000:db:wave1-pg-rr",
+      "kind": "db-instance",
+      "label": "wave1-pg-rr",
+      "props": {
+        "az": "ap-southeast-2b",
+        "backupRetention": 0,
+        "endpoint": "172.27.0.3",
+        "engine": "postgres",
+        "engineVersion": "16.3",
+        "instanceClass": "db.t3.micro",
+        "multiAz": false,
+        "port": 7002,
+        "publiclyAccessible": false,
+        "replicaOf": "wave1-pg",
+        "status": "available",
+        "storage": 20
+      }
+    },
+    {
+      "id": "arn:aws:rds:ap-southeast-2:000000000000:og:wave1-og",
+      "kind": "db-option-group",
+      "label": "wave1-og",
+      "props": {
+        "engine": "postgres",
+        "majorVersion": "16"
+      }
+    },
+    {
+      "id": "arn:aws:rds:ap-southeast-2:000000000000:pg:wave1-pg16",
+      "kind": "db-parameter-group",
+      "label": "wave1-pg16",
+      "props": {
+        "description": "wave1",
+        "family": "postgres16"
+      }
+    },
+    {
+      "id": "arn:aws:rds:ap-southeast-2:000000000000:snapshot:wave1-pg-snap",
+      "kind": "db-snapshot",
+      "label": "wave1-pg-snap",
+      "props": {
+        "engine": "postgres",
+        "instance": "wave1-pg",
+        "status": "available",
+        "storage": 20,
+        "type": "manual"
+      }
+    },
+    {
+      "id": "arn:aws:rds:ap-southeast-2:000000000000:subgrp:wave1-db",
+      "kind": "db-subnet-group",
+      "label": "wave1-db",
+      "props": {
+        "azs": [
+          "ap-southeast-2a",
+          "ap-southeast-2b"
+        ],
+        "description": "wave1",
+        "status": "Complete",
+        "subnets": [
+          "subnet-2b9c9233",
+          "subnet-4f1dede6"
+        ]
+      }
+    },
+    {
+      "id": "arn:aws:s3:::wave1-dst",
+      "kind": "s3-bucket",
+      "label": "wave1-dst",
+      "props": {
+        "encryption": "AES256",
+        "hasPolicy": false,
+        "lifecycleRules": 0,
+        "notifications": 0,
+        "objects": 0,
+        "objectsTruncated": false,
+        "publicAccessBlock": {
+          "BlockPublicAcls": true,
+          "BlockPublicPolicy": true,
+          "IgnorePublicAcls": true,
+          "RestrictPublicBuckets": true
+        },
+        "versioning": "Enabled"
+      }
+    },
+    {
+      "id": "arn:aws:s3:::wave1-logs",
+      "kind": "s3-bucket",
+      "label": "wave1-logs",
+      "props": {
+        "encryption": "AES256",
+        "hasPolicy": false,
+        "lifecycle": [
+          {
+            "abortIncompleteDays": 7,
+            "expirationDays": 30,
+            "id": "expire",
+            "prefix": "tmp/",
+            "status": "Enabled",
+            "transitions": null
+          }
+        ],
+        "lifecycleRules": 1,
+        "notifications": 0,
+        "objects": 3,
+        "objectsTruncated": false,
+        "publicAccessBlock": {
+          "BlockPublicAcls": true,
+          "BlockPublicPolicy": true,
+          "IgnorePublicAcls": true,
+          "RestrictPublicBuckets": true
+        },
+        "versioning": "Enabled"
+      }
+    },
+    {
+      "id": "arn:aws:s3:::wave1-site",
+      "kind": "s3-bucket",
+      "label": "wave1-site",
+      "props": {
+        "encryption": "AES256",
+        "hasPolicy": true,
+        "lifecycleRules": 0,
+        "notifications": 0,
+        "objects": 0,
+        "objectsTruncated": false,
+        "publicAccessBlock": {
+          "BlockPublicAcls": true,
+          "BlockPublicPolicy": true,
+          "IgnorePublicAcls": true,
+          "RestrictPublicBuckets": true
+        },
+        "versioning": "Disabled",
+        "website": {
+          "error": null,
+          "index": "index.html",
+          "redirect": null
+        }
+      }
+    },
+    {
+      "id": "arn:aws:s3:::wave1-src",
+      "kind": "s3-bucket",
+      "label": "wave1-src",
+      "props": {
+        "encryption": "AES256",
+        "hasPolicy": false,
+        "lifecycleRules": 0,
+        "notifications": 1,
+        "objects": 0,
+        "objectsTruncated": false,
+        "publicAccessBlock": {
+          "BlockPublicAcls": true,
+          "BlockPublicPolicy": true,
+          "IgnorePublicAcls": true,
+          "RestrictPublicBuckets": true
+        },
+        "replication": [
+          {
+            "destination": "arn:aws:s3:::wave1-dst",
+            "id": "all",
+            "status": "Enabled",
+            "storageClass": null
+          }
+        ],
+        "versioning": "Enabled"
+      }
+    },
+    {
+      "id": "e9c9b6d0-a862-4051-9e65-a3aba9ac0099",
+      "kind": "s3-multipart-upload",
+      "label": "tmp/big.bin",
+      "props": {
+        "initiated": "2026-10-31 14:41:12+00:00",
+        "key": "tmp/big.bin"
+      }
+    },
+    {
+      "id": "eni-afbe03abb99391253",
+      "kind": "network-interface",
+      "label": "wave1-eni",
+      "props": {
+        "privateIp": "10.80.2.10",
+        "status": "available",
+        "type": "interface"
+      }
+    },
+    {
+      "id": "fl-77c5d028459bcbdff",
+      "kind": "flow-log",
+      "label": "fl-77c5d028459bcbdff",
+      "props": {
+        "destination": "arn:aws:s3:::wave1-logs",
+        "destinationType": "s3",
+        "status": "ACTIVE",
+        "trafficType": "REJECT"
+      }
+    },
+    {
+      "id": "global",
+      "kind": "global",
+      "label": "global",
+      "props": {}
+    },
+    {
+      "id": "i-ebd18d4a95b4c15f4",
+      "kind": "instance",
+      "label": "wave1-web-1",
+      "props": {
+        "imageId": "ami-0abcdef1234567890",
+        "instanceType": "t3.micro",
+        "privateIp": "10.80.1.10",
+        "state": "running"
+      }
+    },
+    {
+      "id": "igw-8a9d8e36",
+      "kind": "igw",
+      "label": "wave1-igw",
+      "props": {
+        "attachedVpc": "vpc-03e9e3f9"
+      }
+    },
+    {
+      "id": "igw-default",
+      "kind": "igw",
+      "label": "igw-default",
+      "props": {
+        "attachedVpc": "vpc-default-ap-southeast-2"
+      }
+    },
+    {
+      "id": "lt-c812f7451d6cc16ed",
+      "kind": "launch-template",
+      "label": "wave1-lt",
+      "props": {
+        "defaultVersion": 1,
+        "latestVersion": 1
+      }
+    },
+    {
+      "id": "pcx-d3e890e91e4299b2d",
+      "kind": "vpc-peering",
+      "label": "wave1-peering",
+      "props": {
+        "accepterCidr": "10.81.0.0/16",
+        "accepterRegion": "ap-southeast-2",
+        "accepterVpc": "vpc-29250840",
+        "requesterCidr": "10.80.0.0/16",
+        "requesterVpc": "vpc-03e9e3f9",
+        "status": "active"
+      }
+    },
+    {
+      "id": "pl-403ec40bdb5e527f2",
+      "kind": "prefix-list",
+      "label": "wave1-office",
+      "props": {
+        "addressFamily": "IPv4",
+        "cidrs": [
+          "203.0.113.0/24"
+        ],
+        "maxEntries": 5
+      }
+    },
+    {
+      "id": "rtb-5394e655",
+      "kind": "route-table",
+      "label": "wave1-public-rt",
+      "props": {
+        "associations": [
+          {
+            "main": false,
+            "subnet": "subnet-2b9c9233"
+          }
+        ],
+        "routes": [
+          {
+            "destination": "0.0.0.0/0",
+            "state": "active",
+            "target": "igw-8a9d8e36"
+          },
+          {
+            "destination": "10.80.0.0/16",
+            "state": "active",
+            "target": "local"
+          },
+          {
+            "destination": "10.81.0.0/16",
+            "state": "active",
+            "target": "pcx-d3e890e91e4299b2d"
+          }
+        ]
+      }
+    },
+    {
+      "id": "rtb-6d078619c8d3b6df5",
+      "kind": "route-table",
+      "label": "rtb-6d078619c8d3b6df5",
+      "props": {
+        "associations": [
+          {
+            "main": true,
+            "subnet": null
+          }
+        ],
+        "main": true,
+        "routes": [
+          {
+            "destination": "10.80.0.0/16",
+            "state": "active",
+            "target": "local"
+          }
+        ]
+      }
+    },
+    {
+      "id": "rtb-944fdcaad287b433a",
+      "kind": "route-table",
+      "label": "rtb-944fdcaad287b433a",
+      "props": {
+        "associations": [
+          {
+            "main": true,
+            "subnet": null
+          }
+        ],
+        "main": true,
+        "routes": [
+          {
+            "destination": "10.81.0.0/16",
+            "state": "active",
+            "target": "local"
+          }
+        ]
+      }
+    },
+    {
+      "id": "rtb-default",
+      "kind": "route-table",
+      "label": "rtb-default",
+      "props": {
+        "associations": [
+          {
+            "main": true,
+            "subnet": null
+          }
+        ],
+        "main": true,
+        "routes": [
+          {
+            "destination": "0.0.0.0/0",
+            "state": "active",
+            "target": "igw-default"
+          },
+          {
+            "destination": "172.31.0.0/16",
+            "state": "active",
+            "target": "local"
+          }
+        ]
+      }
+    },
+    {
+      "id": "sg-16d87565cacd7efa0",
+      "kind": "security-group",
+      "label": "wave1-web",
+      "props": {
+        "egress": [
+          {
+            "from": null,
+            "protocol": "-1",
+            "sources": [
+              "0.0.0.0/0"
+            ],
+            "to": null
+          },
+          {
+            "from": 5432,
+            "protocol": "tcp",
+            "sources": [
+              "sg-5271729b7a5ffc3e2"
+            ],
+            "to": 5432
+          }
+        ],
+        "groupName": "wave1-web",
+        "ingress": [
+          {
+            "from": 22,
+            "protocol": "tcp",
+            "sources": [
+              "pl-403ec40bdb5e527f2"
+            ],
+            "to": 22
+          },
+          {
+            "from": 443,
+            "protocol": "tcp",
+            "sources": [
+              "0.0.0.0/0"
+            ],
+            "to": 443
+          }
+        ]
+      }
+    },
+    {
+      "id": "sg-2559a8642555f05e7",
+      "kind": "security-group",
+      "label": "default",
+      "props": {
+        "egress": [
+          {
+            "from": null,
+            "protocol": "-1",
+            "sources": [
+              "0.0.0.0/0"
+            ],
+            "to": null
+          }
+        ],
+        "groupName": "default"
+      }
+    },
+    {
+      "id": "sg-5271729b7a5ffc3e2",
+      "kind": "security-group",
+      "label": "wave1-app",
+      "props": {
+        "egress": [
+          {
+            "from": null,
+            "protocol": "-1",
+            "sources": [
+              "0.0.0.0/0"
+            ],
+            "to": null
+          }
+        ],
+        "groupName": "wave1-app",
+        "ingress": [
+          {
+            "from": 5432,
+            "protocol": "tcp",
+            "sources": [
+              "sg-16d87565cacd7efa0"
+            ],
+            "to": 5432
+          }
+        ]
+      }
+    },
+    {
+      "id": "sg-cc2f2105a40fceb16",
+      "kind": "security-group",
+      "label": "default",
+      "props": {
+        "egress": [
+          {
+            "from": null,
+            "protocol": "-1",
+            "sources": [
+              "0.0.0.0/0"
+            ],
+            "to": null
+          }
+        ],
+        "groupName": "default"
+      }
+    },
+    {
+      "id": "sg-default-ap-southeast-2",
+      "kind": "security-group",
+      "label": "default",
+      "props": {
+        "egress": [
+          {
+            "from": null,
+            "protocol": "-1",
+            "sources": [
+              "0.0.0.0/0"
+            ],
+            "to": null
+          }
+        ],
+        "groupName": "default"
+      }
+    },
+    {
+      "id": "subnet-2b9c9233",
+      "kind": "subnet-public",
+      "label": "wave1-a1",
+      "props": {
+        "az": "ap-southeast-2a",
+        "cidr": "10.80.1.0/24",
+        "mapPublicIpOnLaunch": false
+      }
+    },
+    {
+      "id": "subnet-4f1dede6",
+      "kind": "subnet-private",
+      "label": "wave1-a2",
+      "props": {
+        "az": "ap-southeast-2b",
+        "cidr": "10.80.2.0/24",
+        "mapPublicIpOnLaunch": false
+      }
+    },
+    {
+      "id": "subnet-b7bc84c2",
+      "kind": "subnet-private",
+      "label": "wave1-b1",
+      "props": {
+        "az": "ap-southeast-2a",
+        "cidr": "10.81.1.0/24",
+        "mapPublicIpOnLaunch": false
+      }
+    },
+    {
+      "id": "subnet-default-ap-southeast-2-a",
+      "kind": "subnet-public",
+      "label": "subnet-default-ap-southeast-2-a",
+      "props": {
+        "az": "ap-southeast-2a",
+        "cidr": "172.31.0.0/20",
+        "mapPublicIpOnLaunch": true
+      }
+    },
+    {
+      "id": "subnet-default-ap-southeast-2-b",
+      "kind": "subnet-public",
+      "label": "subnet-default-ap-southeast-2-b",
+      "props": {
+        "az": "ap-southeast-2b",
+        "cidr": "172.31.16.0/20",
+        "mapPublicIpOnLaunch": true
+      }
+    },
+    {
+      "id": "subnet-default-ap-southeast-2-c",
+      "kind": "subnet-public",
+      "label": "subnet-default-ap-southeast-2-c",
+      "props": {
+        "az": "ap-southeast-2c",
+        "cidr": "172.31.32.0/20",
+        "mapPublicIpOnLaunch": true
+      }
+    },
+    {
+      "id": "tgw-694378cffac133fc8",
+      "kind": "transit-gateway",
+      "label": "wave1-tgw",
+      "props": {
+        "asn": 64512,
+        "defaultRouteTable": "tgw-rtb-91762891d9f9209f7",
+        "state": "available"
+      }
+    },
+    {
+      "id": "tgw-attach-2fc188cb4468af231",
+      "kind": "tgw-attachment",
+      "label": "wave1-tgw-b",
+      "props": {
+        "routeTable": "tgw-rtb-91762891d9f9209f7",
+        "state": "available",
+        "subnets": [
+          "subnet-b7bc84c2"
+        ]
+      }
+    },
+    {
+      "id": "tgw-rtb-91762891d9f9209f7",
+      "kind": "tgw-route-table",
+      "label": "tgw-rtb-91762891d9f9209f7",
+      "props": {
+        "defaultAssociation": true,
+        "state": "available"
+      }
+    },
+    {
+      "id": "tgw-rtb-94e55f216fa9ff145",
+      "kind": "tgw-route-table",
+      "label": "wave1-tgw-rt",
+      "props": {
+        "defaultAssociation": false,
+        "state": "available"
+      }
+    },
+    {
+      "id": "vol-0c91018448f66eb6a",
+      "kind": "ebs-volume",
+      "label": "wave1-spare",
+      "props": {
+        "az": "ap-southeast-2b",
+        "encrypted": false,
+        "size": 4,
+        "state": "available",
+        "volumeType": "gp2"
+      }
+    },
+    {
+      "id": "vol-b09fc864be62d0919",
+      "kind": "ebs-volume",
+      "label": "wave1-data",
+      "props": {
+        "az": "ap-southeast-2a",
+        "device": "/dev/sdf",
+        "encrypted": false,
+        "size": 8,
+        "state": "in-use",
+        "volumeType": "gp2"
+      }
+    },
+    {
+      "id": "vpc-03e9e3f9",
+      "kind": "vpc",
+      "label": "wave1-a",
+      "props": {
+        "cidr": "10.80.0.0/16",
+        "enableDnsHostnames": false
+      }
+    },
+    {
+      "id": "vpc-03e9e3f9/ap-southeast-2a",
+      "kind": "az",
+      "label": "ap-southeast-2a",
+      "props": {}
+    },
+    {
+      "id": "vpc-03e9e3f9/ap-southeast-2b",
+      "kind": "az",
+      "label": "ap-southeast-2b",
+      "props": {}
+    },
+    {
+      "id": "vpc-29250840",
+      "kind": "vpc",
+      "label": "wave1-b",
+      "props": {
+        "cidr": "10.81.0.0/16",
+        "enableDnsHostnames": false
+      }
+    },
+    {
+      "id": "vpc-29250840/ap-southeast-2a",
+      "kind": "az",
+      "label": "ap-southeast-2a",
+      "props": {}
+    },
+    {
+      "id": "vpc-default-ap-southeast-2",
+      "kind": "vpc",
+      "label": "vpc-default-ap-southeast-2",
+      "props": {
+        "cidr": "172.31.0.0/16",
+        "enableDnsHostnames": false,
+        "isDefault": true
+      }
+    },
+    {
+      "id": "vpc-default-ap-southeast-2/ap-southeast-2a",
+      "kind": "az",
+      "label": "ap-southeast-2a",
+      "props": {}
+    },
+    {
+      "id": "vpc-default-ap-southeast-2/ap-southeast-2b",
+      "kind": "az",
+      "label": "ap-southeast-2b",
+      "props": {}
+    },
+    {
+      "id": "vpc-default-ap-southeast-2/ap-southeast-2c",
+      "kind": "az",
+      "label": "ap-southeast-2c",
+      "props": {}
+    },
+    {
+      "id": "vpce-479cfb7293de52075",
+      "kind": "vpc-endpoint",
+      "label": "wave1-s3-endpoint",
+      "props": {
+        "routeTables": [
+          "rtb-5394e655"
+        ],
+        "serviceName": "com.amazonaws.ap-southeast-2.s3",
+        "state": "available",
+        "type": "Gateway"
+      }
+    },
+    {
+      "id": "vpce-db941ac67c6e58118",
+      "kind": "vpc-endpoint",
+      "label": "wave1-sqs-endpoint",
+      "props": {
+        "serviceName": "com.amazonaws.ap-southeast-2.sqs",
+        "state": "available",
+        "subnets": [
+          "subnet-4f1dede6"
+        ],
+        "type": "Interface"
+      }
+    }
+  ],
+  "status": "ok",
+  "takenAt": "2026-11-01T00:00:00Z",
+  "version": 0,
+  "warnings": []
+}

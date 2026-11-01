@@ -11,9 +11,11 @@ from cloudy_labs.server.hub import GraphHub
 def graph(*vpcs: str) -> ResourceGraph:
     return ResourceGraph.model_validate({
         "takenAt": f"2026-10-29T00:00:{time.time() % 60:09.6f}Z",  # differs every time; must not count as a change
-        "nodes": [{"id": "us-east-1", "kind": "region", "label": "us-east-1"}]
+        "nodes": [{"id": "000000000000", "kind": "account", "label": "000000000000"},
+                  {"id": "ap-southeast-2", "kind": "region", "label": "ap-southeast-2"}]
         + [{"id": v, "kind": "vpc", "label": v} for v in vpcs],
-        "contains": [{"parent": "us-east-1", "child": v} for v in vpcs],
+        "contains": [{"parent": "000000000000", "child": "ap-southeast-2"}]
+        + [{"parent": "ap-southeast-2", "child": v} for v in vpcs],
         "edges": [],
     })
 
@@ -118,7 +120,7 @@ def test_only_changed_graphs_are_published_and_versioned():
     assert [m["graph"]["version"] for m in first] == [1]
     assert unchanged == []
     assert [m["graph"]["version"] for m in changed] == [2]
-    assert [n["id"] for n in changed[0]["graph"]["nodes"]] == ["us-east-1", "vpc-1"]
+    assert [n["id"] for n in changed[0]["graph"]["nodes"]] == ["000000000000", "ap-southeast-2", "vpc-1"]
 
 
 def test_failing_collector_publishes_emulator_down_once_then_recovers():
@@ -254,3 +256,22 @@ def test_new_browser_gets_the_graph_then_the_twin():
         return messages
 
     assert [m["type"] for m in run(main())] == ["graph", "twin"]
+
+
+def test_the_hub_remembers_the_kinds_its_graphs_showed_and_writes_named():
+    from cloudy_labs.server.tap_listener import TapListener
+
+    async def main():
+        collector = FakeCollector()
+        collector.vpcs = ["vpc-1"]
+        hub = GraphHub(collector, poll=60)
+        await hub.start()
+        collector.down = True
+        await hub.refresh()  # an emulator-down graph forgets nothing
+        TapListener(hub).handle({"service": "ec2", "action": "CreateKeyPair", "write": True})
+        TapListener(hub).handle({"service": "ec2", "action": "DescribeInstances", "write": False})
+        await hub.stop()
+        return hub.seen_kinds
+
+    seen = run(main())
+    assert {"vpc", "region", "key-pair"} <= seen and "instance" not in seen

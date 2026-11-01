@@ -1,0 +1,29 @@
+{
+  "calls": [
+    {
+      "params": {
+        "AccountId": "000000000000"
+      },
+      "response": {
+        "Budgets": [
+          {
+            "BudgetLimit": {
+              "Amount": "50",
+              "Unit": "USD"
+            },
+            "BudgetName": "w3-monthly",
+            "BudgetType": "COST",
+            "CalculatedSpend": {
+              "ActualSpend": {
+                "Amount": "0",
+                "Unit": "USD"
+              }
+            },
+            "LastUpdatedTime": "2026-10-31 23:25:12+07:00",
+            "TimeUnit": "MONTHLY"
+          }
+        ]
+      }
+    }
+  ]
+}

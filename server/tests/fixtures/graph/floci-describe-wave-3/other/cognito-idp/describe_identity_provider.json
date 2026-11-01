@@ -1,0 +1,29 @@
+{
+  "calls": [
+    {
+      "params": {
+        "ProviderName": "w3-oidc",
+        "UserPoolId": "ap-southeast-2_52b1a1ca3"
+      },
+      "response": {
+        "IdentityProvider": {
+          "AttributeMapping": {
+            "email": "email"
+          },
+          "CreationDate": "2026-10-31 23:25:12+07:00",
+          "IdpIdentifiers": [],
+          "LastModifiedDate": "2026-10-31 23:25:12+07:00",
+          "ProviderDetails": {
+            "attributes_request_method": "GET",
+            "authorize_scopes": "openid email",
+            "client_id": "dummy-client",
+            "oidc_issuer": "https://issuer.example.com"
+          },
+          "ProviderName": "w3-oidc",
+          "ProviderType": "OIDC",
+          "UserPoolId": "ap-southeast-2_52b1a1ca3"
+        }
+      }
+    }
+  ]
+}

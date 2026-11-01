@@ -1,0 +1,72 @@
+# AWS Organizations: global, drawn under the global group. Every Organizations call except the
+# handshake list fails while the account is in no organization, so the organization is read through
+# ListHandshakesForAccount (one item for the whole answer) and DescribeOrganization/ListRoots
+# enrich it: without an organization the enrichment fails quietly and the item has no id.
+# OUs and accounts are listed per organization; only OUs directly under the root are listed.
+# Accounts are never read with their email address.
+
+- kind: organization
+  service: organizations
+  label: AWS Organization
+  scope: global
+  list: {method: list_handshakes_for_account, items: "[@]", paginate: false}
+  enrich:
+    - {method: describe_organization, pick: Organization, merge_as: _Org}
+    - {method: list_roots, pick: "Roots[0]", merge_as: _Root}
+  # The root id: what ListOrganizationalUnitsForParent and ListParents name as the parent.
+  id: "_Org && _Root.Id"
+  name: [_Org.Id]
+  parent: [{kind: global}]
+  props:
+    organizationId: _Org.Id
+    arn: _Org.Arn
+    featureSet: _Org.FeatureSet
+    managementAccount: _Org.MasterAccountId
+    rootId: _Root.Id
+    policyTypes: "_Root.PolicyTypes[].{type: Type, status: Status}"
+  chat_props: [organizationId, arn, featureSet, managementAccount, rootId, policyTypes]
+  caveats:
+    - {code: organizations-accounts-instant, text: "Floci 2.3.0 finishes CreateAccount at once (state SUCCEEDED) with no real account behind it: nothing can be created in the member account."}
+  view: {role: block, category: management, icon: Arch_AWS-Organizations_48.svg, source: Architecture-Service-Icons_07312026/Arch_Management-Tools/48/Arch_AWS-Organizations_48.svg, height: 0.4, order: 712, actions: [Organization, Root, PolicyType]}
+
+- kind: organizational-unit
+  service: organizations
+  label: Organizational Unit
+  scope: global
+  list: {method: list_organizational_units_for_parent, items: OrganizationalUnits, scope: {parent_kind: organization, param: ParentId, field: "_Org && _Root.Id"}}
+  id: Arn
+  name: [Name, Id]
+  parent: [{kind: global}]
+  props:
+    ouId: Id
+    parentId: _Parent
+  chat_props: [ouId, parentId]
+  edges:
+    - {kind: member-of, target: _Parent, to: organization, style: reference}
+  view: {role: block, category: management, icon: Res_AWS-Organizations_Organizational-Unit_48.svg, source: Resource-Icons_07312026/Res_Management-Governance/Res_AWS-Organizations_Organizational-Unit_48.svg, height: 0.3, order: 713, actions: [OrganizationalUnit]}
+
+- kind: org-account
+  service: organizations
+  label: Organization Account
+  scope: global
+  # ListAccounts takes no parent: the scope only makes it run once, and only when an organization exists.
+  list: {method: list_accounts, items: Accounts, scope: {parent_kind: organization, param: MaxResults, field: "_Org && _Root && `20`"}}
+  enrich:
+    - {method: list_parents, params: {ChildId: Id}, pick: "Parents[0]", merge_as: _ParentRef}
+  id: Arn
+  name: [Name, Id]
+  parent: [{kind: global}]
+  props:
+    accountId: Id
+    status: Status
+    state: State
+    joinedMethod: JoinedMethod
+    parentId: _ParentRef.Id
+    parentType: _ParentRef.Type
+  chat_props: [accountId, status, state, joinedMethod, parentId, parentType]
+  edges:
+    - {kind: member-of, target: _ParentRef.Id, match: Id, to: organizational-unit, style: reference}
+    - {kind: member-of, target: _ParentRef.Id, to: organization, style: reference}
+  caveats:
+    - {code: organizations-accounts-instant, text: "Floci 2.3.0 finishes CreateAccount at once (state SUCCEEDED) with no real account behind it: nothing can be created in the member account."}
+  view: {role: block, category: management, icon: Res_AWS-Organizations_Account_48.svg, source: Resource-Icons_07312026/Res_Management-Governance/Res_AWS-Organizations_Account_48.svg, height: 0.3, order: 714, actions: [Account, CreateAccountStatus]}

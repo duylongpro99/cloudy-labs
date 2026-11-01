@@ -1,0 +1,218 @@
+# AWS IAM: global, drawn once under the global group. GetAccountAuthorizationDetails answers
+# users, groups, roles and policies with their attachments in one paginated call per kind.
+# The builder's own user (cloudy-labs-admin) is protected: never listed, never offered.
+
+- kind: iam-role
+  service: iam
+  label: IAM Role
+  scope: global
+  list: {method: get_account_authorization_details, items: RoleDetailList, params: {Filter: [Role]}}
+  filter: {path: "starts_with(Path, '/aws-service-role/')", not_in: [true]}  # made by AWS for its services
+  id: Arn
+  name: [RoleName]
+  parent: [{kind: global}]
+  props:
+    path: Path
+    trustedServices: "AssumeRolePolicyDocument.Statement[?Effect=='Allow'].Principal.Service | []"
+    trustedPrincipals: "AssumeRolePolicyDocument.Statement[?Effect=='Allow'].Principal.AWS | []"
+    managedPolicies: "AttachedManagedPolicies[].PolicyName"
+    inlinePolicies: "RolePolicyList[].PolicyName"
+    maxSessionDuration: MaxSessionDuration
+  chat_props: [path, trustedServices, trustedPrincipals, managedPolicies, inlinePolicies, maxSessionDuration]
+  edges:
+    - {kind: attached-policy, target: "AttachedManagedPolicies[].PolicyArn", to: iam-policy, style: reference}
+    - {kind: assume-role, target: "AssumeRolePolicyDocument.Statement[?Effect=='Allow'].Principal.AWS | []", to: [iam-user, iam-role], reverse: true, style: reference}
+  caveats:
+    - {code: iam-not-enforced, text: "Floci 2.3.0 stores IAM policies but does not enforce them: a call the policy denies still succeeds. Check the policy, not the call."}
+  builder: true
+  view: {role: block, category: security, icon: Res_AWS-Identity-Access-Management_Role_48.svg, source: Resource-Icons_07312026/Res_Security-Identity/Res_AWS-Identity-Access-Management_Role_48.svg, height: 0.4, order: 100, actions: [Role]}
+  contract:
+    create: {op: create-role, params: {RoleName: ct-role, AssumeRolePolicyDocument: '{"Version": "2012-10-17", "Statement": [{"Effect": "Allow", "Principal": {"Service": "ec2.amazonaws.com"}, "Action": "sts:AssumeRole"}]}'}, save: role}
+    then:
+      - {op: attach-role-policy, params: {RoleName: ct-role, PolicyArn: "arn:aws:iam::aws:policy/ReadOnlyAccess"}}
+  ops:
+    - id: create-role
+      api: CreateRole
+      gesture: create
+      title: "Tạo IAM role"
+      fields: [RoleName, {name: AssumeRolePolicyDocument, multiline: true}, Description]
+      defaults: {AssumeRolePolicyDocument: '{"Version": "2012-10-17", "Statement": [{"Effect": "Allow", "Principal": {"Service": "lambda.amazonaws.com"}, "Action": "sts:AssumeRole"}]}'}
+      result_id: Role.Arn
+      expect: {label: RoleName}
+      note: "Create a role. The trust policy says who may assume it: a service (lambda.amazonaws.com, ec2.amazonaws.com) or a user or role ARN."
+    - id: attach-role-policy
+      api: AttachRolePolicy
+      gesture: connect
+      title: "Gắn policy vào role"
+      fields: [{name: RoleName, ref: iam-role, ref_by: label}, {name: PolicyArn, placeholder: "arn:aws:iam::aws:policy/ReadOnlyAccess"}]
+      source: iam-role
+      source_param: RoleName
+      targets: [iam-policy]
+      target_param: PolicyArn
+      note: "Attach a managed policy: your own or an AWS one such as arn:aws:iam::aws:policy/ReadOnlyAccess."
+    - id: put-role-policy
+      api: PutRolePolicy
+      gesture: attribute
+      title: "Thêm inline policy cho role"
+      fields: [{name: RoleName, ref: iam-role, ref_by: label}, PolicyName, {name: PolicyDocument, multiline: true}]
+      targets: [iam-role]
+      target_param: RoleName
+      note: "An inline policy lives and dies with the role."
+
+- kind: iam-user
+  service: iam
+  label: IAM User
+  scope: global
+  list: {method: get_account_authorization_details, items: UserDetailList, params: {Filter: [User]}}
+  protected: "UserName == 'cloudy-labs-admin'"
+  id: Arn
+  name: [UserName]
+  parent: [{kind: global}]
+  props:
+    path: Path
+    groups: "GroupList && sort(GroupList)"
+    managedPolicies: "AttachedManagedPolicies[].PolicyName"
+    inlinePolicies: "UserPolicyList[].PolicyName"
+  chat_props: [path, groups, managedPolicies, inlinePolicies]
+  edges:
+    - {kind: member-of, target: GroupList, match: GroupName, to: iam-group, style: reference}
+    - {kind: attached-policy, target: "AttachedManagedPolicies[].PolicyArn", to: iam-policy, style: reference}
+  builder: true
+  view: {role: block, category: security, icon: Res_User_48_Light.svg, source: Resource-Icons_07312026/Res_General-Icons/Res_48_Light/Res_User_48_Light.svg, height: 0.4, order: 101, actions: [User]}
+  contract:
+    create: {op: create-user, params: {UserName: ct-user}, save: user}
+  ops:
+    - id: create-user
+      api: CreateUser
+      gesture: create
+      title: "Tạo IAM user"
+      fields: [UserName, Path]
+      result_id: User.Arn
+      expect: {label: UserName}
+      note: "Create a user: a long-lived identity for a person or a program."
+    - id: attach-user-policy
+      api: AttachUserPolicy
+      gesture: connect
+      title: "Gắn policy vào user"
+      fields: [{name: UserName, ref: iam-user, ref_by: label}, {name: PolicyArn, placeholder: "arn:aws:iam::aws:policy/ReadOnlyAccess"}]
+      source: iam-user
+      source_param: UserName
+      targets: [iam-policy]
+      target_param: PolicyArn
+      note: "Attach a managed policy straight to a user; a group is usually easier to manage."
+    - id: add-user-to-group
+      api: AddUserToGroup
+      gesture: connect
+      title: "Thêm user vào group"
+      fields: [{name: UserName, ref: iam-user, ref_by: label}, {name: GroupName, ref: iam-group, ref_by: label}]
+      source: iam-user
+      source_param: UserName
+      targets: [iam-group]
+      target_param: GroupName
+      note: "The user gets every policy of the group."
+
+- kind: iam-group
+  service: iam
+  label: IAM Group
+  scope: global
+  list: {method: get_account_authorization_details, items: GroupDetailList, params: {Filter: [Group]}}
+  id: Arn
+  name: [GroupName]
+  parent: [{kind: global}]
+  props:
+    path: Path
+    managedPolicies: "AttachedManagedPolicies[].PolicyName"
+    inlinePolicies: "GroupPolicyList[].PolicyName"
+  chat_props: [path, managedPolicies, inlinePolicies]
+  edges:
+    - {kind: attached-policy, target: "AttachedManagedPolicies[].PolicyArn", to: iam-policy, style: reference}
+  builder: true
+  view: {role: block, category: security, icon: Res_Users_48_Light.svg, source: Resource-Icons_07312026/Res_General-Icons/Res_48_Light/Res_Users_48_Light.svg, height: 0.4, order: 102, actions: [Group]}
+  contract:
+    create: {op: create-group, params: {GroupName: ct-group}, save: group}
+  ops:
+    - id: create-group
+      api: CreateGroup
+      gesture: create
+      title: "Tạo IAM group"
+      fields: [GroupName, Path]
+      result_id: Group.Arn
+      expect: {label: GroupName}
+      note: "Create a group: users in it share its policies."
+    - id: attach-group-policy
+      api: AttachGroupPolicy
+      gesture: connect
+      title: "Gắn policy vào group"
+      fields: [{name: GroupName, ref: iam-group, ref_by: label}, {name: PolicyArn, placeholder: "arn:aws:iam::aws:policy/ReadOnlyAccess"}]
+      source: iam-group
+      source_param: GroupName
+      targets: [iam-policy]
+      target_param: PolicyArn
+      note: "Every member of the group gets this policy."
+
+- kind: iam-policy
+  service: iam
+  label: IAM Policy
+  scope: global
+  list: {method: get_account_authorization_details, items: Policies, params: {Filter: [LocalManagedPolicy, AWSManagedPolicy]}}
+  # An AWS managed policy is shown only while something in the account uses it.
+  filter: {path: "starts_with(Arn, 'arn:aws:iam::aws:') && AttachmentCount == `0`", not_in: [true]}
+  id: Arn
+  name: [PolicyName]
+  parent: [{kind: global}]
+  props:
+    awsManaged: "starts_with(Arn, 'arn:aws:iam::aws:')"
+    attachments: AttachmentCount
+    defaultVersion: DefaultVersionId
+    statements: "PolicyVersionList[?IsDefaultVersion] | [0].Document.Statement"
+  chat_props: [awsManaged, attachments, defaultVersion, statements]
+  builder: true
+  view: {role: block, category: security, icon: Res_AWS-Identity-Access-Management_Permissions_48.svg, source: Resource-Icons_07312026/Res_Security-Identity/Res_AWS-Identity-Access-Management_Permissions_48.svg, height: 0.3, order: 103, actions: [Policy]}
+  contract:
+    create: {op: create-policy, params: {PolicyName: ct-policy, PolicyDocument: '{"Version": "2012-10-17", "Statement": [{"Effect": "Allow", "Action": "s3:ListAllMyBuckets", "Resource": "*"}]}'}, save: policy}
+  ops:
+    - id: create-policy
+      api: CreatePolicy
+      gesture: create
+      title: "Tạo IAM policy"
+      fields: [PolicyName, {name: PolicyDocument, multiline: true}, Description]
+      result_id: Policy.Arn
+      expect: {label: PolicyName}
+      note: "A managed policy: JSON statements of Effect, Action and Resource that can be attached to users, groups and roles."
+
+- kind: iam-instance-profile
+  service: iam
+  label: Instance Profile
+  scope: global
+  list: {method: list_instance_profiles, items: InstanceProfiles}
+  id: Arn
+  name: [InstanceProfileName]
+  parent: [{kind: global}]
+  props:
+    roles: "Roles[].RoleName"
+  chat_props: [roles]
+  edges:
+    - {kind: profile-role, target: "Roles[].Arn", to: iam-role, style: reference}
+  builder: true
+  view: {role: block, category: security, icon: Res_AWS-Identity-Access-Management_Role_48.svg, source: Resource-Icons_07312026/Res_Security-Identity/Res_AWS-Identity-Access-Management_Role_48.svg, height: 0.3, order: 104, actions: [InstanceProfile]}
+  contract:
+    create: {op: create-instance-profile, params: {InstanceProfileName: ct-profile}, save: profile}
+  ops:
+    - id: create-instance-profile
+      api: CreateInstanceProfile
+      gesture: create
+      title: "Tạo instance profile"
+      fields: [InstanceProfileName]
+      result_id: InstanceProfile.Arn
+      expect: {label: InstanceProfileName}
+      note: "The box that carries one role onto EC2 instances; add the role next."
+    - id: add-role-to-instance-profile
+      api: AddRoleToInstanceProfile
+      gesture: connect
+      title: "Gắn role vào instance profile"
+      fields: [{name: InstanceProfileName, ref: iam-instance-profile, ref_by: label}, {name: RoleName, ref: iam-role, ref_by: label}]
+      source: iam-instance-profile
+      source_param: InstanceProfileName
+      targets: [iam-role]
+      target_param: RoleName
+      note: "An instance profile holds at most one role."

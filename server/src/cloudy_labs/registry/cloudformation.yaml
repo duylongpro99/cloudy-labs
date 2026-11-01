@@ -1,0 +1,99 @@
+# AWS CloudFormation stacks. A stack stays a sibling of what it created: DescribeStackResources only
+# adds managed-by edges from those resources, found by their physical ids. Outputs and Parameters are never read.
+
+- kind: cloudformation-stack
+  service: cloudformation
+  label: CloudFormation Stack
+  list: {method: describe_stacks, items: Stacks}
+  enrich:
+    - {method: describe_stack_resources, params: {StackName: StackId}, pick: "StackResources[].{type: ResourceType, logical: LogicalResourceId, physical: PhysicalResourceId, status: ResourceStatus}", merge_as: _Resources}
+  id: StackId
+  name: [StackName]
+  parent: [{kind: region}]
+  props:
+    status: StackStatus
+    statusReason: StackStatusReason
+    description: Description
+    terminationProtection: EnableTerminationProtection
+    resourceCount: "length(not_null(_Resources, `[]`))"
+    resources: "_Resources[].{logical: logical, type: type, status: status}"
+    capabilities: Capabilities
+    created: CreationTime
+    updated: LastUpdatedTime
+    roleArn: RoleARN
+    tags: {hook: common.tags}
+  chat_props: [status, statusReason, description, terminationProtection, resourceCount, resources, capabilities, created, updated, roleArn, tags]
+  # Each rule points from a resource the stack created to the stack. Kinds whose node id is the
+  # physical id share the last rule; the others are matched by the name CloudFormation reports.
+  edges:
+    - {kind: managed-by, target: "_Resources[?type=='AWS::S3::Bucket'].physical", match: Name, to: s3-bucket, reverse: true, style: reference}
+    - {kind: managed-by, target: "_Resources[?type=='AWS::DynamoDB::Table'].physical", match: TableName, to: dynamodb-table, reverse: true, style: reference}
+    - {kind: managed-by, target: "_Resources[?type=='AWS::KMS::Key'].physical", match: KeyId, to: kms-key, reverse: true, style: reference}
+    - {kind: managed-by, target: "_Resources[?type=='AWS::KMS::Alias'].physical", match: AliasName, to: kms-alias, reverse: true, style: reference}
+    - {kind: managed-by, target: "_Resources[?type=='AWS::IAM::Role'].physical", match: RoleName, to: iam-role, reverse: true, style: reference}
+    - {kind: managed-by, target: "_Resources[?type=='AWS::IAM::User'].physical", match: UserName, to: iam-user, reverse: true, style: reference}
+    - {kind: managed-by, target: "_Resources[?type=='AWS::IAM::Group'].physical", match: GroupName, to: iam-group, reverse: true, style: reference}
+    - {kind: managed-by, target: "_Resources[?type=='AWS::IAM::InstanceProfile'].physical", match: InstanceProfileName, to: iam-instance-profile, reverse: true, style: reference}
+    - {kind: managed-by, target: "_Resources[?type=='AWS::Lambda::Function'].physical", match: FunctionName, to: lambda-function, reverse: true, style: reference}
+    - {kind: managed-by, target: "_Resources[?type=='AWS::Lambda::EventSourceMapping'].physical", match: UUID, to: lambda-event-source, reverse: true, style: reference}
+    - {kind: managed-by, target: "_Resources[?type=='AWS::RDS::DBInstance'].physical", match: DBInstanceIdentifier, to: db-instance, reverse: true, style: reference}
+    - {kind: managed-by, target: "_Resources[?type=='AWS::RDS::DBCluster'].physical", match: DBClusterIdentifier, to: db-cluster, reverse: true, style: reference}
+    - {kind: managed-by, target: "_Resources[?type=='AWS::RDS::DBSubnetGroup'].physical", match: DBSubnetGroupName, to: db-subnet-group, reverse: true, style: reference}
+    - {kind: managed-by, target: "_Resources[].physical", to: [vpc, subnet, security-group, igw, nat, route-table, network-acl, instance, vpc-endpoint, vpc-peering, transit-gateway, ebs-volume, launch-template, flow-log, iam-policy, ssm-parameter, secretsmanager-secret], reverse: true, style: reference}
+    - {kind: execution-role, target: RoleARN, to: iam-role, style: reference}
+  caveats:
+    - {code: cfn-no-validation, prop: status, text: "Floci 2.3.0 reaches CREATE_COMPLETE for resource types it does not implement (with a placeholder physical id) and for properties AWS would reject, such as an invalid bucket name. A complete stack only proves the template parsed; check the resources it made."}
+    - {code: cfn-capabilities-not-required, prop: capabilities, text: "Floci 2.3.0 creates IAM resources without CAPABILITY_IAM or CAPABILITY_NAMED_IAM and reports Capabilities as empty; AWS refuses such a stack until the capability is acknowledged."}
+  builder: true
+  view: {role: block, category: management, icon: Res_AWS-CloudFormation_Stack_48.svg, source: Resource-Icons_07312026/Res_Management-Governance/Res_AWS-CloudFormation_Stack_48.svg, height: 0.4, order: 130, actions: [Stack]}
+  contract:
+    create: {op: create-stack, params: {StackName: ct-stack}, save: stack}
+    then:
+      - {op: update-termination-protection, params: {StackName: ct-stack, EnableTerminationProtection: "true"}}
+      - {op: update-termination-protection, params: {StackName: ct-stack, EnableTerminationProtection: "false"}}
+      - {op: delete-stack, params: {StackName: ct-stack}}
+    max_seconds: 5
+  ops:
+    - id: create-stack
+      api: CreateStack
+      gesture: create
+      title: "Tạo CloudFormation stack"
+      fields: [StackName, {name: TemplateBody, multiline: true}, Capabilities, {name: RoleARN, ref: iam-role}, EnableTerminationProtection]
+      defaults:
+        TemplateBody: |
+          AWSTemplateFormatVersion: "2010-09-09"
+          Description: One SSM parameter
+          Resources:
+            Param:
+              Type: AWS::SSM::Parameter
+              Properties:
+                Type: String
+                Value: hello
+      result_id: StackId
+      expect: {label: StackName}
+      note: "Create every resource of a template (YAML or JSON) as one unit. Resources without an explicit name get <stack>-<LogicalId>-<random>. A template that makes IAM resources needs Capabilities CAPABILITY_IAM (CAPABILITY_NAMED_IAM when it names them)."
+    - id: update-stack
+      api: UpdateStack
+      gesture: attribute
+      title: "Cập nhật stack"
+      fields: [{name: StackName, ref: cloudformation-stack, ref_by: label}, {name: TemplateBody, multiline: true}, Capabilities]
+      targets: [cloudformation-stack]
+      target_param: StackName
+      note: "Apply a changed template: CloudFormation adds the new resources, updates changed ones and deletes the ones removed from the template."
+    - id: update-termination-protection
+      api: UpdateTerminationProtection
+      gesture: attribute
+      title: "Bật/tắt bảo vệ xoá stack"
+      fields: [{name: StackName, ref: cloudformation-stack, ref_by: label}, EnableTerminationProtection]
+      defaults: {EnableTerminationProtection: true}
+      targets: [cloudformation-stack]
+      target_param: StackName
+      note: "While termination protection is on, DeleteStack fails; turn it off first."
+    - id: delete-stack
+      api: DeleteStack
+      gesture: delete
+      title: "Xoá stack"
+      fields: [{name: StackName, ref: cloudformation-stack, ref_by: label}]
+      targets: [cloudformation-stack]
+      target_param: StackName
+      note: "Delete the stack and every resource it created (unless a resource has DeletionPolicy Retain)."

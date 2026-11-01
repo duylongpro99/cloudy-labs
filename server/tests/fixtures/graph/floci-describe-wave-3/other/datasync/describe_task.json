@@ -1,0 +1,42 @@
+{
+  "calls": [
+    {
+      "params": {
+        "TaskArn": "arn:aws:datasync:ap-southeast-2:000000000000:task/task-57ed4ed9abc9a81ef"
+      },
+      "response": {
+        "CreationTime": "2026-10-31 23:25:09.941000+07:00",
+        "DestinationLocationArn": "arn:aws:datasync:ap-southeast-2:000000000000:location/loc-a9b69b7c7a2f17dab",
+        "DestinationNetworkInterfaceArns": [],
+        "Excludes": [],
+        "Includes": [],
+        "Name": "w3-dm-sync",
+        "Options": {
+          "Atime": "BEST_EFFORT",
+          "BytesPerSecond": -1,
+          "Gid": "INT_VALUE",
+          "LogLevel": "OFF",
+          "Mtime": "PRESERVE",
+          "ObjectTags": "PRESERVE",
+          "OverwriteMode": "ALWAYS",
+          "PosixPermissions": "PRESERVE",
+          "PreserveDeletedFiles": "PRESERVE",
+          "PreserveDevices": "NONE",
+          "SecurityDescriptorCopyFlags": "OWNER_DACL",
+          "TaskQueueing": "ENABLED",
+          "TransferMode": "CHANGED",
+          "Uid": "INT_VALUE",
+          "VerifyMode": "POINT_IN_TIME_CONSISTENT"
+        },
+        "Schedule": {
+          "ScheduleExpression": "rate(1 hour)"
+        },
+        "SourceLocationArn": "arn:aws:datasync:ap-southeast-2:000000000000:location/loc-8ed178c806cd0da13",
+        "SourceNetworkInterfaceArns": [],
+        "Status": "AVAILABLE",
+        "TaskArn": "arn:aws:datasync:ap-southeast-2:000000000000:task/task-57ed4ed9abc9a81ef",
+        "TaskMode": "BASIC"
+      }
+    }
+  ]
+}

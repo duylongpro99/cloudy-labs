@@ -15,8 +15,8 @@ def graph(nodes, contains=(), edges=()):
     }
 
 
-BASE = [("us-east-1", "region"), ("vpc-1", "vpc"), ("igw-1", "igw")]
-TREE = [("us-east-1", "vpc-1"), ("vpc-1", "igw-1")]
+BASE = [("000000000000", "account"), ("ap-southeast-2", "region"), ("vpc-1", "vpc"), ("igw-1", "igw")]
+TREE = [("000000000000", "ap-southeast-2"), ("ap-southeast-2", "vpc-1"), ("vpc-1", "igw-1")]
 
 
 def test_valid_graph_round_trips_with_camel_case():
@@ -36,19 +36,20 @@ def test_content_hash_ignores_version_and_time():
     a = ResourceGraph.model_validate(graph(BASE, TREE))
     b = a.model_copy(update={"version": 7, "taken_at": "2027-01-01T00:00:00Z"})
     assert a.content_hash() == b.content_hash()
-    c = ResourceGraph.model_validate(graph(BASE[:2], TREE[:1]))
+    c = ResourceGraph.model_validate(graph(BASE[:3], TREE[:2]))
     assert a.content_hash() != c.content_hash()
 
 
 @pytest.mark.parametrize(
     "nodes, contains, edges, message",
     [
-        (BASE, TREE[:1], (), "exactly one root"),  # igw-1 is an orphan
-        (BASE, TREE + [("us-east-1", "igw-1")], (), "two parents"),
+        (BASE, TREE[:2], (), "exactly one root"),  # igw-1 is an orphan
+        (BASE, TREE + [("ap-southeast-2", "igw-1")], (), "two parents"),
         (BASE, TREE, [("route", "vpc-1", "nat-9")], "unknown node nat-9"),
         (BASE, TREE + [("vpc-1", "subnet-9")], (), "unknown node subnet-9"),
         (BASE + [("vpc-1", "vpc")], TREE, (), "duplicate"),
-        ([("vpc-1", "vpc")], (), (), "must be a region"),
+        ([("vpc-1", "vpc")], (), (), "must be an account"),
+        (BASE + [("eu-west-1", "region")], TREE + [("vpc-1", "eu-west-1")], (), "directly in the account"),
     ],
 )
 def test_validator_rejects_malformed_graphs(nodes, contains, edges, message):
@@ -58,4 +59,4 @@ def test_validator_rejects_malformed_graphs(nodes, contains, edges, message):
 
 def test_unknown_kind_is_rejected():
     with pytest.raises(ValidationError):
-        ResourceGraph.model_validate(graph([("us-east-1", "region"), ("x", "lambda")], [("us-east-1", "x")]))
+        ResourceGraph.model_validate(graph([("ap-southeast-2", "region"), ("x", "lambda")], [("ap-southeast-2", "x")]))

@@ -1,0 +1,38 @@
+{
+  "calls": [
+    {
+      "params": {
+        "ServerId": "s-5f25bf4cc12f4b3bb"
+      },
+      "response": {
+        "Server": {
+          "Arn": "arn:aws:transfer:ap-southeast-2:000000000000:server/s-5f25bf4cc12f4b3bb",
+          "Domain": "S3",
+          "EndpointDetails": {
+            "SubnetIds": [
+              "subnet-85834620"
+            ],
+            "VpcId": "vpc-51ff849d"
+          },
+          "EndpointType": "VPC",
+          "HostKeyFingerprint": "SHA256:AAAAflociemulatedkey5f25bf4c",
+          "IdentityProviderType": "SERVICE_MANAGED",
+          "LoggingRole": "arn:aws:iam::000000000000:role/w3-dm-role",
+          "Protocols": [
+            "SFTP"
+          ],
+          "SecurityPolicyName": "TransferSecurityPolicy-2020-06",
+          "ServerId": "s-5f25bf4cc12f4b3bb",
+          "State": "ONLINE",
+          "Tags": [
+            {
+              "Key": "Name",
+              "Value": "w3-dm-sftp"
+            }
+          ],
+          "UserCount": 0
+        }
+      }
+    }
+  ]
+}

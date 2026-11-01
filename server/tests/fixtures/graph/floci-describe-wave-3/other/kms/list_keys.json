@@ -1,0 +1,112 @@
+{
+  "calls": [
+    {
+      "params": {},
+      "response": {
+        "Keys": [
+          {
+            "KeyArn": "arn:aws:kms:ap-southeast-2:000000000000:key/4a860c82-ef36-4c8a-b95c-af594d75ee33",
+            "KeyId": "4a860c82-ef36-4c8a-b95c-af594d75ee33"
+          },
+          {
+            "KeyArn": "arn:aws:kms:ap-southeast-2:000000000000:key/519b4f47-5cbb-4e83-b728-e29650bf1830",
+            "KeyId": "519b4f47-5cbb-4e83-b728-e29650bf1830"
+          },
+          {
+            "KeyArn": "arn:aws:kms:ap-southeast-2:000000000000:key/540aee60-29ff-4556-8ca3-27137ff3a644",
+            "KeyId": "540aee60-29ff-4556-8ca3-27137ff3a644"
+          },
+          {
+            "KeyArn": "arn:aws:kms:ap-southeast-2:000000000000:key/4b53f4d5-69d4-4eac-9bba-19c90dc18e97",
+            "KeyId": "4b53f4d5-69d4-4eac-9bba-19c90dc18e97"
+          },
+          {
+            "KeyArn": "arn:aws:kms:ap-southeast-2:000000000000:key/8be0f1d1-ba20-4ebb-89d1-6381ebec8168",
+            "KeyId": "8be0f1d1-ba20-4ebb-89d1-6381ebec8168"
+          },
+          {
+            "KeyArn": "arn:aws:kms:ap-southeast-2:000000000000:key/a640d42b-e160-4dfe-8af8-6b9c9f70c66d",
+            "KeyId": "a640d42b-e160-4dfe-8af8-6b9c9f70c66d"
+          },
+          {
+            "KeyArn": "arn:aws:kms:ap-southeast-2:000000000000:key/147e9b7e-1c85-4bf8-ba21-29dc3c34ada0",
+            "KeyId": "147e9b7e-1c85-4bf8-ba21-29dc3c34ada0"
+          },
+          {
+            "KeyArn": "arn:aws:kms:ap-southeast-2:000000000000:key/001d4ddf-fd9c-4d7e-9681-0dd608d83f5e",
+            "KeyId": "001d4ddf-fd9c-4d7e-9681-0dd608d83f5e"
+          },
+          {
+            "KeyArn": "arn:aws:kms:ap-southeast-2:000000000000:key/63f3464b-fbe5-4aa1-aa88-674e2fbb5a1b",
+            "KeyId": "63f3464b-fbe5-4aa1-aa88-674e2fbb5a1b"
+          },
+          {
+            "KeyArn": "arn:aws:kms:ap-southeast-2:000000000000:key/8ec4aafe-67c1-40ed-8c80-0ff6c8576e8b",
+            "KeyId": "8ec4aafe-67c1-40ed-8c80-0ff6c8576e8b"
+          },
+          {
+            "KeyArn": "arn:aws:kms:ap-southeast-2:000000000000:key/d59b8959-57ea-446a-8290-17e00d036828",
+            "KeyId": "d59b8959-57ea-446a-8290-17e00d036828"
+          },
+          {
+            "KeyArn": "arn:aws:kms:ap-southeast-2:000000000000:key/e78edc57-76b5-4759-b073-a827cf6628f0",
+            "KeyId": "e78edc57-76b5-4759-b073-a827cf6628f0"
+          },
+          {
+            "KeyArn": "arn:aws:kms:ap-southeast-2:000000000000:key/420676f3-0d16-44c0-a239-ee92031b5a1b",
+            "KeyId": "420676f3-0d16-44c0-a239-ee92031b5a1b"
+          },
+          {
+            "KeyArn": "arn:aws:kms:ap-southeast-2:000000000000:key/f30ff399-8723-43ed-bd2a-22c47df60695",
+            "KeyId": "f30ff399-8723-43ed-bd2a-22c47df60695"
+          },
+          {
+            "KeyArn": "arn:aws:kms:ap-southeast-2:000000000000:key/778bcd17-c640-4e9a-9d94-b0cc202c94d4",
+            "KeyId": "778bcd17-c640-4e9a-9d94-b0cc202c94d4"
+          },
+          {
+            "KeyArn": "arn:aws:kms:ap-southeast-2:000000000000:key/a94d62cd-3158-427b-8123-cbcc967ecfc9",
+            "KeyId": "a94d62cd-3158-427b-8123-cbcc967ecfc9"
+          },
+          {
+            "KeyArn": "arn:aws:kms:ap-southeast-2:000000000000:key/96418982-0fbe-4fd0-9f34-0f4bae3f1c54",
+            "KeyId": "96418982-0fbe-4fd0-9f34-0f4bae3f1c54"
+          },
+          {
+            "KeyArn": "arn:aws:kms:ap-southeast-2:000000000000:key/bacb38d6-9fea-46e1-885f-cbb8b50db086",
+            "KeyId": "bacb38d6-9fea-46e1-885f-cbb8b50db086"
+          },
+          {
+            "KeyArn": "arn:aws:kms:ap-southeast-2:000000000000:key/ad60eab0-66be-4902-a342-33adfca5e277",
+            "KeyId": "ad60eab0-66be-4902-a342-33adfca5e277"
+          },
+          {
+            "KeyArn": "arn:aws:kms:ap-southeast-2:000000000000:key/87afa14c-83b8-415b-8b70-fb164d44d67e",
+            "KeyId": "87afa14c-83b8-415b-8b70-fb164d44d67e"
+          },
+          {
+            "KeyArn": "arn:aws:kms:ap-southeast-2:000000000000:key/ff99f426-6524-4a48-b387-6d488e276c65",
+            "KeyId": "ff99f426-6524-4a48-b387-6d488e276c65"
+          },
+          {
+            "KeyArn": "arn:aws:kms:ap-southeast-2:000000000000:key/c7a0f61e-5ef8-4f8a-9b27-0b7cb7579906",
+            "KeyId": "c7a0f61e-5ef8-4f8a-9b27-0b7cb7579906"
+          },
+          {
+            "KeyArn": "arn:aws:kms:ap-southeast-2:000000000000:key/974808d4-4279-4d86-9a41-840db577e860",
+            "KeyId": "974808d4-4279-4d86-9a41-840db577e860"
+          },
+          {
+            "KeyArn": "arn:aws:kms:ap-southeast-2:000000000000:key/abc5c9f4-7420-4ac2-ba9a-a6e116a129cc",
+            "KeyId": "abc5c9f4-7420-4ac2-ba9a-a6e116a129cc"
+          },
+          {
+            "KeyArn": "arn:aws:kms:ap-southeast-2:000000000000:key/ceb5c200-3d51-4fb6-8ef8-6f4f9a29c7e7",
+            "KeyId": "ceb5c200-3d51-4fb6-8ef8-6f4f9a29c7e7"
+          }
+        ],
+        "Truncated": false
+      }
+    }
+  ]
+}

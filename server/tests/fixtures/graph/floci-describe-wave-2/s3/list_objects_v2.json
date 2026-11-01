@@ -1,0 +1,18 @@
+{
+  "calls": [
+    {
+      "params": {
+        "Bucket": "w2-backup-src",
+        "MaxKeys": 1000
+      },
+      "response": {
+        "EncodingType": "url",
+        "IsTruncated": false,
+        "KeyCount": 0,
+        "MaxKeys": 1000,
+        "Name": "w2-backup-src",
+        "Prefix": ""
+      }
+    }
+  ]
+}

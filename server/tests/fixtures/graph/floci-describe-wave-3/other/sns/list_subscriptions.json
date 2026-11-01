@@ -1,0 +1,25 @@
+{
+  "calls": [
+    {
+      "params": {},
+      "response": {
+        "Subscriptions": [
+          {
+            "Endpoint": "arn:aws:sqs:ap-southeast-2:000000000000:w3-orders",
+            "Owner": "000000000000",
+            "Protocol": "sqs",
+            "SubscriptionArn": "arn:aws:sns:ap-southeast-2:000000000000:w3-order-events:41933c49-cfbb-49a7-875b-9cba9af258c8",
+            "TopicArn": "arn:aws:sns:ap-southeast-2:000000000000:w3-order-events"
+          },
+          {
+            "Endpoint": "arn:aws:lambda:ap-southeast-2:000000000000:function:w3-msg-consumer",
+            "Owner": "000000000000",
+            "Protocol": "lambda",
+            "SubscriptionArn": "arn:aws:sns:ap-southeast-2:000000000000:w3-order-events:74e891d3-d2dc-40d8-ae2c-06ae23572a9f",
+            "TopicArn": "arn:aws:sns:ap-southeast-2:000000000000:w3-order-events"
+          }
+        ]
+      }
+    }
+  ]
+}

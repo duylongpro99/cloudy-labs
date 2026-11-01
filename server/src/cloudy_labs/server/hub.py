@@ -32,8 +32,11 @@ class GraphHub:
         debounce: float = DEBOUNCE_S,
         poll: float = POLL_S,
         down_poll: float = DOWN_POLL_S,
+        down: Callable[[str], ResourceGraph] | None = None,
     ):
         self._collect = collect
+        # The graph shown when collecting fails, from the failure's name: the open lab's regions.
+        self._down = down or (lambda reason: emulator_down(datetime.now(timezone.utc), reason=reason))
         self._debounce, self._poll, self._down_poll = debounce, poll, down_poll
         self.graph: ResourceGraph | None = None
         self.twin: Message | None = None  # the latest {"type": "twin"}, sent to each new browser after the graph
@@ -48,6 +51,9 @@ class GraphHub:
         self._polled = False  # a poll asked for a refresh still to come
         self._failures = 0  # possibly transient failed collects in a row
         self._poller: asyncio.Task | None = None
+        # Kinds the open lab's graph has shown or its writes have named: a lab-scoped collect keeps
+        # listing them, so a resource outside the lab's palette does not vanish on the next refresh.
+        self.seen_kinds: set[str] = set()
 
     async def start(self) -> None:
         await self.refresh("start")
@@ -90,6 +96,9 @@ class GraphHub:
     def set_twin(self, message: Message) -> None:
         self.twin = message
         self.broadcast(message)
+
+    def see(self, kinds: set[str]) -> None:
+        self.seen_kinds |= kinds
 
     def watch(self, watcher: Watcher) -> None:
         """Call `watcher("graph")` after each new graph and `watcher("poll")` after a poll that found none."""
@@ -145,7 +154,7 @@ class GraphHub:
             return self._collect(), False
         except Exception as e:  # never let a collector bug take the server down; show it as down
             log.warning("collect failed: %s: %s", type(e).__name__, e)
-            return emulator_down(datetime.now(timezone.utc), reason=type(e).__name__), True
+            return self._down(type(e).__name__), True
 
     def _publish(self, graph: ResourceGraph, transient: bool = False) -> bool:
         """Whether the graph changed."""
@@ -155,6 +164,8 @@ class GraphHub:
             self._failures += 1
             if self.graph is not None and self.graph.status == "ok" and self._failures < DOWN_AFTER:
                 return False  # keep the last good graph; the poll loop retries soon
+        if graph.status == "ok":
+            self.see({n.kind for n in graph.nodes})
         digest = graph.content_hash()
         if digest == self._hash:
             return False

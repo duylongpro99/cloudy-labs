@@ -1,0 +1,23 @@
+{
+  "calls": [
+    {
+      "params": {},
+      "response": {
+        "Organization": {
+          "Arn": "arn:aws:organizations::000000000000:organization/o-1pln15fyv4",
+          "AvailablePolicyTypes": [
+            {
+              "Status": "ENABLED",
+              "Type": "SERVICE_CONTROL_POLICY"
+            }
+          ],
+          "FeatureSet": "ALL",
+          "Id": "o-1pln15fyv4",
+          "MasterAccountArn": "arn:aws:organizations::000000000000:account/o-1pln15fyv4/000000000000",
+          "MasterAccountEmail": "master@000000000000.example.com",
+          "MasterAccountId": "000000000000"
+        }
+      }
+    }
+  ]
+}

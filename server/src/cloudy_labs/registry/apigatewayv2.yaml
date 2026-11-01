@@ -1,0 +1,59 @@
+# Amazon API Gateway HTTP APIs (v2). WebSocket APIs share the same list and are left out. A quick-create
+# API (CreateApi with Target) gets a Lambda proxy integration, a $default route and a $default stage.
+
+- kind: apigateway-http-api
+  service: apigatewayv2
+  label: API Gateway HTTP API
+  list: {method: get_apis, items: Items}
+  filter: {path: ProtocolType, in: [HTTP]}
+  enrich:
+    - {method: get_integrations, params: {ApiId: ApiId}, pick: Items, merge_as: _Integrations}
+    - {method: get_routes, params: {ApiId: ApiId}, pick: Items, merge_as: _Routes}
+  id: ApiId
+  name: [Name, ApiId]
+  parent: [{kind: region}]
+  props:
+    endpoint: ApiEndpoint
+    description: Description
+    cors: "CorsConfiguration.{allowOrigins: AllowOrigins, allowMethods: AllowMethods, allowHeaders: AllowHeaders}"
+    routes: "sort(_Routes[].RouteKey)"
+    integrations: "sort(_Integrations[].join(' ', [IntegrationType, IntegrationUri || '']))"
+    tags: Tags
+  chat_props: [endpoint, description, cors, routes, integrations]
+  edges:
+    - {kind: invokes, target: "_Integrations[].IntegrationUri", to: [lambda-function, lambda-alias], style: reference}
+  caveats:
+    - {code: apigatewayv2-no-create-stage, text: "Floci 2.3.0 has no CreateStage, GetStages, GetIntegration, UpdateIntegration or DeleteIntegration for HTTP APIs; create the API with Target (quick create), which makes its integration, $default route and auto-deployed $default stage."}
+  builder: true
+  view: {role: block, category: networking, icon: Res_Amazon-API-Gateway_Endpoint_48.svg, source: Resource-Icons_07312026/Res_Networking-Content-Delivery/Res_Amazon-API-Gateway_Endpoint_48.svg, height: 0.5, order: 506, actions: [Api, Route]}
+  contract:
+    create: {op: create-http-api, params: {Name: ct-http-api, ProtocolType: HTTP}, save: api}
+    then:
+      - {op: update-http-api, params: {ApiId: "{api}", Description: contract test}}
+      - {op: delete-http-api, params: {ApiId: "{api}"}}
+  ops:
+    - id: create-http-api
+      api: CreateApi
+      gesture: create
+      title: "Tạo HTTP API"
+      fields: [Name, ProtocolType, Description, Target, RouteKey, {name: CorsConfiguration, multiline: true}]
+      choices: {ProtocolType: [HTTP]}
+      defaults: {ProtocolType: HTTP}
+      result_id: ApiId
+      expect: {label: Name}
+      note: "Create an HTTP API. Target: a Lambda function ARN for quick create (a proxy integration on the $default route, or on RouteKey such as \"GET /items\", deployed to the $default stage). The function's resource policy must let apigateway.amazonaws.com invoke it. CorsConfiguration JSON: {\"AllowOrigins\": [\"*\"], \"AllowMethods\": [\"GET\"]}."
+    - id: update-http-api
+      api: UpdateApi
+      gesture: attribute
+      title: "Sửa HTTP API"
+      fields: [{name: ApiId, ref: apigateway-http-api}, Name, Description, {name: CorsConfiguration, multiline: true}]
+      target_param: ApiId
+      note: "Change the API's name, description or CORS settings (JSON, as for create-http-api)."
+    - id: delete-http-api
+      api: DeleteApi
+      gesture: delete
+      title: "Xoá HTTP API"
+      fields: [{name: ApiId, ref: apigateway-http-api}]
+      targets: [apigateway-http-api]
+      target_param: ApiId
+      note: "Delete the API with its routes, integrations and stages."

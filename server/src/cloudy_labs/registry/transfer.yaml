@@ -1,0 +1,73 @@
+# AWS Transfer Family. A server is a managed SFTP/FTPS/FTP endpoint in front of S3 or EFS; a public one
+# sits in the region, a VPC one in its VPC. CreateServer answers only the server id, so the node id is
+# that id. DescribeServer adds the protocols, logging role, VPC and tags.
+
+- kind: transfer-server
+  service: transfer
+  label: Transfer Family Server
+  list: {method: list_servers, items: Servers}
+  enrich:
+    - {method: describe_server, params: {ServerId: ServerId}, pick: Server, merge_as: _Detail}
+  id: ServerId
+  name: ["_Detail.Tags[?Key=='Name'].Value | [0]", ServerId]
+  parent: [{kind: vpc, path: _Detail.EndpointDetails.VpcId}, {kind: region}]
+  props:
+    state: State
+    endpointType: EndpointType
+    identityProvider: IdentityProviderType
+    domain: Domain
+    protocols: "_Detail.Protocols && sort(_Detail.Protocols)"
+    users: UserCount
+    loggingRole: LoggingRole
+    tags: {hook: common.tags, args: {field: _Detail.Tags}}
+  chat_props: [state, endpointType, identityProvider, domain, protocols, users, loggingRole]
+  edges:
+    - {kind: execution-role, target: LoggingRole, to: iam-role, style: reference}
+    - {kind: endpoint-subnet, target: "_Detail.EndpointDetails.SubnetIds", to: subnet, style: association}
+    - {kind: attached, target: "_Detail.EndpointDetails.SecurityGroupIds", to: security-group, reverse: true, style: attach}
+  caveats:
+    - {code: transfer-endpoint-sg-dropped, text: "Floci 2.3.0 drops EndpointDetails.SecurityGroupIds of a VPC server: it keeps the VPC and subnets, so the server shows no security group."}
+    - {code: transfer-no-file-endpoint, prop: state, text: "Floci 2.3.0 keeps the server's settings and moves it between ONLINE and OFFLINE but runs no SFTP, FTPS or FTP endpoint: a client cannot connect. Check the server's protocols, domain and state."}
+  floci: {status: control-plane-only, note: "Floci 2.3.0 stores Transfer Family servers and their state; no file transfer endpoint runs."}
+  builder: true
+  view: {role: block, category: storage, icon: Res_AWS-Transfer-Family_AWS-SFTP_48.svg, source: Resource-Icons_07312026/Res_Migration-Modernization/Res_AWS-Transfer-Family_AWS-SFTP_48.svg, height: 0.5, order: 675}
+  contract:
+    create: {op: create-transfer-server, params: {Protocols: SFTP, EndpointType: PUBLIC, IdentityProviderType: SERVICE_MANAGED, Domain: S3}, save: server}
+    then:
+      - {op: stop-transfer-server, params: {ServerId: "{server}"}}
+      - {op: start-transfer-server, params: {ServerId: "{server}"}}
+      - {op: delete-transfer-server, params: {ServerId: "{server}"}}
+  ops:
+    - id: create-transfer-server
+      api: CreateServer
+      gesture: create
+      title: "Tạo Transfer Family server"
+      fields: [Protocols, EndpointType, IdentityProviderType, Domain, {name: EndpointDetails.VpcId, ref: vpc}, EndpointDetails.SubnetIds, EndpointDetails.SecurityGroupIds, {name: LoggingRole, ref: iam-role}]
+      choices: {EndpointType: [PUBLIC, VPC], IdentityProviderType: [SERVICE_MANAGED, API_GATEWAY, AWS_DIRECTORY_SERVICE, AWS_LAMBDA], Domain: [S3, EFS]}
+      defaults: {Protocols: SFTP, EndpointType: PUBLIC, IdentityProviderType: SERVICE_MANAGED, Domain: S3}
+      result_id: ServerId
+      note: "A managed SFTP (or FTPS/FTP) server storing files in S3 or EFS. A VPC endpoint takes EndpointDetails (VpcId, SubnetIds, SecurityGroupIds allowing port 22). SERVICE_MANAGED users are added to the server with an SSH key and a role that may access their bucket. LoggingRole lets it write CloudWatch logs."
+    - id: stop-transfer-server
+      api: StopServer
+      gesture: attribute
+      title: "Dừng Transfer Family server"
+      fields: [{name: ServerId, ref: transfer-server}]
+      targets: [transfer-server]
+      target_param: ServerId
+      note: "Take the server OFFLINE: clients cannot connect; it keeps its users and settings."
+    - id: start-transfer-server
+      api: StartServer
+      gesture: attribute
+      title: "Chạy Transfer Family server"
+      fields: [{name: ServerId, ref: transfer-server}]
+      targets: [transfer-server]
+      target_param: ServerId
+      note: "Bring an OFFLINE server back ONLINE."
+    - id: delete-transfer-server
+      api: DeleteServer
+      gesture: delete
+      title: "Xoá Transfer Family server"
+      fields: [{name: ServerId, ref: transfer-server}]
+      targets: [transfer-server]
+      target_param: ServerId
+      note: "Delete the server and its users; the files in S3 or EFS stay."

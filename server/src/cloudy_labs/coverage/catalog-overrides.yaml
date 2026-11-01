@@ -1,0 +1,61 @@
+# What Floci lacks below the level of a whole service. The public catalog lists only the API
+# namespaces a lab uses (ec2, rds...), so it cannot say that a lab needs an EBS snapshot or an
+# Oracle engine; these entries can. `labctl coverage` marks a lab `blocked` when one applies:
+#
+#   catalog mode: a `match` regex (case-insensitive) hits the lab's slug, title or table of contents,
+#                 and the slug is not in `exclude` (labs a manual review found to be false matches);
+#   one lab:      a command of the lab passes a value `flags` names (when the entry has flags), or
+#                 else runs one of `apis` (any API of `service` when `apis` is empty). A line of
+#                 the page that `match` hits is listed for the learner to review, not counted.
+#
+# Each entry is checked by hand against the labs it matches; the review is in
+# the lab coverage plan's notes (catalog-overrides-review.md).
+# Floci evidence: the action tables of docs/services/*.md at the pinned tag (floci-ops-2.3.0.json).
+- id: ebs-snapshot
+  service: ec2
+  apis: [CreateSnapshot, CopySnapshot, CreateSnapshots, EnableFastSnapshotRestores]
+  reason: Floci's EC2 has no EBS snapshot actions.
+  match: ['EBS Snapshot', 'snapshot[^;|]{0,40}\bEBS\b', '\bEBS\b[^;|]{0,40}snapshot']
+- id: codecommit
+  service: codecommit
+  apis: []
+  reason: Floci has no CodeCommit.
+  match: ['CodeCommit']
+- id: dhcp-options
+  service: ec2
+  apis: [CreateDhcpOptions, AssociateDhcpOptions]
+  reason: Floci's EC2 has no DHCP option sets.
+  match: ['DHCP Option']
+- id: egress-only-internet-gateway
+  service: ec2
+  apis: [CreateEgressOnlyInternetGateway]
+  reason: Floci's EC2 lists egress-only internet gateways as an empty set and cannot create one.
+  match: ['Egress-Only Internet Gateway', '\bEIGW\b']
+- id: placement-group
+  service: ec2
+  apis: [CreatePlacementGroup]
+  reason: Floci's EC2 has no placement groups.
+  match: ['Placement Group']
+- id: rds-oracle
+  service: rds
+  apis: []
+  flags: {'--engine': '^oracle'}
+  reason: Floci's RDS does not emulate the Oracle engine.
+  match: ['\bOracle\b']
+- id: rds-sql-server
+  service: rds
+  apis: []
+  flags: {'--engine': '^sqlserver'}
+  reason: Floci's RDS does not emulate the SQL Server engine.
+  match: ['SQL Server']
+  exclude: [lab-042-tao-aurora-postgresql-cluster]  # Babelfish on Aurora PostgreSQL, no SQL Server instance
+- id: rds-blue-green
+  service: rds
+  apis: [CreateBlueGreenDeployment, SwitchoverBlueGreenDeployment]
+  reason: Floci's RDS has no blue/green deployments.
+  match: ['Blue[ /-]?Green']
+- id: replace-root-volume
+  service: ec2
+  apis: [CreateReplaceRootVolumeTask]
+  reason: Floci's EC2 has no replace root volume tasks.
+  match: ['Replace Root Volume']

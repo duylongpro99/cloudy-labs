@@ -1,0 +1,73 @@
+{
+  "calls": [
+    {
+      "params": {},
+      "response": {
+        "VpcPeeringConnections": [
+          {
+            "AccepterVpcInfo": {
+              "CidrBlock": "10.62.0.0/16",
+              "OwnerId": "000000000000",
+              "PeeringOptions": {
+                "AllowDnsResolutionFromRemoteVpc": false
+              },
+              "Region": "ap-southeast-2",
+              "VpcId": "vpc-5daae3bf"
+            },
+            "RequesterVpcInfo": {
+              "CidrBlock": "10.61.0.0/16",
+              "OwnerId": "000000000000",
+              "PeeringOptions": {
+                "AllowDnsResolutionFromRemoteVpc": false
+              },
+              "Region": "ap-southeast-2",
+              "VpcId": "vpc-31a790ed"
+            },
+            "Status": {
+              "Code": "active",
+              "Message": "Active"
+            },
+            "Tags": [
+              {
+                "Key": "Name",
+                "Value": "rx-pcx-bc"
+              }
+            ],
+            "VpcPeeringConnectionId": "pcx-deaf1efb7deee2e9b"
+          },
+          {
+            "AccepterVpcInfo": {
+              "CidrBlock": "10.61.0.0/16",
+              "OwnerId": "000000000000",
+              "PeeringOptions": {
+                "AllowDnsResolutionFromRemoteVpc": false
+              },
+              "Region": "ap-southeast-2",
+              "VpcId": "vpc-31a790ed"
+            },
+            "RequesterVpcInfo": {
+              "CidrBlock": "10.60.0.0/16",
+              "OwnerId": "000000000000",
+              "PeeringOptions": {
+                "AllowDnsResolutionFromRemoteVpc": false
+              },
+              "Region": "ap-southeast-2",
+              "VpcId": "vpc-ae467f29"
+            },
+            "Status": {
+              "Code": "active",
+              "Message": "Active"
+            },
+            "Tags": [
+              {
+                "Key": "Name",
+                "Value": "rx-pcx-ab"
+              }
+            ],
+            "VpcPeeringConnectionId": "pcx-840fe2cb4f6139f8b"
+          }
+        ]
+      }
+    }
+  ]
+}

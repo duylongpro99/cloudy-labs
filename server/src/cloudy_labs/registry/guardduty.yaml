@@ -1,0 +1,22 @@
+# Amazon GuardDuty: at most one detector per region. ListDetectors answers bare ids, made into items.
+
+- kind: guardduty-detector
+  service: guardduty
+  label: GuardDuty Detector
+  list: {method: list_detectors, items: "DetectorIds[].{DetectorId: @}"}
+  enrich:
+    - {method: get_detector, params: {DetectorId: DetectorId}, merge_as: _Detector}
+  id: DetectorId
+  name: [DetectorId]
+  parent: [{kind: region}]
+  props:
+    status: _Detector.Status
+    findingFrequency: _Detector.FindingPublishingFrequency
+    features: "_Detector.Features[].{name: Name, status: Status}"
+    createdAt: _Detector.CreatedAt
+    tags: _Detector.Tags
+  chat_props: [status, findingFrequency, features, createdAt, tags]
+  caveats:
+    - {code: guardduty-no-findings, prop: status, text: "Floci 2.3.0 stores the detector but has no findings API (ListFindings, GetFindings, CreateSampleFindings): no threat is ever reported."}
+  floci: {status: control-plane-only, note: "Detectors are stored; nothing is analysed and there are no findings."}
+  view: {role: block, category: security, icon: Arch_Amazon-GuardDuty_48.svg, source: Architecture-Service-Icons_07312026/Arch_Security-Identity/48/Arch_Amazon-GuardDuty_48.svg, height: 0.4, order: 716, actions: [Detector]}

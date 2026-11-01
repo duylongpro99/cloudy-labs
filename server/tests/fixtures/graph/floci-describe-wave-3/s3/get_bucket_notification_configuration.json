@@ -1,0 +1,28 @@
+{
+  "calls": [
+    {
+      "params": {
+        "Bucket": "w3-governance-logs"
+      },
+      "response": {}
+    },
+    {
+      "params": {
+        "Bucket": "w3-delivery-artifacts"
+      },
+      "response": {}
+    },
+    {
+      "params": {
+        "Bucket": "w3-dm-bucket"
+      },
+      "response": {}
+    },
+    {
+      "params": {
+        "Bucket": "w3-edge-origin"
+      },
+      "response": {}
+    }
+  ]
+}

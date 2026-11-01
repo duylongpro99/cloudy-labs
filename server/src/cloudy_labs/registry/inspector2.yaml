@@ -1,0 +1,22 @@
+# Amazon Inspector: no resource of its own, only whether scanning is on for the account in this region.
+# BatchGetAccountStatus always answers the account, so a disabled account has no node.
+
+- kind: inspector
+  service: inspector2
+  label: Amazon Inspector
+  list: {method: batch_get_account_status, items: accounts, paginate: false}
+  filter: {path: state.status, not_in: [DISABLED]}
+  id: "join('', ['inspector2/', not_null(_Region, ''), '/', accountId])"
+  name: ["join(' ', ['Inspector', accountId])"]
+  parent: [{kind: region}]
+  props:
+    status: state.status
+    ec2: resourceState.ec2.status
+    ecr: resourceState.ecr.status
+    lambda: resourceState.lambda.status
+    lambdaCode: resourceState.lambdaCode.status
+  chat_props: [status, ec2, ecr, lambda, lambdaCode]
+  caveats:
+    - {code: inspector-no-findings, prop: status, text: "Floci 2.3.0 records which scan types are enabled but scans nothing: ListFindings and ListCoverage are missing, and Disable is missing too, so scanning once enabled stays on."}
+  floci: {status: control-plane-only, note: "Only the enabled scan types are stored; nothing is scanned."}
+  view: {role: block, category: security, icon: Arch_Amazon-Inspector_48.svg, source: Architecture-Service-Icons_07312026/Arch_Security-Identity/48/Arch_Amazon-Inspector_48.svg, height: 0.4, order: 718, actions: [AccountStatus, Coverage]}

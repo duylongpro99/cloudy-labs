@@ -1,0 +1,3368 @@
+{
+  "kinds": [
+    {
+      "kind": "account",
+      "label": "AWS account",
+      "service": "",
+      "signingName": "",
+      "role": "tray-badge",
+      "category": "account",
+      "icon": "AWS-Account_32.svg",
+      "source": "Architecture-Group-Icons_07312026/AWS-Account_32.svg",
+      "height": null,
+      "order": -10,
+      "group": true,
+      "stack": false,
+      "host": false,
+      "actions": [],
+      "curveSegments": null,
+      "parents": [],
+      "floci": "supported",
+      "scope": "regional"
+    },
+    {
+      "kind": "region",
+      "label": "Region",
+      "service": "",
+      "signingName": "",
+      "role": "tray-badge",
+      "category": "region",
+      "icon": "Region_32.svg",
+      "source": "Architecture-Group-Icons_07312026/Region_32.svg",
+      "height": null,
+      "order": 0,
+      "group": true,
+      "stack": false,
+      "host": false,
+      "actions": [],
+      "curveSegments": null,
+      "parents": [
+        "account"
+      ],
+      "floci": "supported",
+      "scope": "regional"
+    },
+    {
+      "kind": "global",
+      "label": "Toàn cục",
+      "service": "",
+      "signingName": "",
+      "role": "tray-badge",
+      "category": "global",
+      "icon": "AWS-Cloud_32.svg",
+      "source": "Architecture-Group-Icons_07312026/AWS-Cloud_32.svg",
+      "height": null,
+      "order": 1,
+      "group": true,
+      "stack": false,
+      "host": false,
+      "actions": [],
+      "curveSegments": null,
+      "parents": [
+        "account"
+      ],
+      "floci": "supported",
+      "scope": "regional"
+    },
+    {
+      "kind": "vpc",
+      "label": "VPC",
+      "service": "ec2",
+      "signingName": "ec2",
+      "role": "tray-badge",
+      "category": "vpc",
+      "icon": "Virtual-private-cloud-VPC_32.svg",
+      "source": "Architecture-Group-Icons_07312026/Virtual-private-cloud-VPC_32.svg",
+      "height": null,
+      "order": 10,
+      "group": true,
+      "stack": false,
+      "host": false,
+      "actions": [
+        "Vpc",
+        "DefaultVpc"
+      ],
+      "curveSegments": null,
+      "parents": [
+        "region"
+      ],
+      "floci": "supported",
+      "scope": "regional"
+    },
+    {
+      "kind": "az",
+      "label": "Availability Zone",
+      "service": "ec2",
+      "signingName": "ec2",
+      "role": "outline-only",
+      "category": "region",
+      "icon": null,
+      "source": null,
+      "height": null,
+      "order": 20,
+      "group": true,
+      "stack": true,
+      "host": false,
+      "actions": [],
+      "curveSegments": null,
+      "parents": [
+        "vpc"
+      ],
+      "floci": "supported",
+      "scope": "regional"
+    },
+    {
+      "kind": "subnet-public",
+      "label": "Subnet công khai",
+      "service": "ec2",
+      "signingName": "ec2",
+      "role": "tray-badge",
+      "category": "subnet-public",
+      "icon": "Public-subnet_32.svg",
+      "source": "Architecture-Group-Icons_07312026/Public-subnet_32.svg",
+      "height": null,
+      "order": 30,
+      "group": true,
+      "stack": false,
+      "host": false,
+      "actions": [
+        "Subnet"
+      ],
+      "curveSegments": null,
+      "parents": [
+        "az"
+      ],
+      "floci": "supported",
+      "scope": "regional"
+    },
+    {
+      "kind": "subnet-private",
+      "label": "Subnet riêng tư",
+      "service": "ec2",
+      "signingName": "ec2",
+      "role": "tray-badge",
+      "category": "subnet-private",
+      "icon": "Private-subnet_32.svg",
+      "source": "Architecture-Group-Icons_07312026/Private-subnet_32.svg",
+      "height": null,
+      "order": 31,
+      "group": true,
+      "stack": false,
+      "host": false,
+      "actions": [
+        "Subnet"
+      ],
+      "curveSegments": null,
+      "parents": [
+        "az"
+      ],
+      "floci": "supported",
+      "scope": "regional"
+    },
+    {
+      "kind": "igw",
+      "label": "Internet Gateway",
+      "service": "ec2",
+      "signingName": "ec2",
+      "role": "block",
+      "category": "networking",
+      "icon": "Res_Amazon-VPC_Internet-Gateway_48.svg",
+      "source": "Resource-Icons_07312026/Res_Networking-Content-Delivery/Res_Amazon-VPC_Internet-Gateway_48.svg",
+      "height": 0.6,
+      "order": 40,
+      "group": false,
+      "stack": false,
+      "host": false,
+      "actions": [
+        "InternetGateway"
+      ],
+      "curveSegments": null,
+      "parents": [
+        "region",
+        "vpc"
+      ],
+      "floci": "supported",
+      "scope": "regional"
+    },
+    {
+      "kind": "nat",
+      "label": "NAT Gateway",
+      "service": "ec2",
+      "signingName": "ec2",
+      "role": "block",
+      "category": "networking",
+      "icon": "Res_Amazon-VPC_NAT-Gateway_48.svg",
+      "source": "Resource-Icons_07312026/Res_Networking-Content-Delivery/Res_Amazon-VPC_NAT-Gateway_48.svg",
+      "height": 0.6,
+      "order": 41,
+      "group": false,
+      "stack": false,
+      "host": true,
+      "actions": [
+        "NatGateway"
+      ],
+      "curveSegments": null,
+      "parents": [
+        "subnet-private",
+        "subnet-public"
+      ],
+      "floci": "supported",
+      "scope": "regional"
+    },
+    {
+      "kind": "route-table",
+      "label": "Route Table",
+      "service": "ec2",
+      "signingName": "ec2",
+      "role": "block",
+      "category": "networking",
+      "icon": "Res_Amazon-VPC_Router_48.svg",
+      "source": "Resource-Icons_07312026/Res_Networking-Content-Delivery/Res_Amazon-VPC_Router_48.svg",
+      "height": 0.4,
+      "order": 42,
+      "group": false,
+      "stack": false,
+      "host": false,
+      "actions": [
+        "Route"
+      ],
+      "curveSegments": null,
+      "parents": [
+        "vpc"
+      ],
+      "floci": "supported",
+      "scope": "regional"
+    },
+    {
+      "kind": "vpc-endpoint",
+      "label": "VPC Endpoint",
+      "service": "ec2",
+      "signingName": "ec2",
+      "role": "block",
+      "category": "networking",
+      "icon": "Res_Amazon-VPC_Endpoints_48.svg",
+      "source": "Resource-Icons_07312026/Res_Networking-Content-Delivery/Res_Amazon-VPC_Endpoints_48.svg",
+      "height": 0.5,
+      "order": 43,
+      "group": false,
+      "stack": false,
+      "host": true,
+      "actions": [
+        "VpcEndpoint"
+      ],
+      "curveSegments": null,
+      "parents": [
+        "vpc"
+      ],
+      "floci": "supported",
+      "scope": "regional"
+    },
+    {
+      "kind": "vpc-peering",
+      "label": "VPC Peering",
+      "service": "ec2",
+      "signingName": "ec2",
+      "role": "block",
+      "category": "networking",
+      "icon": "Res_Amazon-VPC_Peering-Connection_48.svg",
+      "source": "Resource-Icons_07312026/Res_Networking-Content-Delivery/Res_Amazon-VPC_Peering-Connection_48.svg",
+      "height": 0.5,
+      "order": 44,
+      "group": false,
+      "stack": false,
+      "host": false,
+      "actions": [
+        "VpcPeeringConnection"
+      ],
+      "curveSegments": null,
+      "parents": [
+        "region"
+      ],
+      "floci": "supported",
+      "scope": "regional"
+    },
+    {
+      "kind": "transit-gateway",
+      "label": "Transit Gateway",
+      "service": "ec2",
+      "signingName": "ec2",
+      "role": "block",
+      "category": "networking",
+      "icon": "Arch_AWS-Transit-Gateway_48.svg",
+      "source": "Architecture-Service-Icons_07312026/Arch_Networking-Content-Delivery/48/Arch_AWS-Transit-Gateway_48.svg",
+      "height": 0.7,
+      "order": 45,
+      "group": false,
+      "stack": false,
+      "host": false,
+      "actions": [
+        "TransitGateway"
+      ],
+      "curveSegments": null,
+      "parents": [
+        "region"
+      ],
+      "floci": "supported",
+      "scope": "regional"
+    },
+    {
+      "kind": "tgw-attachment",
+      "label": "Transit Gateway Attachment",
+      "service": "ec2",
+      "signingName": "ec2",
+      "role": "block",
+      "category": "networking",
+      "icon": "Res_AWS-Transit-Gateway_Attachment_48.svg",
+      "source": "Resource-Icons_07312026/Res_Networking-Content-Delivery/Res_AWS-Transit-Gateway_Attachment_48.svg",
+      "height": 0.4,
+      "order": 46,
+      "group": false,
+      "stack": false,
+      "host": false,
+      "actions": [
+        "TransitGatewayVpcAttachment"
+      ],
+      "curveSegments": null,
+      "parents": [
+        "vpc"
+      ],
+      "floci": "supported",
+      "scope": "regional"
+    },
+    {
+      "kind": "tgw-route-table",
+      "label": "Transit Gateway Route Table",
+      "service": "ec2",
+      "signingName": "ec2",
+      "role": "block",
+      "category": "networking",
+      "icon": "Res_AWS-Cloud-WAN_Transit-Gateway-Route-Table-Attachment_48.svg",
+      "source": "Resource-Icons_07312026/Res_Networking-Content-Delivery/Res_AWS-Cloud-WAN_Transit-Gateway-Route-Table-Attachment_48.svg",
+      "height": 0.4,
+      "order": 47,
+      "group": false,
+      "stack": false,
+      "host": false,
+      "actions": [
+        "TransitGatewayRouteTable"
+      ],
+      "curveSegments": null,
+      "parents": [
+        "region"
+      ],
+      "floci": "supported",
+      "scope": "regional"
+    },
+    {
+      "kind": "prefix-list",
+      "label": "Prefix List",
+      "service": "ec2",
+      "signingName": "ec2",
+      "role": "block",
+      "category": "networking",
+      "icon": "Res_Amazon-VPC_Network-Access-Control-List_48.svg",
+      "source": "Resource-Icons_07312026/Res_Networking-Content-Delivery/Res_Amazon-VPC_Network-Access-Control-List_48.svg",
+      "height": 0.3,
+      "order": 48,
+      "group": false,
+      "stack": false,
+      "host": false,
+      "actions": [
+        "ManagedPrefixList"
+      ],
+      "curveSegments": null,
+      "parents": [
+        "region"
+      ],
+      "floci": "supported",
+      "scope": "regional"
+    },
+    {
+      "kind": "flow-log",
+      "label": "Flow Log",
+      "service": "ec2",
+      "signingName": "ec2",
+      "role": "block",
+      "category": "networking",
+      "icon": "Res_Amazon-VPC_Flow-Logs_48.svg",
+      "source": "Resource-Icons_07312026/Res_Networking-Content-Delivery/Res_Amazon-VPC_Flow-Logs_48.svg",
+      "height": 0.3,
+      "order": 49,
+      "group": false,
+      "stack": false,
+      "host": false,
+      "actions": [
+        "FlowLogs"
+      ],
+      "curveSegments": null,
+      "parents": [
+        "network-interface",
+        "subnet-private",
+        "subnet-public",
+        "vpc"
+      ],
+      "floci": "supported",
+      "scope": "regional"
+    },
+    {
+      "kind": "security-group",
+      "label": "Security Group",
+      "service": "ec2",
+      "signingName": "ec2",
+      "role": "attach-badge",
+      "category": "security",
+      "icon": "Security-Group-Shield_48.svg",
+      "source": null,
+      "height": null,
+      "order": 50,
+      "group": false,
+      "stack": false,
+      "host": false,
+      "actions": [
+        "SecurityGroup"
+      ],
+      "curveSegments": null,
+      "parents": [
+        "vpc"
+      ],
+      "floci": "supported",
+      "scope": "regional"
+    },
+    {
+      "kind": "key-pair",
+      "label": "Key Pair",
+      "service": "ec2",
+      "signingName": "ec2",
+      "role": "block",
+      "category": "security",
+      "icon": "Res_AWS-Identity-Access-Management_Long-Term-Security-Credential_48.svg",
+      "source": "Resource-Icons_07312026/Res_Security-Identity/Res_AWS-Identity-Access-Management_Long-Term-Security-Credential_48.svg",
+      "height": 0.4,
+      "order": 51,
+      "group": false,
+      "stack": false,
+      "host": false,
+      "actions": [
+        "KeyPair"
+      ],
+      "curveSegments": null,
+      "parents": [
+        "region"
+      ],
+      "floci": "supported",
+      "scope": "regional"
+    },
+    {
+      "kind": "network-acl",
+      "label": "Network ACL",
+      "service": "ec2",
+      "signingName": "ec2",
+      "role": "block",
+      "category": "security",
+      "icon": "Res_Amazon-VPC_Network-Access-Control-List_48.svg",
+      "source": "Resource-Icons_07312026/Res_Networking-Content-Delivery/Res_Amazon-VPC_Network-Access-Control-List_48.svg",
+      "height": 0.4,
+      "order": 52,
+      "group": false,
+      "stack": false,
+      "host": false,
+      "actions": [
+        "NetworkAcl"
+      ],
+      "curveSegments": null,
+      "parents": [
+        "vpc"
+      ],
+      "floci": "supported",
+      "scope": "regional"
+    },
+    {
+      "kind": "load-balancer",
+      "label": "Load Balancer",
+      "service": "elbv2",
+      "signingName": "elasticloadbalancing",
+      "role": "block",
+      "category": "networking",
+      "icon": "Arch_Elastic-Load-Balancing_48.svg",
+      "source": "Architecture-Service-Icons_07312026/Arch_Networking-Content-Delivery/48/Arch_Elastic-Load-Balancing_48.svg",
+      "height": 0.6,
+      "order": 55,
+      "group": false,
+      "stack": false,
+      "host": true,
+      "actions": [
+        "LoadBalancer",
+        "SecurityGroups",
+        "Subnets"
+      ],
+      "curveSegments": null,
+      "parents": [
+        "vpc"
+      ],
+      "floci": "supported",
+      "scope": "regional"
+    },
+    {
+      "kind": "target-group",
+      "label": "Target Group",
+      "service": "elbv2",
+      "signingName": "elasticloadbalancing",
+      "role": "block",
+      "category": "networking",
+      "icon": "Res_Servers_48_Light.svg",
+      "source": "Resource-Icons_07312026/Res_General-Icons/Res_48_Light/Res_Servers_48_Light.svg",
+      "height": 0.4,
+      "order": 56,
+      "group": false,
+      "stack": false,
+      "host": false,
+      "actions": [
+        "TargetGroup",
+        "Targets",
+        "TargetHealth"
+      ],
+      "curveSegments": null,
+      "parents": [
+        "region",
+        "vpc"
+      ],
+      "floci": "supported",
+      "scope": "regional"
+    },
+    {
+      "kind": "listener",
+      "label": "Listener",
+      "service": "elbv2",
+      "signingName": "elasticloadbalancing",
+      "role": "block",
+      "category": "networking",
+      "icon": "Res_Data-Stream_48_Light.svg",
+      "source": "Resource-Icons_07312026/Res_General-Icons/Res_48_Light/Res_Data-Stream_48_Light.svg",
+      "height": 0.3,
+      "order": 57,
+      "group": false,
+      "stack": false,
+      "host": false,
+      "actions": [
+        "Listener"
+      ],
+      "curveSegments": null,
+      "parents": [
+        "region"
+      ],
+      "floci": "supported",
+      "scope": "regional"
+    },
+    {
+      "kind": "listener-rule",
+      "label": "Listener Rule",
+      "service": "elbv2",
+      "signingName": "elasticloadbalancing",
+      "role": "block",
+      "category": "networking",
+      "icon": "Res_Document_48_Light.svg",
+      "source": "Resource-Icons_07312026/Res_General-Icons/Res_48_Light/Res_Document_48_Light.svg",
+      "height": 0.2,
+      "order": 58,
+      "group": false,
+      "stack": false,
+      "host": false,
+      "actions": [
+        "Rule",
+        "RulePriorities"
+      ],
+      "curveSegments": null,
+      "parents": [
+        "region"
+      ],
+      "floci": "supported",
+      "scope": "regional"
+    },
+    {
+      "kind": "instance",
+      "label": "EC2 Instance",
+      "service": "ec2",
+      "signingName": "ec2",
+      "role": "block",
+      "category": "compute",
+      "icon": "Res_Amazon-EC2_Instance_48.svg",
+      "source": "Resource-Icons_07312026/Res_Compute/Res_Amazon-EC2_Instance_48.svg",
+      "height": 0.9,
+      "order": 60,
+      "group": false,
+      "stack": false,
+      "host": true,
+      "actions": [
+        "Instance"
+      ],
+      "curveSegments": null,
+      "parents": [
+        "subnet-private",
+        "subnet-public"
+      ],
+      "floci": "supported",
+      "scope": "regional"
+    },
+    {
+      "kind": "elastic-ip",
+      "label": "Elastic IP",
+      "service": "ec2",
+      "signingName": "ec2",
+      "role": "attach-badge",
+      "category": "compute",
+      "icon": "Res_Amazon-EC2_Elastic-IP-Address_48.svg",
+      "source": "Resource-Icons_07312026/Res_Compute/Res_Amazon-EC2_Elastic-IP-Address_48.svg",
+      "height": null,
+      "order": 61,
+      "group": false,
+      "stack": false,
+      "host": false,
+      "actions": [
+        "Address"
+      ],
+      "curveSegments": null,
+      "parents": [
+        "region"
+      ],
+      "floci": "supported",
+      "scope": "regional"
+    },
+    {
+      "kind": "network-interface",
+      "label": "Network Interface (ENI)",
+      "service": "ec2",
+      "signingName": "ec2",
+      "role": "attach-badge",
+      "category": "networking",
+      "icon": "Res_Amazon-VPC_Elastic-Network-Interface_48.svg",
+      "source": "Resource-Icons_07312026/Res_Networking-Content-Delivery/Res_Amazon-VPC_Elastic-Network-Interface_48.svg",
+      "height": null,
+      "order": 62,
+      "group": false,
+      "stack": false,
+      "host": true,
+      "actions": [
+        "NetworkInterface"
+      ],
+      "curveSegments": null,
+      "parents": [
+        "subnet-private",
+        "subnet-public"
+      ],
+      "floci": "supported",
+      "scope": "regional"
+    },
+    {
+      "kind": "ebs-volume",
+      "label": "EBS Volume",
+      "service": "ec2",
+      "signingName": "ec2",
+      "role": "attach-badge",
+      "category": "storage",
+      "icon": "Res_Amazon-Elastic-Block-Store_Volume_48.svg",
+      "source": "Resource-Icons_07312026/Res_Storage/Res_Amazon-Elastic-Block-Store_Volume_48.svg",
+      "height": null,
+      "order": 63,
+      "group": false,
+      "stack": false,
+      "host": false,
+      "actions": [
+        "Volume"
+      ],
+      "curveSegments": null,
+      "parents": [
+        "region"
+      ],
+      "floci": "supported",
+      "scope": "regional"
+    },
+    {
+      "kind": "launch-template",
+      "label": "Launch Template",
+      "service": "ec2",
+      "signingName": "ec2",
+      "role": "block",
+      "category": "compute",
+      "icon": "Res_Amazon-EC2_AMI_48.svg",
+      "source": "Resource-Icons_07312026/Res_Compute/Res_Amazon-EC2_AMI_48.svg",
+      "height": 0.4,
+      "order": 64,
+      "group": false,
+      "stack": false,
+      "host": false,
+      "actions": [
+        "LaunchTemplate"
+      ],
+      "curveSegments": null,
+      "parents": [
+        "region"
+      ],
+      "floci": "supported",
+      "scope": "regional"
+    },
+    {
+      "kind": "autoscaling-group",
+      "label": "Auto Scaling Group",
+      "service": "autoscaling",
+      "signingName": "autoscaling",
+      "role": "block",
+      "category": "compute",
+      "icon": "Res_Amazon-EC2_Auto-Scaling_48.svg",
+      "source": "Resource-Icons_07312026/Res_Compute/Res_Amazon-EC2_Auto-Scaling_48.svg",
+      "height": 0.6,
+      "order": 65,
+      "group": false,
+      "stack": false,
+      "host": false,
+      "actions": [
+        "AutoScalingGroup",
+        "DesiredCapacity",
+        "LoadBalancerTargetGroups"
+      ],
+      "curveSegments": null,
+      "parents": [
+        "region"
+      ],
+      "floci": "supported",
+      "scope": "regional"
+    },
+    {
+      "kind": "scaling-policy",
+      "label": "Scaling Policy",
+      "service": "autoscaling",
+      "signingName": "autoscaling",
+      "role": "block",
+      "category": "compute",
+      "icon": "Res_Metrics_48_Light.svg",
+      "source": "Resource-Icons_07312026/Res_General-Icons/Res_48_Light/Res_Metrics_48_Light.svg",
+      "height": 0.3,
+      "order": 66,
+      "group": false,
+      "stack": false,
+      "host": false,
+      "actions": [
+        "ScalingPolicy",
+        "Policies"
+      ],
+      "curveSegments": null,
+      "parents": [
+        "region"
+      ],
+      "floci": "supported",
+      "scope": "regional"
+    },
+    {
+      "kind": "db-subnet-group",
+      "label": "DB Subnet Group",
+      "service": "rds",
+      "signingName": "rds",
+      "role": "block",
+      "category": "database",
+      "icon": "Res_Amazon-RDS_Multi-AZ_48.svg",
+      "source": "Resource-Icons_07312026/Res_Databases/Res_Amazon-RDS_Multi-AZ_48.svg",
+      "height": 0.4,
+      "order": 70,
+      "group": false,
+      "stack": false,
+      "host": false,
+      "actions": [
+        "DBSubnetGroup"
+      ],
+      "curveSegments": null,
+      "parents": [
+        "vpc"
+      ],
+      "floci": "supported",
+      "scope": "regional"
+    },
+    {
+      "kind": "db-cluster",
+      "label": "Aurora DB Cluster",
+      "service": "rds",
+      "signingName": "rds",
+      "role": "block",
+      "category": "database",
+      "icon": "Arch_Amazon-Aurora_48.svg",
+      "source": "Architecture-Service-Icons_07312026/Arch_Databases/48/Arch_Amazon-Aurora_48.svg",
+      "height": 0.8,
+      "order": 71,
+      "group": false,
+      "stack": false,
+      "host": true,
+      "actions": [
+        "DBCluster"
+      ],
+      "curveSegments": null,
+      "parents": [
+        "db-subnet-group",
+        "region"
+      ],
+      "floci": "supported",
+      "scope": "regional"
+    },
+    {
+      "kind": "db-instance",
+      "label": "RDS DB Instance",
+      "service": "rds",
+      "signingName": "rds",
+      "role": "block",
+      "category": "database",
+      "icon": "Arch_Amazon-RDS_48.svg",
+      "source": "Architecture-Service-Icons_07312026/Arch_Databases/48/Arch_Amazon-RDS_48.svg",
+      "height": 0.7,
+      "order": 72,
+      "group": false,
+      "stack": false,
+      "host": true,
+      "actions": [
+        "DBInstance"
+      ],
+      "curveSegments": null,
+      "parents": [
+        "db-cluster",
+        "db-subnet-group",
+        "region"
+      ],
+      "floci": "supported",
+      "scope": "regional"
+    },
+    {
+      "kind": "db-proxy",
+      "label": "RDS Proxy",
+      "service": "rds",
+      "signingName": "rds",
+      "role": "block",
+      "category": "database",
+      "icon": "Res_Amazon-RDS-Proxy-Instance_48.svg",
+      "source": "Resource-Icons_07312026/Res_Databases/Res_Amazon-RDS-Proxy-Instance_48.svg",
+      "height": 0.5,
+      "order": 73,
+      "group": false,
+      "stack": false,
+      "host": true,
+      "actions": [
+        "DBProxy"
+      ],
+      "curveSegments": null,
+      "parents": [
+        "vpc"
+      ],
+      "floci": "supported",
+      "scope": "regional"
+    },
+    {
+      "kind": "db-parameter-group",
+      "label": "DB Parameter Group",
+      "service": "rds",
+      "signingName": "rds",
+      "role": "block",
+      "category": "database",
+      "icon": "Res_AWS-Systems-Manager_Parameter-Store_48.svg",
+      "source": "Resource-Icons_07312026/Res_Management-Governance/Res_AWS-Systems-Manager_Parameter-Store_48.svg",
+      "height": 0.3,
+      "order": 74,
+      "group": false,
+      "stack": false,
+      "host": false,
+      "actions": [
+        "DBParameterGroup"
+      ],
+      "curveSegments": null,
+      "parents": [
+        "region"
+      ],
+      "floci": "supported",
+      "scope": "regional"
+    },
+    {
+      "kind": "db-cluster-parameter-group",
+      "label": "DB Cluster Parameter Group",
+      "service": "rds",
+      "signingName": "rds",
+      "role": "block",
+      "category": "database",
+      "icon": "Res_AWS-Systems-Manager_Parameter-Store_48.svg",
+      "source": "Resource-Icons_07312026/Res_Management-Governance/Res_AWS-Systems-Manager_Parameter-Store_48.svg",
+      "height": 0.3,
+      "order": 75,
+      "group": false,
+      "stack": false,
+      "host": false,
+      "actions": [
+        "DBClusterParameterGroup"
+      ],
+      "curveSegments": null,
+      "parents": [
+        "region"
+      ],
+      "floci": "supported",
+      "scope": "regional"
+    },
+    {
+      "kind": "db-option-group",
+      "label": "DB Option Group",
+      "service": "rds",
+      "signingName": "rds",
+      "role": "block",
+      "category": "database",
+      "icon": "Res_AWS-Systems-Manager_Parameter-Store_48.svg",
+      "source": "Resource-Icons_07312026/Res_Management-Governance/Res_AWS-Systems-Manager_Parameter-Store_48.svg",
+      "height": 0.3,
+      "order": 76,
+      "group": false,
+      "stack": false,
+      "host": false,
+      "actions": [
+        "OptionGroup"
+      ],
+      "curveSegments": null,
+      "parents": [
+        "region"
+      ],
+      "floci": "supported",
+      "scope": "regional"
+    },
+    {
+      "kind": "db-snapshot",
+      "label": "DB Snapshot",
+      "service": "rds",
+      "signingName": "rds",
+      "role": "block",
+      "category": "database",
+      "icon": "Res_Amazon-Elastic-Block-Store_Snapshot_48.svg",
+      "source": "Resource-Icons_07312026/Res_Storage/Res_Amazon-Elastic-Block-Store_Snapshot_48.svg",
+      "height": 0.3,
+      "order": 77,
+      "group": false,
+      "stack": false,
+      "host": false,
+      "actions": [],
+      "curveSegments": 3,
+      "parents": [
+        "region"
+      ],
+      "floci": "supported",
+      "scope": "regional"
+    },
+    {
+      "kind": "db-cluster-snapshot",
+      "label": "DB Cluster Snapshot",
+      "service": "rds",
+      "signingName": "rds",
+      "role": "block",
+      "category": "database",
+      "icon": "Res_Amazon-Elastic-Block-Store_Snapshot_48.svg",
+      "source": "Resource-Icons_07312026/Res_Storage/Res_Amazon-Elastic-Block-Store_Snapshot_48.svg",
+      "height": 0.3,
+      "order": 78,
+      "group": false,
+      "stack": false,
+      "host": false,
+      "actions": [],
+      "curveSegments": 3,
+      "parents": [
+        "region"
+      ],
+      "floci": "supported",
+      "scope": "regional"
+    },
+    {
+      "kind": "s3-bucket",
+      "label": "S3 Bucket",
+      "service": "s3",
+      "signingName": "s3",
+      "role": "block",
+      "category": "storage",
+      "icon": "Res_Amazon-Simple-Storage-Service_Bucket_48.svg",
+      "source": "Resource-Icons_07312026/Res_Storage/Res_Amazon-Simple-Storage-Service_Bucket_48.svg",
+      "height": 0.6,
+      "order": 80,
+      "group": false,
+      "stack": false,
+      "host": false,
+      "actions": [
+        "Bucket"
+      ],
+      "curveSegments": 3,
+      "parents": [
+        "region"
+      ],
+      "floci": "supported",
+      "scope": "regional"
+    },
+    {
+      "kind": "s3-multipart-upload",
+      "label": "Multipart Upload",
+      "service": "s3",
+      "signingName": "s3",
+      "role": "block",
+      "category": "storage",
+      "icon": "Res_Amazon-Simple-Storage-Service_Object_48.svg",
+      "source": "Resource-Icons_07312026/Res_Storage/Res_Amazon-Simple-Storage-Service_Object_48.svg",
+      "height": 0.3,
+      "order": 81,
+      "group": false,
+      "stack": false,
+      "host": false,
+      "actions": [
+        "MultipartUpload"
+      ],
+      "curveSegments": null,
+      "parents": [
+        "region"
+      ],
+      "floci": "supported",
+      "scope": "regional"
+    },
+    {
+      "kind": "dynamodb-table",
+      "label": "DynamoDB Table",
+      "service": "dynamodb",
+      "signingName": "dynamodb",
+      "role": "block",
+      "category": "database",
+      "icon": "Res_Amazon-DynamoDB_Table_48.svg",
+      "source": "Resource-Icons_07312026/Res_Databases/Res_Amazon-DynamoDB_Table_48.svg",
+      "height": 0.6,
+      "order": 85,
+      "group": false,
+      "stack": false,
+      "host": false,
+      "actions": [
+        "Table",
+        "TimeToLive",
+        "ContinuousBackups"
+      ],
+      "curveSegments": null,
+      "parents": [
+        "region"
+      ],
+      "floci": "supported",
+      "scope": "regional"
+    },
+    {
+      "kind": "efs-file-system",
+      "label": "EFS File System",
+      "service": "efs",
+      "signingName": "elasticfilesystem",
+      "role": "block",
+      "category": "storage",
+      "icon": "Res_Amazon-Elastic-File-System_File-System_48.svg",
+      "source": "Resource-Icons_07312026/Res_Storage/Res_Amazon-Elastic-File-System_File-System_48.svg",
+      "height": 0.6,
+      "order": 87,
+      "group": false,
+      "stack": false,
+      "host": true,
+      "actions": [
+        "FileSystem",
+        "LifecycleConfiguration",
+        "BackupPolicy"
+      ],
+      "curveSegments": null,
+      "parents": [
+        "region"
+      ],
+      "floci": "supported",
+      "scope": "regional"
+    },
+    {
+      "kind": "efs-mount-target",
+      "label": "EFS Mount Target",
+      "service": "efs",
+      "signingName": "elasticfilesystem",
+      "role": "block",
+      "category": "storage",
+      "icon": "Res_Amazon-VPC_Elastic-Network-Interface_48.svg",
+      "source": "Resource-Icons_07312026/Res_Networking-Content-Delivery/Res_Amazon-VPC_Elastic-Network-Interface_48.svg",
+      "height": 0.3,
+      "order": 88,
+      "group": false,
+      "stack": false,
+      "host": true,
+      "actions": [
+        "MountTarget"
+      ],
+      "curveSegments": null,
+      "parents": [
+        "subnet-private",
+        "subnet-public"
+      ],
+      "floci": "supported",
+      "scope": "regional"
+    },
+    {
+      "kind": "efs-access-point",
+      "label": "EFS Access Point",
+      "service": "efs",
+      "signingName": "elasticfilesystem",
+      "role": "block",
+      "category": "storage",
+      "icon": "Arch_Amazon-EFS_48.svg",
+      "source": "Architecture-Service-Icons_07312026/Arch_Storage/48/Arch_Amazon-EFS_48.svg",
+      "height": 0.3,
+      "order": 89,
+      "group": false,
+      "stack": false,
+      "host": false,
+      "actions": [
+        "AccessPoint"
+      ],
+      "curveSegments": null,
+      "parents": [
+        "region"
+      ],
+      "floci": "supported",
+      "scope": "regional"
+    },
+    {
+      "kind": "lambda-function",
+      "label": "Lambda Function",
+      "service": "lambda",
+      "signingName": "lambda",
+      "role": "block",
+      "category": "compute",
+      "icon": "Arch_AWS-Lambda_48.svg",
+      "source": "Architecture-Service-Icons_07312026/Arch_Compute/48/Arch_AWS-Lambda_48.svg",
+      "height": 0.6,
+      "order": 90,
+      "group": false,
+      "stack": false,
+      "host": true,
+      "actions": [
+        "Function"
+      ],
+      "curveSegments": null,
+      "parents": [
+        "region",
+        "subnet-private",
+        "subnet-public"
+      ],
+      "floci": "supported",
+      "scope": "regional"
+    },
+    {
+      "kind": "lambda-version",
+      "label": "Lambda Version",
+      "service": "lambda",
+      "signingName": "lambda",
+      "role": "block",
+      "category": "compute",
+      "icon": "Res_AWS-Lambda_Lambda-Function_48.svg",
+      "source": "Resource-Icons_07312026/Res_Compute/Res_AWS-Lambda_Lambda-Function_48.svg",
+      "height": 0.3,
+      "order": 91,
+      "group": false,
+      "stack": false,
+      "host": false,
+      "actions": [],
+      "curveSegments": null,
+      "parents": [
+        "region"
+      ],
+      "floci": "supported",
+      "scope": "regional"
+    },
+    {
+      "kind": "lambda-alias",
+      "label": "Lambda Alias",
+      "service": "lambda",
+      "signingName": "lambda",
+      "role": "block",
+      "category": "compute",
+      "icon": "Res_AWS-Lambda_Lambda-Function_48.svg",
+      "source": "Resource-Icons_07312026/Res_Compute/Res_AWS-Lambda_Lambda-Function_48.svg",
+      "height": 0.3,
+      "order": 92,
+      "group": false,
+      "stack": false,
+      "host": false,
+      "actions": [],
+      "curveSegments": null,
+      "parents": [
+        "region"
+      ],
+      "floci": "supported",
+      "scope": "regional"
+    },
+    {
+      "kind": "lambda-layer",
+      "label": "Lambda Layer",
+      "service": "lambda",
+      "signingName": "lambda",
+      "role": "block",
+      "category": "compute",
+      "icon": "Res_AWS-Lambda_Lambda-Function_48.svg",
+      "source": "Resource-Icons_07312026/Res_Compute/Res_AWS-Lambda_Lambda-Function_48.svg",
+      "height": 0.3,
+      "order": 93,
+      "group": false,
+      "stack": false,
+      "host": false,
+      "actions": [
+        "LayerVersion"
+      ],
+      "curveSegments": null,
+      "parents": [
+        "region"
+      ],
+      "floci": "supported",
+      "scope": "regional"
+    },
+    {
+      "kind": "lambda-event-source",
+      "label": "Event Source Mapping",
+      "service": "lambda",
+      "signingName": "lambda",
+      "role": "block",
+      "category": "compute",
+      "icon": "Res_AWS-Lambda_Lambda-Function_48.svg",
+      "source": "Resource-Icons_07312026/Res_Compute/Res_AWS-Lambda_Lambda-Function_48.svg",
+      "height": 0.3,
+      "order": 94,
+      "group": false,
+      "stack": false,
+      "host": false,
+      "actions": [],
+      "curveSegments": null,
+      "parents": [
+        "region"
+      ],
+      "floci": "supported",
+      "scope": "regional"
+    },
+    {
+      "kind": "iam-role",
+      "label": "IAM Role",
+      "service": "iam",
+      "signingName": "iam",
+      "role": "block",
+      "category": "security",
+      "icon": "Res_AWS-Identity-Access-Management_Role_48.svg",
+      "source": "Resource-Icons_07312026/Res_Security-Identity/Res_AWS-Identity-Access-Management_Role_48.svg",
+      "height": 0.4,
+      "order": 100,
+      "group": false,
+      "stack": false,
+      "host": false,
+      "actions": [
+        "Role"
+      ],
+      "curveSegments": null,
+      "parents": [
+        "global"
+      ],
+      "floci": "supported",
+      "scope": "global"
+    },
+    {
+      "kind": "iam-user",
+      "label": "IAM User",
+      "service": "iam",
+      "signingName": "iam",
+      "role": "block",
+      "category": "security",
+      "icon": "Res_User_48_Light.svg",
+      "source": "Resource-Icons_07312026/Res_General-Icons/Res_48_Light/Res_User_48_Light.svg",
+      "height": 0.4,
+      "order": 101,
+      "group": false,
+      "stack": false,
+      "host": false,
+      "actions": [
+        "User"
+      ],
+      "curveSegments": null,
+      "parents": [
+        "global"
+      ],
+      "floci": "supported",
+      "scope": "global"
+    },
+    {
+      "kind": "iam-group",
+      "label": "IAM Group",
+      "service": "iam",
+      "signingName": "iam",
+      "role": "block",
+      "category": "security",
+      "icon": "Res_Users_48_Light.svg",
+      "source": "Resource-Icons_07312026/Res_General-Icons/Res_48_Light/Res_Users_48_Light.svg",
+      "height": 0.4,
+      "order": 102,
+      "group": false,
+      "stack": false,
+      "host": false,
+      "actions": [
+        "Group"
+      ],
+      "curveSegments": null,
+      "parents": [
+        "global"
+      ],
+      "floci": "supported",
+      "scope": "global"
+    },
+    {
+      "kind": "iam-policy",
+      "label": "IAM Policy",
+      "service": "iam",
+      "signingName": "iam",
+      "role": "block",
+      "category": "security",
+      "icon": "Res_AWS-Identity-Access-Management_Permissions_48.svg",
+      "source": "Resource-Icons_07312026/Res_Security-Identity/Res_AWS-Identity-Access-Management_Permissions_48.svg",
+      "height": 0.3,
+      "order": 103,
+      "group": false,
+      "stack": false,
+      "host": false,
+      "actions": [
+        "Policy"
+      ],
+      "curveSegments": null,
+      "parents": [
+        "global"
+      ],
+      "floci": "supported",
+      "scope": "global"
+    },
+    {
+      "kind": "iam-instance-profile",
+      "label": "Instance Profile",
+      "service": "iam",
+      "signingName": "iam",
+      "role": "block",
+      "category": "security",
+      "icon": "Res_AWS-Identity-Access-Management_Role_48.svg",
+      "source": "Resource-Icons_07312026/Res_Security-Identity/Res_AWS-Identity-Access-Management_Role_48.svg",
+      "height": 0.3,
+      "order": 104,
+      "group": false,
+      "stack": false,
+      "host": false,
+      "actions": [
+        "InstanceProfile"
+      ],
+      "curveSegments": null,
+      "parents": [
+        "global"
+      ],
+      "floci": "supported",
+      "scope": "global"
+    },
+    {
+      "kind": "hosted-zone",
+      "label": "Route 53 Hosted Zone",
+      "service": "route53",
+      "signingName": "route53",
+      "role": "block",
+      "category": "networking",
+      "icon": "Res_Amazon-Route-53-Hosted-Zone_48.svg",
+      "source": "Resource-Icons_07312026/Res_Networking-Content-Delivery/Res_Amazon-Route-53-Hosted-Zone_48.svg",
+      "height": 0.5,
+      "order": 106,
+      "group": false,
+      "stack": false,
+      "host": false,
+      "actions": [
+        "HostedZone",
+        "VPCAssociation"
+      ],
+      "curveSegments": null,
+      "parents": [
+        "global"
+      ],
+      "floci": "supported",
+      "scope": "global"
+    },
+    {
+      "kind": "record-set",
+      "label": "Route 53 Record",
+      "service": "route53",
+      "signingName": "route53",
+      "role": "block",
+      "category": "networking",
+      "icon": "Res_Document_48_Light.svg",
+      "source": "Resource-Icons_07312026/Res_General-Icons/Res_48_Light/Res_Document_48_Light.svg",
+      "height": 0.2,
+      "order": 107,
+      "group": false,
+      "stack": false,
+      "host": false,
+      "actions": [
+        "ResourceRecordSets"
+      ],
+      "curveSegments": null,
+      "parents": [
+        "global"
+      ],
+      "floci": "supported",
+      "scope": "global"
+    },
+    {
+      "kind": "kms-key",
+      "label": "KMS Key",
+      "service": "kms",
+      "signingName": "kms",
+      "role": "block",
+      "category": "security",
+      "icon": "Arch_AWS-Key-Management-Service_48.svg",
+      "source": "Architecture-Service-Icons_07312026/Arch_Security-Identity/48/Arch_AWS-Key-Management-Service_48.svg",
+      "height": 0.4,
+      "order": 110,
+      "group": false,
+      "stack": false,
+      "host": false,
+      "actions": [
+        "Key"
+      ],
+      "curveSegments": null,
+      "parents": [
+        "region"
+      ],
+      "floci": "supported",
+      "scope": "regional"
+    },
+    {
+      "kind": "kms-alias",
+      "label": "KMS Alias",
+      "service": "kms",
+      "signingName": "kms",
+      "role": "block",
+      "category": "security",
+      "icon": "Arch_AWS-Key-Management-Service_48.svg",
+      "source": "Architecture-Service-Icons_07312026/Arch_Security-Identity/48/Arch_AWS-Key-Management-Service_48.svg",
+      "height": 0.2,
+      "order": 111,
+      "group": false,
+      "stack": false,
+      "host": false,
+      "actions": [
+        "Alias"
+      ],
+      "curveSegments": null,
+      "parents": [
+        "region"
+      ],
+      "floci": "supported",
+      "scope": "regional"
+    },
+    {
+      "kind": "secretsmanager-secret",
+      "label": "Secret",
+      "service": "secretsmanager",
+      "signingName": "secretsmanager",
+      "role": "block",
+      "category": "security",
+      "icon": "Arch_AWS-Secrets-Manager_48.svg",
+      "source": "Architecture-Service-Icons_07312026/Arch_Security-Identity/48/Arch_AWS-Secrets-Manager_48.svg",
+      "height": 0.3,
+      "order": 112,
+      "group": false,
+      "stack": false,
+      "host": false,
+      "actions": [
+        "Secret"
+      ],
+      "curveSegments": null,
+      "parents": [
+        "region"
+      ],
+      "floci": "supported",
+      "scope": "regional"
+    },
+    {
+      "kind": "ssm-parameter",
+      "label": "SSM Parameter",
+      "service": "ssm",
+      "signingName": "ssm",
+      "role": "block",
+      "category": "management",
+      "icon": "Res_AWS-Systems-Manager_Parameter-Store_48.svg",
+      "source": "Resource-Icons_07312026/Res_Management-Governance/Res_AWS-Systems-Manager_Parameter-Store_48.svg",
+      "height": 0.3,
+      "order": 120,
+      "group": false,
+      "stack": false,
+      "host": false,
+      "actions": [
+        "Parameter"
+      ],
+      "curveSegments": null,
+      "parents": [
+        "region"
+      ],
+      "floci": "supported",
+      "scope": "regional"
+    },
+    {
+      "kind": "cloudformation-stack",
+      "label": "CloudFormation Stack",
+      "service": "cloudformation",
+      "signingName": "cloudformation",
+      "role": "block",
+      "category": "management",
+      "icon": "Res_AWS-CloudFormation_Stack_48.svg",
+      "source": "Resource-Icons_07312026/Res_Management-Governance/Res_AWS-CloudFormation_Stack_48.svg",
+      "height": 0.4,
+      "order": 130,
+      "group": false,
+      "stack": false,
+      "host": false,
+      "actions": [
+        "Stack"
+      ],
+      "curveSegments": null,
+      "parents": [
+        "region"
+      ],
+      "floci": "supported",
+      "scope": "regional"
+    },
+    {
+      "kind": "cloudwatch-alarm",
+      "label": "CloudWatch Alarm",
+      "service": "cloudwatch",
+      "signingName": "monitoring",
+      "role": "block",
+      "category": "management",
+      "icon": "Res_Amazon-CloudWatch_Alarm_48.svg",
+      "source": "Resource-Icons_07312026/Res_Management-Governance/Res_Amazon-CloudWatch_Alarm_48.svg",
+      "height": 0.4,
+      "order": 400,
+      "group": false,
+      "stack": false,
+      "host": false,
+      "actions": [
+        "Alarm"
+      ],
+      "curveSegments": null,
+      "parents": [
+        "region"
+      ],
+      "floci": "supported",
+      "scope": "regional"
+    },
+    {
+      "kind": "cloudwatch-dashboard",
+      "label": "CloudWatch Dashboard",
+      "service": "cloudwatch",
+      "signingName": "monitoring",
+      "role": "block",
+      "category": "management",
+      "icon": "Arch_Amazon-CloudWatch_48.svg",
+      "source": "Architecture-Service-Icons_07312026/Arch_Management-Tools/48/Arch_Amazon-CloudWatch_48.svg",
+      "height": 0.4,
+      "order": 401,
+      "group": false,
+      "stack": false,
+      "host": false,
+      "actions": [
+        "Dashboard"
+      ],
+      "curveSegments": null,
+      "parents": [
+        "global"
+      ],
+      "floci": "supported",
+      "scope": "global"
+    },
+    {
+      "kind": "log-group",
+      "label": "Log Group",
+      "service": "logs",
+      "signingName": "logs",
+      "role": "block",
+      "category": "management",
+      "icon": "Res_Amazon-CloudWatch_Logs_48.svg",
+      "source": "Resource-Icons_07312026/Res_Management-Governance/Res_Amazon-CloudWatch_Logs_48.svg",
+      "height": 0.4,
+      "order": 402,
+      "group": false,
+      "stack": false,
+      "host": false,
+      "actions": [
+        "LogGroup",
+        "RetentionPolicy"
+      ],
+      "curveSegments": null,
+      "parents": [
+        "region"
+      ],
+      "floci": "supported",
+      "scope": "regional"
+    },
+    {
+      "kind": "metric-filter",
+      "label": "Metric Filter",
+      "service": "logs",
+      "signingName": "logs",
+      "role": "block",
+      "category": "management",
+      "icon": "Res_Amazon-CloudWatch_Metrics-Insights_48.svg",
+      "source": "Resource-Icons_07312026/Res_Management-Governance/Res_Amazon-CloudWatch_Metrics-Insights_48.svg",
+      "height": 0.3,
+      "order": 403,
+      "group": false,
+      "stack": false,
+      "host": false,
+      "actions": [
+        "MetricFilter"
+      ],
+      "curveSegments": null,
+      "parents": [
+        "region"
+      ],
+      "floci": "supported",
+      "scope": "regional"
+    },
+    {
+      "kind": "event-bus",
+      "label": "Event Bus",
+      "service": "events",
+      "signingName": "events",
+      "role": "block",
+      "category": "app-integration",
+      "icon": "Res_Amazon-EventBridge_Custom-Event-Bus_48.svg",
+      "source": "Resource-Icons_07312026/Res_Application-Integration/Res_Amazon-EventBridge_Custom-Event-Bus_48.svg",
+      "height": 0.4,
+      "order": 410,
+      "group": false,
+      "stack": false,
+      "host": false,
+      "actions": [
+        "EventBus"
+      ],
+      "curveSegments": null,
+      "parents": [
+        "region"
+      ],
+      "floci": "supported",
+      "scope": "regional"
+    },
+    {
+      "kind": "event-rule",
+      "label": "EventBridge Rule",
+      "service": "events",
+      "signingName": "events",
+      "role": "block",
+      "category": "app-integration",
+      "icon": "Res_Amazon-EventBridge_Rule_48.svg",
+      "source": "Resource-Icons_07312026/Res_Application-Integration/Res_Amazon-EventBridge_Rule_48.svg",
+      "height": 0.3,
+      "order": 411,
+      "group": false,
+      "stack": false,
+      "host": false,
+      "actions": [
+        "Rule",
+        "Targets"
+      ],
+      "curveSegments": null,
+      "parents": [
+        "event-bus"
+      ],
+      "floci": "supported",
+      "scope": "regional"
+    },
+    {
+      "kind": "schedule",
+      "label": "EventBridge Schedule",
+      "service": "scheduler",
+      "signingName": "scheduler",
+      "role": "block",
+      "category": "app-integration",
+      "icon": "Res_Amazon-EventBridge_Scheduler_48.svg",
+      "source": "Resource-Icons_07312026/Res_Application-Integration/Res_Amazon-EventBridge_Scheduler_48.svg",
+      "height": 0.4,
+      "order": 412,
+      "group": false,
+      "stack": false,
+      "host": false,
+      "actions": [
+        "Schedule"
+      ],
+      "curveSegments": null,
+      "parents": [
+        "region"
+      ],
+      "floci": "supported",
+      "scope": "regional"
+    },
+    {
+      "kind": "backup-vault",
+      "label": "Backup Vault",
+      "service": "backup",
+      "signingName": "backup",
+      "role": "block",
+      "category": "storage",
+      "icon": "Res_AWS-Backup_Backup-Vault_48.svg",
+      "source": "Resource-Icons_07312026/Res_Storage/Res_AWS-Backup_Backup-Vault_48.svg",
+      "height": 0.4,
+      "order": 420,
+      "group": false,
+      "stack": false,
+      "host": false,
+      "actions": [
+        "BackupVault",
+        "BackupJob"
+      ],
+      "curveSegments": null,
+      "parents": [
+        "region"
+      ],
+      "floci": "supported",
+      "scope": "regional"
+    },
+    {
+      "kind": "backup-plan",
+      "label": "Backup Plan",
+      "service": "backup",
+      "signingName": "backup",
+      "role": "block",
+      "category": "storage",
+      "icon": "Res_AWS-Backup_Backup-Plan_48.svg",
+      "source": "Resource-Icons_07312026/Res_Storage/Res_AWS-Backup_Backup-Plan_48.svg",
+      "height": 0.4,
+      "order": 421,
+      "group": false,
+      "stack": false,
+      "host": false,
+      "actions": [
+        "BackupPlan"
+      ],
+      "curveSegments": null,
+      "parents": [
+        "region"
+      ],
+      "floci": "supported",
+      "scope": "regional"
+    },
+    {
+      "kind": "backup-selection",
+      "label": "Backup Selection",
+      "service": "backup",
+      "signingName": "backup",
+      "role": "block",
+      "category": "storage",
+      "icon": "Arch_AWS-Backup_48.svg",
+      "source": "Architecture-Service-Icons_07312026/Arch_Storage/48/Arch_AWS-Backup_48.svg",
+      "height": 0.3,
+      "order": 422,
+      "group": false,
+      "stack": false,
+      "host": false,
+      "actions": [
+        "BackupSelection"
+      ],
+      "curveSegments": null,
+      "parents": [
+        "backup-plan"
+      ],
+      "floci": "supported",
+      "scope": "regional"
+    },
+    {
+      "kind": "cloudfront-distribution",
+      "label": "CloudFront Distribution",
+      "service": "cloudfront",
+      "signingName": "cloudfront",
+      "role": "block",
+      "category": "networking",
+      "icon": "Res_Amazon-CloudFront_Download-Distribution_48.svg",
+      "source": "Resource-Icons_07312026/Res_Networking-Content-Delivery/Res_Amazon-CloudFront_Download-Distribution_48.svg",
+      "height": 0.6,
+      "order": 500,
+      "group": false,
+      "stack": false,
+      "host": false,
+      "actions": [
+        "Distribution",
+        "DistributionConfig"
+      ],
+      "curveSegments": null,
+      "parents": [
+        "global"
+      ],
+      "floci": "supported",
+      "scope": "global"
+    },
+    {
+      "kind": "apigateway-rest-api",
+      "label": "API Gateway REST API",
+      "service": "apigateway",
+      "signingName": "apigateway",
+      "role": "block",
+      "category": "networking",
+      "icon": "Arch_Amazon-API-Gateway_48.svg",
+      "source": "Architecture-Service-Icons_07312026/Arch_Networking-Content-Delivery/48/Arch_Amazon-API-Gateway_48.svg",
+      "height": 0.6,
+      "order": 505,
+      "group": false,
+      "stack": false,
+      "host": false,
+      "actions": [
+        "RestApi",
+        "Deployment"
+      ],
+      "curveSegments": null,
+      "parents": [
+        "region"
+      ],
+      "floci": "supported",
+      "scope": "regional"
+    },
+    {
+      "kind": "apigateway-http-api",
+      "label": "API Gateway HTTP API",
+      "service": "apigatewayv2",
+      "signingName": "apigateway",
+      "role": "block",
+      "category": "networking",
+      "icon": "Res_Amazon-API-Gateway_Endpoint_48.svg",
+      "source": "Resource-Icons_07312026/Res_Networking-Content-Delivery/Res_Amazon-API-Gateway_Endpoint_48.svg",
+      "height": 0.5,
+      "order": 506,
+      "group": false,
+      "stack": false,
+      "host": false,
+      "actions": [
+        "Api",
+        "Route"
+      ],
+      "curveSegments": null,
+      "parents": [
+        "region"
+      ],
+      "floci": "supported",
+      "scope": "regional"
+    },
+    {
+      "kind": "global-accelerator",
+      "label": "Global Accelerator",
+      "service": "globalaccelerator",
+      "signingName": "globalaccelerator",
+      "role": "block",
+      "category": "networking",
+      "icon": "Arch_AWS-Global-Accelerator_48.svg",
+      "source": "Architecture-Service-Icons_07312026/Arch_Networking-Content-Delivery/48/Arch_AWS-Global-Accelerator_48.svg",
+      "height": 0.6,
+      "order": 510,
+      "group": false,
+      "stack": false,
+      "host": false,
+      "actions": [
+        "Accelerator",
+        "AcceleratorAttributes"
+      ],
+      "curveSegments": null,
+      "parents": [
+        "global"
+      ],
+      "floci": "control-plane-only",
+      "scope": "global"
+    },
+    {
+      "kind": "acm-certificate",
+      "label": "ACM Certificate",
+      "service": "acm",
+      "signingName": "acm",
+      "role": "block",
+      "category": "security",
+      "icon": "Arch_AWS-Certificate-Manager_48.svg",
+      "source": "Architecture-Service-Icons_07312026/Arch_Security-Identity/48/Arch_AWS-Certificate-Manager_48.svg",
+      "height": 0.4,
+      "order": 515,
+      "group": false,
+      "stack": false,
+      "host": false,
+      "actions": [
+        "Certificate",
+        "CertificateOptions"
+      ],
+      "curveSegments": null,
+      "parents": [
+        "region"
+      ],
+      "floci": "supported",
+      "scope": "regional"
+    },
+    {
+      "kind": "waf-web-acl",
+      "label": "WAF Web ACL",
+      "service": "wafv2",
+      "signingName": "wafv2",
+      "role": "block",
+      "category": "security",
+      "icon": "Arch_AWS-WAF_48.svg",
+      "source": "Architecture-Service-Icons_07312026/Arch_Security-Identity/48/Arch_AWS-WAF_48.svg",
+      "height": 0.5,
+      "order": 520,
+      "group": false,
+      "stack": false,
+      "host": false,
+      "actions": [
+        "WebACL"
+      ],
+      "curveSegments": null,
+      "parents": [
+        "region"
+      ],
+      "floci": "control-plane-only",
+      "scope": "regional"
+    },
+    {
+      "kind": "route53-health-check",
+      "label": "Route 53 Health Check",
+      "service": "route53",
+      "signingName": "route53",
+      "role": "block",
+      "category": "networking",
+      "icon": "Res_Amazon-Route-53_Readiness-Checks_48.svg",
+      "source": "Resource-Icons_07312026/Res_Networking-Content-Delivery/Res_Amazon-Route-53_Readiness-Checks_48.svg",
+      "height": 0.3,
+      "order": 525,
+      "group": false,
+      "stack": false,
+      "host": false,
+      "actions": [
+        "HealthCheck"
+      ],
+      "curveSegments": null,
+      "parents": [
+        "global"
+      ],
+      "floci": "supported",
+      "scope": "global"
+    },
+    {
+      "kind": "sqs-queue",
+      "label": "SQS Queue",
+      "service": "sqs",
+      "signingName": "sqs",
+      "role": "block",
+      "category": "app-integration",
+      "icon": "Res_Amazon-Simple-Queue-Service_Queue_48.svg",
+      "source": "Resource-Icons_07312026/Res_Application-Integration/Res_Amazon-Simple-Queue-Service_Queue_48.svg",
+      "height": 0.4,
+      "order": 550,
+      "group": false,
+      "stack": false,
+      "host": false,
+      "actions": [
+        "Queue",
+        "QueueAttributes"
+      ],
+      "curveSegments": null,
+      "parents": [
+        "region"
+      ],
+      "floci": "supported",
+      "scope": "regional"
+    },
+    {
+      "kind": "sns-topic",
+      "label": "SNS Topic",
+      "service": "sns",
+      "signingName": "sns",
+      "role": "block",
+      "category": "app-integration",
+      "icon": "Res_Amazon-Simple-Notification-Service_Topic_48.svg",
+      "source": "Resource-Icons_07312026/Res_Application-Integration/Res_Amazon-Simple-Notification-Service_Topic_48.svg",
+      "height": 0.4,
+      "order": 560,
+      "group": false,
+      "stack": false,
+      "host": false,
+      "actions": [
+        "Topic",
+        "TopicAttributes"
+      ],
+      "curveSegments": null,
+      "parents": [
+        "region"
+      ],
+      "floci": "supported",
+      "scope": "regional"
+    },
+    {
+      "kind": "sns-subscription",
+      "label": "SNS Subscription",
+      "service": "sns",
+      "signingName": "sns",
+      "role": "block",
+      "category": "app-integration",
+      "icon": "Res_Amazon-Simple-Notification-Service_HTTP-Notification_48.svg",
+      "source": "Resource-Icons_07312026/Res_Application-Integration/Res_Amazon-Simple-Notification-Service_HTTP-Notification_48.svg",
+      "height": 0.25,
+      "order": 561,
+      "group": false,
+      "stack": false,
+      "host": false,
+      "actions": [
+        "Subscription",
+        "SubscriptionAttributes"
+      ],
+      "curveSegments": null,
+      "parents": [
+        "sns-topic"
+      ],
+      "floci": "supported",
+      "scope": "regional"
+    },
+    {
+      "kind": "kinesis-stream",
+      "label": "Kinesis Data Stream",
+      "service": "kinesis",
+      "signingName": "kinesis",
+      "role": "block",
+      "category": "analytics",
+      "icon": "Arch_Amazon-Kinesis-Data-Streams_48.svg",
+      "source": "Architecture-Service-Icons_07312026/Arch_Analytics/48/Arch_Amazon-Kinesis-Data-Streams_48.svg",
+      "height": 0.4,
+      "order": 570,
+      "group": false,
+      "stack": false,
+      "host": false,
+      "actions": [
+        "Stream",
+        "ShardCount",
+        "StreamRetentionPeriod"
+      ],
+      "curveSegments": null,
+      "parents": [
+        "region"
+      ],
+      "floci": "supported",
+      "scope": "regional"
+    },
+    {
+      "kind": "state-machine",
+      "label": "Step Functions State Machine",
+      "service": "stepfunctions",
+      "signingName": "states",
+      "role": "block",
+      "category": "app-integration",
+      "icon": "Arch_AWS-Step-Functions_48.svg",
+      "source": "Architecture-Service-Icons_07312026/Arch_Application-Integration/48/Arch_AWS-Step-Functions_48.svg",
+      "height": 0.5,
+      "order": 580,
+      "group": false,
+      "stack": false,
+      "host": false,
+      "actions": [
+        "StateMachine"
+      ],
+      "curveSegments": null,
+      "parents": [
+        "region"
+      ],
+      "floci": "supported",
+      "scope": "regional"
+    },
+    {
+      "kind": "ecr-repository",
+      "label": "ECR Repository",
+      "service": "ecr",
+      "signingName": "ecr",
+      "role": "block",
+      "category": "containers",
+      "icon": "Res_Amazon-Elastic-Container-Registry_Registry_48.svg",
+      "source": "Resource-Icons_07312026/Res_Containers/Res_Amazon-Elastic-Container-Registry_Registry_48.svg",
+      "height": 0.5,
+      "order": 600,
+      "group": false,
+      "stack": false,
+      "host": false,
+      "actions": [
+        "Repository",
+        "Image",
+        "ImageScanningConfiguration",
+        "ImageTagMutability"
+      ],
+      "curveSegments": null,
+      "parents": [
+        "region"
+      ],
+      "floci": "supported",
+      "scope": "regional"
+    },
+    {
+      "kind": "ecs-cluster",
+      "label": "ECS Cluster",
+      "service": "ecs",
+      "signingName": "ecs",
+      "role": "block",
+      "category": "containers",
+      "icon": "Arch_Amazon-Elastic-Container-Service_48.svg",
+      "source": "Architecture-Service-Icons_07312026/Arch_Containers/48/Arch_Amazon-Elastic-Container-Service_48.svg",
+      "height": 0.6,
+      "order": 605,
+      "group": false,
+      "stack": false,
+      "host": false,
+      "actions": [
+        "Cluster",
+        "ClusterSettings",
+        "ClusterCapacityProviders"
+      ],
+      "curveSegments": null,
+      "parents": [
+        "region"
+      ],
+      "floci": "supported",
+      "scope": "regional"
+    },
+    {
+      "kind": "eks-cluster",
+      "label": "EKS Cluster",
+      "service": "eks",
+      "signingName": "eks",
+      "role": "block",
+      "category": "containers",
+      "icon": "Arch_Amazon-Elastic-Kubernetes-Service_48.svg",
+      "source": "Architecture-Service-Icons_07312026/Arch_Containers/48/Arch_Amazon-Elastic-Kubernetes-Service_48.svg",
+      "height": 0.6,
+      "order": 610,
+      "group": false,
+      "stack": false,
+      "host": true,
+      "actions": [
+        "Cluster",
+        "ClusterConfig",
+        "ClusterVersion"
+      ],
+      "curveSegments": null,
+      "parents": [
+        "region",
+        "vpc"
+      ],
+      "floci": "supported",
+      "scope": "regional"
+    },
+    {
+      "kind": "beanstalk-application",
+      "label": "Beanstalk Application",
+      "service": "elasticbeanstalk",
+      "signingName": "elasticbeanstalk",
+      "role": "block",
+      "category": "compute",
+      "icon": "Res_AWS-Elastic-Beanstalk_Application_48.svg",
+      "source": "Resource-Icons_07312026/Res_Compute/Res_AWS-Elastic-Beanstalk_Application_48.svg",
+      "height": 0.4,
+      "order": 615,
+      "group": false,
+      "stack": false,
+      "host": false,
+      "actions": [
+        "Application",
+        "ApplicationVersion"
+      ],
+      "curveSegments": null,
+      "parents": [
+        "region"
+      ],
+      "floci": "control-plane-only",
+      "scope": "regional"
+    },
+    {
+      "kind": "beanstalk-environment",
+      "label": "Beanstalk Environment",
+      "service": "elasticbeanstalk",
+      "signingName": "elasticbeanstalk",
+      "role": "block",
+      "category": "compute",
+      "icon": "Arch_AWS-Elastic-Beanstalk_48.svg",
+      "source": "Architecture-Service-Icons_07312026/Arch_Compute/48/Arch_AWS-Elastic-Beanstalk_48.svg",
+      "height": 0.6,
+      "order": 616,
+      "group": false,
+      "stack": false,
+      "host": false,
+      "actions": [
+        "Environment",
+        "ConfigurationSettings"
+      ],
+      "curveSegments": null,
+      "parents": [
+        "beanstalk-application",
+        "region"
+      ],
+      "floci": "control-plane-only",
+      "scope": "regional"
+    },
+    {
+      "kind": "codebuild-project",
+      "label": "CodeBuild Project",
+      "service": "codebuild",
+      "signingName": "codebuild",
+      "role": "block",
+      "category": "developer-tools",
+      "icon": "Arch_AWS-CodeBuild_48.svg",
+      "source": "Architecture-Service-Icons_07312026/Arch_Developer-Tools/48/Arch_AWS-CodeBuild_48.svg",
+      "height": 0.5,
+      "order": 620,
+      "group": false,
+      "stack": false,
+      "host": false,
+      "actions": [
+        "Project",
+        "Build"
+      ],
+      "curveSegments": null,
+      "parents": [
+        "region"
+      ],
+      "floci": "supported",
+      "scope": "regional"
+    },
+    {
+      "kind": "codedeploy-application",
+      "label": "CodeDeploy Application",
+      "service": "codedeploy",
+      "signingName": "codedeploy",
+      "role": "block",
+      "category": "developer-tools",
+      "icon": "Arch_AWS-CodeDeploy_48.svg",
+      "source": "Architecture-Service-Icons_07312026/Arch_Developer-Tools/48/Arch_AWS-CodeDeploy_48.svg",
+      "height": 0.5,
+      "order": 625,
+      "group": false,
+      "stack": false,
+      "host": false,
+      "actions": [
+        "Application",
+        "DeploymentGroup",
+        "Deployment"
+      ],
+      "curveSegments": null,
+      "parents": [
+        "region"
+      ],
+      "floci": "supported",
+      "scope": "regional"
+    },
+    {
+      "kind": "codepipeline-pipeline",
+      "label": "CodePipeline",
+      "service": "codepipeline",
+      "signingName": "codepipeline",
+      "role": "block",
+      "category": "developer-tools",
+      "icon": "Arch_AWS-CodePipeline_48.svg",
+      "source": "Architecture-Service-Icons_07312026/Arch_Developer-Tools/48/Arch_AWS-CodePipeline_48.svg",
+      "height": 0.5,
+      "order": 630,
+      "group": false,
+      "stack": false,
+      "host": false,
+      "actions": [
+        "Pipeline",
+        "PipelineExecution",
+        "StageTransition"
+      ],
+      "curveSegments": null,
+      "parents": [
+        "region"
+      ],
+      "floci": "supported",
+      "scope": "regional"
+    },
+    {
+      "kind": "codeartifact-domain",
+      "label": "CodeArtifact Domain",
+      "service": "codeartifact",
+      "signingName": "codeartifact",
+      "role": "block",
+      "category": "developer-tools",
+      "icon": "Arch_AWS-CodeArtifact_48.svg",
+      "source": "Architecture-Service-Icons_07312026/Arch_Developer-Tools/48/Arch_AWS-CodeArtifact_48.svg",
+      "height": 0.4,
+      "order": 635,
+      "group": false,
+      "stack": false,
+      "host": false,
+      "actions": [
+        "Domain",
+        "DomainPermissionsPolicy"
+      ],
+      "curveSegments": null,
+      "parents": [
+        "region"
+      ],
+      "floci": "supported",
+      "scope": "regional"
+    },
+    {
+      "kind": "codeartifact-repository",
+      "label": "CodeArtifact Repository",
+      "service": "codeartifact",
+      "signingName": "codeartifact",
+      "role": "block",
+      "category": "developer-tools",
+      "icon": "Arch_AWS-CodeArtifact_48.svg",
+      "source": "Architecture-Service-Icons_07312026/Arch_Developer-Tools/48/Arch_AWS-CodeArtifact_48.svg",
+      "height": 0.3,
+      "order": 636,
+      "group": false,
+      "stack": false,
+      "host": false,
+      "actions": [
+        "Repository",
+        "ExternalConnection",
+        "RepositoryPermissionsPolicy"
+      ],
+      "curveSegments": null,
+      "parents": [
+        "codeartifact-domain",
+        "region"
+      ],
+      "floci": "supported",
+      "scope": "regional"
+    },
+    {
+      "kind": "dms-replication-instance",
+      "label": "DMS Replication Instance",
+      "service": "dms",
+      "signingName": "dms",
+      "role": "block",
+      "category": "database",
+      "icon": "Arch_AWS-Database-Migration-Service_48.svg",
+      "source": "Architecture-Service-Icons_07312026/Arch_Databases/48/Arch_AWS-Database-Migration-Service_48.svg",
+      "height": 0.6,
+      "order": 650,
+      "group": false,
+      "stack": false,
+      "host": true,
+      "actions": [
+        "ReplicationInstance",
+        "ReplicationInstances"
+      ],
+      "curveSegments": null,
+      "parents": [
+        "region",
+        "vpc"
+      ],
+      "floci": "control-plane-only",
+      "scope": "regional"
+    },
+    {
+      "kind": "dms-endpoint",
+      "label": "DMS Endpoint",
+      "service": "dms",
+      "signingName": "dms",
+      "role": "block",
+      "category": "database",
+      "icon": "Res_Database_48_Light.svg",
+      "source": "Resource-Icons_07312026/Res_General-Icons/Res_48_Light/Res_Database_48_Light.svg",
+      "height": 0.3,
+      "order": 651,
+      "group": false,
+      "stack": false,
+      "host": false,
+      "actions": [],
+      "curveSegments": null,
+      "parents": [
+        "region"
+      ],
+      "floci": "control-plane-only",
+      "scope": "regional"
+    },
+    {
+      "kind": "dms-replication-task",
+      "label": "DMS Replication Task",
+      "service": "dms",
+      "signingName": "dms",
+      "role": "block",
+      "category": "database",
+      "icon": "Res_AWS-Database-Migration-Service_Database-migration-workflow-or-job_48.svg",
+      "source": "Resource-Icons_07312026/Res_Databases/Res_AWS-Database-Migration-Service_Database-migration-workflow-or-job_48.svg",
+      "height": 0.4,
+      "order": 652,
+      "group": false,
+      "stack": false,
+      "host": false,
+      "actions": [
+        "ReplicationTask",
+        "ReplicationTasks"
+      ],
+      "curveSegments": null,
+      "parents": [
+        "region"
+      ],
+      "floci": "control-plane-only",
+      "scope": "regional"
+    },
+    {
+      "kind": "datasync-location",
+      "label": "DataSync Location",
+      "service": "datasync",
+      "signingName": "datasync",
+      "role": "block",
+      "category": "storage",
+      "icon": "Res_AWS-DataSync_Discovery_48.svg",
+      "source": "Resource-Icons_07312026/Res_Migration-Modernization/Res_AWS-DataSync_Discovery_48.svg",
+      "height": 0.3,
+      "order": 655,
+      "group": false,
+      "stack": false,
+      "host": false,
+      "actions": [
+        "LocationS3"
+      ],
+      "curveSegments": null,
+      "parents": [
+        "region"
+      ],
+      "floci": "control-plane-only",
+      "scope": "regional"
+    },
+    {
+      "kind": "datasync-task",
+      "label": "DataSync Task",
+      "service": "datasync",
+      "signingName": "datasync",
+      "role": "block",
+      "category": "storage",
+      "icon": "Arch_AWS-DataSync_48.svg",
+      "source": "Architecture-Service-Icons_07312026/Arch_Migration-Modernization/48/Arch_AWS-DataSync_48.svg",
+      "height": 0.4,
+      "order": 656,
+      "group": false,
+      "stack": false,
+      "host": false,
+      "actions": [],
+      "curveSegments": null,
+      "parents": [
+        "region"
+      ],
+      "floci": "control-plane-only",
+      "scope": "regional"
+    },
+    {
+      "kind": "elasticache-replication-group",
+      "label": "ElastiCache Replication Group",
+      "service": "elasticache",
+      "signingName": "elasticache",
+      "role": "block",
+      "category": "database",
+      "icon": "Res_Amazon-ElastiCache_ElastiCache-for-Redis_48.svg",
+      "source": "Resource-Icons_07312026/Res_Databases/Res_Amazon-ElastiCache_ElastiCache-for-Redis_48.svg",
+      "height": 0.6,
+      "order": 660,
+      "group": false,
+      "stack": false,
+      "host": true,
+      "actions": [
+        "ReplicationGroup",
+        "ReplicationGroups"
+      ],
+      "curveSegments": null,
+      "parents": [
+        "region",
+        "vpc"
+      ],
+      "floci": "supported",
+      "scope": "regional"
+    },
+    {
+      "kind": "elasticache-cache-cluster",
+      "label": "ElastiCache Cluster",
+      "service": "elasticache",
+      "signingName": "elasticache",
+      "role": "block",
+      "category": "database",
+      "icon": "Res_Amazon-ElastiCache_ElastiCache-for-Memcached_48.svg",
+      "source": "Resource-Icons_07312026/Res_Databases/Res_Amazon-ElastiCache_ElastiCache-for-Memcached_48.svg",
+      "height": 0.5,
+      "order": 661,
+      "group": false,
+      "stack": false,
+      "host": true,
+      "actions": [
+        "CacheCluster",
+        "CacheClusters"
+      ],
+      "curveSegments": null,
+      "parents": [
+        "region",
+        "vpc"
+      ],
+      "floci": "supported",
+      "scope": "regional"
+    },
+    {
+      "kind": "athena-workgroup",
+      "label": "Athena Workgroup",
+      "service": "athena",
+      "signingName": "athena",
+      "role": "block",
+      "category": "analytics",
+      "icon": "Arch_Amazon-Athena_48.svg",
+      "source": "Architecture-Service-Icons_07312026/Arch_Analytics/48/Arch_Amazon-Athena_48.svg",
+      "height": 0.4,
+      "order": 665,
+      "group": false,
+      "stack": false,
+      "host": false,
+      "actions": [
+        "WorkGroup",
+        "WorkGroups"
+      ],
+      "curveSegments": null,
+      "parents": [
+        "region"
+      ],
+      "floci": "supported",
+      "scope": "regional"
+    },
+    {
+      "kind": "glue-database",
+      "label": "Glue Database",
+      "service": "glue",
+      "signingName": "glue",
+      "role": "block",
+      "category": "analytics",
+      "icon": "Res_AWS-Glue_Data-Catalog_48.svg",
+      "source": "Resource-Icons_07312026/Res_Analytics/Res_AWS-Glue_Data-Catalog_48.svg",
+      "height": 0.4,
+      "order": 670,
+      "group": false,
+      "stack": false,
+      "host": false,
+      "actions": [],
+      "curveSegments": null,
+      "parents": [
+        "region"
+      ],
+      "floci": "supported",
+      "scope": "regional"
+    },
+    {
+      "kind": "glue-crawler",
+      "label": "Glue Crawler",
+      "service": "glue",
+      "signingName": "glue",
+      "role": "block",
+      "category": "analytics",
+      "icon": "Res_AWS-Glue_Crawler_48.svg",
+      "source": "Resource-Icons_07312026/Res_Analytics/Res_AWS-Glue_Crawler_48.svg",
+      "height": 0.4,
+      "order": 671,
+      "group": false,
+      "stack": false,
+      "host": false,
+      "actions": [
+        "Crawler",
+        "Crawlers"
+      ],
+      "curveSegments": null,
+      "parents": [
+        "region"
+      ],
+      "floci": "control-plane-only",
+      "scope": "regional"
+    },
+    {
+      "kind": "transfer-server",
+      "label": "Transfer Family Server",
+      "service": "transfer",
+      "signingName": "transfer",
+      "role": "block",
+      "category": "storage",
+      "icon": "Res_AWS-Transfer-Family_AWS-SFTP_48.svg",
+      "source": "Resource-Icons_07312026/Res_Migration-Modernization/Res_AWS-Transfer-Family_AWS-SFTP_48.svg",
+      "height": 0.5,
+      "order": 675,
+      "group": false,
+      "stack": false,
+      "host": false,
+      "actions": [],
+      "curveSegments": null,
+      "parents": [
+        "region",
+        "vpc"
+      ],
+      "floci": "control-plane-only",
+      "scope": "regional"
+    },
+    {
+      "kind": "rds-event-subscription",
+      "label": "RDS Event Subscription",
+      "service": "rds",
+      "signingName": "rds",
+      "role": "block",
+      "category": "database",
+      "icon": "Res_Amazon-Simple-Notification-Service_Email-Notification_48.svg",
+      "source": "Resource-Icons_07312026/Res_Application-Integration/Res_Amazon-Simple-Notification-Service_Email-Notification_48.svg",
+      "height": 0.3,
+      "order": 680,
+      "group": false,
+      "stack": false,
+      "host": false,
+      "actions": [
+        "EventSubscription",
+        "EventSubscriptions"
+      ],
+      "curveSegments": null,
+      "parents": [
+        "region"
+      ],
+      "floci": "control-plane-only",
+      "scope": "regional"
+    },
+    {
+      "kind": "cloudtrail-trail",
+      "label": "CloudTrail Trail",
+      "service": "cloudtrail",
+      "signingName": "cloudtrail",
+      "role": "block",
+      "category": "management",
+      "icon": "Arch_AWS-CloudTrail_48.svg",
+      "source": "Architecture-Service-Icons_07312026/Arch_Management-Tools/48/Arch_AWS-CloudTrail_48.svg",
+      "height": 0.4,
+      "order": 700,
+      "group": false,
+      "stack": false,
+      "host": false,
+      "actions": [
+        "Trail",
+        "Logging",
+        "EventSelectors"
+      ],
+      "curveSegments": null,
+      "parents": [
+        "region"
+      ],
+      "floci": "supported",
+      "scope": "regional"
+    },
+    {
+      "kind": "config-recorder",
+      "label": "Config Recorder",
+      "service": "config",
+      "signingName": "config",
+      "role": "block",
+      "category": "management",
+      "icon": "Arch_AWS-Config_48.svg",
+      "source": "Architecture-Service-Icons_07312026/Arch_Management-Tools/48/Arch_AWS-Config_48.svg",
+      "height": 0.4,
+      "order": 702,
+      "group": false,
+      "stack": false,
+      "host": false,
+      "actions": [
+        "ConfigurationRecorder",
+        "DeliveryChannel"
+      ],
+      "curveSegments": 3,
+      "parents": [
+        "region"
+      ],
+      "floci": "control-plane-only",
+      "scope": "regional"
+    },
+    {
+      "kind": "config-rule",
+      "label": "Config Rule",
+      "service": "config",
+      "signingName": "config",
+      "role": "block",
+      "category": "management",
+      "icon": "Res_Documents_48_Light.svg",
+      "source": "Resource-Icons_07312026/Res_General-Icons/Res_48_Light/Res_Documents_48_Light.svg",
+      "height": 0.3,
+      "order": 703,
+      "group": false,
+      "stack": false,
+      "host": false,
+      "actions": [
+        "ConfigRule",
+        "ConfigRulesEvaluation"
+      ],
+      "curveSegments": null,
+      "parents": [
+        "region"
+      ],
+      "floci": "control-plane-only",
+      "scope": "regional"
+    },
+    {
+      "kind": "cognito-user-pool",
+      "label": "Cognito User Pool",
+      "service": "cognito-idp",
+      "signingName": "cognito-idp",
+      "role": "block",
+      "category": "security",
+      "icon": "Arch_Amazon-Cognito_48.svg",
+      "source": "Architecture-Service-Icons_07312026/Arch_Security-Identity/48/Arch_Amazon-Cognito_48.svg",
+      "height": 0.4,
+      "order": 705,
+      "group": false,
+      "stack": false,
+      "host": false,
+      "actions": [
+        "UserPool"
+      ],
+      "curveSegments": null,
+      "parents": [
+        "region"
+      ],
+      "floci": "supported",
+      "scope": "regional"
+    },
+    {
+      "kind": "cognito-identity-provider",
+      "label": "Cognito Identity Provider",
+      "service": "cognito-idp",
+      "signingName": "cognito-idp",
+      "role": "block",
+      "category": "security",
+      "icon": "Res_Authenticated-User_48_Light.svg",
+      "source": "Resource-Icons_07312026/Res_General-Icons/Res_48_Light/Res_Authenticated-User_48_Light.svg",
+      "height": 0.2,
+      "order": 706,
+      "group": false,
+      "stack": false,
+      "host": false,
+      "actions": [
+        "IdentityProvider"
+      ],
+      "curveSegments": null,
+      "parents": [
+        "region"
+      ],
+      "floci": "supported",
+      "scope": "regional"
+    },
+    {
+      "kind": "cognito-identity-pool",
+      "label": "Cognito Identity Pool",
+      "service": "cognito-identity",
+      "signingName": "cognito-identity",
+      "role": "block",
+      "category": "security",
+      "icon": "Res_Users_48_Light.svg",
+      "source": "Resource-Icons_07312026/Res_General-Icons/Res_48_Light/Res_Users_48_Light.svg",
+      "height": 0.3,
+      "order": 707,
+      "group": false,
+      "stack": false,
+      "host": false,
+      "actions": [
+        "IdentityPool",
+        "IdentityPoolRoles"
+      ],
+      "curveSegments": null,
+      "parents": [
+        "region"
+      ],
+      "floci": "supported",
+      "scope": "regional"
+    },
+    {
+      "kind": "budget",
+      "label": "Budget",
+      "service": "budgets",
+      "signingName": "budgets",
+      "role": "block",
+      "category": "management",
+      "icon": "Arch_AWS-Budgets_48.svg",
+      "source": "Architecture-Service-Icons_07312026/Arch_Cloud-Financial-Management/48/Arch_AWS-Budgets_48.svg",
+      "height": 0.3,
+      "order": 710,
+      "group": false,
+      "stack": false,
+      "host": false,
+      "actions": [
+        "Budget",
+        "NotificationsForBudget"
+      ],
+      "curveSegments": null,
+      "parents": [
+        "global"
+      ],
+      "floci": "control-plane-only",
+      "scope": "global"
+    },
+    {
+      "kind": "organization",
+      "label": "AWS Organization",
+      "service": "organizations",
+      "signingName": "organizations",
+      "role": "block",
+      "category": "management",
+      "icon": "Arch_AWS-Organizations_48.svg",
+      "source": "Architecture-Service-Icons_07312026/Arch_Management-Tools/48/Arch_AWS-Organizations_48.svg",
+      "height": 0.4,
+      "order": 712,
+      "group": false,
+      "stack": false,
+      "host": false,
+      "actions": [
+        "Organization",
+        "Root",
+        "PolicyType"
+      ],
+      "curveSegments": null,
+      "parents": [
+        "global"
+      ],
+      "floci": "supported",
+      "scope": "global"
+    },
+    {
+      "kind": "organizational-unit",
+      "label": "Organizational Unit",
+      "service": "organizations",
+      "signingName": "organizations",
+      "role": "block",
+      "category": "management",
+      "icon": "Res_AWS-Organizations_Organizational-Unit_48.svg",
+      "source": "Resource-Icons_07312026/Res_Management-Governance/Res_AWS-Organizations_Organizational-Unit_48.svg",
+      "height": 0.3,
+      "order": 713,
+      "group": false,
+      "stack": false,
+      "host": false,
+      "actions": [
+        "OrganizationalUnit"
+      ],
+      "curveSegments": null,
+      "parents": [
+        "global"
+      ],
+      "floci": "supported",
+      "scope": "global"
+    },
+    {
+      "kind": "org-account",
+      "label": "Organization Account",
+      "service": "organizations",
+      "signingName": "organizations",
+      "role": "block",
+      "category": "management",
+      "icon": "Res_AWS-Organizations_Account_48.svg",
+      "source": "Resource-Icons_07312026/Res_Management-Governance/Res_AWS-Organizations_Account_48.svg",
+      "height": 0.3,
+      "order": 714,
+      "group": false,
+      "stack": false,
+      "host": false,
+      "actions": [
+        "Account",
+        "CreateAccountStatus"
+      ],
+      "curveSegments": null,
+      "parents": [
+        "global"
+      ],
+      "floci": "supported",
+      "scope": "global"
+    },
+    {
+      "kind": "guardduty-detector",
+      "label": "GuardDuty Detector",
+      "service": "guardduty",
+      "signingName": "guardduty",
+      "role": "block",
+      "category": "security",
+      "icon": "Arch_Amazon-GuardDuty_48.svg",
+      "source": "Architecture-Service-Icons_07312026/Arch_Security-Identity/48/Arch_Amazon-GuardDuty_48.svg",
+      "height": 0.4,
+      "order": 716,
+      "group": false,
+      "stack": false,
+      "host": false,
+      "actions": [
+        "Detector"
+      ],
+      "curveSegments": null,
+      "parents": [
+        "region"
+      ],
+      "floci": "control-plane-only",
+      "scope": "regional"
+    },
+    {
+      "kind": "inspector",
+      "label": "Amazon Inspector",
+      "service": "inspector2",
+      "signingName": "inspector2",
+      "role": "block",
+      "category": "security",
+      "icon": "Arch_Amazon-Inspector_48.svg",
+      "source": "Architecture-Service-Icons_07312026/Arch_Security-Identity/48/Arch_Amazon-Inspector_48.svg",
+      "height": 0.4,
+      "order": 718,
+      "group": false,
+      "stack": false,
+      "host": false,
+      "actions": [
+        "AccountStatus",
+        "Coverage"
+      ],
+      "curveSegments": null,
+      "parents": [
+        "region"
+      ],
+      "floci": "control-plane-only",
+      "scope": "regional"
+    },
+    {
+      "kind": "securityhub-hub",
+      "label": "Security Hub",
+      "service": "securityhub",
+      "signingName": "securityhub",
+      "role": "block",
+      "category": "security",
+      "icon": "Arch_AWS-Security-Hub_48.svg",
+      "source": "Architecture-Service-Icons_07312026/Arch_Security-Identity/48/Arch_AWS-Security-Hub_48.svg",
+      "height": 0.4,
+      "order": 720,
+      "group": false,
+      "stack": false,
+      "host": false,
+      "actions": [
+        "Hub",
+        "SecurityHub",
+        "FindingAggregator"
+      ],
+      "curveSegments": null,
+      "parents": [
+        "region"
+      ],
+      "floci": "control-plane-only",
+      "scope": "regional"
+    },
+    {
+      "kind": "network-firewall",
+      "label": "Network Firewall",
+      "service": "network-firewall",
+      "signingName": "network-firewall",
+      "role": "block",
+      "category": "security",
+      "icon": "Res_AWS-Network-Firewall_Endpoints_48.svg",
+      "source": "Resource-Icons_07312026/Res_Security-Identity/Res_AWS-Network-Firewall_Endpoints_48.svg",
+      "height": 0.4,
+      "order": 722,
+      "group": false,
+      "stack": false,
+      "host": false,
+      "actions": [
+        "Firewall",
+        "FirewallPolicy",
+        "SubnetMappings",
+        "LoggingConfiguration"
+      ],
+      "curveSegments": null,
+      "parents": [
+        "region",
+        "vpc"
+      ],
+      "floci": "control-plane-only",
+      "scope": "regional"
+    },
+    {
+      "kind": "firewall-policy",
+      "label": "Firewall Policy",
+      "service": "network-firewall",
+      "signingName": "network-firewall",
+      "role": "block",
+      "category": "security",
+      "icon": "Arch_AWS-Network-Firewall_48.svg",
+      "source": "Architecture-Service-Icons_07312026/Arch_Security-Identity/48/Arch_AWS-Network-Firewall_48.svg",
+      "height": 0.3,
+      "order": 723,
+      "group": false,
+      "stack": false,
+      "host": false,
+      "actions": [
+        "FirewallPolicy"
+      ],
+      "curveSegments": null,
+      "parents": [
+        "region"
+      ],
+      "floci": "control-plane-only",
+      "scope": "regional"
+    },
+    {
+      "kind": "firewall-rule-group",
+      "label": "Firewall Rule Group",
+      "service": "network-firewall",
+      "signingName": "network-firewall",
+      "role": "block",
+      "category": "security",
+      "icon": "Res_Firewall_48_Light.svg",
+      "source": "Resource-Icons_07312026/Res_General-Icons/Res_48_Light/Res_Firewall_48_Light.svg",
+      "height": 0.2,
+      "order": 724,
+      "group": false,
+      "stack": false,
+      "host": false,
+      "actions": [
+        "RuleGroup"
+      ],
+      "curveSegments": null,
+      "parents": [
+        "region"
+      ],
+      "floci": "control-plane-only",
+      "scope": "regional"
+    },
+    {
+      "kind": "landing-zone",
+      "label": "Control Tower Landing Zone",
+      "service": "controltower",
+      "signingName": "controltower",
+      "role": "block",
+      "category": "management",
+      "icon": "Arch_AWS-Control-Tower_48.svg",
+      "source": "Architecture-Service-Icons_07312026/Arch_Management-Tools/48/Arch_AWS-Control-Tower_48.svg",
+      "height": 0.4,
+      "order": 726,
+      "group": false,
+      "stack": false,
+      "host": false,
+      "actions": [
+        "LandingZone",
+        "EnabledControl",
+        "EnabledBaseline"
+      ],
+      "curveSegments": null,
+      "parents": [
+        "region"
+      ],
+      "floci": "control-plane-only",
+      "scope": "regional"
+    }
+  ],
+  "edgeKinds": [
+    {
+      "kind": "access-point-of",
+      "style": "reference"
+    },
+    {
+      "kind": "alarm-action",
+      "style": "reference"
+    },
+    {
+      "kind": "alias-of",
+      "style": "reference"
+    },
+    {
+      "kind": "alias-to",
+      "style": "reference"
+    },
+    {
+      "kind": "asg-instance",
+      "style": "reference"
+    },
+    {
+      "kind": "asg-target-group",
+      "style": "reference"
+    },
+    {
+      "kind": "association",
+      "style": "association"
+    },
+    {
+      "kind": "assume-role",
+      "style": "reference"
+    },
+    {
+      "kind": "attached",
+      "style": "attach"
+    },
+    {
+      "kind": "attached-policy",
+      "style": "reference"
+    },
+    {
+      "kind": "backs-up-to",
+      "style": "reference"
+    },
+    {
+      "kind": "calculated-from",
+      "style": "reference"
+    },
+    {
+      "kind": "copies-from",
+      "style": "reference"
+    },
+    {
+      "kind": "copies-to",
+      "style": "reference"
+    },
+    {
+      "kind": "crawls",
+      "style": "reference"
+    },
+    {
+      "kind": "crawls-into",
+      "style": "reference"
+    },
+    {
+      "kind": "dead-letter",
+      "style": "reference"
+    },
+    {
+      "kind": "delivers-to",
+      "style": "reference"
+    },
+    {
+      "kind": "encrypted-by",
+      "style": "reference"
+    },
+    {
+      "kind": "endpoint-database",
+      "style": "reference"
+    },
+    {
+      "kind": "endpoint-route",
+      "style": "route"
+    },
+    {
+      "kind": "endpoint-subnet",
+      "style": "association"
+    },
+    {
+      "kind": "event-source",
+      "style": "reference"
+    },
+    {
+      "kind": "execution-role",
+      "style": "reference"
+    },
+    {
+      "kind": "federates",
+      "style": "reference"
+    },
+    {
+      "kind": "filter-of",
+      "style": "reference"
+    },
+    {
+      "kind": "firewall-subnet",
+      "style": "association"
+    },
+    {
+      "kind": "follows-alarm",
+      "style": "reference"
+    },
+    {
+      "kind": "forwards-to",
+      "style": "reference"
+    },
+    {
+      "kind": "instance-profile",
+      "style": "reference"
+    },
+    {
+      "kind": "invokes",
+      "style": "reference"
+    },
+    {
+      "kind": "lb-subnet",
+      "style": "association"
+    },
+    {
+      "kind": "listener-of",
+      "style": "reference"
+    },
+    {
+      "kind": "located-in",
+      "style": "reference"
+    },
+    {
+      "kind": "managed-by",
+      "style": "reference"
+    },
+    {
+      "kind": "member-of",
+      "style": "reference"
+    },
+    {
+      "kind": "mount-of",
+      "style": "reference"
+    },
+    {
+      "kind": "nacl-association",
+      "style": "association"
+    },
+    {
+      "kind": "notifies",
+      "style": "reference"
+    },
+    {
+      "kind": "origin",
+      "style": "reference"
+    },
+    {
+      "kind": "peering",
+      "style": "association"
+    },
+    {
+      "kind": "pipeline-action",
+      "style": "route"
+    },
+    {
+      "kind": "pipeline-source",
+      "style": "route"
+    },
+    {
+      "kind": "policy-of",
+      "style": "reference"
+    },
+    {
+      "kind": "pool-role",
+      "style": "reference"
+    },
+    {
+      "kind": "profile-role",
+      "style": "reference"
+    },
+    {
+      "kind": "provider-of",
+      "style": "reference"
+    },
+    {
+      "kind": "proxy-target",
+      "style": "reference"
+    },
+    {
+      "kind": "reads-stream",
+      "style": "reference"
+    },
+    {
+      "kind": "record-of",
+      "style": "reference"
+    },
+    {
+      "kind": "registered-target",
+      "style": "reference"
+    },
+    {
+      "kind": "replica-of",
+      "style": "replica"
+    },
+    {
+      "kind": "replicates-to",
+      "style": "replica"
+    },
+    {
+      "kind": "rotated-by",
+      "style": "reference"
+    },
+    {
+      "kind": "route",
+      "style": "route"
+    },
+    {
+      "kind": "rule-of",
+      "style": "reference"
+    },
+    {
+      "kind": "runs-on",
+      "style": "reference"
+    },
+    {
+      "kind": "selects",
+      "style": "reference"
+    },
+    {
+      "kind": "snapshot-of",
+      "style": "reference"
+    },
+    {
+      "kind": "subnet-group-member",
+      "style": "reference"
+    },
+    {
+      "kind": "targets",
+      "style": "reference"
+    },
+    {
+      "kind": "tgw-attached",
+      "style": "association"
+    },
+    {
+      "kind": "tgw-route-table-of",
+      "style": "reference"
+    },
+    {
+      "kind": "tgw-subnet",
+      "style": "reference"
+    },
+    {
+      "kind": "upload-to",
+      "style": "reference"
+    },
+    {
+      "kind": "upstream",
+      "style": "route"
+    },
+    {
+      "kind": "uses-bucket",
+      "style": "reference"
+    },
+    {
+      "kind": "uses-certificate",
+      "style": "reference"
+    },
+    {
+      "kind": "uses-firewall-policy",
+      "style": "reference"
+    },
+    {
+      "kind": "uses-health-check",
+      "style": "reference"
+    },
+    {
+      "kind": "uses-key",
+      "style": "reference"
+    },
+    {
+      "kind": "uses-launch-template",
+      "style": "reference"
+    },
+    {
+      "kind": "uses-layer",
+      "style": "reference"
+    },
+    {
+      "kind": "uses-option-group",
+      "style": "reference"
+    },
+    {
+      "kind": "uses-parameter-group",
+      "style": "reference"
+    },
+    {
+      "kind": "uses-rule-group",
+      "style": "reference"
+    },
+    {
+      "kind": "uses-target-group",
+      "style": "reference"
+    },
+    {
+      "kind": "version-of",
+      "style": "reference"
+    },
+    {
+      "kind": "watches",
+      "style": "reference"
+    },
+    {
+      "kind": "web-acl-for",
+      "style": "association"
+    },
+    {
+      "kind": "zone-vpc",
+      "style": "association"
+    }
+  ]
+}

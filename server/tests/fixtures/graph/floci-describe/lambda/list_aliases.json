@@ -1,0 +1,27 @@
+{
+  "calls": [
+    {
+      "params": {
+        "FunctionName": "arn:aws:lambda:ap-southeast-2:000000000000:function:wave1-vpc-fn"
+      },
+      "response": {
+        "Aliases": []
+      }
+    },
+    {
+      "params": {
+        "FunctionName": "arn:aws:lambda:ap-southeast-2:000000000000:function:wave1-fn"
+      },
+      "response": {
+        "Aliases": [
+          {
+            "AliasArn": "arn:aws:lambda:ap-southeast-2:000000000000:function:wave1-fn:live",
+            "FunctionVersion": "1",
+            "Name": "live",
+            "RevisionId": "d9840a32-3564-4f05-b0b2-ff03729b98a4"
+          }
+        ]
+      }
+    }
+  ]
+}

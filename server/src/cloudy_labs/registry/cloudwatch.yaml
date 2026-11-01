@@ -1,0 +1,95 @@
+# Amazon CloudWatch alarms and dashboards. Metrics are not nodes: an alarm shows what it watches as an
+# edge (an instance, a function, a DB instance or a log metric filter) and its state as a prop.
+
+- kind: cloudwatch-alarm
+  service: cloudwatch
+  label: CloudWatch Alarm
+  list: {method: describe_alarms, items: MetricAlarms}
+  id: AlarmArn
+  name: [AlarmName]
+  parent: [{kind: region}]
+  props:
+    state: StateValue
+    namespace: Namespace
+    metric: MetricName
+    dimensions: "Dimensions[].{name: Name, value: Value}"
+    statistic: "Statistic || ExtendedStatistic"
+    period: Period
+    evaluationPeriods: EvaluationPeriods
+    datapointsToAlarm: DatapointsToAlarm
+    threshold: Threshold
+    comparison: ComparisonOperator
+    treatMissingData: TreatMissingData
+    actionsEnabled: ActionsEnabled
+    alarmActions: AlarmActions
+    okActions: OKActions
+    description: AlarmDescription
+  chat_props: [state, namespace, metric, dimensions, statistic, period, evaluationPeriods, datapointsToAlarm, threshold, comparison, treatMissingData, actionsEnabled, alarmActions, okActions, description]
+  edges:
+    - {kind: watches, target: "Namespace == 'AWS/EC2' && Dimensions[?Name=='InstanceId'].Value | [0]", to: instance, style: reference}
+    - {kind: watches, target: "Namespace == 'AWS/Lambda' && Dimensions[?Name=='FunctionName'].Value | [0]", match: FunctionName, to: lambda-function, style: reference}
+    - {kind: watches, target: "Namespace == 'AWS/RDS' && Dimensions[?Name=='DBInstanceIdentifier'].Value | [0]", match: DBInstanceIdentifier, to: db-instance, style: reference}
+    - {kind: watches, target: "Namespace && MetricName && join('/', [Namespace, MetricName])", match: "metricTransformations[].join('/', [metricNamespace, metricName])", to: metric-filter, style: reference}
+    - {kind: alarm-action, target: "[AlarmActions, OKActions, InsufficientDataActions][]", to: [lambda-function, lambda-alias, lambda-version, sns-topic], style: reference}
+  caveats:
+    - {code: no-service-metrics, prop: state, text: "Floci 2.3.0 publishes no AWS/* metrics (EC2 CPU, Lambda errors, RDS connections): an alarm on them never leaves OK or INSUFFICIENT_DATA. Push the numbers with put-metric-data, or flip the state with set-alarm-state."}
+  builder: true
+  view: {role: block, category: management, icon: Res_Amazon-CloudWatch_Alarm_48.svg, source: Resource-Icons_07312026/Res_Management-Governance/Res_Amazon-CloudWatch_Alarm_48.svg, height: 0.4, order: 400, actions: [Alarm]}
+  contract:
+    create: {op: put-metric-alarm, params: {AlarmName: ct-alarm, Namespace: ct/App, MetricName: Errors, Statistic: Sum, Period: "60", EvaluationPeriods: "1", Threshold: "1", ComparisonOperator: GreaterThanOrEqualToThreshold}}
+    # Not put-metric-data: Floci evaluates the alarm on it only about a minute later.
+    then:
+      - {op: set-alarm-state, params: {AlarmName: ct-alarm, StateValue: ALARM, StateReason: contract test}}
+  ops:
+    - id: put-metric-alarm
+      api: PutMetricAlarm
+      gesture: create
+      title: "Tạo CloudWatch alarm"
+      fields: [AlarmName, Namespace, MetricName, {name: Dimensions, multiline: true}, Statistic, Period, EvaluationPeriods, Threshold, ComparisonOperator, TreatMissingData, AlarmActions, AlarmDescription]
+      defaults: {Statistic: Average, Period: 60, EvaluationPeriods: 1, ComparisonOperator: GreaterThanOrEqualToThreshold}
+      expect: {label: AlarmName}
+      note: "Watch one metric and go to ALARM when Statistic over Period crosses Threshold for EvaluationPeriods periods. Dimensions: JSON [{\"Name\": \"InstanceId\", \"Value\": \"i-...\"}]. AlarmActions: ARNs to notify or invoke."
+    - id: put-metric-data
+      api: PutMetricData
+      gesture: attribute
+      title: "Đẩy số liệu metric"
+      fields: [Namespace, {name: MetricData, multiline: true}]
+      defaults: {MetricData: '[{"MetricName": "Errors", "Value": 1, "Unit": "Count"}]'}
+      targets: [cloudwatch-alarm]
+      note: "Publish data points to a custom metric; an alarm on the same Namespace, MetricName and Dimensions evaluates them within a minute. Namespaces starting with AWS/ are reserved."
+    - id: set-alarm-state
+      api: SetAlarmState
+      gesture: attribute
+      title: "Đặt trạng thái alarm"
+      fields: [{name: AlarmName, ref: cloudwatch-alarm, ref_by: label}, StateValue, StateReason]
+      defaults: {StateValue: ALARM, StateReason: manual test}
+      targets: [cloudwatch-alarm]
+      target_param: AlarmName
+      note: "Force the alarm into OK, ALARM or INSUFFICIENT_DATA to test its actions; the next evaluation sets it back from the metric."
+
+- kind: cloudwatch-dashboard
+  service: cloudwatch
+  label: CloudWatch Dashboard
+  scope: global
+  list: {method: list_dashboards, items: DashboardEntries}
+  id: DashboardArn
+  name: [DashboardName]
+  parent: [{kind: global}]
+  props:
+    size: Size
+  chat_props: [size]
+  caveats:
+    - {code: floci-regional-dashboards, text: "AWS dashboards are global; Floci 2.3.0 keeps each one in the region it was created in. Create dashboards in the lab's region."}
+  builder: true
+  view: {role: block, category: management, icon: Arch_Amazon-CloudWatch_48.svg, source: Architecture-Service-Icons_07312026/Arch_Management-Tools/48/Arch_Amazon-CloudWatch_48.svg, height: 0.4, order: 401, actions: [Dashboard]}
+  contract:
+    create: {op: put-dashboard, params: {DashboardName: ct-dashboard, DashboardBody: '{"widgets": [{"type": "text", "x": 0, "y": 0, "width": 6, "height": 2, "properties": {"markdown": "contract"}}]}'}}
+  ops:
+    - id: put-dashboard
+      api: PutDashboard
+      gesture: create
+      title: "Tạo CloudWatch dashboard"
+      fields: [DashboardName, {name: DashboardBody, multiline: true}]
+      defaults: {DashboardBody: '{"widgets": [{"type": "metric", "x": 0, "y": 0, "width": 12, "height": 6, "properties": {"metrics": [["AWS/EC2", "CPUUtilization"]], "period": 300, "stat": "Average", "region": "ap-southeast-2", "title": "CPU"}}]}'}
+      expect: {label: DashboardName}
+      note: "Create or replace a dashboard. DashboardBody is JSON with a widgets list; each metric widget names [namespace, metric, dimension name, value] rows and the region."

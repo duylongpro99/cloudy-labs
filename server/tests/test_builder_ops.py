@@ -21,15 +21,13 @@ def spike(line: str) -> list[str]:
 
 
 # Each case is the same command lab-06-07.sh ran against Floci, so the builder emits CLI calls known to work there.
-@pytest.mark.parametrize(
-    "op, params, expected",
-    [
+SPIKE_CASES = [
         ("create-vpc", {"name": "lab06-vpc", "cidr": "10.0.0.0/16"},
          "ec2 create-vpc --cidr-block 10.0.0.0/16 --tag-specifications 'ResourceType=vpc,Tags=[{Key=Name,Value=lab06-vpc},{Key=lab,Value=06}]'"),
         ("modify-vpc-attribute", {"vpcId": "vpc-1"},
          """ec2 modify-vpc-attribute --vpc-id vpc-1 --enable-dns-hostnames '{"Value": true}'"""),
-        ("create-subnet", {"name": "lab06-public-a", "vpcId": "vpc-1", "cidr": "10.0.1.0/24", "az": "us-east-1a"},
-         "ec2 create-subnet --vpc-id vpc-1 --cidr-block 10.0.1.0/24 --availability-zone us-east-1a "
+        ("create-subnet", {"name": "lab06-public-a", "vpcId": "vpc-1", "cidr": "10.0.1.0/24", "az": "ap-southeast-2a"},
+         "ec2 create-subnet --vpc-id vpc-1 --cidr-block 10.0.1.0/24 --availability-zone ap-southeast-2a "
          "--tag-specifications 'ResourceType=subnet,Tags=[{Key=Name,Value=lab06-public-a},{Key=lab,Value=06}]'"),
         ("modify-subnet-attribute", {"subnetId": "subnet-1"}, "ec2 modify-subnet-attribute --subnet-id subnet-1 --map-public-ip-on-launch"),
         ("create-internet-gateway", {"name": "lab06-igw"},
@@ -72,10 +70,22 @@ def spike(line: str) -> list[str]:
          "--security-group-ids sg-1 --count 1 --tag-specifications 'ResourceType=instance,Tags=[{Key=Name,Value=w},{Key=lab,Value=06}]'"),
         ("modify-instance-attribute", {"instanceId": "i-1", "groupId": "sg-2", "currentGroups": ["sg-1"]},
          "ec2 modify-instance-attribute --instance-id i-1 --groups sg-1 sg-2"),
-    ],
-)
+]
+
+
+@pytest.mark.parametrize("op, params, expected", SPIKE_CASES)
 def test_argv_matches_the_spike(op, params, expected):
     assert argv(op, **params) == spike(expected)
+
+
+@pytest.mark.parametrize("op, params, expected", [c for c in SPIKE_CASES if c[0] != "modify-instance-attribute"])
+def test_registry_ops_keep_the_hand_written_argv(op, params, expected):
+    from cloudy_labs.builder.catalog import op_named, prepare
+    from cloudy_labs.graph.schema import ResourceGraph
+
+    golden = ResourceGraph.model_validate_json((Path(__file__).parent / "fixtures/graph/lab-06-07.graph.json").read_text())
+    prepared = prepare(op_named(op), params, graph=golden, azs=[], choices={}, tags=TAGS, check=False)
+    assert prepared.argv == spike(expected) and prepared.problems == []
 
 
 def test_display_round_trips_through_the_shell():
@@ -165,8 +175,25 @@ def test_attach_security_group_expects_the_attached_edge():
 
 def test_practice_expectation_waits_for_a_named_resource_or_the_same_change():
     subnet = OPS["create-subnet"]
-    params = subnet.params.model_validate({"name": "lab06-public-a", "vpcId": "vpc-1", "cidr": "10.66.1.0/24", "az": "us-east-1a"})
+    params = subnet.params.model_validate({"name": "lab06-public-a", "vpcId": "vpc-1", "cidr": "10.66.1.0/24", "az": "ap-southeast-2a"})
     assert practice_expectation(subnet, params) == {"kind": "subnet", "label": "lab06-public-a"}
     attach = OPS["modify-instance-attribute"]
     params = attach.params.model_validate({"instanceId": "i-1", "groupId": "sg-2"})
     assert practice_expectation(attach, params) == {"edge": "attached:sg-2->i-1"}
+
+
+def test_no_op_sends_a_member_as_a_global_cli_option():
+    # `--version` would print the CLI's version and exit 0 without sending the request.
+    from botocore import xform_name
+
+    from cloudy_labs.builder.catalog import all_ops
+    from cloudy_labs.builder.shapes import CLI_GLOBAL_OPTIONS, CLI_RENAMES, operation
+    collisions = [
+        (name, member)
+        for name, op in all_ops().items()
+        for member in operation(op.service, op.spec.api).input_shape.members
+        if (CLI_RENAMES.get((op.service, op.spec.api, member)) or "--" + xform_name(member, "-")) in CLI_GLOBAL_OPTIONS
+    ]
+    assert collisions == []
+    assert CLI_RENAMES[("eks", "CreateCluster", "version")] == "--kubernetes-version"
+    assert CLI_RENAMES[("apigatewayv2", "CreateApi", "Version")] == "--api-version"

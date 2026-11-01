@@ -1,0 +1,32 @@
+{
+  "calls": [
+    {
+      "params": {
+        "EventBusName": "arn:aws:events:ap-southeast-2:000000000000:event-bus/default",
+        "Rule": "w3-orders-rule"
+      },
+      "response": {
+        "Targets": [
+          {
+            "Arn": "arn:aws:sqs:ap-southeast-2:000000000000:w3-orders",
+            "Id": "queue"
+          },
+          {
+            "Arn": "arn:aws:sns:ap-southeast-2:000000000000:w3-order-events",
+            "Id": "topic"
+          },
+          {
+            "Arn": "arn:aws:kinesis:ap-southeast-2:000000000000:stream/w3-clicks",
+            "Id": "stream",
+            "RoleArn": "arn:aws:iam::000000000000:role/w3-msg-role"
+          },
+          {
+            "Arn": "arn:aws:states:ap-southeast-2:000000000000:stateMachine:w3-order-flow",
+            "Id": "flow",
+            "RoleArn": "arn:aws:iam::000000000000:role/w3-msg-role"
+          }
+        ]
+      }
+    }
+  ]
+}

@@ -1,0 +1,42 @@
+{
+  "calls": [
+    {
+      "params": {},
+      "response": {
+        "VpcPeeringConnections": [
+          {
+            "AccepterVpcInfo": {
+              "CidrBlock": "10.81.0.0/16",
+              "OwnerId": "000000000000",
+              "PeeringOptions": {
+                "AllowDnsResolutionFromRemoteVpc": false
+              },
+              "Region": "ap-southeast-2",
+              "VpcId": "vpc-29250840"
+            },
+            "RequesterVpcInfo": {
+              "CidrBlock": "10.80.0.0/16",
+              "OwnerId": "000000000000",
+              "PeeringOptions": {
+                "AllowDnsResolutionFromRemoteVpc": false
+              },
+              "Region": "ap-southeast-2",
+              "VpcId": "vpc-03e9e3f9"
+            },
+            "Status": {
+              "Code": "active",
+              "Message": "Active"
+            },
+            "Tags": [
+              {
+                "Key": "Name",
+                "Value": "wave1-peering"
+              }
+            ],
+            "VpcPeeringConnectionId": "pcx-d3e890e91e4299b2d"
+          }
+        ]
+      }
+    }
+  ]
+}

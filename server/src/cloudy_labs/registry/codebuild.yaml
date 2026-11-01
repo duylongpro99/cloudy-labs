@@ -1,0 +1,83 @@
+# AWS CodeBuild projects. ListProjects answers names only; BatchGetProjects gives the rest. A project's
+# environment variables hold plaintext values (sometimes credentials), so only their names and types
+# are read, and the buildspec text is never read. Floci runs a build (StartBuild) in a real Docker
+# container; a project on its own runs nothing.
+
+- kind: codebuild-project
+  service: codebuild
+  label: CodeBuild Project
+  list: {method: list_projects, items: "projects[].{name: @}"}
+  enrich:
+    - {method: batch_get_projects, params: {names: "[name]"}, pick: "projects[0]", merge_as: _Project}
+  id: _Project.arn
+  name: [name]
+  parent: [{kind: region}]
+  props:
+    description: _Project.description
+    sourceType: _Project.source.type
+    sourceLocation: _Project.source.location
+    artifactsType: _Project.artifacts.type
+    artifactsLocation: _Project.artifacts.location
+    containerType: _Project.environment.type
+    image: _Project.environment.image
+    computeType: _Project.environment.computeType
+    privilegedMode: _Project.environment.privilegedMode
+    variableNames: "_Project.environment.environmentVariables[].join(':', [name, type])"
+    serviceRole: _Project.serviceRole
+    timeoutInMinutes: _Project.timeoutInMinutes
+    queuedTimeoutInMinutes: _Project.queuedTimeoutInMinutes
+    encryptionKey: _Project.encryptionKey
+  chat_props: [description, sourceType, sourceLocation, artifactsType, artifactsLocation, containerType, image, variableNames, computeType, privilegedMode, serviceRole, timeoutInMinutes, queuedTimeoutInMinutes, encryptionKey]
+  edges:
+    - {kind: execution-role, target: _Project.serviceRole, to: iam-role, style: reference}
+    - {kind: upload-to, target: "_Project.artifacts.type == 'S3' && _Project.artifacts.location", match: Name, to: s3-bucket, style: reference}
+    - {kind: encrypted-by, target: _Project.encryptionKey, to: [kms-key, kms-alias], style: reference}
+    - {kind: attached, target: _Project.vpcConfig.securityGroupIds, to: security-group, reverse: true, style: attach}
+  builder: true
+  view: {role: block, category: developer-tools, icon: Arch_AWS-CodeBuild_48.svg, source: Architecture-Service-Icons_07312026/Arch_Developer-Tools/48/Arch_AWS-CodeBuild_48.svg, height: 0.5, order: 620, actions: [Project, Build]}
+  contract:
+    needs:
+      - {op: create-role, params: {RoleName: ct-codebuild-role, AssumeRolePolicyDocument: '{"Version": "2012-10-17", "Statement": [{"Effect": "Allow", "Principal": {"Service": "codebuild.amazonaws.com"}, "Action": "sts:AssumeRole"}]}'}, save: role}
+    create: {op: create-codebuild-project, params: {name: ct-codebuild, serviceRole: "{role}", source.type: NO_SOURCE, source.buildspec: "version: 0.2", artifacts.type: NO_ARTIFACTS, environment.type: LINUX_CONTAINER, environment.image: "aws/codebuild/standard:7.0", environment.computeType: BUILD_GENERAL1_SMALL}, save: project}
+    then:
+      - {op: update-codebuild-project, params: {name: ct-codebuild, timeoutInMinutes: "15"}}
+      - {op: delete-codebuild-project, params: {name: ct-codebuild}}
+  ops:
+    - id: create-codebuild-project
+      api: CreateProject
+      gesture: create
+      title: "Tạo CodeBuild project"
+      fields:
+        - {name: name, placeholder: my-app-build}
+        - {name: serviceRole, ref: iam-role}
+        - source.type
+        - source.location
+        - {name: source.buildspec, multiline: true, placeholder: "version: 0.2\nphases:\n  build:\n    commands:\n      - echo hello"}
+        - artifacts.type
+        - artifacts.location
+        - environment.type
+        - environment.image
+        - environment.computeType
+        - environment.privilegedMode
+        - description
+        - timeoutInMinutes
+      defaults: {source.type: NO_SOURCE, artifacts.type: NO_ARTIFACTS, environment.type: LINUX_CONTAINER, environment.image: "aws/codebuild/standard:7.0", environment.computeType: BUILD_GENERAL1_SMALL}
+      result_id: project.arn
+      expect: {label: name}
+      note: "Create a build project. source.type S3, CODEPIPELINE or NO_SOURCE (then give source.buildspec); artifacts.type S3 (artifacts.location is the bucket name), CODEPIPELINE or NO_ARTIFACTS. serviceRole: a role codebuild.amazonaws.com may assume. privilegedMode=true lets the build run docker."
+    - id: update-codebuild-project
+      api: UpdateProject
+      gesture: attribute
+      title: "Cập nhật CodeBuild project"
+      fields: [{name: name, ref: codebuild-project, ref_by: label}, description, timeoutInMinutes, environment.type, environment.image, environment.computeType, environment.privilegedMode]
+      targets: [codebuild-project]
+      target_param: name
+      note: "Change the description, the build timeout, or the build image and compute size. The environment fields go together: give type, image and computeType."
+    - id: delete-codebuild-project
+      api: DeleteProject
+      gesture: delete
+      title: "Xoá CodeBuild project"
+      fields: [{name: name, ref: codebuild-project, ref_by: label}]
+      targets: [codebuild-project]
+      target_param: name
+      note: "Delete the build project. Its build history goes with it."

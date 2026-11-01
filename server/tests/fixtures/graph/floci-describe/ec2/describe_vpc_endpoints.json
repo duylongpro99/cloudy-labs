@@ -1,0 +1,74 @@
+{
+  "calls": [
+    {
+      "params": {},
+      "response": {
+        "VpcEndpoints": [
+          {
+            "CreationTimestamp": "2026-10-31 14:41:10.364000+00:00",
+            "DnsEntries": [
+              {
+                "DnsName": "vpce-db941ac67c6e58118-4e7d6fba.sqs.ap-southeast-2.vpce.amazonaws.com",
+                "HostedZoneId": "Z44AE0B53344B3"
+              },
+              {
+                "DnsName": "vpce-db941ac67c6e58118-4e7d6fba-ap-southeast-2b.sqs.ap-southeast-2.vpce.amazonaws.com",
+                "HostedZoneId": "Z44AE0B53344B3"
+              },
+              {
+                "DnsName": "sqs.ap-southeast-2.amazonaws.com",
+                "HostedZoneId": "Z8253E3B6DECC3"
+              }
+            ],
+            "Groups": [
+              {
+                "GroupId": "sg-5271729b7a5ffc3e2"
+              }
+            ],
+            "IpAddressType": "ipv4",
+            "NetworkInterfaceIds": [
+              "eni-ec98d81aae0d34869"
+            ],
+            "PrivateDnsEnabled": true,
+            "RouteTableIds": [],
+            "ServiceName": "com.amazonaws.ap-southeast-2.sqs",
+            "State": "available",
+            "SubnetIds": [
+              "subnet-4f1dede6"
+            ],
+            "Tags": [
+              {
+                "Key": "Name",
+                "Value": "wave1-sqs-endpoint"
+              }
+            ],
+            "VpcEndpointId": "vpce-db941ac67c6e58118",
+            "VpcEndpointType": "Interface",
+            "VpcId": "vpc-03e9e3f9"
+          },
+          {
+            "CreationTimestamp": "2026-10-31 14:41:10.362000+00:00",
+            "Groups": [],
+            "IpAddressType": "ipv4",
+            "PrivateDnsEnabled": false,
+            "RouteTableIds": [
+              "rtb-5394e655"
+            ],
+            "ServiceName": "com.amazonaws.ap-southeast-2.s3",
+            "State": "available",
+            "SubnetIds": [],
+            "Tags": [
+              {
+                "Key": "Name",
+                "Value": "wave1-s3-endpoint"
+              }
+            ],
+            "VpcEndpointId": "vpce-479cfb7293de52075",
+            "VpcEndpointType": "Gateway",
+            "VpcId": "vpc-03e9e3f9"
+          }
+        ]
+      }
+    }
+  ]
+}

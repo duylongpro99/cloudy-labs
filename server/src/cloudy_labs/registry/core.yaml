@@ -1,0 +1,17 @@
+# Structural kinds: the collector makes them itself; nothing is listed.
+# The graph's one root is the emulator's account; each region the lab uses and the global group
+# (IAM, CloudFront, Route 53: services with no region) sit directly in it.
+- kind: account
+  label: AWS account
+  target: false
+  view: {role: tray-badge, category: account, icon: AWS-Account_32.svg, source: Architecture-Group-Icons_07312026/AWS-Account_32.svg, order: -10, group: true}
+- kind: region
+  label: Region
+  target: false
+  parent: [{kind: account}]
+  view: {role: tray-badge, category: region, icon: Region_32.svg, source: Architecture-Group-Icons_07312026/Region_32.svg, order: 0, group: true}
+- kind: global
+  label: Toàn cục
+  target: false
+  parent: [{kind: account}]
+  view: {role: tray-badge, category: global, icon: AWS-Cloud_32.svg, source: Architecture-Group-Icons_07312026/AWS-Cloud_32.svg, order: 1, group: true}

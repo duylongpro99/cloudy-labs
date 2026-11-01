@@ -1,0 +1,67 @@
+{
+  "calls": [
+    {
+      "params": {},
+      "response": {
+        "Marker": "",
+        "ReplicationGroups": [
+          {
+            "ARN": "arn:aws:elasticache:ap-southeast-2:000000000000:replicationgroup:w3-dm-redis",
+            "AtRestEncryptionEnabled": false,
+            "AuthTokenEnabled": false,
+            "AutomaticFailover": "enabled",
+            "CacheNodeType": "cache.t3.micro",
+            "ClusterEnabled": false,
+            "ClusterMode": "disabled",
+            "Description": "w3 data movement",
+            "Engine": "valkey",
+            "MemberClusters": [
+              "w3-dm-redis-001",
+              "w3-dm-redis-002"
+            ],
+            "MultiAZ": "disabled",
+            "NodeGroups": [
+              {
+                "NodeGroupId": "0001",
+                "NodeGroupMembers": [
+                  {
+                    "CacheClusterId": "w3-dm-redis-001",
+                    "CacheNodeId": "0001",
+                    "CurrentRole": "primary",
+                    "ReadEndpoint": {
+                      "Address": "localhost",
+                      "Port": 6379
+                    }
+                  },
+                  {
+                    "CacheClusterId": "w3-dm-redis-002",
+                    "CacheNodeId": "0001",
+                    "CurrentRole": "replica",
+                    "ReadEndpoint": {
+                      "Address": "localhost",
+                      "Port": 6379
+                    }
+                  }
+                ],
+                "PrimaryEndpoint": {
+                  "Address": "localhost",
+                  "Port": 6379
+                },
+                "ReaderEndpoint": {
+                  "Address": "localhost",
+                  "Port": 6379
+                },
+                "Status": "available"
+              }
+            ],
+            "ReplicationGroupId": "w3-dm-redis",
+            "SnapshotRetentionLimit": 0,
+            "SnapshotWindow": "00:00-01:00",
+            "Status": "available",
+            "TransitEncryptionEnabled": false
+          }
+        ]
+      }
+    }
+  ]
+}

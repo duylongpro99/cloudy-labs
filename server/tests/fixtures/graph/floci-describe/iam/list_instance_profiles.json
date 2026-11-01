@@ -1,0 +1,41 @@
+{
+  "calls": [
+    {
+      "params": {},
+      "response": {
+        "InstanceProfiles": [
+          {
+            "Arn": "arn:aws:iam::000000000000:instance-profile/wave1-web-profile",
+            "CreateDate": "2026-10-31 14:41:11.906000+00:00",
+            "InstanceProfileId": "AIPAAWG39BGCOAMGFI5G",
+            "InstanceProfileName": "wave1-web-profile",
+            "Path": "/",
+            "Roles": [
+              {
+                "Arn": "arn:aws:iam::000000000000:role/wave1-ops",
+                "AssumeRolePolicyDocument": {
+                  "Statement": [
+                    {
+                      "Action": "sts:AssumeRole",
+                      "Effect": "Allow",
+                      "Principal": {
+                        "AWS": "arn:aws:iam::000000000000:user/wave1-dev"
+                      }
+                    }
+                  ],
+                  "Version": "2012-10-17"
+                },
+                "CreateDate": "2026-10-31 14:41:11.878000+00:00",
+                "MaxSessionDuration": 3600,
+                "Path": "/",
+                "RoleId": "AROAXVS6YO2GXIPDAEJB",
+                "RoleName": "wave1-ops"
+              }
+            ]
+          }
+        ],
+        "IsTruncated": false
+      }
+    }
+  ]
+}

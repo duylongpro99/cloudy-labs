@@ -1,0 +1,37 @@
+{
+  "calls": [
+    {
+      "params": {},
+      "response": {
+        "TransitGateways": [
+          {
+            "CreationTime": "2026-10-31 14:34:04.195000+00:00",
+            "Description": "reachability",
+            "Options": {
+              "AmazonSideAsn": 64512,
+              "AssociationDefaultRouteTableId": "tgw-rtb-8b7af86b3565e0be4",
+              "AutoAcceptSharedAttachments": "disable",
+              "DefaultRouteTableAssociation": "enable",
+              "DefaultRouteTablePropagation": "enable",
+              "DnsSupport": "enable",
+              "MulticastSupport": "disable",
+              "PropagationDefaultRouteTableId": "tgw-rtb-8b7af86b3565e0be4",
+              "SecurityGroupReferencingSupport": "disable",
+              "VpnEcmpSupport": "enable"
+            },
+            "OwnerId": "000000000000",
+            "State": "available",
+            "Tags": [
+              {
+                "Key": "Name",
+                "Value": "rx-tgw"
+              }
+            ],
+            "TransitGatewayArn": "arn:aws:ec2:ap-southeast-2:000000000000:transit-gateway/tgw-6387b2ce851a1c9a3",
+            "TransitGatewayId": "tgw-6387b2ce851a1c9a3"
+          }
+        ]
+      }
+    }
+  ]
+}

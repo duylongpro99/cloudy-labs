@@ -1,0 +1,163 @@
+{
+  "calls": [
+    {
+      "params": {
+        "FunctionName": "arn:aws:lambda:ap-southeast-2:000000000000:function:wave1-vpc-fn"
+      },
+      "response": {
+        "Versions": [
+          {
+            "Architectures": [
+              "x86_64"
+            ],
+            "CodeSha256": "wN0yGO8zl7FzZ7GAH746aUI/agghwwJUzbU74vc4U58=",
+            "CodeSize": 294,
+            "EphemeralStorage": {
+              "Size": 512
+            },
+            "FunctionArn": "arn:aws:lambda:ap-southeast-2:000000000000:function:wave1-vpc-fn",
+            "FunctionName": "wave1-vpc-fn",
+            "Handler": "lambda_function.lambda_handler",
+            "LastModified": "2026-10-31T14:41:11.941+0000",
+            "LastUpdateStatus": "Successful",
+            "LoggingConfig": {
+              "LogFormat": "Text",
+              "LogGroup": "/aws/lambda/wave1-vpc-fn"
+            },
+            "MemorySize": 128,
+            "PackageType": "Zip",
+            "RevisionId": "0b628303-eb09-435a-a9d7-4a9a2ee801c5",
+            "Role": "arn:aws:iam::000000000000:role/wave1-lambda-role",
+            "Runtime": "python3.12",
+            "RuntimeVersionConfig": {
+              "RuntimeVersionArn": "arn:aws:lambda:ap-southeast-2::runtime:42f2b28d8258c41a63374ac4365007738900f66a9b62a7eb1a2041a2e091d41b"
+            },
+            "SnapStart": {
+              "ApplyOn": "None",
+              "OptimizationStatus": "Off"
+            },
+            "State": "Active",
+            "Timeout": 3,
+            "TracingConfig": {
+              "Mode": "PassThrough"
+            },
+            "Version": "$LATEST",
+            "VpcConfig": {
+              "Ipv6AllowedForDualStack": false,
+              "SecurityGroupIds": [
+                "sg-5271729b7a5ffc3e2"
+              ],
+              "SubnetIds": [
+                "subnet-4f1dede6"
+              ],
+              "VpcId": "vpc-03e9e3f9"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "params": {
+        "FunctionName": "arn:aws:lambda:ap-southeast-2:000000000000:function:wave1-fn"
+      },
+      "response": {
+        "Versions": [
+          {
+            "Architectures": [
+              "x86_64"
+            ],
+            "CodeSha256": "wN0yGO8zl7FzZ7GAH746aUI/agghwwJUzbU74vc4U58=",
+            "CodeSize": 294,
+            "Environment": {
+              "Variables": {
+                "STAGE": "<redacted>"
+              }
+            },
+            "EphemeralStorage": {
+              "Size": 512
+            },
+            "FunctionArn": "arn:aws:lambda:ap-southeast-2:000000000000:function:wave1-fn",
+            "FunctionName": "wave1-fn",
+            "Handler": "lambda_function.lambda_handler",
+            "LastModified": "2026-10-31T14:41:11.929+0000",
+            "LastUpdateStatus": "Successful",
+            "Layers": [
+              {
+                "Arn": "arn:aws:lambda:ap-southeast-2:000000000000:layer:wave1-layer:1"
+              }
+            ],
+            "LoggingConfig": {
+              "LogFormat": "Text",
+              "LogGroup": "/aws/lambda/wave1-fn"
+            },
+            "MemorySize": 128,
+            "PackageType": "Zip",
+            "RevisionId": "0915af7e-f025-4f44-8d4f-1cdd3dead156",
+            "Role": "arn:aws:iam::000000000000:role/wave1-lambda-role",
+            "Runtime": "python3.12",
+            "RuntimeVersionConfig": {
+              "RuntimeVersionArn": "arn:aws:lambda:ap-southeast-2::runtime:42f2b28d8258c41a63374ac4365007738900f66a9b62a7eb1a2041a2e091d41b"
+            },
+            "SnapStart": {
+              "ApplyOn": "None",
+              "OptimizationStatus": "Off"
+            },
+            "State": "Active",
+            "Timeout": 3,
+            "TracingConfig": {
+              "Mode": "PassThrough"
+            },
+            "Version": "$LATEST"
+          },
+          {
+            "Architectures": [
+              "x86_64"
+            ],
+            "CodeSha256": "wN0yGO8zl7FzZ7GAH746aUI/agghwwJUzbU74vc4U58=",
+            "CodeSize": 294,
+            "Environment": {
+              "Variables": {
+                "STAGE": "<redacted>"
+              }
+            },
+            "EphemeralStorage": {
+              "Size": 512
+            },
+            "FunctionArn": "arn:aws:lambda:ap-southeast-2:000000000000:function:wave1-fn:1",
+            "FunctionName": "wave1-fn",
+            "Handler": "lambda_function.lambda_handler",
+            "LastModified": "2026-10-31T14:41:11.934+0000",
+            "LastUpdateStatus": "Successful",
+            "Layers": [
+              {
+                "Arn": "arn:aws:lambda:ap-southeast-2:000000000000:layer:wave1-layer:1"
+              }
+            ],
+            "LoggingConfig": {
+              "LogFormat": "Text",
+              "LogGroup": "/aws/lambda/wave1-fn"
+            },
+            "MemorySize": 128,
+            "PackageType": "Zip",
+            "RevisionId": "dfe47072-80b4-4ae1-baf4-000e5427e033",
+            "Role": "arn:aws:iam::000000000000:role/wave1-lambda-role",
+            "Runtime": "python3.12",
+            "RuntimeVersionConfig": {
+              "RuntimeVersionArn": "arn:aws:lambda:ap-southeast-2::runtime:42f2b28d8258c41a63374ac4365007738900f66a9b62a7eb1a2041a2e091d41b"
+            },
+            "SnapStart": {
+              "ApplyOn": "None",
+              "OptimizationStatus": "Off"
+            },
+            "State": "Active",
+            "Timeout": 3,
+            "TracingConfig": {
+              "Mode": "PassThrough"
+            },
+            "Version": "1"
+          }
+        ]
+      }
+    }
+  ]
+}

@@ -58,7 +58,7 @@ def wait_for(ws, node_id: str, timeout: float = 10.0) -> float:
 
 
 def test_write_reaches_the_websocket_within_two_seconds(server):
-    ec2 = boto3.client("ec2", endpoint_url="http://127.0.0.1:4566", region_name="us-east-1",
+    ec2 = boto3.client("ec2", endpoint_url="http://127.0.0.1:4566", region_name="ap-southeast-2",
                        aws_access_key_id="test", aws_secret_access_key="test")
     vpc = ec2.create_vpc(CidrBlock="10.99.0.0/16")["Vpc"]["VpcId"]
     subnets, latencies = [], []
@@ -66,7 +66,7 @@ def test_write_reaches_the_websocket_within_two_seconds(server):
         with connect(server, open_timeout=10) as ws:
             wait_for(ws, vpc)
             for i in range(RUNS):
-                subnet = ec2.create_subnet(VpcId=vpc, CidrBlock=f"10.99.{i}.0/24", AvailabilityZone="us-east-1a")["Subnet"]["SubnetId"]
+                subnet = ec2.create_subnet(VpcId=vpc, CidrBlock=f"10.99.{i}.0/24", AvailabilityZone="ap-southeast-2a")["Subnet"]["SubnetId"]
                 t0 = time.monotonic()
                 subnets.append(subnet)
                 latencies.append(wait_for(ws, subnet) - t0)

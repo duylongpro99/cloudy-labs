@@ -1,0 +1,12 @@
+{
+  "calls": [
+    {
+      "params": {},
+      "response": {
+        "clusterArns": [
+          "arn:aws:ecs:ap-southeast-2:000000000000:cluster/w3-delivery"
+        ]
+      }
+    }
+  ]
+}

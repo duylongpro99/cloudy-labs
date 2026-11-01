@@ -1,0 +1,36 @@
+{
+  "calls": [
+    {
+      "params": {},
+      "response": {
+        "DBClusterSnapshots": [
+          {
+            "AllocatedStorage": 1,
+            "AvailabilityZones": [
+              "ap-southeast-2b"
+            ],
+            "ClusterCreateTime": "2026-10-31 14:41:16.401177+00:00",
+            "DBClusterIdentifier": "wave1-aurora",
+            "DBClusterSnapshotArn": "arn:aws:rds:ap-southeast-2:000000000000:cluster-snapshot:wave1-aurora-snap",
+            "DBClusterSnapshotIdentifier": "wave1-aurora-snap",
+            "DbClusterResourceId": "cluster-277BE83BC2484707B63C2F86",
+            "Engine": "aurora-postgresql",
+            "EngineMode": "provisioned",
+            "EngineVersion": "16.3",
+            "IAMDatabaseAuthenticationEnabled": false,
+            "LicenseModel": "postgresql-license",
+            "MasterUsername": "wave1",
+            "PercentProgress": 100,
+            "Port": 7003,
+            "SnapshotCreateTime": "2026-10-31 14:41:17.731228+00:00",
+            "SnapshotType": "manual",
+            "Status": "available",
+            "StorageEncrypted": false,
+            "TagList": [],
+            "VpcId": "vpc-03e9e3f9"
+          }
+        ]
+      }
+    }
+  ]
+}

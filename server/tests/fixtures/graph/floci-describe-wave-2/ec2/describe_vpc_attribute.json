@@ -1,0 +1,28 @@
+{
+  "calls": [
+    {
+      "params": {
+        "Attribute": "enableDnsHostnames",
+        "VpcId": "vpc-1db2f371"
+      },
+      "response": {
+        "EnableDnsHostnames": {
+          "Value": false
+        },
+        "VpcId": "vpc-1db2f371"
+      }
+    },
+    {
+      "params": {
+        "Attribute": "enableDnsHostnames",
+        "VpcId": "vpc-default-ap-southeast-2"
+      },
+      "response": {
+        "EnableDnsHostnames": {
+          "Value": false
+        },
+        "VpcId": "vpc-default-ap-southeast-2"
+      }
+    }
+  ]
+}

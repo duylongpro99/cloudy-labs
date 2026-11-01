@@ -1,0 +1,2150 @@
+{
+ "floci_image_digest": "sha256:e0b292df4dc9559b7b1bf4f51bdda4bb8e269276236438cd03cae661260ea8a9",
+ "date": "2026-10-31",
+ "results": [
+  {
+   "kind": "acm-certificate",
+   "step": "create",
+   "op": "request-certificate",
+   "result": "pass",
+   "seconds": 0.69,
+   "max_seconds": 2.0
+  },
+  {
+   "kind": "acm-certificate",
+   "step": "then",
+   "op": "delete-certificate",
+   "result": "pass",
+   "seconds": 0.92,
+   "max_seconds": 2.0
+  },
+  {
+   "kind": "acm-certificate",
+   "step": "then",
+   "op": "update-certificate-options",
+   "result": "pass",
+   "seconds": 1.36,
+   "max_seconds": 2.0
+  },
+  {
+   "kind": "apigateway-http-api",
+   "step": "create",
+   "op": "create-http-api",
+   "result": "pass",
+   "seconds": 0.75,
+   "max_seconds": 2.0
+  },
+  {
+   "kind": "apigateway-http-api",
+   "step": "then",
+   "op": "delete-http-api",
+   "result": "pass",
+   "seconds": 0.68,
+   "max_seconds": 2.0
+  },
+  {
+   "kind": "apigateway-http-api",
+   "step": "then",
+   "op": "update-http-api",
+   "result": "pass",
+   "seconds": 0.52,
+   "max_seconds": 2.0
+  },
+  {
+   "kind": "apigateway-rest-api",
+   "step": "create",
+   "op": "create-rest-api",
+   "result": "pass",
+   "seconds": 0.68,
+   "max_seconds": 2.0
+  },
+  {
+   "kind": "apigateway-rest-api",
+   "step": "then",
+   "op": "create-deployment",
+   "result": "pass",
+   "seconds": 0.69,
+   "max_seconds": 2.0
+  },
+  {
+   "kind": "apigateway-rest-api",
+   "step": "then",
+   "op": "delete-rest-api",
+   "result": "pass",
+   "seconds": 0.73,
+   "max_seconds": 2.0
+  },
+  {
+   "kind": "athena-workgroup",
+   "step": "create",
+   "op": "create-work-group",
+   "result": "pass",
+   "seconds": 0.74,
+   "max_seconds": 2.0
+  },
+  {
+   "kind": "athena-workgroup",
+   "step": "then",
+   "op": "delete-work-group",
+   "result": "pass",
+   "seconds": 0.69,
+   "max_seconds": 2.0
+  },
+  {
+   "kind": "athena-workgroup",
+   "step": "then",
+   "op": "update-work-group",
+   "result": "pass",
+   "seconds": 0.65,
+   "max_seconds": 2.0
+  },
+  {
+   "kind": "autoscaling-group",
+   "step": "create",
+   "op": "create-auto-scaling-group",
+   "result": "pass",
+   "seconds": 0.66,
+   "max_seconds": 2.0
+  },
+  {
+   "kind": "autoscaling-group",
+   "step": "delete",
+   "op": "-",
+   "result": "no-op"
+  },
+  {
+   "kind": "autoscaling-group",
+   "step": "then",
+   "op": "update-auto-scaling-group",
+   "result": "pass",
+   "seconds": 0.7,
+   "max_seconds": 2.0
+  },
+  {
+   "kind": "backup-plan",
+   "step": "create",
+   "op": "create-backup-plan",
+   "result": "pass",
+   "seconds": 0.79,
+   "max_seconds": 2.0
+  },
+  {
+   "kind": "backup-plan",
+   "step": "delete",
+   "op": "-",
+   "result": "no-op"
+  },
+  {
+   "kind": "backup-selection",
+   "step": "create",
+   "op": "create-backup-selection",
+   "result": "pass",
+   "seconds": 0.7,
+   "max_seconds": 2.0
+  },
+  {
+   "kind": "backup-selection",
+   "step": "delete",
+   "op": "-",
+   "result": "no-op"
+  },
+  {
+   "kind": "backup-vault",
+   "step": "create",
+   "op": "create-backup-vault",
+   "result": "pass",
+   "seconds": 1.07,
+   "max_seconds": 2.0
+  },
+  {
+   "kind": "backup-vault",
+   "step": "delete",
+   "op": "-",
+   "result": "no-op"
+  },
+  {
+   "kind": "backup-vault",
+   "step": "then",
+   "op": "put-backup-vault-lock-configuration",
+   "result": "pass",
+   "seconds": 0.68,
+   "max_seconds": 2.0
+  },
+  {
+   "kind": "beanstalk-application",
+   "step": "create",
+   "op": "create-beanstalk-application",
+   "result": "pass",
+   "seconds": 1.18,
+   "max_seconds": 2.0
+  },
+  {
+   "kind": "beanstalk-application",
+   "step": "then",
+   "op": "delete-beanstalk-application",
+   "result": "pass",
+   "seconds": 0.72,
+   "max_seconds": 2.0
+  },
+  {
+   "kind": "beanstalk-application",
+   "step": "then",
+   "op": "update-beanstalk-application",
+   "result": "pass",
+   "seconds": 0.93,
+   "max_seconds": 2.0
+  },
+  {
+   "kind": "beanstalk-environment",
+   "step": "create",
+   "op": "create-beanstalk-environment",
+   "result": "pass",
+   "seconds": 0.91,
+   "max_seconds": 2.0
+  },
+  {
+   "kind": "beanstalk-environment",
+   "step": "then",
+   "op": "terminate-beanstalk-environment",
+   "result": "pass",
+   "seconds": 1.05,
+   "max_seconds": 2.0
+  },
+  {
+   "kind": "beanstalk-environment",
+   "step": "then",
+   "op": "update-beanstalk-environment",
+   "result": "pass",
+   "seconds": 0.86,
+   "max_seconds": 2.0
+  },
+  {
+   "kind": "budget",
+   "step": "create",
+   "op": "create-budget",
+   "result": "pass",
+   "seconds": 0.85,
+   "max_seconds": 2.0
+  },
+  {
+   "kind": "budget",
+   "step": "then",
+   "op": "delete-budget",
+   "result": "pass",
+   "seconds": 0.72,
+   "max_seconds": 2.0
+  },
+  {
+   "kind": "budget",
+   "step": "then",
+   "op": "update-budget",
+   "result": "pass",
+   "seconds": 0.93,
+   "max_seconds": 2.0
+  },
+  {
+   "kind": "cloudformation-stack",
+   "step": "create",
+   "op": "create-stack",
+   "result": "pass",
+   "seconds": 0.65,
+   "max_seconds": 5.0
+  },
+  {
+   "kind": "cloudformation-stack",
+   "step": "then",
+   "op": "delete-stack",
+   "result": "pass",
+   "seconds": 0.7,
+   "max_seconds": 5.0
+  },
+  {
+   "kind": "cloudformation-stack",
+   "step": "then",
+   "op": "update-termination-protection",
+   "result": "pass",
+   "seconds": 0.62,
+   "max_seconds": 5.0
+  },
+  {
+   "kind": "cloudformation-stack",
+   "step": "then",
+   "op": "update-termination-protection",
+   "result": "pass",
+   "seconds": 1.11,
+   "max_seconds": 5.0
+  },
+  {
+   "kind": "cloudfront-distribution",
+   "step": "create",
+   "op": "create-distribution",
+   "result": "pass",
+   "seconds": 0.8,
+   "max_seconds": 2.0
+  },
+  {
+   "kind": "cloudtrail-trail",
+   "step": "create",
+   "op": "create-trail",
+   "result": "pass",
+   "seconds": 0.78,
+   "max_seconds": 2.0
+  },
+  {
+   "kind": "cloudtrail-trail",
+   "step": "then",
+   "op": "delete-trail",
+   "result": "pass",
+   "seconds": 0.81,
+   "max_seconds": 2.0
+  },
+  {
+   "kind": "cloudtrail-trail",
+   "step": "then",
+   "op": "start-logging",
+   "result": "pass",
+   "seconds": 0.74,
+   "max_seconds": 2.0
+  },
+  {
+   "kind": "cloudwatch-alarm",
+   "step": "create",
+   "op": "put-metric-alarm",
+   "result": "pass",
+   "seconds": 1.13,
+   "max_seconds": 2.0
+  },
+  {
+   "kind": "cloudwatch-alarm",
+   "step": "delete",
+   "op": "-",
+   "result": "no-op"
+  },
+  {
+   "kind": "cloudwatch-alarm",
+   "step": "then",
+   "op": "set-alarm-state",
+   "result": "pass",
+   "seconds": 0.73,
+   "max_seconds": 2.0
+  },
+  {
+   "kind": "cloudwatch-dashboard",
+   "step": "create",
+   "op": "put-dashboard",
+   "result": "pass",
+   "seconds": 0.93,
+   "max_seconds": 2.0
+  },
+  {
+   "kind": "cloudwatch-dashboard",
+   "step": "delete",
+   "op": "-",
+   "result": "no-op"
+  },
+  {
+   "kind": "codeartifact-domain",
+   "step": "create",
+   "op": "create-codeartifact-domain",
+   "result": "pass",
+   "seconds": 0.81,
+   "max_seconds": 2.0
+  },
+  {
+   "kind": "codeartifact-domain",
+   "step": "then",
+   "op": "delete-codeartifact-domain",
+   "result": "pass",
+   "seconds": 1.0,
+   "max_seconds": 2.0
+  },
+  {
+   "kind": "codeartifact-domain",
+   "step": "then",
+   "op": "put-codeartifact-domain-policy",
+   "result": "pass",
+   "seconds": 0.52,
+   "max_seconds": 2.0
+  },
+  {
+   "kind": "codeartifact-repository",
+   "step": "create",
+   "op": "create-codeartifact-repository",
+   "result": "pass",
+   "seconds": 0.7,
+   "max_seconds": 2.0
+  },
+  {
+   "kind": "codeartifact-repository",
+   "step": "then",
+   "op": "delete-codeartifact-repository",
+   "result": "pass",
+   "seconds": 0.98,
+   "max_seconds": 2.0
+  },
+  {
+   "kind": "codeartifact-repository",
+   "step": "then",
+   "op": "update-codeartifact-repository",
+   "result": "pass",
+   "seconds": 0.51,
+   "max_seconds": 2.0
+  },
+  {
+   "kind": "codebuild-project",
+   "step": "create",
+   "op": "create-codebuild-project",
+   "result": "pass",
+   "seconds": 0.73,
+   "max_seconds": 2.0
+  },
+  {
+   "kind": "codebuild-project",
+   "step": "then",
+   "op": "delete-codebuild-project",
+   "result": "pass",
+   "seconds": 0.56,
+   "max_seconds": 2.0
+  },
+  {
+   "kind": "codebuild-project",
+   "step": "then",
+   "op": "update-codebuild-project",
+   "result": "pass",
+   "seconds": 0.73,
+   "max_seconds": 2.0
+  },
+  {
+   "kind": "codedeploy-application",
+   "step": "create",
+   "op": "create-codedeploy-application",
+   "result": "pass",
+   "seconds": 0.76,
+   "max_seconds": 2.0
+  },
+  {
+   "kind": "codedeploy-application",
+   "step": "then",
+   "op": "delete-codedeploy-application",
+   "result": "pass",
+   "seconds": 0.73,
+   "max_seconds": 2.0
+  },
+  {
+   "kind": "codedeploy-application",
+   "step": "then",
+   "op": "rename-codedeploy-application",
+   "result": "pass",
+   "seconds": 0.9,
+   "max_seconds": 2.0
+  },
+  {
+   "kind": "codepipeline-pipeline",
+   "step": "create",
+   "op": "create-codepipeline-pipeline",
+   "result": "pass",
+   "seconds": 0.72,
+   "max_seconds": 2.0
+  },
+  {
+   "kind": "codepipeline-pipeline",
+   "step": "then",
+   "op": "delete-codepipeline-pipeline",
+   "result": "pass",
+   "seconds": 0.76,
+   "max_seconds": 2.0
+  },
+  {
+   "kind": "codepipeline-pipeline",
+   "step": "then",
+   "op": "update-codepipeline-pipeline",
+   "result": "pass",
+   "seconds": 0.69,
+   "max_seconds": 2.0
+  },
+  {
+   "kind": "cognito-identity-pool",
+   "step": "create",
+   "op": "create-identity-pool",
+   "result": "pass",
+   "seconds": 1.1,
+   "max_seconds": 2.0
+  },
+  {
+   "kind": "cognito-identity-pool",
+   "step": "then",
+   "op": "delete-identity-pool",
+   "result": "pass",
+   "seconds": 0.72,
+   "max_seconds": 2.0
+  },
+  {
+   "kind": "cognito-identity-pool",
+   "step": "then",
+   "op": "set-identity-pool-roles",
+   "result": "pass",
+   "seconds": 0.88,
+   "max_seconds": 2.0
+  },
+  {
+   "kind": "cognito-identity-provider",
+   "step": "create",
+   "op": "create-identity-provider",
+   "result": "pass",
+   "seconds": 0.74,
+   "max_seconds": 2.0
+  },
+  {
+   "kind": "cognito-identity-provider",
+   "step": "then",
+   "op": "delete-identity-provider",
+   "result": "pass",
+   "seconds": 0.74,
+   "max_seconds": 2.0
+  },
+  {
+   "kind": "cognito-identity-provider",
+   "step": "then",
+   "op": "update-identity-provider",
+   "result": "pass",
+   "seconds": 0.78,
+   "max_seconds": 2.0
+  },
+  {
+   "kind": "cognito-user-pool",
+   "step": "create",
+   "op": "create-user-pool",
+   "result": "pass",
+   "seconds": 0.73,
+   "max_seconds": 2.0
+  },
+  {
+   "kind": "cognito-user-pool",
+   "step": "then",
+   "op": "delete-user-pool",
+   "result": "pass",
+   "seconds": 0.71,
+   "max_seconds": 2.0
+  },
+  {
+   "kind": "cognito-user-pool",
+   "step": "then",
+   "op": "update-user-pool",
+   "result": "pass",
+   "seconds": 0.72,
+   "max_seconds": 2.0
+  },
+  {
+   "kind": "cognito-user-pool",
+   "step": "then",
+   "op": "update-user-pool",
+   "result": "pass",
+   "seconds": 0.74,
+   "max_seconds": 2.0
+  },
+  {
+   "kind": "config-recorder",
+   "step": "create",
+   "op": "put-configuration-recorder",
+   "result": "pass",
+   "seconds": 0.75,
+   "max_seconds": 2.0
+  },
+  {
+   "kind": "config-recorder",
+   "step": "then",
+   "op": "delete-configuration-recorder",
+   "result": "pass",
+   "seconds": 0.77,
+   "max_seconds": 2.0
+  },
+  {
+   "kind": "config-recorder",
+   "step": "then",
+   "op": "put-delivery-channel",
+   "result": "pass",
+   "seconds": 0.74,
+   "max_seconds": 2.0
+  },
+  {
+   "kind": "config-recorder",
+   "step": "then",
+   "op": "start-configuration-recorder",
+   "result": "pass",
+   "seconds": 0.74,
+   "max_seconds": 2.0
+  },
+  {
+   "kind": "config-rule",
+   "step": "create",
+   "op": "put-config-rule",
+   "result": "pass",
+   "seconds": 0.73,
+   "max_seconds": 2.0
+  },
+  {
+   "kind": "config-rule",
+   "step": "then",
+   "op": "delete-config-rule",
+   "result": "pass",
+   "seconds": 0.78,
+   "max_seconds": 2.0
+  },
+  {
+   "kind": "config-rule",
+   "step": "then",
+   "op": "start-config-rules-evaluation",
+   "result": "pass",
+   "seconds": 0.77,
+   "max_seconds": 2.0
+  },
+  {
+   "kind": "datasync-location",
+   "step": "create",
+   "op": "create-location-s3",
+   "result": "pass",
+   "seconds": 0.85,
+   "max_seconds": 2.0
+  },
+  {
+   "kind": "datasync-location",
+   "step": "then",
+   "op": "delete-datasync-location",
+   "result": "pass",
+   "seconds": 0.75,
+   "max_seconds": 2.0
+  },
+  {
+   "kind": "datasync-location",
+   "step": "then",
+   "op": "update-location-s3",
+   "result": "pass",
+   "seconds": 0.75,
+   "max_seconds": 2.0
+  },
+  {
+   "kind": "datasync-task",
+   "step": "create",
+   "op": "create-datasync-task",
+   "result": "pass",
+   "seconds": 0.85,
+   "max_seconds": 2.0
+  },
+  {
+   "kind": "datasync-task",
+   "step": "then",
+   "op": "delete-datasync-task",
+   "result": "pass",
+   "seconds": 0.77,
+   "max_seconds": 2.0
+  },
+  {
+   "kind": "datasync-task",
+   "step": "then",
+   "op": "update-datasync-task",
+   "result": "pass",
+   "seconds": 0.52,
+   "max_seconds": 2.0
+  },
+  {
+   "kind": "db-cluster",
+   "step": "create",
+   "op": "create-db-cluster",
+   "result": "pass",
+   "seconds": 0.42,
+   "max_seconds": 30.0
+  },
+  {
+   "kind": "db-cluster",
+   "step": "delete",
+   "op": "-",
+   "result": "no-op"
+  },
+  {
+   "kind": "db-cluster-parameter-group",
+   "step": "create",
+   "op": "create-db-cluster-parameter-group",
+   "result": "pass",
+   "seconds": 1.2,
+   "max_seconds": 2.0
+  },
+  {
+   "kind": "db-cluster-parameter-group",
+   "step": "delete",
+   "op": "-",
+   "result": "no-op"
+  },
+  {
+   "kind": "db-instance",
+   "step": "create",
+   "op": "create-db-instance",
+   "result": "pass",
+   "seconds": 0.97,
+   "max_seconds": 30.0
+  },
+  {
+   "kind": "db-instance",
+   "step": "delete",
+   "op": "-",
+   "result": "no-op"
+  },
+  {
+   "kind": "db-instance",
+   "step": "then",
+   "op": "create-db-instance-read-replica",
+   "result": "pass",
+   "seconds": 0.94,
+   "max_seconds": 30.0
+  },
+  {
+   "kind": "db-option-group",
+   "step": "create",
+   "op": "create-option-group",
+   "result": "pass",
+   "seconds": 0.9,
+   "max_seconds": 2.0
+  },
+  {
+   "kind": "db-option-group",
+   "step": "delete",
+   "op": "-",
+   "result": "no-op"
+  },
+  {
+   "kind": "db-parameter-group",
+   "step": "create",
+   "op": "create-db-parameter-group",
+   "result": "pass",
+   "seconds": 1.2,
+   "max_seconds": 2.0
+  },
+  {
+   "kind": "db-parameter-group",
+   "step": "delete",
+   "op": "-",
+   "result": "no-op"
+  },
+  {
+   "kind": "db-proxy",
+   "step": "create",
+   "op": "create-db-proxy",
+   "result": "pass",
+   "seconds": 1.11,
+   "max_seconds": 2.0
+  },
+  {
+   "kind": "db-proxy",
+   "step": "delete",
+   "op": "-",
+   "result": "no-op"
+  },
+  {
+   "kind": "db-subnet-group",
+   "step": "create",
+   "op": "create-db-subnet-group",
+   "result": "pass",
+   "seconds": 0.92,
+   "max_seconds": 2.0
+  },
+  {
+   "kind": "db-subnet-group",
+   "step": "delete",
+   "op": "-",
+   "result": "no-op"
+  },
+  {
+   "kind": "dms-endpoint",
+   "step": "create",
+   "op": "create-dms-endpoint",
+   "result": "pass",
+   "seconds": 0.75,
+   "max_seconds": 2.0
+  },
+  {
+   "kind": "dms-endpoint",
+   "step": "then",
+   "op": "delete-dms-endpoint",
+   "result": "pass",
+   "seconds": 0.85,
+   "max_seconds": 2.0
+  },
+  {
+   "kind": "dms-endpoint",
+   "step": "then",
+   "op": "modify-dms-endpoint",
+   "result": "pass",
+   "seconds": 0.32,
+   "max_seconds": 2.0
+  },
+  {
+   "kind": "dms-replication-instance",
+   "step": "create",
+   "op": "create-replication-instance",
+   "result": "pass",
+   "seconds": 0.87,
+   "max_seconds": 2.0
+  },
+  {
+   "kind": "dms-replication-instance",
+   "step": "then",
+   "op": "delete-replication-instance",
+   "result": "pass",
+   "seconds": 0.75,
+   "max_seconds": 2.0
+  },
+  {
+   "kind": "dms-replication-instance",
+   "step": "then",
+   "op": "modify-replication-instance",
+   "result": "pass",
+   "seconds": 0.83,
+   "max_seconds": 2.0
+  },
+  {
+   "kind": "dms-replication-task",
+   "step": "create",
+   "op": "create-replication-task",
+   "result": "pass",
+   "seconds": 0.84,
+   "max_seconds": 2.0
+  },
+  {
+   "kind": "dms-replication-task",
+   "step": "then",
+   "op": "delete-replication-task",
+   "result": "pass",
+   "seconds": 0.8,
+   "max_seconds": 2.0
+  },
+  {
+   "kind": "dms-replication-task",
+   "step": "then",
+   "op": "start-replication-task",
+   "result": "pass",
+   "seconds": 0.88,
+   "max_seconds": 2.0
+  },
+  {
+   "kind": "dms-replication-task",
+   "step": "then",
+   "op": "stop-replication-task",
+   "result": "pass",
+   "seconds": 0.77,
+   "max_seconds": 2.0
+  },
+  {
+   "kind": "dynamodb-table",
+   "step": "create",
+   "op": "create-dynamodb-table",
+   "result": "pass",
+   "seconds": 0.83,
+   "max_seconds": 2.0
+  },
+  {
+   "kind": "dynamodb-table",
+   "step": "delete",
+   "op": "-",
+   "result": "no-op"
+  },
+  {
+   "kind": "dynamodb-table",
+   "step": "then",
+   "op": "update-continuous-backups",
+   "result": "pass",
+   "seconds": 0.52,
+   "max_seconds": 2.0
+  },
+  {
+   "kind": "dynamodb-table",
+   "step": "then",
+   "op": "update-dynamodb-stream",
+   "result": "pass",
+   "seconds": 0.9,
+   "max_seconds": 2.0
+  },
+  {
+   "kind": "dynamodb-table",
+   "step": "then",
+   "op": "update-time-to-live",
+   "result": "pass",
+   "seconds": 0.75,
+   "max_seconds": 2.0
+  },
+  {
+   "kind": "ebs-volume",
+   "step": "create",
+   "op": "create-volume",
+   "result": "pass",
+   "seconds": 0.85,
+   "max_seconds": 2.0
+  },
+  {
+   "kind": "ebs-volume",
+   "step": "delete",
+   "op": "-",
+   "result": "no-op"
+  },
+  {
+   "kind": "ecr-repository",
+   "step": "create",
+   "op": "create-ecr-repository",
+   "result": "pass",
+   "seconds": 0.8,
+   "max_seconds": 2.0
+  },
+  {
+   "kind": "ecr-repository",
+   "step": "then",
+   "op": "delete-ecr-repository",
+   "result": "pass",
+   "seconds": 0.84,
+   "max_seconds": 2.0
+  },
+  {
+   "kind": "ecr-repository",
+   "step": "then",
+   "op": "put-image-scanning-configuration",
+   "result": "pass",
+   "seconds": 0.54,
+   "max_seconds": 2.0
+  },
+  {
+   "kind": "ecs-cluster",
+   "step": "create",
+   "op": "create-ecs-cluster",
+   "result": "pass",
+   "seconds": 1.11,
+   "max_seconds": 2.0
+  },
+  {
+   "kind": "ecs-cluster",
+   "step": "then",
+   "op": "delete-ecs-cluster",
+   "result": "pass",
+   "seconds": 1.46,
+   "max_seconds": 2.0
+  },
+  {
+   "kind": "ecs-cluster",
+   "step": "then",
+   "op": "update-ecs-cluster-settings",
+   "result": "pass",
+   "seconds": 1.51,
+   "max_seconds": 2.0
+  },
+  {
+   "kind": "efs-access-point",
+   "step": "create",
+   "op": "create-access-point",
+   "result": "pass",
+   "seconds": 0.82,
+   "max_seconds": 2.0
+  },
+  {
+   "kind": "efs-access-point",
+   "step": "delete",
+   "op": "-",
+   "result": "no-op"
+  },
+  {
+   "kind": "efs-file-system",
+   "step": "create",
+   "op": "create-file-system",
+   "result": "pass",
+   "seconds": 1.69,
+   "max_seconds": 2.0
+  },
+  {
+   "kind": "efs-file-system",
+   "step": "delete",
+   "op": "-",
+   "result": "no-op"
+  },
+  {
+   "kind": "efs-file-system",
+   "step": "then",
+   "op": "put-backup-policy",
+   "result": "slow",
+   "seconds": 2.33,
+   "max_seconds": 2.0
+  },
+  {
+   "kind": "efs-file-system",
+   "step": "then",
+   "op": "put-lifecycle-configuration",
+   "result": "pass",
+   "seconds": 0.97,
+   "max_seconds": 2.0
+  },
+  {
+   "kind": "efs-mount-target",
+   "step": "create",
+   "op": "create-mount-target",
+   "result": "pass",
+   "seconds": 1.29,
+   "max_seconds": 2.0
+  },
+  {
+   "kind": "efs-mount-target",
+   "step": "delete",
+   "op": "-",
+   "result": "no-op"
+  },
+  {
+   "kind": "eks-cluster",
+   "step": "create",
+   "op": "create-eks-cluster",
+   "result": "pass",
+   "seconds": 0.94,
+   "max_seconds": 5.0
+  },
+  {
+   "kind": "eks-cluster",
+   "step": "then",
+   "op": "delete-eks-cluster",
+   "result": "pass",
+   "seconds": 2.03,
+   "max_seconds": 5.0
+  },
+  {
+   "kind": "elastic-ip",
+   "step": "create",
+   "op": "allocate-address",
+   "result": "pass",
+   "seconds": 0.77,
+   "max_seconds": 2.0
+  },
+  {
+   "kind": "elastic-ip",
+   "step": "delete",
+   "op": "-",
+   "result": "no-op"
+  },
+  {
+   "kind": "elasticache-cache-cluster",
+   "step": "create",
+   "op": "create-cache-cluster",
+   "result": "pass",
+   "seconds": 1.84,
+   "max_seconds": 10.0
+  },
+  {
+   "kind": "elasticache-cache-cluster",
+   "step": "then",
+   "op": "delete-cache-cluster",
+   "result": "pass",
+   "seconds": 2.15,
+   "max_seconds": 10.0
+  },
+  {
+   "kind": "elasticache-replication-group",
+   "step": "create",
+   "op": "create-replication-group",
+   "result": "pass",
+   "seconds": 2.85,
+   "max_seconds": 10.0
+  },
+  {
+   "kind": "elasticache-replication-group",
+   "step": "then",
+   "op": "delete-replication-group",
+   "result": "pass",
+   "seconds": 1.58,
+   "max_seconds": 10.0
+  },
+  {
+   "kind": "elasticache-replication-group",
+   "step": "then",
+   "op": "modify-replication-group",
+   "result": "pass",
+   "seconds": 1.77,
+   "max_seconds": 10.0
+  },
+  {
+   "kind": "event-bus",
+   "step": "create",
+   "op": "create-event-bus",
+   "result": "pass",
+   "seconds": 0.71,
+   "max_seconds": 2.0
+  },
+  {
+   "kind": "event-bus",
+   "step": "delete",
+   "op": "-",
+   "result": "no-op"
+  },
+  {
+   "kind": "event-rule",
+   "step": "create",
+   "op": "put-rule",
+   "result": "pass",
+   "seconds": 0.86,
+   "max_seconds": 2.0
+  },
+  {
+   "kind": "event-rule",
+   "step": "delete",
+   "op": "-",
+   "result": "no-op"
+  },
+  {
+   "kind": "event-rule",
+   "step": "then",
+   "op": "disable-rule",
+   "result": "pass",
+   "seconds": 0.46,
+   "max_seconds": 2.0
+  },
+  {
+   "kind": "event-rule",
+   "step": "then",
+   "op": "put-targets",
+   "result": "pass",
+   "seconds": 0.92,
+   "max_seconds": 2.0
+  },
+  {
+   "kind": "firewall-policy",
+   "step": "create",
+   "op": "create-firewall-policy",
+   "result": "pass",
+   "seconds": 0.86,
+   "max_seconds": 2.0
+  },
+  {
+   "kind": "firewall-policy",
+   "step": "then",
+   "op": "delete-firewall-policy",
+   "result": "pass",
+   "seconds": 1.17,
+   "max_seconds": 2.0
+  },
+  {
+   "kind": "firewall-rule-group",
+   "step": "create",
+   "op": "create-firewall-rule-group",
+   "result": "pass",
+   "seconds": 1.38,
+   "max_seconds": 2.0
+  },
+  {
+   "kind": "firewall-rule-group",
+   "step": "then",
+   "op": "delete-firewall-rule-group",
+   "result": "pass",
+   "seconds": 0.88,
+   "max_seconds": 2.0
+  },
+  {
+   "kind": "flow-log",
+   "step": "create",
+   "op": "create-flow-logs",
+   "result": "pass",
+   "seconds": 0.86,
+   "max_seconds": 2.0
+  },
+  {
+   "kind": "flow-log",
+   "step": "delete",
+   "op": "-",
+   "result": "no-op"
+  },
+  {
+   "kind": "global-accelerator",
+   "step": "create",
+   "op": "create-accelerator",
+   "result": "pass",
+   "seconds": 0.88,
+   "max_seconds": 2.0
+  },
+  {
+   "kind": "global-accelerator",
+   "step": "then",
+   "op": "delete-accelerator",
+   "result": "pass",
+   "seconds": 0.9,
+   "max_seconds": 2.0
+  },
+  {
+   "kind": "global-accelerator",
+   "step": "then",
+   "op": "update-accelerator",
+   "result": "pass",
+   "seconds": 0.89,
+   "max_seconds": 2.0
+  },
+  {
+   "kind": "glue-crawler",
+   "step": "create",
+   "op": "create-crawler",
+   "result": "pass",
+   "seconds": 0.89,
+   "max_seconds": 2.0
+  },
+  {
+   "kind": "glue-crawler",
+   "step": "then",
+   "op": "delete-crawler",
+   "result": "pass",
+   "seconds": 0.97,
+   "max_seconds": 2.0
+  },
+  {
+   "kind": "glue-crawler",
+   "step": "then",
+   "op": "update-crawler",
+   "result": "pass",
+   "seconds": 1.2,
+   "max_seconds": 2.0
+  },
+  {
+   "kind": "glue-database",
+   "step": "create",
+   "op": "create-glue-database",
+   "result": "pass",
+   "seconds": 1.1,
+   "max_seconds": 2.0
+  },
+  {
+   "kind": "glue-database",
+   "step": "then",
+   "op": "delete-glue-database",
+   "result": "pass",
+   "seconds": 1.12,
+   "max_seconds": 2.0
+  },
+  {
+   "kind": "hosted-zone",
+   "step": "create",
+   "op": "create-hosted-zone",
+   "result": "pass",
+   "seconds": 1.11,
+   "max_seconds": 2.0
+  },
+  {
+   "kind": "hosted-zone",
+   "step": "delete",
+   "op": "-",
+   "result": "no-op"
+  },
+  {
+   "kind": "hosted-zone",
+   "step": "then",
+   "op": "change-resource-record-sets",
+   "result": "pass",
+   "seconds": 1.11,
+   "max_seconds": 2.0
+  },
+  {
+   "kind": "iam-group",
+   "step": "create",
+   "op": "create-group",
+   "result": "pass",
+   "seconds": 0.88,
+   "max_seconds": 2.0
+  },
+  {
+   "kind": "iam-group",
+   "step": "delete",
+   "op": "-",
+   "result": "no-op"
+  },
+  {
+   "kind": "iam-instance-profile",
+   "step": "create",
+   "op": "create-instance-profile",
+   "result": "pass",
+   "seconds": 1.27,
+   "max_seconds": 2.0
+  },
+  {
+   "kind": "iam-instance-profile",
+   "step": "delete",
+   "op": "-",
+   "result": "no-op"
+  },
+  {
+   "kind": "iam-policy",
+   "step": "create",
+   "op": "create-policy",
+   "result": "pass",
+   "seconds": 1.19,
+   "max_seconds": 2.0
+  },
+  {
+   "kind": "iam-policy",
+   "step": "delete",
+   "op": "-",
+   "result": "no-op"
+  },
+  {
+   "kind": "iam-role",
+   "step": "create",
+   "op": "create-role",
+   "result": "pass",
+   "seconds": 0.98,
+   "max_seconds": 2.0
+  },
+  {
+   "kind": "iam-role",
+   "step": "delete",
+   "op": "-",
+   "result": "no-op"
+  },
+  {
+   "kind": "iam-role",
+   "step": "then",
+   "op": "attach-role-policy",
+   "result": "pass",
+   "seconds": 1.19,
+   "max_seconds": 2.0
+  },
+  {
+   "kind": "iam-user",
+   "step": "create",
+   "op": "create-user",
+   "result": "pass",
+   "seconds": 0.87,
+   "max_seconds": 2.0
+  },
+  {
+   "kind": "iam-user",
+   "step": "delete",
+   "op": "-",
+   "result": "no-op"
+  },
+  {
+   "kind": "igw",
+   "step": "create",
+   "op": "create-internet-gateway",
+   "result": "pass",
+   "seconds": 0.29,
+   "max_seconds": 2.0
+  },
+  {
+   "kind": "igw",
+   "step": "delete",
+   "op": "-",
+   "result": "no-op"
+  },
+  {
+   "kind": "igw",
+   "step": "then",
+   "op": "attach-internet-gateway",
+   "result": "pass",
+   "seconds": 0.76,
+   "max_seconds": 2.0
+  },
+  {
+   "kind": "instance",
+   "step": "create",
+   "op": "run-instances",
+   "result": "pass",
+   "seconds": 0.91,
+   "max_seconds": 30.0
+  },
+  {
+   "kind": "instance",
+   "step": "delete",
+   "op": "-",
+   "result": "no-op"
+  },
+  {
+   "kind": "instance",
+   "step": "then",
+   "op": "modify-instance-attribute",
+   "result": "pass",
+   "seconds": 0.88,
+   "max_seconds": 30.0
+  },
+  {
+   "kind": "key-pair",
+   "step": "create",
+   "op": "create-key-pair",
+   "result": "pass",
+   "seconds": 0.74,
+   "max_seconds": 2.0
+  },
+  {
+   "kind": "key-pair",
+   "step": "delete",
+   "op": "-",
+   "result": "no-op"
+  },
+  {
+   "kind": "kinesis-stream",
+   "step": "create",
+   "op": "create-stream",
+   "result": "pass",
+   "seconds": 0.93,
+   "max_seconds": 5.0
+  },
+  {
+   "kind": "kinesis-stream",
+   "step": "then",
+   "op": "delete-stream",
+   "result": "pass",
+   "seconds": 1.31,
+   "max_seconds": 5.0
+  },
+  {
+   "kind": "kinesis-stream",
+   "step": "then",
+   "op": "update-shard-count",
+   "result": "pass",
+   "seconds": 0.93,
+   "max_seconds": 5.0
+  },
+  {
+   "kind": "kms-alias",
+   "step": "create",
+   "op": "create-kms-alias",
+   "result": "pass",
+   "seconds": 0.89,
+   "max_seconds": 2.0
+  },
+  {
+   "kind": "kms-alias",
+   "step": "delete",
+   "op": "-",
+   "result": "no-op"
+  },
+  {
+   "kind": "kms-alias",
+   "step": "then",
+   "op": "update-kms-alias",
+   "result": "pass",
+   "seconds": 1.2,
+   "max_seconds": 2.0
+  },
+  {
+   "kind": "kms-key",
+   "step": "create",
+   "op": "create-kms-key",
+   "result": "pass",
+   "seconds": 0.87,
+   "max_seconds": 2.0
+  },
+  {
+   "kind": "kms-key",
+   "step": "delete",
+   "op": "-",
+   "result": "no-op"
+  },
+  {
+   "kind": "kms-key",
+   "step": "then",
+   "op": "disable-kms-key",
+   "result": "pass",
+   "seconds": 1.14,
+   "max_seconds": 2.0
+  },
+  {
+   "kind": "kms-key",
+   "step": "then",
+   "op": "enable-key-rotation",
+   "result": "pass",
+   "seconds": 1.15,
+   "max_seconds": 2.0
+  },
+  {
+   "kind": "lambda-function",
+   "step": "create",
+   "op": "create-function",
+   "result": "pass",
+   "seconds": 1.03,
+   "max_seconds": 10.0
+  },
+  {
+   "kind": "lambda-function",
+   "step": "delete",
+   "op": "-",
+   "result": "no-op"
+  },
+  {
+   "kind": "lambda-function",
+   "step": "then",
+   "op": "publish-version",
+   "result": "pass",
+   "seconds": 0.24,
+   "max_seconds": 10.0
+  },
+  {
+   "kind": "lambda-layer",
+   "step": "create",
+   "op": "publish-layer-version",
+   "result": "pass",
+   "seconds": 0.97,
+   "max_seconds": 2.0
+  },
+  {
+   "kind": "lambda-layer",
+   "step": "delete",
+   "op": "-",
+   "result": "no-op"
+  },
+  {
+   "kind": "launch-template",
+   "step": "create",
+   "op": "create-launch-template",
+   "result": "pass",
+   "seconds": 0.75,
+   "max_seconds": 2.0
+  },
+  {
+   "kind": "launch-template",
+   "step": "delete",
+   "op": "-",
+   "result": "no-op"
+  },
+  {
+   "kind": "listener",
+   "step": "create",
+   "op": "create-listener",
+   "result": "pass",
+   "seconds": 0.18,
+   "max_seconds": 2.0
+  },
+  {
+   "kind": "listener",
+   "step": "delete",
+   "op": "-",
+   "result": "no-op"
+  },
+  {
+   "kind": "listener",
+   "step": "then",
+   "op": "modify-listener",
+   "result": "pass",
+   "seconds": 0.0,
+   "max_seconds": 2.0
+  },
+  {
+   "kind": "listener-rule",
+   "step": "create",
+   "op": "create-rule",
+   "result": "pass",
+   "seconds": 0.87,
+   "max_seconds": 2.0
+  },
+  {
+   "kind": "listener-rule",
+   "step": "delete",
+   "op": "-",
+   "result": "no-op"
+  },
+  {
+   "kind": "load-balancer",
+   "step": "create",
+   "op": "create-load-balancer",
+   "result": "pass",
+   "seconds": 0.9,
+   "max_seconds": 2.0
+  },
+  {
+   "kind": "load-balancer",
+   "step": "delete",
+   "op": "-",
+   "result": "no-op"
+  },
+  {
+   "kind": "load-balancer",
+   "step": "then",
+   "op": "set-security-groups",
+   "result": "pass",
+   "seconds": 0.9,
+   "max_seconds": 2.0
+  },
+  {
+   "kind": "log-group",
+   "step": "create",
+   "op": "create-log-group",
+   "result": "pass",
+   "seconds": 0.9,
+   "max_seconds": 2.0
+  },
+  {
+   "kind": "log-group",
+   "step": "delete",
+   "op": "-",
+   "result": "no-op"
+  },
+  {
+   "kind": "log-group",
+   "step": "then",
+   "op": "put-metric-filter",
+   "result": "pass",
+   "seconds": 1.24,
+   "max_seconds": 2.0
+  },
+  {
+   "kind": "log-group",
+   "step": "then",
+   "op": "put-retention-policy",
+   "result": "pass",
+   "seconds": 0.84,
+   "max_seconds": 2.0
+  },
+  {
+   "kind": "nat",
+   "step": "create",
+   "op": "create-nat-gateway",
+   "result": "pass",
+   "seconds": 0.33,
+   "max_seconds": 2.0
+  },
+  {
+   "kind": "nat",
+   "step": "delete",
+   "op": "-",
+   "result": "no-op"
+  },
+  {
+   "kind": "network-acl",
+   "step": "create",
+   "op": "create-network-acl",
+   "result": "pass",
+   "seconds": 0.73,
+   "max_seconds": 2.0
+  },
+  {
+   "kind": "network-acl",
+   "step": "delete",
+   "op": "-",
+   "result": "no-op"
+  },
+  {
+   "kind": "network-acl",
+   "step": "then",
+   "op": "create-network-acl-entry",
+   "result": "pass",
+   "seconds": 0.33,
+   "max_seconds": 2.0
+  },
+  {
+   "kind": "network-firewall",
+   "step": "create",
+   "op": "create-firewall",
+   "result": "pass",
+   "seconds": 0.96,
+   "max_seconds": 2.0
+  },
+  {
+   "kind": "network-firewall",
+   "step": "then",
+   "op": "associate-firewall-policy",
+   "result": "pass",
+   "seconds": 0.87,
+   "max_seconds": 2.0
+  },
+  {
+   "kind": "network-firewall",
+   "step": "then",
+   "op": "delete-firewall",
+   "result": "pass",
+   "seconds": 0.95,
+   "max_seconds": 2.0
+  },
+  {
+   "kind": "network-interface",
+   "step": "create",
+   "op": "create-network-interface",
+   "result": "pass",
+   "seconds": 0.57,
+   "max_seconds": 2.0
+  },
+  {
+   "kind": "network-interface",
+   "step": "delete",
+   "op": "-",
+   "result": "no-op"
+  },
+  {
+   "kind": "prefix-list",
+   "step": "create",
+   "op": "create-managed-prefix-list",
+   "result": "pass",
+   "seconds": 0.27,
+   "max_seconds": 2.0
+  },
+  {
+   "kind": "prefix-list",
+   "step": "delete",
+   "op": "-",
+   "result": "no-op"
+  },
+  {
+   "kind": "rds-event-subscription",
+   "step": "create",
+   "op": "create-event-subscription",
+   "result": "pass",
+   "seconds": 1.0,
+   "max_seconds": 2.0
+  },
+  {
+   "kind": "rds-event-subscription",
+   "step": "then",
+   "op": "delete-event-subscription",
+   "result": "pass",
+   "seconds": 1.23,
+   "max_seconds": 2.0
+  },
+  {
+   "kind": "rds-event-subscription",
+   "step": "then",
+   "op": "modify-event-subscription",
+   "result": "pass",
+   "seconds": 1.21,
+   "max_seconds": 2.0
+  },
+  {
+   "kind": "route-table",
+   "step": "create",
+   "op": "create-route-table",
+   "result": "pass",
+   "seconds": 0.98,
+   "max_seconds": 2.0
+  },
+  {
+   "kind": "route-table",
+   "step": "delete",
+   "op": "-",
+   "result": "no-op"
+  },
+  {
+   "kind": "route-table",
+   "step": "then",
+   "op": "associate-route-table",
+   "result": "pass",
+   "seconds": 0.82,
+   "max_seconds": 2.0
+  },
+  {
+   "kind": "route-table",
+   "step": "then",
+   "op": "create-route",
+   "result": "pass",
+   "seconds": 0.75,
+   "max_seconds": 2.0
+  },
+  {
+   "kind": "route53-health-check",
+   "step": "create",
+   "op": "create-health-check",
+   "result": "pass",
+   "seconds": 1.0,
+   "max_seconds": 2.0
+  },
+  {
+   "kind": "route53-health-check",
+   "step": "then",
+   "op": "delete-health-check",
+   "result": "pass",
+   "seconds": 1.16,
+   "max_seconds": 2.0
+  },
+  {
+   "kind": "route53-health-check",
+   "step": "then",
+   "op": "update-health-check",
+   "result": "pass",
+   "seconds": 1.24,
+   "max_seconds": 2.0
+  },
+  {
+   "kind": "s3-bucket",
+   "step": "create",
+   "op": "create-bucket",
+   "result": "pass",
+   "seconds": 1.25,
+   "max_seconds": 2.0
+  },
+  {
+   "kind": "s3-bucket",
+   "step": "delete",
+   "op": "-",
+   "result": "no-op"
+  },
+  {
+   "kind": "s3-bucket",
+   "step": "then",
+   "op": "put-bucket-versioning",
+   "result": "pass",
+   "seconds": 1.18,
+   "max_seconds": 2.0
+  },
+  {
+   "kind": "s3-multipart-upload",
+   "step": "create",
+   "op": "create-multipart-upload",
+   "result": "pass",
+   "seconds": 1.01,
+   "max_seconds": 2.0
+  },
+  {
+   "kind": "scaling-policy",
+   "step": "create",
+   "op": "put-scaling-policy",
+   "result": "pass",
+   "seconds": 0.37,
+   "max_seconds": 2.0
+  },
+  {
+   "kind": "scaling-policy",
+   "step": "delete",
+   "op": "-",
+   "result": "no-op"
+  },
+  {
+   "kind": "schedule",
+   "step": "create",
+   "op": "create-schedule",
+   "result": "pass",
+   "seconds": 1.04,
+   "max_seconds": 2.0
+  },
+  {
+   "kind": "schedule",
+   "step": "then",
+   "op": "delete-schedule",
+   "result": "pass",
+   "seconds": 1.24,
+   "max_seconds": 2.0
+  },
+  {
+   "kind": "secretsmanager-secret",
+   "step": "create",
+   "op": "create-secret",
+   "result": "pass",
+   "seconds": 1.02,
+   "max_seconds": 2.0
+  },
+  {
+   "kind": "secretsmanager-secret",
+   "step": "then",
+   "op": "delete-secret",
+   "result": "pass",
+   "seconds": 1.29,
+   "max_seconds": 2.0
+  },
+  {
+   "kind": "security-group",
+   "step": "create",
+   "op": "create-security-group",
+   "result": "pass",
+   "seconds": 0.82,
+   "max_seconds": 2.0
+  },
+  {
+   "kind": "security-group",
+   "step": "delete",
+   "op": "-",
+   "result": "no-op"
+  },
+  {
+   "kind": "security-group",
+   "step": "then",
+   "op": "authorize-security-group-ingress",
+   "result": "pass",
+   "seconds": 1.0,
+   "max_seconds": 2.0
+  },
+  {
+   "kind": "sns-subscription",
+   "step": "create",
+   "op": "subscribe",
+   "result": "pass",
+   "seconds": 1.1,
+   "max_seconds": 5.0
+  },
+  {
+   "kind": "sns-subscription",
+   "step": "then",
+   "op": "set-subscription-attributes",
+   "result": "pass",
+   "seconds": 1.17,
+   "max_seconds": 5.0
+  },
+  {
+   "kind": "sns-subscription",
+   "step": "then",
+   "op": "unsubscribe",
+   "result": "pass",
+   "seconds": 1.22,
+   "max_seconds": 5.0
+  },
+  {
+   "kind": "sns-topic",
+   "step": "create",
+   "op": "create-topic",
+   "result": "pass",
+   "seconds": 1.25,
+   "max_seconds": 2.0
+  },
+  {
+   "kind": "sns-topic",
+   "step": "then",
+   "op": "set-topic-attributes",
+   "result": "pass",
+   "seconds": 1.07,
+   "max_seconds": 2.0
+  },
+  {
+   "kind": "sqs-queue",
+   "step": "create",
+   "op": "create-queue",
+   "result": "pass",
+   "seconds": 1.28,
+   "max_seconds": 5.0
+  },
+  {
+   "kind": "sqs-queue",
+   "step": "then",
+   "op": "delete-queue",
+   "result": "pass",
+   "seconds": 1.03,
+   "max_seconds": 5.0
+  },
+  {
+   "kind": "sqs-queue",
+   "step": "then",
+   "op": "set-queue-attributes",
+   "result": "pass",
+   "seconds": 1.14,
+   "max_seconds": 5.0
+  },
+  {
+   "kind": "ssm-parameter",
+   "step": "create",
+   "op": "put-ssm-parameter",
+   "result": "pass",
+   "seconds": 0.99,
+   "max_seconds": 2.0
+  },
+  {
+   "kind": "ssm-parameter",
+   "step": "then",
+   "op": "delete-ssm-parameter",
+   "result": "pass",
+   "seconds": 1.24,
+   "max_seconds": 2.0
+  },
+  {
+   "kind": "state-machine",
+   "step": "create",
+   "op": "create-state-machine",
+   "result": "pass",
+   "seconds": 1.11,
+   "max_seconds": 5.0
+  },
+  {
+   "kind": "state-machine",
+   "step": "then",
+   "op": "delete-state-machine",
+   "result": "pass",
+   "seconds": 1.03,
+   "max_seconds": 5.0
+  },
+  {
+   "kind": "state-machine",
+   "step": "then",
+   "op": "update-state-machine",
+   "result": "pass",
+   "seconds": 1.16,
+   "max_seconds": 5.0
+  },
+  {
+   "kind": "subnet-public",
+   "step": "create",
+   "op": "create-subnet",
+   "result": "pass",
+   "seconds": 1.09,
+   "max_seconds": 2.0
+  },
+  {
+   "kind": "subnet-public",
+   "step": "delete",
+   "op": "-",
+   "result": "no-op"
+  },
+  {
+   "kind": "subnet-public",
+   "step": "then",
+   "op": "modify-subnet-attribute",
+   "result": "pass",
+   "seconds": 0.71,
+   "max_seconds": 2.0
+  },
+  {
+   "kind": "target-group",
+   "step": "create",
+   "op": "create-target-group",
+   "result": "pass",
+   "seconds": 0.88,
+   "max_seconds": 2.0
+  },
+  {
+   "kind": "target-group",
+   "step": "delete",
+   "op": "-",
+   "result": "no-op"
+  },
+  {
+   "kind": "target-group",
+   "step": "then",
+   "op": "modify-target-group",
+   "result": "pass",
+   "seconds": 0.81,
+   "max_seconds": 2.0
+  },
+  {
+   "kind": "tgw-attachment",
+   "step": "create",
+   "op": "create-transit-gateway-vpc-attachment",
+   "result": "pass",
+   "seconds": 1.69,
+   "max_seconds": 2.0
+  },
+  {
+   "kind": "tgw-attachment",
+   "step": "delete",
+   "op": "-",
+   "result": "no-op"
+  },
+  {
+   "kind": "tgw-route-table",
+   "step": "create",
+   "op": "create-transit-gateway-route-table",
+   "result": "slow",
+   "seconds": 2.09,
+   "max_seconds": 2.0
+  },
+  {
+   "kind": "tgw-route-table",
+   "step": "delete",
+   "op": "-",
+   "result": "no-op"
+  },
+  {
+   "kind": "transfer-server",
+   "step": "create",
+   "op": "create-transfer-server",
+   "result": "pass",
+   "seconds": 1.13,
+   "max_seconds": 2.0
+  },
+  {
+   "kind": "transfer-server",
+   "step": "then",
+   "op": "delete-transfer-server",
+   "result": "pass",
+   "seconds": 1.06,
+   "max_seconds": 2.0
+  },
+  {
+   "kind": "transfer-server",
+   "step": "then",
+   "op": "start-transfer-server",
+   "result": "pass",
+   "seconds": 0.99,
+   "max_seconds": 2.0
+  },
+  {
+   "kind": "transfer-server",
+   "step": "then",
+   "op": "stop-transfer-server",
+   "result": "pass",
+   "seconds": 1.39,
+   "max_seconds": 2.0
+  },
+  {
+   "kind": "transit-gateway",
+   "step": "create",
+   "op": "create-transit-gateway",
+   "result": "pass",
+   "seconds": 1.39,
+   "max_seconds": 2.0
+  },
+  {
+   "kind": "transit-gateway",
+   "step": "delete",
+   "op": "-",
+   "result": "no-op"
+  },
+  {
+   "kind": "vpc",
+   "step": "create",
+   "op": "create-vpc",
+   "result": "pass",
+   "seconds": 0.73,
+   "max_seconds": 2.0
+  },
+  {
+   "kind": "vpc",
+   "step": "delete",
+   "op": "-",
+   "result": "no-op"
+  },
+  {
+   "kind": "vpc",
+   "step": "then",
+   "op": "modify-vpc-attribute",
+   "result": "pass",
+   "seconds": 0.49,
+   "max_seconds": 2.0
+  },
+  {
+   "kind": "vpc-endpoint",
+   "step": "create",
+   "op": "create-vpc-endpoint",
+   "result": "pass",
+   "seconds": 0.78,
+   "max_seconds": 2.0
+  },
+  {
+   "kind": "vpc-endpoint",
+   "step": "delete",
+   "op": "-",
+   "result": "no-op"
+  },
+  {
+   "kind": "vpc-peering",
+   "step": "create",
+   "op": "create-vpc-peering-connection",
+   "result": "pass",
+   "seconds": 0.5,
+   "max_seconds": 2.0
+  },
+  {
+   "kind": "vpc-peering",
+   "step": "delete",
+   "op": "-",
+   "result": "no-op"
+  },
+  {
+   "kind": "vpc-peering",
+   "step": "then",
+   "op": "accept-vpc-peering-connection",
+   "result": "pass",
+   "seconds": 0.9,
+   "max_seconds": 2.0
+  },
+  {
+   "kind": "waf-web-acl",
+   "step": "create",
+   "op": "create-web-acl",
+   "result": "pass",
+   "seconds": 1.1,
+   "max_seconds": 2.0
+  },
+  {
+   "kind": "waf-web-acl",
+   "step": "then",
+   "op": "associate-web-acl",
+   "result": "pass",
+   "seconds": 1.25,
+   "max_seconds": 2.0
+  }
+ ]
+}

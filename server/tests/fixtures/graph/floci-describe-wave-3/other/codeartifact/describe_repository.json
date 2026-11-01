@@ -1,0 +1,50 @@
+{
+  "calls": [
+    {
+      "params": {
+        "domain": "w3-delivery",
+        "repository": "w3-delivery-libs"
+      },
+      "response": {
+        "repository": {
+          "administratorAccount": "000000000000",
+          "arn": "arn:aws:codeartifact:ap-southeast-2:000000000000:repository/w3-delivery/w3-delivery-libs",
+          "createdTime": "2026-10-31 23:25:11+07:00",
+          "domainName": "w3-delivery",
+          "domainOwner": "000000000000",
+          "externalConnections": [],
+          "name": "w3-delivery-libs",
+          "upstreams": [
+            {
+              "repositoryName": "w3-delivery-npm-store"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "params": {
+        "domain": "w3-delivery",
+        "repository": "w3-delivery-npm-store"
+      },
+      "response": {
+        "repository": {
+          "administratorAccount": "000000000000",
+          "arn": "arn:aws:codeartifact:ap-southeast-2:000000000000:repository/w3-delivery/w3-delivery-npm-store",
+          "createdTime": "2026-10-31 23:25:11+07:00",
+          "domainName": "w3-delivery",
+          "domainOwner": "000000000000",
+          "externalConnections": [
+            {
+              "externalConnectionName": "public:npmjs",
+              "packageFormat": "npm",
+              "status": "Available"
+            }
+          ],
+          "name": "w3-delivery-npm-store",
+          "upstreams": []
+        }
+      }
+    }
+  ]
+}

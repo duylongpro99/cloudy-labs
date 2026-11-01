@@ -1,0 +1,62 @@
+# Amazon API Gateway REST APIs (v1). One node per API; its resources, methods and stages are read per
+# API and shown as props. A Lambda integration's URI wraps the function's ARN:
+# arn:aws:apigateway:<region>:lambda:path/2015-03-31/functions/<FunctionArn>/invocations.
+
+- kind: apigateway-rest-api
+  service: apigateway
+  label: API Gateway REST API
+  list: {method: get_rest_apis, items: items}
+  enrich:
+    - {method: get_resources, params: {restApiId: id}, const: {embed: [methods], limit: 500}, pick: items, merge_as: _Resources}
+    - {method: get_stages, params: {restApiId: id}, pick: item, merge_as: _Stages}
+  id: id
+  name: [name, id]
+  parent: [{kind: region}]
+  props:
+    description: description
+    endpointTypes: endpointConfiguration.types
+    apiKeySource: apiKeySource
+    paths: "sort(_Resources[].path)"
+    methods: "sort_by(_Resources[?resourceMethods], &path)[].{path: path, methods: sort(keys(resourceMethods))}"
+    integrations: "sort(_Resources[].resourceMethods.*[][].methodIntegration.join(' ', [type, uri || '']))"
+    stages: "sort(_Stages[].stageName)"
+    tags: tags
+  chat_props: [description, endpointTypes, apiKeySource, paths, methods, integrations, stages]
+  edges:
+    - {kind: invokes, target: "_Resources[].resourceMethods.*[][].methodIntegration.uri", to: lambda-function, match: "join('', ['arn:aws:apigateway:', _Region, ':lambda:path/2015-03-31/functions/', FunctionArn, '/invocations'])", style: reference}
+    - {kind: invokes, target: "_Resources[].resourceMethods.*[][].methodIntegration.uri", to: lambda-alias, match: "join('', ['arn:aws:apigateway:', _Region, ':lambda:path/2015-03-31/functions/', AliasArn, '/invocations'])", style: reference}
+  caveats:
+    - {code: apigateway-no-throttling, prop: stages, text: "Floci 2.3.0 serves a deployed stage's methods and Lambda integrations, but does not enforce API keys, usage plans or throttling, and stage caching is not emulated. Check the configuration, not throttled or cached responses."}
+  builder: true
+  view: {role: block, category: networking, icon: Arch_Amazon-API-Gateway_48.svg, source: Architecture-Service-Icons_07312026/Arch_Networking-Content-Delivery/48/Arch_Amazon-API-Gateway_48.svg, height: 0.6, order: 505, actions: [RestApi, Deployment]}
+  contract:
+    create: {op: create-rest-api, params: {name: ct-rest-api, description: contract test}, save: api}
+    then:
+      - {op: create-deployment, params: {restApiId: "{api}", stageName: dev}}
+      - {op: delete-rest-api, params: {restApiId: "{api}"}}
+  ops:
+    - id: create-rest-api
+      api: CreateRestApi
+      gesture: create
+      title: "Tạo REST API"
+      fields: [name, description, endpointConfiguration.types, apiKeySource]
+      choices: {apiKeySource: [HEADER, AUTHORIZER]}
+      result_id: id
+      expect: {label: name}
+      note: "Create an empty REST API with its root resource /. endpointConfiguration.types: REGIONAL, EDGE or PRIVATE. Then add resources and methods (aws apigateway put-method, put-integration with a Lambda proxy URI) and deploy it to a stage."
+    - id: create-deployment
+      api: CreateDeployment
+      gesture: attribute
+      title: "Deploy REST API ra stage"
+      fields: [{name: restApiId, ref: apigateway-rest-api}, stageName, description, stageDescription]
+      defaults: {stageName: dev}
+      target_param: restApiId
+      note: "Snapshot the API's resources and methods and publish them to stageName (made when missing). Clients call https://<api id>.execute-api.<region>.amazonaws.com/<stage>/<path>; changes to methods take effect only after the next deployment."
+    - id: delete-rest-api
+      api: DeleteRestApi
+      gesture: delete
+      title: "Xoá REST API"
+      fields: [{name: restApiId, ref: apigateway-rest-api}]
+      targets: [apigateway-rest-api]
+      target_param: restApiId
+      note: "Delete the API with all its resources, methods, deployments and stages."

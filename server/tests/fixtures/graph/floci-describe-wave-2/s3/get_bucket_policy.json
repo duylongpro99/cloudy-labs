@@ -1,0 +1,10 @@
+{
+  "calls": [
+    {
+      "error": "NoSuchBucketPolicy",
+      "params": {
+        "Bucket": "w2-backup-src"
+      }
+    }
+  ]
+}

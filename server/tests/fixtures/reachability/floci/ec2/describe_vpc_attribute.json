@@ -1,0 +1,76 @@
+{
+  "calls": [
+    {
+      "params": {
+        "Attribute": "enableDnsHostnames",
+        "VpcId": "vpc-31a790ed"
+      },
+      "response": {
+        "EnableDnsHostnames": {
+          "Value": false
+        },
+        "VpcId": "vpc-31a790ed"
+      }
+    },
+    {
+      "params": {
+        "Attribute": "enableDnsHostnames",
+        "VpcId": "vpc-c34cd66d"
+      },
+      "response": {
+        "EnableDnsHostnames": {
+          "Value": false
+        },
+        "VpcId": "vpc-c34cd66d"
+      }
+    },
+    {
+      "params": {
+        "Attribute": "enableDnsHostnames",
+        "VpcId": "vpc-5daae3bf"
+      },
+      "response": {
+        "EnableDnsHostnames": {
+          "Value": false
+        },
+        "VpcId": "vpc-5daae3bf"
+      }
+    },
+    {
+      "params": {
+        "Attribute": "enableDnsHostnames",
+        "VpcId": "vpc-default-ap-southeast-2"
+      },
+      "response": {
+        "EnableDnsHostnames": {
+          "Value": false
+        },
+        "VpcId": "vpc-default-ap-southeast-2"
+      }
+    },
+    {
+      "params": {
+        "Attribute": "enableDnsHostnames",
+        "VpcId": "vpc-ae467f29"
+      },
+      "response": {
+        "EnableDnsHostnames": {
+          "Value": false
+        },
+        "VpcId": "vpc-ae467f29"
+      }
+    },
+    {
+      "params": {
+        "Attribute": "enableDnsHostnames",
+        "VpcId": "vpc-baf044cc"
+      },
+      "response": {
+        "EnableDnsHostnames": {
+          "Value": false
+        },
+        "VpcId": "vpc-baf044cc"
+      }
+    }
+  ]
+}

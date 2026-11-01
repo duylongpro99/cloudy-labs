@@ -1,0 +1,21 @@
+{
+  "calls": [
+    {
+      "params": {},
+      "response": {
+        "Items": [
+          {
+            "ApiEndpoint": "https://53e9b9a7ac.execute-api.ap-southeast-2.amazonaws.com",
+            "ApiId": "53e9b9a7ac",
+            "ApiKeySelectionExpression": "$request.header.x-api-key",
+            "CreatedDate": "2026-10-31 16:25:12.090000+00:00",
+            "DisableExecuteApiEndpoint": false,
+            "Name": "w3-edge-http",
+            "ProtocolType": "HTTP",
+            "RouteSelectionExpression": "${request.method} ${request.path}"
+          }
+        ]
+      }
+    }
+  ]
+}

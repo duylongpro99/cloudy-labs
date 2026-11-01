@@ -1,0 +1,56 @@
+{
+  "calls": [
+    {
+      "params": {},
+      "response": {
+        "Vpcs": [
+          {
+            "CidrBlock": "10.91.0.0/16",
+            "CidrBlockAssociationSet": [
+              {
+                "AssociationId": "vpc-cidr-assoc-cd98ae20",
+                "CidrBlock": "10.91.0.0/16",
+                "CidrBlockState": {
+                  "State": "associated"
+                }
+              }
+            ],
+            "DhcpOptionsId": "dopt-default",
+            "InstanceTenancy": "default",
+            "Ipv6CidrBlockAssociationSet": [],
+            "IsDefault": false,
+            "OwnerId": "000000000000",
+            "State": "available",
+            "Tags": [
+              {
+                "Key": "Name",
+                "Value": "w2-net-vpc"
+              }
+            ],
+            "VpcId": "vpc-1db2f371"
+          },
+          {
+            "CidrBlock": "172.31.0.0/16",
+            "CidrBlockAssociationSet": [
+              {
+                "AssociationId": "vpc-cidr-assoc-default",
+                "CidrBlock": "172.31.0.0/16",
+                "CidrBlockState": {
+                  "State": "associated"
+                }
+              }
+            ],
+            "DhcpOptionsId": "dopt-default",
+            "InstanceTenancy": "default",
+            "Ipv6CidrBlockAssociationSet": [],
+            "IsDefault": true,
+            "OwnerId": "000000000000",
+            "State": "available",
+            "Tags": [],
+            "VpcId": "vpc-default-ap-southeast-2"
+          }
+        ]
+      }
+    }
+  ]
+}

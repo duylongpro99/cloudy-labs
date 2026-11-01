@@ -8,29 +8,33 @@ import time
 from collections.abc import Callable
 from contextlib import asynccontextmanager
 from dataclasses import asdict
+from datetime import datetime, timezone
 from typing import Any
 
 import anyio
 from fastapi import FastAPI, HTTPException, Request, WebSocket, WebSocketDisconnect
-from fastapi.responses import JSONResponse
-from pydantic import ValidationError
+from fastapi.responses import FileResponse, JSONResponse
 from starlette.middleware.trustedhost import TrustedHostMiddleware
 
 from ..builder.ec2_choices import choices
-from ..builder.ops import OPS, ModifyInstanceAttribute, Op, Params, catalog, display, expectation, practice_expectation
+from ..builder.catalog import (BuilderOp, OpError, Prepared, catalog, expectation, op_named, parse_legacy, prepare,
+                               practice_expectation, server_field_problem)
 from ..builder.runner import Runner, run_blocker
-from ..builder.validate import attached_groups, validate
 from ..chat import provider
 from ..chat.provider import Message, ProviderError
 from ..chat.settings import LlmSettings, Missing, load_settings
 from ..chat.suggest import Complete, suggest
-from ..config import WEB_DEV_PORT, home
-from ..graph.collector import collect, region_azs
+from ..config import DEFAULT_REGION, WEB_DEV_PORT, home
+from ..graph.collector import collect, emulator_down, lab_kinds, region_azs
 from ..graph.schema import ResourceGraph
 from ..labs import LabError, LoadedLab, load_lab
+from ..labs.content import ContentError, image_file, image_type
 from ..progress import Attempt, Progress
+from ..reachability import NETWORK_KINDS, EndpointError, analyze
+from ..providers.aws import AwsProvider
+from ..registry import default_registry
 from .hub import GraphHub
-from .tap_listener import TapListener
+from .tap_listener import EVENTS_URLS, TapListener
 from .twin_runner import ChecksRunner, TwinRunner, run_lab_checks
 
 # Only the web app may read lab state over the socket; tools without an Origin (CLI) are fine.
@@ -62,6 +66,17 @@ def current_lab() -> tuple[LoadedLab, Attempt] | None:
     if attempt.lab_id not in _loaded:
         _loaded[attempt.lab_id] = load_lab(attempt.lab_id)
     return _loaded[attempt.lab_id], attempt
+
+
+def lab_target(lab: CurrentLab) -> tuple[str, list[str]]:
+    """(emulator, regions) the scene shows: those of the open lab, else Floci in the default region."""
+    try:
+        current = lab()
+    except LabError:
+        current = None  # the open lab no longer loads: show the defaults rather than nothing
+    if current is None:
+        return "floci", [DEFAULT_REGION]
+    return current[0].lab.emulator, current[0].lab.all_regions
 
 
 def _refuse(status: int, message: str, **extra: Any) -> JSONResponse:
@@ -113,43 +128,98 @@ def chat_messages(body: Any) -> list[Message] | str:
     return out
 
 
+PROTOCOLS = ("tcp", "udp", "icmp", "-1")
+
+
+def reachability_problem(body: Any) -> str | None:
+    """Why a reachability request is refused, or None. Endpoints are checked against the graph later."""
+    shape = 'expected {"src": "...", "dst": "...", "port": 0-65535, "proto": "tcp" | "udp" | "icmp" | "-1"}'
+    if not isinstance(body, dict) or not {"src", "dst", "port"} <= set(body) <= {"src", "dst", "port", "proto"}:
+        return shape
+    if not all(isinstance(body[k], str) and 0 < len(body[k]) <= 256 for k in ("src", "dst")):
+        return shape
+    port = body["port"]
+    if not isinstance(port, int) or isinstance(port, bool) or not 0 <= port <= 65535:
+        return "port must be a whole number from 0 to 65535"
+    if body.get("proto", "tcp") not in PROTOCOLS:
+        return f"proto must be one of {', '.join(PROTOCOLS)}"
+    return None
+
+
 def create_app(
-    collector: Callable[[], ResourceGraph] = collect,
+    collector: Callable[[], ResourceGraph] | None = None,
     *,
     hub: GraphHub | None = None,
     listen: bool = True,
     lab: CurrentLab = current_lab,
     runner: Runner | None = None,
-    azs: Callable[[], list[str]] = region_azs,
+    azs: Callable[[], list[str]] | None = None,
     blocker: Callable[[], str | None] = run_blocker,
     llm: Callable[[], LlmSettings | Missing] = load_settings,
     complete: Complete = provider.complete,
     checks_runner: ChecksRunner = run_lab_checks,
+    network: Callable[[], ResourceGraph] | None = None,
 ) -> FastAPI:
-    hub = hub or GraphHub(collector)
-    listener = TapListener(hub)
+    # By default the scene follows the open lab: its emulator, every region it uses, and the closed
+    # set of kinds it can show (its palette, its target, and kinds seen since it opened).
+    opened: list[str | None] = [None]
+
+    def lab_collect() -> ResourceGraph:
+        emulator, regions = lab_target(lab)
+        try:
+            current = lab()
+        except LabError:
+            current = None
+        lab_id = current[0].lab.id if current else None
+        if lab_id != opened[0]:  # another lab opened: what the last one showed says nothing here
+            opened[0] = lab_id
+            hub.seen_kinds.clear()
+        kinds = None
+        if current is not None:
+            spec = current[0].lab
+            kinds = lab_kinds(default_registry(), spec.builder.palette, (n.kind for n in spec.target.nodes), hub.seen_kinds)
+        return collect(AwsProvider(emulator, regions[0]), regions=regions, kinds=kinds)
+
+    def lab_network() -> ResourceGraph:
+        """Every network kind of the open lab's emulator: the scene's graph may leave some out."""
+        emulator, regions = lab_target(lab)
+        return collect(AwsProvider(emulator, regions[0]), kinds=NETWORK_KINDS, ports=lambda: {})
+
+    def lab_down(reason: str) -> ResourceGraph:
+        emulator, regions = lab_target(lab)
+        return emulator_down(datetime.now(timezone.utc), regions, reason, emulator=emulator)
+
+    def lab_azs() -> list[str]:
+        emulator, regions = lab_target(lab)
+        return region_azs(AwsProvider(emulator, regions[0]))
+
+    hub = hub or GraphHub(collector or lab_collect, down=lab_down)
+    listeners = [TapListener(hub, url) for url in EVENTS_URLS]  # Floci's api-tap and moto's
     twin = TwinRunner(hub, lab, checks=checks_runner)
     runner = runner or Runner()
-    zones: list[str] = []  # read once per server run, the first time the emulator answers
-    zones_retry_at = 0.0  # while it does not, ask again at most every AZ_RETRY_S, not on every preview
+    # Read once per (emulator, region), the first time the emulator answers; while it does not,
+    # ask again at most every AZ_RETRY_S, not on every preview.
+    zones: dict[tuple[str, str], list[str]] = {}
+    zones_retry_at: dict[tuple[str, str], float] = {}
 
     async def region_zones() -> list[str]:
-        nonlocal zones, zones_retry_at
-        if not zones and time.monotonic() >= zones_retry_at:
-            zones = await asyncio.to_thread(azs)
-            zones_retry_at = time.monotonic() + AZ_RETRY_S
-        return zones
+        emulator, regions = lab_target(lab)
+        key = (emulator, regions[0])
+        if not zones.get(key) and time.monotonic() >= zones_retry_at.get(key, 0.0):
+            zones[key] = await asyncio.to_thread(azs or lab_azs)
+            zones_retry_at[key] = time.monotonic() + AZ_RETRY_S
+        return zones.get(key, [])
 
     @asynccontextmanager
     async def lifespan(app: FastAPI):
         await hub.start()
         hub.watch(twin.trigger)
         await twin.run("start")  # browsers that connect from here on get a twin right after the graph
-        task = asyncio.create_task(listener.run()) if listen else None
+        tasks = [asyncio.create_task(listener.run()) for listener in listeners] if listen else []
         try:
             yield
         finally:
-            if task:
+            for task in tasks:
                 task.cancel()
                 with contextlib.suppress(asyncio.CancelledError):
                     await task
@@ -158,12 +228,17 @@ def create_app(
 
     app = FastAPI(title="Cloudy Labs lab-server", lifespan=lifespan)
     app.add_middleware(TrustedHostMiddleware, allowed_hosts=ALLOWED_HOSTS)
-    app.state.hub, app.state.listener, app.state.twin = hub, listener, twin
+    app.state.hub, app.state.listener, app.state.twin = hub, listeners[0], twin
+    app.state.listeners = listeners
 
     @app.get("/api/health")
     def health() -> dict:
         graph = hub.graph
-        return {"floci": bool(graph and graph.status == "ok"), "tap": listener.connected, "version": graph.version if graph else 0}
+        return {"floci": bool(graph and graph.status == "ok"), "tap": any(listener.connected for listener in listeners), "version": graph.version if graph else 0}
+
+    @app.get("/api/registry")
+    def registry() -> dict:
+        return default_registry().public()
 
     @app.get("/api/graph")
     def graph() -> dict:
@@ -181,11 +256,19 @@ def create_app(
             return {"id": None}
         loaded, attempt = current
         info = loaded.lab
+        try:  # hints.yaml may have been edited since the lab was loaded
+            hints = await asyncio.to_thread(loaded.hints)
+        except LabError as e:
+            raise HTTPException(409, str(e)) from e
         return {
             "id": info.id,
             "title": info.title,
             "attempt": attempt.id,
             "tasks": [{"id": t.id, "text": t.text} for t in info.tasks],
+            "hints": hints,
+            # The theory tabs of content/lab.md; local only, never sent to the chat model.
+            "content": None if (tabs := await asyncio.to_thread(loaded.tabs)) is None
+            else [{"title": t.title, "markdown": t.markdown} for t in tabs],
             "palette": list(info.builder.palette),
             "tags": info.builder.tags,
             "cidrs": [str(c) for c in info.cidrs],  # the blocks the lab plans to use, to suggest in the form
@@ -198,25 +281,43 @@ def create_app(
             "chat": chat_status(llm()),
         }
 
-    async def op_request(request: Request) -> tuple[Op, Params, LoadedLab] | JSONResponse:
+    @app.get("/api/lab/content/{name}")
+    async def lab_image(name: str) -> FileResponse:
+        """An image of the open lab's content. Only plain image names inside its content directory."""
+        try:
+            current = await asyncio.to_thread(lab)
+        except LabError as e:
+            raise HTTPException(409, str(e)) from e
+        if current is None:
+            raise HTTPException(404, "no lab is open")
+        try:
+            path = image_file(current[0].path, name)
+        except ContentError as e:
+            raise HTTPException(404, str(e)) from e
+        headers = {"X-Content-Type-Options": "nosniff", "Cache-Control": "no-store"}
+        if name.lower().endswith(".svg"):  # an SVG opened on its own must not run script
+            headers["Content-Security-Policy"] = "sandbox"
+        return FileResponse(path, media_type=image_type(name), headers=headers)
+
+    async def op_request(request: Request) -> tuple[BuilderOp, dict[str, Any], LoadedLab] | JSONResponse:
         """The op a builder request asks for, or the response refusing it."""
         body = await guard_request(request)
         if isinstance(body, JSONResponse):
             return body
         if not isinstance(body, dict) or set(body) != {"op", "params"} or not isinstance(body["params"], dict):
             return _refuse(422, 'expected {"op": ..., "params": {...}}')
-        op = OPS.get(body["op"]) if isinstance(body["op"], str) else None
+        op = op_named(body["op"])
         if op is None:
             return _refuse(422, f"unknown op {body['op']!r}")
-        # Either spelling: the models accept field names as well as the camelCase aliases.
-        server_fields = {*op.server_fields, *(name for name, f in op.params.model_fields.items() if f.alias in op.server_fields)}
-        if refused := sorted(server_fields & set(body["params"])):
+        if refused := server_field_problem(op, body["params"]):
             return _refuse(422, f"{op.name}: wrong parameters: {', '.join(refused)} (the server fills these in)")
-        try:
-            params = op.params.model_validate(body["params"])
-        except ValidationError as e:
-            fields = [".".join(map(str, err["loc"])) for err in e.errors()]
-            return _refuse(422, f"{op.name}: wrong parameters: {', '.join(fields)}")
+        if any(not isinstance(v, str) for v in body["params"].values()):
+            return _refuse(422, f"{op.name}: every parameter is sent as text")
+        if op.legacy:  # a hand-written op's fields are fixed; a generated op explains each field instead
+            try:
+                parse_legacy(op, body["params"])
+            except OpError as e:
+                return _refuse(422, str(e))
         try:
             current = await asyncio.to_thread(lab)
         except LabError as e:
@@ -228,52 +329,51 @@ def create_app(
             return _refuse(422, f"{loaded.lab.id} does not offer {op.name} in its builder")
         if hub.graph is None or hub.graph.status != "ok":
             return _refuse(503, "the emulator is not answering; run `labctl up`")
-        return op, params, loaded
+        return op, body["params"], loaded
 
-    async def checked(request: Request, *, fresh: bool = False) -> tuple[Op, Params, list[str], list[dict]] | JSONResponse:
-        """`fresh`: about to run, so read the instance's groups from a new collect rather than the
-        last graph, which may not show a group attached a moment ago; `--groups` would drop it."""
+    async def checked(request: Request, *, fresh: bool = False) -> Prepared | JSONResponse:
+        """`fresh`: about to run, so an op with server fields reads them from a new collect rather
+        than the last graph, which may not show a change made a moment ago (`--groups` would drop it)."""
         parsed = await op_request(request)
         if isinstance(parsed, JSONResponse):
             return parsed
-        op, params, loaded = parsed
+        op, raw, loaded = parsed
         graph = hub.graph
-        if isinstance(params, ModifyInstanceAttribute):
-            if fresh:
-                graph = await asyncio.to_thread(hub.collect_now)
-                if graph.status != "ok":
-                    return _refuse(503, "the emulator is not answering; run `labctl up`")
-            params = params.model_copy(update={"current_groups": attached_groups(graph, params.instance_id)})
-        argv = op.argv(params, loaded.lab.builder.tags)
-        problems = validate(op.name, params, graph, await region_zones(), choices())
-        return op, params, argv, [asdict(p) for p in problems]
+        if fresh and op.server_fields:
+            graph = await asyncio.to_thread(hub.collect_now)
+            if graph.status != "ok":
+                return _refuse(503, "the emulator is not answering; run `labctl up`")
+        try:
+            return prepare(op, raw, graph=graph, azs=await region_zones(), choices=choices(),
+                           tags=loaded.lab.builder.tags)
+        except OpError as e:
+            return _refuse(422, str(e))
 
     @app.post("/api/preview")
     async def preview(request: Request) -> Any:
         result = await checked(request)
         if isinstance(result, JSONResponse):
             return result
-        op, params, argv, problems = result
-        return {"command": display(argv), "argv": argv, "problems": problems,
-                "practiceExpect": practice_expectation(op, params)}
+        return {"command": result.command, "argv": result.argv, "problems": [asdict(p) for p in result.problems],
+                "practiceExpect": practice_expectation(result)}
 
     @app.post("/api/run")
     async def run(request: Request) -> Any:
         result = await checked(request, fresh=True)
         if isinstance(result, JSONResponse):
             return result
-        op, params, argv, problems = result
-        if problems:  # validated again here: a preview the browser holds may be stale
-            return _refuse(409, "the command was not run", command=display(argv), problems=problems)
+        if result.problems:  # validated again here: a preview the browser holds may be stale
+            return _refuse(409, "the command was not run", command=result.command,
+                           problems=[asdict(p) for p in result.problems])
         if why := await asyncio.to_thread(blocker):
             return _refuse(503, why)
         if runner.busy:  # it was validated against a graph the running command is about to change
             return _refuse(409, "another builder command is still running; wait for it, then press Run again")
         before = hub.graph.version if hub.graph else 0
-        outcome = await runner.run(argv)  # no await between the check and taking the lock
+        outcome = await runner.run(result.argv)  # no await between the check and taking the lock
         hub.notify("builder")  # do not rely on api-tap alone to bring the new graph
-        expect = expectation(op, params, outcome.stdout, before) if outcome.exit_code == 0 else None
-        return {"command": display(argv), "argv": argv, **outcome.to_dict(), "expect": expect}
+        expect = expectation(result, outcome.stdout, before) if outcome.exit_code == 0 else None
+        return {"command": result.command, "argv": result.argv, **outcome.to_dict(), "expect": expect}
 
     @app.post("/api/chat")
     async def chat(request: Request) -> Any:
@@ -303,6 +403,25 @@ def create_app(
         except ProviderError as e:
             return _refuse(502, provider.redact(str(e), settings))  # already redacted; once more costs nothing
         return result.to_dict()
+
+    @app.post("/api/reachability")
+    async def reachability(request: Request) -> Any:
+        """Static analysis of whether `src` reaches `dst` on `port`: configuration, not traffic."""
+        body = await guard_request(request)
+        if isinstance(body, JSONResponse):
+            return body
+        problem = reachability_problem(body)
+        if problem:
+            return _refuse(422, problem)
+        graph = await asyncio.to_thread(network or lab_network)
+        if graph.status != "ok":
+            return _refuse(503, "the emulator is not answering; run `labctl up`")
+        try:
+            found = await asyncio.to_thread(analyze, graph, body["src"], body["dst"], body["port"],
+                                            body.get("proto", "tcp"))
+        except EndpointError as e:
+            return _refuse(422, str(e))
+        return found.to_dict()
 
     @app.websocket("/ws")
     async def ws(socket: WebSocket) -> None:

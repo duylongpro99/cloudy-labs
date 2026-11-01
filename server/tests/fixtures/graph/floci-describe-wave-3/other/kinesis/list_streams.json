@@ -1,0 +1,13 @@
+{
+  "calls": [
+    {
+      "params": {},
+      "response": {
+        "HasMoreStreams": false,
+        "StreamNames": [
+          "w3-clicks"
+        ]
+      }
+    }
+  ]
+}

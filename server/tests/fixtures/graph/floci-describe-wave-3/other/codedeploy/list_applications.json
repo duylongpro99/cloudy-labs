@@ -1,0 +1,12 @@
+{
+  "calls": [
+    {
+      "params": {},
+      "response": {
+        "applications": [
+          "w3-delivery-deploy"
+        ]
+      }
+    }
+  ]
+}

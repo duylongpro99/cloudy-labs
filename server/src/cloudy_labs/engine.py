@@ -24,7 +24,7 @@ class EngineError(Exception):
 class Engine:
     progress: Progress
     labs_root: Path | None = None  # None: config.labs_dir()
-    providers: Callable[[str, str], Provider] = get_provider
+    providers: Callable[..., Provider] = get_provider  # (provider, emulator, region)
     networks: Callable[[], list[tuple[str, IPv4Network]]] = docker_networks
     log: Log = print
     _labs: dict[str, LoadedLab] = field(default_factory=dict)
@@ -39,7 +39,7 @@ class Engine:
         return self._labs[lab_id]
 
     def _provider(self, lab: Lab) -> Provider:
-        provider = self.providers(lab.provider, lab.emulator)
+        provider = self.providers(lab.provider, lab.emulator, lab.region)
         if not provider.health():
             raise EngineError(f"the {lab.emulator} emulator is not reachable; run `labctl up` first")
         return provider
@@ -113,4 +113,5 @@ class Engine:
 
 
 def result_dict(r: CheckResult) -> dict[str, Any]:
-    return {"check_id": r.check_id, "passed": r.passed, "message": r.message, "resource_ids": r.resource_ids}
+    return {"check_id": r.check_id, "passed": r.passed, "message": r.message, "resource_ids": r.resource_ids,
+            "info": r.info}

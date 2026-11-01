@@ -1,0 +1,109 @@
+{
+  "calls": [
+    {
+      "params": {},
+      "response": {
+        "SecurityGroups": [
+          {
+            "Description": "default VPC security group",
+            "GroupId": "sg-default-ap-southeast-2",
+            "GroupName": "default",
+            "IpPermissions": [],
+            "IpPermissionsEgress": [
+              {
+                "IpProtocol": "-1",
+                "IpRanges": [
+                  {
+                    "CidrIp": "0.0.0.0/0"
+                  }
+                ],
+                "Ipv6Ranges": [],
+                "PrefixListIds": [],
+                "UserIdGroupPairs": []
+              }
+            ],
+            "OwnerId": "000000000000",
+            "Tags": [],
+            "VpcId": "vpc-default-ap-southeast-2"
+          },
+          {
+            "Description": "default VPC security group",
+            "GroupId": "sg-5bfd55daf853758d5",
+            "GroupName": "default",
+            "IpPermissions": [],
+            "IpPermissionsEgress": [
+              {
+                "IpProtocol": "-1",
+                "IpRanges": [
+                  {
+                    "CidrIp": "0.0.0.0/0"
+                  }
+                ],
+                "Ipv6Ranges": [],
+                "PrefixListIds": [],
+                "UserIdGroupPairs": []
+              }
+            ],
+            "OwnerId": "000000000000",
+            "Tags": [],
+            "VpcId": "vpc-1db2f371"
+          },
+          {
+            "Description": "w2 web and nfs",
+            "GroupId": "sg-bb3624e3b61656762",
+            "GroupName": "w2-net-sg",
+            "IpPermissions": [
+              {
+                "FromPort": 80,
+                "IpProtocol": "tcp",
+                "IpRanges": [
+                  {
+                    "CidrIp": "10.91.0.0/16"
+                  }
+                ],
+                "Ipv6Ranges": [],
+                "PrefixListIds": [],
+                "ToPort": 80,
+                "UserIdGroupPairs": []
+              },
+              {
+                "FromPort": 2049,
+                "IpProtocol": "tcp",
+                "IpRanges": [
+                  {
+                    "CidrIp": "10.91.0.0/16"
+                  }
+                ],
+                "Ipv6Ranges": [],
+                "PrefixListIds": [],
+                "ToPort": 2049,
+                "UserIdGroupPairs": []
+              }
+            ],
+            "IpPermissionsEgress": [
+              {
+                "IpProtocol": "-1",
+                "IpRanges": [
+                  {
+                    "CidrIp": "0.0.0.0/0"
+                  }
+                ],
+                "Ipv6Ranges": [],
+                "PrefixListIds": [],
+                "UserIdGroupPairs": []
+              }
+            ],
+            "OwnerId": "000000000000",
+            "Tags": [
+              {
+                "Key": "Name",
+                "Value": "w2-net-sg"
+              }
+            ],
+            "VpcId": "vpc-1db2f371"
+          }
+        ]
+      }
+    }
+  ]
+}

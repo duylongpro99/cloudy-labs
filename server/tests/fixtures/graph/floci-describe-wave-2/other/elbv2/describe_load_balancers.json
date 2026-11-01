@@ -1,0 +1,39 @@
+{
+  "calls": [
+    {
+      "params": {},
+      "response": {
+        "LoadBalancers": [
+          {
+            "AvailabilityZones": [
+              {
+                "SubnetId": "subnet-5c186171",
+                "ZoneName": "ap-southeast-2a"
+              },
+              {
+                "SubnetId": "subnet-99826efa",
+                "ZoneName": "ap-southeast-2b"
+              }
+            ],
+            "CanonicalHostedZoneId": "Z1GM3OXH4ZPM65",
+            "CreatedTime": "2026-10-31 15:16:09.470000+00:00",
+            "DNSName": "w2-alb-74ca62bb5d81462c.elb.localhost.floci.io",
+            "IpAddressType": "ipv4",
+            "LoadBalancerArn": "arn:aws:elasticloadbalancing:ap-southeast-2:000000000000:loadbalancer/app/w2-alb/74ca62bb5d81462c",
+            "LoadBalancerName": "w2-alb",
+            "Scheme": "internal",
+            "SecurityGroups": [
+              "sg-bb3624e3b61656762"
+            ],
+            "State": {
+              "Code": "active"
+            },
+            "Type": "application",
+            "VpcId": "vpc-1db2f371"
+          }
+        ],
+        "NextMarker": ""
+      }
+    }
+  ]
+}

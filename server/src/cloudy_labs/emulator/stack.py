@@ -6,17 +6,19 @@ import urllib.request
 from collections.abc import Callable
 from pathlib import Path
 
-from ..config import API_PORT, COMPOSE_PROJECT, FLOCI_PORT, HOST, MOTO_PORT, TAP_EVENTS_PORT
+from ..config import (
+    API_PORT, COMPOSE_PROJECT, FLOCI_PORT, HOST, MOTO_PORT, MOTO_TAP_EVENTS_PORT, MOTO_TAP_PORT, TAP_EVENTS_PORT,
+)
 from .docker import DockerError, docker, lines, require_docker
-from .orphans import Orphans, remove_orphans
+from .orphans import Orphans, remove_orphans, unowned_service_containers
 from .preflight import port_busy_message, port_free
 
 COMPOSE_FILE = Path(__file__).with_name("compose.yaml")
 # Health is probed on these host ports. api-tap's /health also checks Floci behind it.
-SERVICES = {"floci": FLOCI_PORT, "moto": MOTO_PORT, "api-tap": TAP_EVENTS_PORT}
-HEALTH_PATHS = {"floci": "/_floci/health", "moto": "/moto-api/", "api-tap": "/health"}
+SERVICES = {"floci": FLOCI_PORT, "moto": MOTO_PORT, "api-tap": TAP_EVENTS_PORT, "api-tap-moto": MOTO_TAP_EVENTS_PORT}
+HEALTH_PATHS = {"floci": "/_floci/health", "moto": "/moto-api/", "api-tap": "/health", "api-tap-moto": "/health"}
 # Every host port the stack publishes, all on 127.0.0.1.
-HOST_PORTS = (API_PORT, FLOCI_PORT, TAP_EVENTS_PORT, MOTO_PORT)
+HOST_PORTS = (API_PORT, FLOCI_PORT, TAP_EVENTS_PORT, MOTO_PORT, MOTO_TAP_PORT, MOTO_TAP_EVENTS_PORT)
 # Floci pulls alpine/socat without a tag the first time an app port is published, which
 # makes Docker fetch every tag (about two minutes). Having :latest locally avoids that.
 SOCAT_IMAGE = "alpine/socat:latest"
@@ -68,8 +70,8 @@ def endpoints() -> dict[str, str]:
 
 
 def learner_endpoints() -> dict[str, str]:
-    """Where the CLI and the checkers go: Floci through api-tap, and moto."""
-    return {"floci (via api-tap)": f"http://{HOST}:{API_PORT}", "moto": endpoints()["moto"]}
+    """Where the CLI and the checkers go: each emulator through its api-tap."""
+    return {"floci (via api-tap)": f"http://{HOST}:{API_PORT}", "moto (via api-tap-moto)": f"http://{HOST}:{MOTO_TAP_PORT}"}
 
 
 def reachable(name: str) -> bool:
@@ -117,7 +119,7 @@ def up(log: Log = print) -> None:
             # A stopped Floci container may still be attached to VPC networks; see recreate_floci.
             compose("rm", "-s", "-f", "floci")
             _report(remove_orphans(), log, "from an earlier run")
-        log("starting emulator stack (floci, api-tap, moto)...")
+        log("starting emulator stack (floci, api-tap, moto, api-tap-moto)...")
         compose("up", "-d", "--wait")
     if not _have_image(SOCAT_IMAGE):
         log(f"pulling {SOCAT_IMAGE} (Floci needs it to publish instance ports)...")
@@ -138,6 +140,9 @@ def down(log: Log = print) -> None:
     compose("down", "-v", "--remove-orphans")
     after = remove_orphans()
     log(f"emulator stack stopped; cleaned up {len(before) + len(after)} leftover Floci resources")
+    if left := unowned_service_containers():
+        log(f"Floci left service containers it gives no owner label: {', '.join(left)}. If no other Floci "
+            f"runs on this machine, remove them with: docker rm -f {' '.join(left)}")
     # Errors from the first pass may clear once compose has removed its network; only the last pass counts.
     if after.errors:
         raise DockerError("could not remove some Floci resources: " + "; ".join(after.errors))

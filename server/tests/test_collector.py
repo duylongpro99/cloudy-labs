@@ -2,42 +2,13 @@ import copy
 import json
 import os
 import random
-from datetime import datetime, timedelta, timezone
-from pathlib import Path
+from datetime import timedelta
 
 
-from cloudy_labs.graph.collector import DESCRIBE, USER_DATA_NOTE, build_graph, collect
+from cloudy_labs.graph.collector import USER_DATA_NOTE, collect
 from cloudy_labs.graph.host_ports import parse_ps
 
-FIXTURES = Path(__file__).parent / "fixtures" / "graph"
-DESCRIBED = FIXTURES / "floci-describe"
-GOLDEN = FIXTURES / "lab-06-07.graph.json"
-INSTANCE = "i-fdb553d289095d128"
-LAUNCHED = datetime(2026, 10, 29, 7, 33, 59, 99000, tzinfo=timezone.utc)
-LATER = LAUNCHED + timedelta(hours=1)
-
-
-def raw() -> dict:
-    return {
-        key: json.loads((DESCRIBED / f"{method.replace('_', '-')}.json").read_text())[key]
-        for method, key in DESCRIBE.items()
-    }
-
-
-def ports() -> dict:
-    return parse_ps((DESCRIBED / "docker-ps.txt").read_text())
-
-
-def user_data() -> dict:
-    return json.loads((DESCRIBED / "user-data.json").read_text())
-
-
-def dns_hostnames() -> dict:
-    return json.loads((DESCRIBED / "vpc-dns-hostnames.json").read_text())
-
-
-def lab_graph(now=LATER, data=None):
-    return build_graph(data or raw(), host_ports=ports(), user_data=user_data(), dns_hostnames=dns_hostnames(), now=now)
+from graph_fixtures import GOLDEN, INSTANCE, LAB_KINDS, LAUNCHED, LATER, FakeEc2, FakeProvider, dns_hostnames, lab_graph, ports, raw
 
 
 def by_id(g):
@@ -56,21 +27,21 @@ def test_lab_06_07_structure():
     g = lab_graph()
     nodes, parent = by_id(g), parent_of(g)
     vpc = "vpc-149d0439"
-    assert parent[vpc] == "us-east-1" and nodes[vpc].label == "lab06-vpc"
+    assert parent[vpc] == "ap-southeast-2" and nodes[vpc].label == "lab06-vpc"
     assert {s: nodes[s].kind for s in ("subnet-83a1f79a", "subnet-b893d7ba", "subnet-e917cc42", "subnet-44acdeb7")} == {
         "subnet-83a1f79a": "subnet-public", "subnet-b893d7ba": "subnet-public",
         "subnet-e917cc42": "subnet-private", "subnet-44acdeb7": "subnet-private",
     }
-    assert parent["subnet-83a1f79a"] == f"{vpc}/us-east-1a" and parent[f"{vpc}/us-east-1a"] == vpc
-    assert parent["subnet-b893d7ba"] == f"{vpc}/us-east-1b"
+    assert parent["subnet-83a1f79a"] == f"{vpc}/ap-southeast-2a" and parent[f"{vpc}/ap-southeast-2a"] == vpc
+    assert parent["subnet-b893d7ba"] == f"{vpc}/ap-southeast-2b"
     assert parent["igw-34ddd4cd"] == vpc
     assert parent["nat-235f142ec41b5d904"] == "subnet-83a1f79a"
     assert parent[INSTANCE] == "subnet-83a1f79a"
     for rt in ("rtb-509e5b33", "rtb-02888668", "rtb-157470092a6fefa4a"):
         assert parent[rt] == vpc and nodes[rt].kind == "route-table"
     assert parent["sg-dbd2e6007fa2e7eef"] == vpc
-    assert parent["key-856759379e524ce96"] == "us-east-1"
-    assert parent["eipalloc-2cc57421a05781343"] == "us-east-1"
+    assert parent["key-856759379e524ce96"] == "ap-southeast-2"
+    assert parent["eipalloc-2cc57421a05781343"] == "ap-southeast-2"
     edges = edge_set(g)
     assert ("route", "rtb-509e5b33", "igw-34ddd4cd", "0.0.0.0/0") in edges
     assert ("route", "rtb-02888668", "nat-235f142ec41b5d904", "0.0.0.0/0") in edges
@@ -106,14 +77,14 @@ def test_loopback_public_ip_becomes_host_ports():
     props = by_id(lab_graph()).get(INSTANCE).props
     assert props["hostPorts"] == {"22/tcp": 2200, "80/tcp": 30000}
     assert "publicIp" not in props
-    props = by_id(build_graph(raw(), host_ports={}, now=LATER))[INSTANCE].props
+    props = by_id(lab_graph(host_ports={}))[INSTANCE].props
     assert "hostPorts" not in props and "publicIp" not in props
 
 
 def test_user_data_note_only_shortly_after_launch():
     assert by_id(lab_graph(now=LAUNCHED + timedelta(minutes=2)))[INSTANCE].props["note"] == USER_DATA_NOTE
     assert "note" not in by_id(lab_graph(now=LAUNCHED + timedelta(minutes=7)))[INSTANCE].props
-    no_data = build_graph(raw(), host_ports=ports(), user_data={}, now=LAUNCHED + timedelta(minutes=2))
+    no_data = lab_graph(LAUNCHED + timedelta(minutes=2), user_data_={})
     assert "note" not in by_id(no_data)[INSTANCE].props
 
 
@@ -160,48 +131,14 @@ def test_parse_docker_ps_maps_forwarders_to_their_instance():
     assert parse_ps(out) == {"i-abc": {"22/tcp": 2201, "8080/tcp": 30001}}
 
 
-class FakeEc2:
-    def __init__(self, data, fail=None):
-        self.data, self.fail, self.attribute_calls = data, fail, []
-
-    def can_paginate(self, method):
-        return False
-
-    def __getattr__(self, method):
-        if method not in DESCRIBE:
-            raise AttributeError(method)
-        def call():
-            if self.fail:
-                raise self.fail
-            return {DESCRIBE[method]: self.data[DESCRIBE[method]]}
-        return call
-
-    def describe_vpc_attribute(self, VpcId, Attribute):
-        assert Attribute == "enableDnsHostnames"
-        return {"VpcId": VpcId, "EnableDnsHostnames": {"Value": dns_hostnames()[VpcId]}}
-
-    def describe_instance_attribute(self, InstanceId, Attribute):
-        self.attribute_calls.append(InstanceId)
-        return {"UserData": {"Value": "IyEvYmluL2Jhc2g="}}
-
-
-class FakeProvider:
-    def __init__(self, ec2):
-        self.ec2, self.calls = ec2, []
-
-    def client(self, service, credentials=None, *, direct=False, config=None):
-        self.calls.append((service, direct))
-        return self.ec2
-
-
 def test_collect_reads_floci_directly_and_asks_user_data_only_for_fresh_instances():
-    provider = FakeProvider(FakeEc2(raw()))
-    g = collect(provider, clock=lambda: LATER, ports=ports)
-    assert provider.calls == [("ec2", True)]
-    assert provider.ec2.attribute_calls == []
+    provider = FakeProvider(FakeEc2(raw(), dns=dns_hostnames(), user_data={INSTANCE: True}))
+    g = collect(provider, clock=lambda: LATER, ports=ports, kinds=LAB_KINDS)
+    assert provider.calls == [("ec2", True), ("sts", True)]  # sts: the account id; the fake has none
+    assert provider.clients["ec2"].attribute_calls == []
     assert g.to_json() == lab_graph().to_json()
-    g = collect(provider, clock=lambda: LAUNCHED + timedelta(minutes=1), ports=ports)
-    assert provider.ec2.attribute_calls == [INSTANCE]
+    g = collect(provider, clock=lambda: LAUNCHED + timedelta(minutes=1), ports=ports, kinds=LAB_KINDS)
+    assert provider.clients["ec2"].attribute_calls == [INSTANCE]
     assert by_id(g)[INSTANCE].props["note"] == USER_DATA_NOTE
 
 
@@ -209,9 +146,10 @@ def test_collect_reports_emulator_down_when_floci_does_not_answer():
     from botocore.exceptions import EndpointConnectionError
 
     g = collect(FakeProvider(FakeEc2(raw(), fail=EndpointConnectionError(endpoint_url="http://127.0.0.1:4567"))),
-                clock=lambda: LATER, ports=ports)
-    assert g.status == "emulator-down" and [n.kind for n in g.nodes] == ["region"]
-    assert g.contains == [] and g.edges == []
+                clock=lambda: LATER, ports=ports, kinds=["vpc", "instance"])
+    assert g.status == "emulator-down" and [n.kind for n in g.nodes] == ["account", "region", "global"]
+    assert {(c.parent, c.child) for c in g.contains} == {("000000000000", "ap-southeast-2"), ("000000000000", "global")}
+    assert g.edges == []
 
 
 def test_builder_attributes_become_props():
@@ -219,5 +157,57 @@ def test_builder_attributes_become_props():
     assert nodes["vpc-149d0439"].props["enableDnsHostnames"] is True
     flags = {n.id: n.props["mapPublicIpOnLaunch"] for n in nodes.values() if n.kind.startswith("subnet")}
     assert flags["subnet-83a1f79a"] is True and flags["subnet-e917cc42"] is False
-    unknown = by_id(build_graph(raw(), host_ports=ports(), now=LATER))["vpc-149d0439"]
+    unknown = by_id(lab_graph(dns={}))["vpc-149d0439"]
     assert "enableDnsHostnames" not in unknown.props  # not asked: left out, not reported as off
+
+
+def test_a_lab_lists_its_palette_target_reachability_and_seen_kinds():
+    from cloudy_labs.graph.collector import REACHABILITY_KINDS, lab_kinds
+    from cloudy_labs.registry import default_registry
+
+    reg = default_registry()
+    assert lab_kinds(reg, [], []) is None  # a lab that names no kind lists everything
+    kinds = lab_kinds(reg, ["vpc", "subnet"], ["igw"], seen={"key-pair"})
+    assert {"vpc", "subnet-public", "subnet-private", "igw", "key-pair"} <= set(kinds)
+    assert REACHABILITY_KINDS & set(reg.kinds()) <= set(kinds)  # a lab with subnets gets every reachability kind
+    assert "instance" not in kinds and "elastic-ip" not in kinds
+    assert lab_kinds(reg, ["key-pair"], []) == ["key-pair"]  # no network kind, no reachability kinds
+    # What a palette kind's ops make is listed too, though no palette offers it.
+    assert {"lambda-function", "lambda-version", "lambda-alias"} <= set(lab_kinds(reg, ["lambda-function"], []))
+
+
+def test_a_write_names_the_kinds_it_may_have_touched():
+    from cloudy_labs.graph.collector import kinds_of_action
+    from cloudy_labs.registry import default_registry
+
+    reg = default_registry()
+    assert kinds_of_action(reg, "ec2", "CreateVpc") == {"vpc"}
+    assert kinds_of_action(reg, "ec2", "AuthorizeSecurityGroupIngress") == {"security-group"}
+    assert kinds_of_action(reg, "ec2", "CreateNatGateway") == {"nat"}
+    assert kinds_of_action(reg, "ec2", "CreateTransitGateway") == {"transit-gateway"}
+    every_ec2 = kinds_of_action(reg, "ec2", "CreateDhcpOptions")  # no kind of its own: list all of ec2
+    assert {"vpc", "instance", "nat", "elastic-ip", "transit-gateway"} <= every_ec2
+    assert kinds_of_action(reg, "nosuchservice", "CreateThing") == set()
+    assert kinds_of_action(reg, "lambda", "PublishVersion") == {"lambda-function", "lambda-version"}
+
+
+def test_a_signing_name_several_services_share_reaches_each_of_their_kinds():
+    # api-tap reports the SigV4 name: `rds` is also DocumentDB and Neptune, `elasticloadbalancing`
+    # both ELB APIs, `events` EventBridge's two models, `apigateway` both API Gateway APIs.
+    from cloudy_labs.graph.collector import kinds_of_action
+    from cloudy_labs.registry import default_registry
+
+    reg = default_registry()
+    assert kinds_of_action(reg, "rds", "CreateDBInstance") == {"db-instance"}
+    assert kinds_of_action(reg, "elasticloadbalancing", "CreateTargetGroup") == {"target-group"}
+    assert kinds_of_action(reg, "events", "PutRule") == {"event-rule"}
+    assert kinds_of_action(reg, "apigateway", "CreateRestApi") == {"apigateway-rest-api"}
+    assert kinds_of_action(reg, "apigateway", "CreateApi") == {"apigateway-http-api"}
+
+
+def test_a_kind_listed_per_parent_brings_that_parent_in():
+    from cloudy_labs.graph.collector import _with_parents
+    from cloudy_labs.registry import default_registry
+    reg = default_registry()
+    scoped = next(t for t in reg.types if t.listing and t.listing.scope)
+    assert scoped.listing.scope.parent_kind in _with_parents(reg, [scoped.kind])

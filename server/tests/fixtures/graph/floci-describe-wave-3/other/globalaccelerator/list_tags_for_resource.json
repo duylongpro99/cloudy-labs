@@ -1,0 +1,12 @@
+{
+  "calls": [
+    {
+      "params": {
+        "ResourceArn": "arn:aws:globalaccelerator::000000000000:accelerator/4446017a-ee15-432b-aadc-908b93397ab3"
+      },
+      "response": {
+        "Tags": []
+      }
+    }
+  ]
+}

@@ -1,0 +1,18 @@
+{
+  "calls": [
+    {
+      "params": {
+        "TableName": "w2-orders"
+      },
+      "response": {
+        "ContinuousBackupsDescription": {
+          "ContinuousBackupsStatus": "ENABLED",
+          "PointInTimeRecoveryDescription": {
+            "PointInTimeRecoveryStatus": "ENABLED",
+            "RecoveryPeriodInDays": 35
+          }
+        }
+      }
+    }
+  ]
+}

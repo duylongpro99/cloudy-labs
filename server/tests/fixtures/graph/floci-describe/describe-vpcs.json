@@ -15,7 +15,7 @@
             ],
             "IsDefault": true,
             "Tags": [],
-            "VpcId": "vpc-default-us-east-1",
+            "VpcId": "vpc-default-ap-southeast-2",
             "State": "available",
             "CidrBlock": "172.31.0.0/16",
             "DhcpOptionsId": "dopt-default"

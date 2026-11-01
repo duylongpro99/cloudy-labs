@@ -1,0 +1,136 @@
+{
+  "calls": [
+    {
+      "params": {},
+      "response": {
+        "Reservations": [
+          {
+            "Groups": [],
+            "Instances": [
+              {
+                "AmiLaunchIndex": 0,
+                "Architecture": "x86_64",
+                "BlockDeviceMappings": [
+                  {
+                    "DeviceName": "/dev/xvda",
+                    "Ebs": {
+                      "AttachTime": "2026-10-31 14:34:04.252000+00:00",
+                      "DeleteOnTermination": true,
+                      "Status": "attached",
+                      "VolumeId": "vol-4329601d13fe4bc2b"
+                    }
+                  }
+                ],
+                "CapacityReservationSpecification": {
+                  "CapacityReservationPreference": "open"
+                },
+                "ClientToken": "0836fee1-1963-4fd0-a887-a59ad97079dd",
+                "CpuOptions": {
+                  "CoreCount": 1,
+                  "ThreadsPerCore": 1
+                },
+                "EbsOptimized": false,
+                "EnaSupport": true,
+                "EnclaveOptions": {
+                  "Enabled": false
+                },
+                "HibernationOptions": {
+                  "Configured": false
+                },
+                "Hypervisor": "xen",
+                "ImageId": "ami-0abcdef1234567890",
+                "InstanceId": "i-0d0e81998ba9ee9ac",
+                "InstanceType": "t3.micro",
+                "LaunchTime": "2026-10-31 14:34:04.252000+00:00",
+                "MaintenanceOptions": {
+                  "AutoRecovery": "default"
+                },
+                "MetadataOptions": {
+                  "HttpEndpoint": "enabled",
+                  "HttpProtocolIpv6": "disabled",
+                  "HttpPutResponseHopLimit": 1,
+                  "HttpTokens": "optional",
+                  "InstanceMetadataTags": "disabled",
+                  "State": "applied"
+                },
+                "Monitoring": {
+                  "State": "disabled"
+                },
+                "NetworkInterfaces": [
+                  {
+                    "Attachment": {
+                      "AttachTime": "2026-10-31 14:34:04.252000+00:00",
+                      "AttachmentId": "eni-attach-ddee61f237f7555de",
+                      "DeleteOnTermination": true,
+                      "DeviceIndex": 0,
+                      "Status": "attached"
+                    },
+                    "Groups": [
+                      {
+                        "GroupId": "sg-0ce61b20372180cec",
+                        "GroupName": "rx-sg-web"
+                      }
+                    ],
+                    "NetworkInterfaceId": "eni-abd8d2de65aff96e8",
+                    "OwnerId": "000000000000",
+                    "PrivateDnsName": "ip-10-60-1-12.ap-southeast-2.compute.internal",
+                    "PrivateIpAddress": "10.60.1.12",
+                    "PrivateIpAddresses": [
+                      {
+                        "Primary": true,
+                        "PrivateDnsName": "ip-10-60-1-12.ap-southeast-2.compute.internal",
+                        "PrivateIpAddress": "10.60.1.12"
+                      }
+                    ],
+                    "SourceDestCheck": true,
+                    "Status": "in-use",
+                    "SubnetId": "subnet-aafaffcb",
+                    "VpcId": "vpc-ae467f29"
+                  }
+                ],
+                "Placement": {
+                  "AvailabilityZone": "ap-southeast-2a",
+                  "Tenancy": "default"
+                },
+                "PlatformDetails": "Linux/UNIX",
+                "PrivateDnsName": "ip-10-60-1-12.ap-southeast-2.compute.internal",
+                "PrivateDnsNameOptions": {
+                  "EnableResourceNameDnsAAAARecord": false,
+                  "EnableResourceNameDnsARecord": false,
+                  "HostnameType": "ip-name"
+                },
+                "PrivateIpAddress": "10.60.1.12",
+                "PublicDnsName": "localhost",
+                "PublicIpAddress": "127.0.0.1",
+                "RootDeviceName": "/dev/xvda",
+                "RootDeviceType": "ebs",
+                "SecurityGroups": [
+                  {
+                    "GroupId": "sg-0ce61b20372180cec",
+                    "GroupName": "rx-sg-web"
+                  }
+                ],
+                "SourceDestCheck": true,
+                "State": {
+                  "Code": 16,
+                  "Name": "running"
+                },
+                "SubnetId": "subnet-aafaffcb",
+                "Tags": [
+                  {
+                    "Key": "Name",
+                    "Value": "rx-web"
+                  }
+                ],
+                "VirtualizationType": "hvm",
+                "VpcId": "vpc-ae467f29"
+              }
+            ],
+            "OwnerId": "000000000000",
+            "ReservationId": "r-bc220f14b51d432d5"
+          }
+        ]
+      }
+    }
+  ]
+}

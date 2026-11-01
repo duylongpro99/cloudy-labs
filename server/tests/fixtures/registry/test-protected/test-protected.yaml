@@ -1,0 +1,21 @@
+# A kind the lab platform owns one item of: the builder and the chat must refuse to delete it.
+- kind: test-user
+  service: iam
+  label: Test user
+  list: {hook: test.items, params: {items: [{UserName: learner}]}}
+  test_only: true
+  id: UserName
+  name: UserName
+  protected: "UserName == 'cloudy-labs-admin'"
+  parent: [{kind: global}]
+  builder: true
+  view: {role: block, category: general, icon: Test-Only_48.svg, order: 998}
+  ops:
+    - id: delete-test-user
+      api: DeleteUser
+      gesture: delete
+      title: Xoá test user
+      fields: [{name: UserName, ref: test-user, ref_by: label}]
+      targets: [test-user]
+      target_param: UserName
+      note: "Deletes a test user."

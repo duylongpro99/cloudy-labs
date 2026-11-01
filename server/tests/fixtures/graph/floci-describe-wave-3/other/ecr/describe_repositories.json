@@ -1,0 +1,25 @@
+{
+  "calls": [
+    {
+      "params": {},
+      "response": {
+        "repositories": [
+          {
+            "createdAt": "2026-10-31 23:25:10+07:00",
+            "encryptionConfiguration": {
+              "encryptionType": "AES256"
+            },
+            "imageScanningConfiguration": {
+              "scanOnPush": true
+            },
+            "imageTagMutability": "MUTABLE",
+            "registryId": "000000000000",
+            "repositoryArn": "arn:aws:ecr:ap-southeast-2:000000000000:repository/w3-delivery-app",
+            "repositoryName": "w3-delivery-app",
+            "repositoryUri": "000000000000.dkr.ecr.ap-southeast-2.localhost:4567/w3-delivery-app"
+          }
+        ]
+      }
+    }
+  ]
+}

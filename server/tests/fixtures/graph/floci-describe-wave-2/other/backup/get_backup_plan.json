@@ -1,0 +1,31 @@
+{
+  "calls": [
+    {
+      "params": {
+        "BackupPlanId": "a042f776-eaf9-464e-8f1e-8d88a6ad3967"
+      },
+      "response": {
+        "BackupPlan": {
+          "BackupPlanName": "w2-plan",
+          "Rules": [
+            {
+              "CopyActions": [],
+              "Lifecycle": {
+                "DeleteAfterDays": 7
+              },
+              "RecoveryPointTags": {},
+              "RuleId": "750414c5-caa8-4f7d-af3c-b7548211b80f",
+              "RuleName": "daily",
+              "ScheduleExpression": "cron(0 5 ? * * *)",
+              "TargetBackupVaultName": "w2-vault"
+            }
+          ]
+        },
+        "BackupPlanArn": "arn:aws:backup:ap-southeast-2:000000000000:backup-plan:a042f776-eaf9-464e-8f1e-8d88a6ad3967",
+        "BackupPlanId": "a042f776-eaf9-464e-8f1e-8d88a6ad3967",
+        "CreationDate": "2026-10-31 22:16:09+07:00",
+        "VersionId": "aca582bec0b7"
+      }
+    }
+  ]
+}

@@ -1,0 +1,121 @@
+{
+  "calls": [
+    {
+      "params": {},
+      "response": {
+        "SecurityGroups": [
+          {
+            "Description": "default VPC security group",
+            "GroupId": "sg-d945fe5c7e3ea5ad0",
+            "GroupName": "default",
+            "IpPermissions": [],
+            "IpPermissionsEgress": [
+              {
+                "IpProtocol": "-1",
+                "IpRanges": [
+                  {
+                    "CidrIp": "0.0.0.0/0"
+                  }
+                ],
+                "Ipv6Ranges": [],
+                "PrefixListIds": [],
+                "UserIdGroupPairs": []
+              }
+            ],
+            "OwnerId": "000000000000",
+            "Tags": [],
+            "VpcId": "vpc-c238e6aa"
+          },
+          {
+            "Description": "default VPC security group",
+            "GroupId": "sg-default-ap-southeast-2",
+            "GroupName": "default",
+            "IpPermissions": [],
+            "IpPermissionsEgress": [
+              {
+                "IpProtocol": "-1",
+                "IpRanges": [
+                  {
+                    "CidrIp": "0.0.0.0/0"
+                  }
+                ],
+                "Ipv6Ranges": [],
+                "PrefixListIds": [],
+                "UserIdGroupPairs": []
+              }
+            ],
+            "OwnerId": "000000000000",
+            "Tags": [],
+            "VpcId": "vpc-default-ap-southeast-2"
+          },
+          {
+            "Description": "default VPC security group",
+            "GroupId": "sg-806d5719db1444e2a",
+            "GroupName": "default",
+            "IpPermissions": [],
+            "IpPermissionsEgress": [
+              {
+                "IpProtocol": "-1",
+                "IpRanges": [
+                  {
+                    "CidrIp": "0.0.0.0/0"
+                  }
+                ],
+                "Ipv6Ranges": [],
+                "PrefixListIds": [],
+                "UserIdGroupPairs": []
+              }
+            ],
+            "OwnerId": "000000000000",
+            "Tags": [],
+            "VpcId": "vpc-126a9f97"
+          },
+          {
+            "Description": "w3 data movement",
+            "GroupId": "sg-6ab169e1e9cfbb053",
+            "GroupName": "w3-dm-sg",
+            "IpPermissions": [],
+            "IpPermissionsEgress": [
+              {
+                "IpProtocol": "-1",
+                "IpRanges": [
+                  {
+                    "CidrIp": "0.0.0.0/0"
+                  }
+                ],
+                "Ipv6Ranges": [],
+                "PrefixListIds": [],
+                "UserIdGroupPairs": []
+              }
+            ],
+            "OwnerId": "000000000000",
+            "Tags": [],
+            "VpcId": "vpc-51ff849d"
+          },
+          {
+            "Description": "default VPC security group",
+            "GroupId": "sg-7bc96a71d0de3e99e",
+            "GroupName": "default",
+            "IpPermissions": [],
+            "IpPermissionsEgress": [
+              {
+                "IpProtocol": "-1",
+                "IpRanges": [
+                  {
+                    "CidrIp": "0.0.0.0/0"
+                  }
+                ],
+                "Ipv6Ranges": [],
+                "PrefixListIds": [],
+                "UserIdGroupPairs": []
+              }
+            ],
+            "OwnerId": "000000000000",
+            "Tags": [],
+            "VpcId": "vpc-51ff849d"
+          }
+        ]
+      }
+    }
+  ]
+}

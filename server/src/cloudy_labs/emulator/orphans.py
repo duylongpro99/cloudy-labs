@@ -48,6 +48,15 @@ def find_orphans(port: int = FLOCI_PORT) -> Orphans:
     )
 
 
+def unowned_service_containers() -> list[str]:
+    """Containers a Floci starts for a service (the ECR registry, Athena's DuckDB...) without an
+    owner label. Their names are fixed (floci-aws-ecr-registry), so they cannot be told apart from
+    another Floci's and are never removed here; `labctl down` names them for the learner."""
+    rows = lines(docker("ps", "-a", "--filter", "label=io.floci=aws", "--filter", "label=io.floci.service",
+                        "--format", '{{.Names}}\t{{.Label "io.floci.owner"}}'))
+    return [name for name, _, owner in (row.partition("\t") for row in rows) if not owner.strip()]
+
+
 def remove_orphans(port: int = FLOCI_PORT) -> Orphans:
     """Remove containers first: a network or volume still in use cannot be removed.
 

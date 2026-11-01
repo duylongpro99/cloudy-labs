@@ -1,0 +1,21 @@
+{
+  "calls": [
+    {
+      "params": {
+        "ConfigurationRecorderNames": [
+          "w3-recorder"
+        ]
+      },
+      "response": {
+        "ConfigurationRecordersStatus": [
+          {
+            "lastStartTime": "2026-10-31 23:25:12+07:00",
+            "lastStatus": "SUCCESS",
+            "name": "w3-recorder",
+            "recording": true
+          }
+        ]
+      }
+    }
+  ]
+}

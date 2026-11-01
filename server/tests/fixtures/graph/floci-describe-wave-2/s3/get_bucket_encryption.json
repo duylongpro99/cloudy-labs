@@ -1,0 +1,21 @@
+{
+  "calls": [
+    {
+      "params": {
+        "Bucket": "w2-backup-src"
+      },
+      "response": {
+        "ServerSideEncryptionConfiguration": {
+          "Rules": [
+            {
+              "ApplyServerSideEncryptionByDefault": {
+                "SSEAlgorithm": "AES256"
+              },
+              "BucketKeyEnabled": false
+            }
+          ]
+        }
+      }
+    }
+  ]
+}
