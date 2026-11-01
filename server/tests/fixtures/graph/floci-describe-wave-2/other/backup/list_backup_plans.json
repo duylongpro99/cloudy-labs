@@ -5,11 +5,11 @@
       "response": {
         "BackupPlansList": [
           {
-            "BackupPlanArn": "arn:aws:backup:ap-southeast-2:000000000000:backup-plan:a042f776-eaf9-464e-8f1e-8d88a6ad3967",
-            "BackupPlanId": "a042f776-eaf9-464e-8f1e-8d88a6ad3967",
+            "BackupPlanArn": "arn:aws:backup:ap-southeast-2:000000000000:backup-plan:81dc3600-5953-4af0-8855-77f86fd253b4",
+            "BackupPlanId": "81dc3600-5953-4af0-8855-77f86fd253b4",
             "BackupPlanName": "w2-plan",
-            "CreationDate": "2026-10-31 22:16:09+07:00",
-            "VersionId": "aca582bec0b7"
+            "CreationDate": "2026-11-01 16:05:21+07:00",
+            "VersionId": "d8a9501fdcf6"
           }
         ]
       }

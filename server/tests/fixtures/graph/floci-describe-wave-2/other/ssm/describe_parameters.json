@@ -6,8 +6,8 @@
         "Parameters": [
           {
             "DataType": "text",
-            "KeyId": "b13ec560-c4f7-420a-9463-c4bddbe501c1",
-            "LastModifiedDate": "2026-10-31 22:16:09.231000+07:00",
+            "KeyId": "ef4cdec5-ea05-4214-8e8c-e5a6ee387ac9",
+            "LastModifiedDate": "2026-11-01 16:05:21.001000+07:00",
             "Name": "/w2/app/api-token",
             "Tier": "Standard",
             "Type": "SecureString",
@@ -15,7 +15,7 @@
           },
           {
             "DataType": "text",
-            "LastModifiedDate": "2026-10-31 22:16:09.229000+07:00",
+            "LastModifiedDate": "2026-11-01 16:05:20.998000+07:00",
             "Name": "/w2/app/db-host",
             "Tier": "Standard",
             "Type": "String",
@@ -23,7 +23,7 @@
           },
           {
             "DataType": "text",
-            "LastModifiedDate": "2026-10-31 22:16:09.248000+07:00",
+            "LastModifiedDate": "2026-11-01 16:05:21.016000+07:00",
             "Name": "/w2/cfn/param",
             "Tier": "Standard",
             "Type": "String",

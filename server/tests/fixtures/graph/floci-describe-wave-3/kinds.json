@@ -1,6 +1,8 @@
 [
   "acm-certificate",
   "apigateway-rest-api",
+  "apigateway-api-key",
+  "apigateway-usage-plan",
   "apigateway-http-api",
   "athena-workgroup",
   "autoscaling-group",
@@ -11,6 +13,9 @@
   "budget",
   "cloudformation-stack",
   "cloudfront-distribution",
+  "cloudfront-cache-policy",
+  "cloudfront-origin-request-policy",
+  "cloudfront-origin-access-control",
   "cloudtrail-trail",
   "cloudwatch-alarm",
   "cloudwatch-dashboard",

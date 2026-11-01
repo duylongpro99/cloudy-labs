@@ -18,7 +18,7 @@
             "AliasArn": "arn:aws:lambda:ap-southeast-2:000000000000:function:wave1-fn:live",
             "FunctionVersion": "1",
             "Name": "live",
-            "RevisionId": "d9840a32-3564-4f05-b0b2-ff03729b98a4"
+            "RevisionId": "b7286e95-09b1-47e0-ae82-06b65d33b26d"
           }
         ]
       }

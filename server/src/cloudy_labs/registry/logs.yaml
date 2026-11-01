@@ -5,6 +5,9 @@
   service: logs
   label: Log Group
   list: {method: describe_log_groups, items: logGroups}
+  # Streams are many and short-lived (one per Lambda container), so they are props, not nodes.
+  enrich:
+    - {method: describe_log_streams, params: {logGroupName: logGroupName}, const: {limit: 50}, pick: logStreams, merge_as: _Streams}
   id: ["logGroupArn", "arn"]
   name: [logGroupName]
   parent: [{kind: region}]
@@ -15,15 +18,17 @@
     kmsKey: kmsKeyId
     logGroupClass: logGroupClass
     deletionProtection: deletionProtectionEnabled
-  chat_props: [retentionDays, storedBytes, metricFilters, kmsKey, logGroupClass, deletionProtection]
+    logStreams: "sort_by(_Streams || `[]`, &logStreamName)[].{name: logStreamName, lastEvent: lastEventTimestamp}"
+  chat_props: [retentionDays, storedBytes, metricFilters, kmsKey, logGroupClass, deletionProtection, logStreams]
   caveats:
     - {code: floci-rds-log-groups, text: "Floci 2.3.0 makes a /aws/rds/instance/<id>/error log group for every DB instance, log exports enabled or not."}
   builder: true
-  view: {role: block, category: management, icon: Res_Amazon-CloudWatch_Logs_48.svg, source: Resource-Icons_07312026/Res_Management-Governance/Res_Amazon-CloudWatch_Logs_48.svg, height: 0.4, order: 402, actions: [LogGroup, RetentionPolicy]}
+  view: {role: block, category: management, icon: Res_Amazon-CloudWatch_Logs_48.svg, source: Resource-Icons_07312026/Res_Management-Governance/Res_Amazon-CloudWatch_Logs_48.svg, height: 0.4, order: 402, actions: [LogGroup, RetentionPolicy, LogStream, LogEvents]}
   contract:
     create: {op: create-log-group, params: {logGroupName: ct-app-logs}, save: lg}
     then:
       - {op: put-retention-policy, params: {logGroupName: ct-app-logs, retentionInDays: "7"}}
+      - {op: create-log-stream, params: {logGroupName: ct-app-logs, logStreamName: web-1}}
       - {op: put-metric-filter, params: {logGroupName: ct-app-logs, filterName: ct-errors, filterPattern: ERROR, metricTransformations: '[{"metricName": "AppErrors", "metricNamespace": "ct/Logs", "metricValue": "1", "defaultValue": 0}]'}}
   ops:
     - id: create-log-group
@@ -42,6 +47,22 @@
       targets: [log-group]
       target_param: logGroupName
       note: "Delete log events older than retentionInDays: 1, 3, 5, 7, 14, 30, 60, 90, 120, 150, 180, 365 and longer allowed values."
+    - id: create-log-stream
+      api: CreateLogStream
+      gesture: attribute
+      title: "Tạo log stream"
+      fields: [{name: logGroupName, ref: log-group, ref_by: label}, logStreamName]
+      targets: [log-group]
+      target_param: logGroupName
+      note: "Create a stream in a log group for one source of events (an instance, a container, a test run), e.g. web-1. Events are written with put-log-events."
+    - id: put-log-events
+      api: PutLogEvents
+      gesture: attribute
+      title: "Ghi log event"
+      fields: [{name: logGroupName, ref: log-group, ref_by: label}, logStreamName, {name: logEvents, multiline: true}]
+      targets: [log-group]
+      target_param: logGroupName
+      note: "Write events to an existing stream. logEvents JSON: [{\"timestamp\": <now in epoch milliseconds, e.g. $(date +%s000)>, \"message\": \"ERROR payment failed\"}], oldest first; AWS refuses events older than 14 days. A metric filter on the group counts the matching messages."
     - id: put-metric-filter
       api: PutMetricFilter
       gesture: create

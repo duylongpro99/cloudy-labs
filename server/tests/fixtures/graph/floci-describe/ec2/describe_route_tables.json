@@ -10,41 +10,23 @@
                 "AssociationState": {
                   "State": "associated"
                 },
-                "Main": false,
-                "RouteTableAssociationId": "rtbassoc-9f913d5a",
-                "RouteTableId": "rtb-5394e655",
-                "SubnetId": "subnet-2b9c9233"
+                "Main": true,
+                "RouteTableAssociationId": "rtbassoc-f9fc2e4aa5439641c",
+                "RouteTableId": "rtb-8ae5665093623bf05"
               }
             ],
             "OwnerId": "000000000000",
-            "RouteTableId": "rtb-5394e655",
+            "RouteTableId": "rtb-8ae5665093623bf05",
             "Routes": [
               {
-                "DestinationCidrBlock": "10.80.0.0/16",
+                "DestinationCidrBlock": "10.81.0.0/16",
                 "GatewayId": "local",
                 "Origin": "CreateRouteTable",
                 "State": "active"
-              },
-              {
-                "DestinationCidrBlock": "0.0.0.0/0",
-                "GatewayId": "igw-8a9d8e36",
-                "Origin": "CreateRoute",
-                "State": "active"
-              },
-              {
-                "DestinationCidrBlock": "10.81.0.0/16",
-                "Origin": "CreateRoute",
-                "State": "active",
-                "VpcPeeringConnectionId": "pcx-d3e890e91e4299b2d"
               }
             ],
-            "Tags": [
-              {
-                "Key": "Name",
-                "Value": "wave1-public-rt"
-              }
-            ],
-            "VpcId": "vpc-03e9e3f9"
+            "Tags": [],
+            "VpcId": "vpc-0359d433"
           },
           {
             "Associations": [
@@ -82,13 +64,55 @@
                 "AssociationState": {
                   "State": "associated"
                 },
-                "Main": true,
-                "RouteTableAssociationId": "rtbassoc-86f70618fac0fd08c",
-                "RouteTableId": "rtb-6d078619c8d3b6df5"
+                "Main": false,
+                "RouteTableAssociationId": "rtbassoc-481ce40e",
+                "RouteTableId": "rtb-c0c65b43",
+                "SubnetId": "subnet-427c8089"
               }
             ],
             "OwnerId": "000000000000",
-            "RouteTableId": "rtb-6d078619c8d3b6df5",
+            "RouteTableId": "rtb-c0c65b43",
+            "Routes": [
+              {
+                "DestinationCidrBlock": "10.80.0.0/16",
+                "GatewayId": "local",
+                "Origin": "CreateRouteTable",
+                "State": "active"
+              },
+              {
+                "DestinationCidrBlock": "0.0.0.0/0",
+                "GatewayId": "igw-89cb1765",
+                "Origin": "CreateRoute",
+                "State": "active"
+              },
+              {
+                "DestinationCidrBlock": "10.81.0.0/16",
+                "Origin": "CreateRoute",
+                "State": "active",
+                "VpcPeeringConnectionId": "pcx-e39234371b42f79ca"
+              }
+            ],
+            "Tags": [
+              {
+                "Key": "Name",
+                "Value": "wave1-public-rt"
+              }
+            ],
+            "VpcId": "vpc-95741f0b"
+          },
+          {
+            "Associations": [
+              {
+                "AssociationState": {
+                  "State": "associated"
+                },
+                "Main": true,
+                "RouteTableAssociationId": "rtbassoc-8349e1fc5894c7f78",
+                "RouteTableId": "rtb-7117010417434ae14"
+              }
+            ],
+            "OwnerId": "000000000000",
+            "RouteTableId": "rtb-7117010417434ae14",
             "Routes": [
               {
                 "DestinationCidrBlock": "10.80.0.0/16",
@@ -98,31 +122,7 @@
               }
             ],
             "Tags": [],
-            "VpcId": "vpc-03e9e3f9"
-          },
-          {
-            "Associations": [
-              {
-                "AssociationState": {
-                  "State": "associated"
-                },
-                "Main": true,
-                "RouteTableAssociationId": "rtbassoc-cd13191ea540ca564",
-                "RouteTableId": "rtb-944fdcaad287b433a"
-              }
-            ],
-            "OwnerId": "000000000000",
-            "RouteTableId": "rtb-944fdcaad287b433a",
-            "Routes": [
-              {
-                "DestinationCidrBlock": "10.81.0.0/16",
-                "GatewayId": "local",
-                "Origin": "CreateRouteTable",
-                "State": "active"
-              }
-            ],
-            "Tags": [],
-            "VpcId": "vpc-29250840"
+            "VpcId": "vpc-95741f0b"
           }
         ]
       }

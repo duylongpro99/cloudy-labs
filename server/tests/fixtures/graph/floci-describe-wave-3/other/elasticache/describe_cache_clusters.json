@@ -32,13 +32,13 @@
         "CacheClusters": [
           {
             "ARN": "arn:aws:elasticache:ap-southeast-2:000000000000:cluster:w3-dm-memcached",
-            "CacheClusterCreateTime": "2026-10-31 16:25:10.255416+00:00",
+            "CacheClusterCreateTime": "2026-11-01 09:05:39.668095+00:00",
             "CacheClusterId": "w3-dm-memcached",
             "CacheClusterStatus": "available",
             "CacheNodeType": "cache.t3.micro",
             "CacheNodes": [
               {
-                "CacheNodeCreateTime": "2026-10-31 16:25:10.255416+00:00",
+                "CacheNodeCreateTime": "2026-11-01 09:05:39.668095+00:00",
                 "CacheNodeId": "0001",
                 "CacheNodeStatus": "available",
                 "CustomerAvailabilityZone": "ap-southeast-2a",
@@ -61,7 +61,7 @@
             "PreferredAvailabilityZone": "ap-southeast-2a",
             "SecurityGroups": [
               {
-                "SecurityGroupId": "sg-6ab169e1e9cfbb053",
+                "SecurityGroupId": "sg-ca05146b9adfdf3cb",
                 "Status": "active"
               }
             ]

@@ -7,9 +7,9 @@
       "response": {
         "WebACLs": [
           {
-            "ARN": "arn:aws:wafv2:ap-southeast-2:000000000000:regional/webacl/w3-edge-acl/6fdea9e8-028a-4786-9398-70895c9cb7e1",
-            "Id": "6fdea9e8-028a-4786-9398-70895c9cb7e1",
-            "LockToken": "35b7f513-09cb-4ef7-929f-78bd27216f5a",
+            "ARN": "arn:aws:wafv2:ap-southeast-2:000000000000:regional/webacl/w3-edge-acl/5a727a5e-2344-430d-a2ad-ac3d38d9d7d6",
+            "Id": "5a727a5e-2344-430d-a2ad-ac3d38d9d7d6",
+            "LockToken": "43bd058f-6152-43dd-ad01-a01ba3263d98",
             "Name": "w3-edge-acl"
           }
         ]

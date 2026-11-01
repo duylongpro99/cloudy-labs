@@ -17,8 +17,8 @@
       "response": {
         "CertificateSummaryList": [
           {
-            "CertificateArn": "arn:aws:acm:ap-southeast-2:000000000000:certificate/7a4702a0-cfe3-4fff-8947-03af3fb36b4e",
-            "CreatedAt": "2026-10-31 23:25:11.987000+07:00",
+            "CertificateArn": "arn:aws:acm:ap-southeast-2:000000000000:certificate/cdfc61b2-7931-4669-838f-1d178d90c1e2",
+            "CreatedAt": "2026-11-01 16:05:41.384000+07:00",
             "DomainName": "w3-edge.example.com",
             "ExtendedKeyUsages": [
               "TLS_WEB_SERVER_AUTHENTICATION",
@@ -26,14 +26,14 @@
             ],
             "HasAdditionalSubjectAlternativeNames": false,
             "InUse": false,
-            "IssuedAt": "2026-10-31 23:25:11.987000+07:00",
+            "IssuedAt": "2026-11-01 16:05:41.384000+07:00",
             "KeyAlgorithm": "RSA-2048",
             "KeyUsages": [
               "DIGITAL_SIGNATURE",
               "KEY_ENCIPHERMENT"
             ],
-            "NotAfter": "2027-10-31 23:25:11+07:00",
-            "NotBefore": "2026-10-31 23:25:11+07:00",
+            "NotAfter": "2027-11-01 16:05:41+07:00",
+            "NotBefore": "2026-11-01 16:05:41+07:00",
             "RenewalEligibility": "INELIGIBLE",
             "Status": "ISSUED",
             "SubjectAlternativeNameSummaries": [

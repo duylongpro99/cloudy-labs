@@ -1,0 +1,20 @@
+{
+  "calls": [
+    {
+      "params": {},
+      "response": {
+        "items": [
+          {
+            "createdDate": "2026-11-01 16:05:41+07:00",
+            "enabled": true,
+            "id": "4fc0fb52f4",
+            "lastUpdatedDate": "2026-11-01 16:05:41+07:00",
+            "name": "w3-edge-key",
+            "stageKeys": [],
+            "tags": {}
+          }
+        ]
+      }
+    }
+  ]
+}

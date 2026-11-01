@@ -2,7 +2,7 @@
   "calls": [
     {
       "params": {
-        "ListenerArn": "arn:aws:elasticloadbalancing:ap-southeast-2:000000000000:listener/app/w3-edge-alb/69f799da92464b34/d283f3a73f4e40a9"
+        "ListenerArn": "arn:aws:elasticloadbalancing:ap-southeast-2:000000000000:listener/app/w3-edge-alb/7004a8a039ba453d/15c914b075444661"
       },
       "response": {
         "NextMarker": "",
@@ -19,7 +19,7 @@
             "Conditions": [],
             "IsDefault": true,
             "Priority": "default",
-            "RuleArn": "arn:aws:elasticloadbalancing:ap-southeast-2:000000000000:listener-rule/app/w3-edge-alb/69f799da92464b34/d283f3a73f4e40a9/a57b25be32b04333"
+            "RuleArn": "arn:aws:elasticloadbalancing:ap-southeast-2:000000000000:listener-rule/app/w3-edge-alb/7004a8a039ba453d/15c914b075444661/9bf6b9b389a3409f"
           }
         ]
       }

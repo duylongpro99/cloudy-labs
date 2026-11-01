@@ -1,0 +1,11 @@
+{
+  "calls": [
+    {
+      "params": {},
+      "response": {
+        "HasMoreStreams": false,
+        "StreamNames": []
+      }
+    }
+  ]
+}

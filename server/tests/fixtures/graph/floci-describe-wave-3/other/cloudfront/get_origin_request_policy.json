@@ -1,0 +1,29 @@
+{
+  "calls": [
+    {
+      "params": {
+        "Id": "bed7e4c2-4d0a-4e65-911a-0452c5ca96fe"
+      },
+      "response": {
+        "ETag": "b8bc93ac-aff0-4c0f-8fc5-ceb978f4dd2d",
+        "OriginRequestPolicy": {
+          "Id": "bed7e4c2-4d0a-4e65-911a-0452c5ca96fe",
+          "LastModifiedTime": "2026-11-01 09:05:41.436283+00:00",
+          "OriginRequestPolicyConfig": {
+            "Comment": "",
+            "CookiesConfig": {
+              "CookieBehavior": "none"
+            },
+            "HeadersConfig": {
+              "HeaderBehavior": "none"
+            },
+            "Name": "w3-edge-orp",
+            "QueryStringsConfig": {
+              "QueryStringBehavior": "all"
+            }
+          }
+        }
+      }
+    }
+  ]
+}

@@ -14,17 +14,17 @@
                   {
                     "DeviceName": "/dev/xvda",
                     "Ebs": {
-                      "AttachTime": "2026-10-31 14:34:04.252000+00:00",
+                      "AttachTime": "2026-11-01 09:02:05.921000+00:00",
                       "DeleteOnTermination": true,
                       "Status": "attached",
-                      "VolumeId": "vol-4329601d13fe4bc2b"
+                      "VolumeId": "vol-891f9d283684b2cb2"
                     }
                   }
                 ],
                 "CapacityReservationSpecification": {
                   "CapacityReservationPreference": "open"
                 },
-                "ClientToken": "0836fee1-1963-4fd0-a887-a59ad97079dd",
+                "ClientToken": "67e8b2d7-e1f3-4a85-9e22-01c9ef09d433",
                 "CpuOptions": {
                   "CoreCount": 1,
                   "ThreadsPerCore": 1
@@ -39,9 +39,9 @@
                 },
                 "Hypervisor": "xen",
                 "ImageId": "ami-0abcdef1234567890",
-                "InstanceId": "i-0d0e81998ba9ee9ac",
+                "InstanceId": "i-11b9fce935370b694",
                 "InstanceType": "t3.micro",
-                "LaunchTime": "2026-10-31 14:34:04.252000+00:00",
+                "LaunchTime": "2026-11-01 09:02:05.921000+00:00",
                 "MaintenanceOptions": {
                   "AutoRecovery": "default"
                 },
@@ -59,19 +59,19 @@
                 "NetworkInterfaces": [
                   {
                     "Attachment": {
-                      "AttachTime": "2026-10-31 14:34:04.252000+00:00",
-                      "AttachmentId": "eni-attach-ddee61f237f7555de",
+                      "AttachTime": "2026-11-01 09:02:05.921000+00:00",
+                      "AttachmentId": "eni-attach-2e453f0ab829aaf3c",
                       "DeleteOnTermination": true,
                       "DeviceIndex": 0,
                       "Status": "attached"
                     },
                     "Groups": [
                       {
-                        "GroupId": "sg-0ce61b20372180cec",
+                        "GroupId": "sg-294901f3527c9a5e1",
                         "GroupName": "rx-sg-web"
                       }
                     ],
-                    "NetworkInterfaceId": "eni-abd8d2de65aff96e8",
+                    "NetworkInterfaceId": "eni-ff1a7487ddca2f55e",
                     "OwnerId": "000000000000",
                     "PrivateDnsName": "ip-10-60-1-12.ap-southeast-2.compute.internal",
                     "PrivateIpAddress": "10.60.1.12",
@@ -84,8 +84,8 @@
                     ],
                     "SourceDestCheck": true,
                     "Status": "in-use",
-                    "SubnetId": "subnet-aafaffcb",
-                    "VpcId": "vpc-ae467f29"
+                    "SubnetId": "subnet-2f1af3b5",
+                    "VpcId": "vpc-6359315f"
                   }
                 ],
                 "Placement": {
@@ -106,7 +106,7 @@
                 "RootDeviceType": "ebs",
                 "SecurityGroups": [
                   {
-                    "GroupId": "sg-0ce61b20372180cec",
+                    "GroupId": "sg-294901f3527c9a5e1",
                     "GroupName": "rx-sg-web"
                   }
                 ],
@@ -115,7 +115,7 @@
                   "Code": 16,
                   "Name": "running"
                 },
-                "SubnetId": "subnet-aafaffcb",
+                "SubnetId": "subnet-2f1af3b5",
                 "Tags": [
                   {
                     "Key": "Name",
@@ -123,11 +123,11 @@
                   }
                 ],
                 "VirtualizationType": "hvm",
-                "VpcId": "vpc-ae467f29"
+                "VpcId": "vpc-6359315f"
               }
             ],
             "OwnerId": "000000000000",
-            "ReservationId": "r-bc220f14b51d432d5"
+            "ReservationId": "r-af0227f93d421c08f"
           }
         ]
       }

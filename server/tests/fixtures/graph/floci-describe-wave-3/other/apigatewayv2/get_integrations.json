@@ -2,12 +2,12 @@
   "calls": [
     {
       "params": {
-        "ApiId": "53e9b9a7ac"
+        "ApiId": "6d77101f8c"
       },
       "response": {
         "Items": [
           {
-            "IntegrationId": "f6719010",
+            "IntegrationId": "7a0d1402",
             "IntegrationMethod": "POST",
             "IntegrationType": "AWS_PROXY",
             "IntegrationUri": "arn:aws:lambda:ap-southeast-2:000000000000:function:w3-edge-fn",

@@ -10,20 +10,20 @@
             "DBInstanceIdentifier": "wave1-pg",
             "DBSnapshotArn": "arn:aws:rds:ap-southeast-2:000000000000:snapshot:wave1-pg-snap",
             "DBSnapshotIdentifier": "wave1-pg-snap",
-            "DbiResourceId": "db-BB561C051021409B8046BCAD",
+            "DbiResourceId": "db-8F95F7A473D24CE2BA5ACBE0",
             "Encrypted": false,
             "Engine": "postgres",
             "EngineVersion": "16.3",
             "IAMDatabaseAuthenticationEnabled": false,
-            "InstanceCreateTime": "2026-10-31 14:41:13.286935+00:00",
+            "InstanceCreateTime": "2026-11-01 09:04:58.321486+00:00",
             "MasterUsername": "wave1",
             "OptionGroupName": "wave1-og",
             "Port": 7001,
-            "SnapshotCreateTime": "2026-10-31 14:41:16.229054+00:00",
+            "SnapshotCreateTime": "2026-11-01 09:05:00.473537+00:00",
             "SnapshotType": "manual",
             "Status": "available",
             "TagList": [],
-            "VpcId": "vpc-03e9e3f9"
+            "VpcId": "vpc-95741f0b"
           }
         ]
       }

@@ -1,0 +1,62 @@
+{
+  "calls": [
+    {
+      "params": {
+        "limit": 50,
+        "logGroupName": "/aws/elasticache/cluster/w3-dm-memcached/engine-log"
+      },
+      "response": {
+        "logStreams": [
+          {
+            "arn": "arn:aws:logs:ap-southeast-2:000000000000:log-group:/aws/elasticache/cluster/w3-dm-memcached/engine-log:log-stream:2026/11/01/748943d3",
+            "creationTime": 1793523939667,
+            "lastIngestionTime": 0,
+            "logStreamName": "2026/11/01/748943d3",
+            "storedBytes": 0,
+            "uploadSequenceToken": "09aaa58f-37ae-474f-bf0f-d4089f6c7558"
+          }
+        ]
+      }
+    },
+    {
+      "params": {
+        "limit": 50,
+        "logGroupName": "/aws/elasticache/cluster/w3-dm-redis/engine-log"
+      },
+      "response": {
+        "logStreams": [
+          {
+            "arn": "arn:aws:logs:ap-southeast-2:000000000000:log-group:/aws/elasticache/cluster/w3-dm-redis/engine-log:log-stream:2026/11/01/33b4a042",
+            "creationTime": 1793523939396,
+            "firstEventTimestamp": 1793523939415,
+            "lastEventTimestamp": 1793523939498,
+            "lastIngestionTime": 1793523939498,
+            "logStreamName": "2026/11/01/33b4a042",
+            "storedBytes": 1175,
+            "uploadSequenceToken": "64e8502d-ecb6-4a8a-a1e5-9bcc3dd1aff2"
+          }
+        ]
+      }
+    },
+    {
+      "params": {
+        "limit": 50,
+        "logGroupName": "/aws/rds/instance/w3-dm-db/error"
+      },
+      "response": {
+        "logStreams": [
+          {
+            "arn": "arn:aws:logs:ap-southeast-2:000000000000:log-group:/aws/rds/instance/w3-dm-db/error:log-stream:2026/11/01/e5cf2390",
+            "creationTime": 1793523938826,
+            "firstEventTimestamp": 1793523938831,
+            "lastEventTimestamp": 1793523938833,
+            "lastIngestionTime": 1793523938833,
+            "logStreamName": "2026/11/01/e5cf2390",
+            "storedBytes": 4418,
+            "uploadSequenceToken": "0ae74195-1f63-4ff0-a78d-33ed77fa826d"
+          }
+        ]
+      }
+    }
+  ]
+}

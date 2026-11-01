@@ -5,8 +5,8 @@
       "response": {
         "Roots": [
           {
-            "Arn": "arn:aws:organizations::000000000000:root/o-1pln15fyv4/r-gt0v",
-            "Id": "r-gt0v",
+            "Arn": "arn:aws:organizations::000000000000:root/o-p2d5zb71e3/r-y8ib",
+            "Id": "r-y8ib",
             "Name": "Root",
             "PolicyTypes": []
           }

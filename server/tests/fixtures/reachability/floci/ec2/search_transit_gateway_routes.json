@@ -11,7 +11,7 @@
             ]
           }
         ],
-        "TransitGatewayRouteTableId": "tgw-rtb-86dc7719c9a3ca559"
+        "TransitGatewayRouteTableId": "tgw-rtb-a69a2921d7b5846b5"
       },
       "response": {
         "AdditionalRoutesAvailable": false,
@@ -21,9 +21,9 @@
             "State": "active",
             "TransitGatewayAttachments": [
               {
-                "ResourceId": "vpc-c34cd66d",
+                "ResourceId": "vpc-0199f38c",
                 "ResourceType": "vpc",
-                "TransitGatewayAttachmentId": "tgw-attach-5cfaf68c6d1f51594"
+                "TransitGatewayAttachmentId": "tgw-attach-4ece5085886b16f0c"
               }
             ],
             "Type": "static"
@@ -42,19 +42,31 @@
             ]
           }
         ],
-        "TransitGatewayRouteTableId": "tgw-rtb-8b7af86b3565e0be4"
+        "TransitGatewayRouteTableId": "tgw-rtb-a14f6cd8331ebe83e"
       },
       "response": {
         "AdditionalRoutesAvailable": false,
         "Routes": [
           {
+            "DestinationCidrBlock": "10.64.0.0/16",
+            "State": "active",
+            "TransitGatewayAttachments": [
+              {
+                "ResourceId": "vpc-95a4a5fc",
+                "ResourceType": "vpc",
+                "TransitGatewayAttachmentId": "tgw-attach-7958403249f4a2f66"
+              }
+            ],
+            "Type": "static"
+          },
+          {
             "DestinationCidrBlock": "10.99.0.0/16",
             "State": "active",
             "TransitGatewayAttachments": [
               {
-                "ResourceId": "vpc-c34cd66d",
+                "ResourceId": "vpc-0199f38c",
                 "ResourceType": "vpc",
-                "TransitGatewayAttachmentId": "tgw-attach-5cfaf68c6d1f51594"
+                "TransitGatewayAttachmentId": "tgw-attach-4ece5085886b16f0c"
               }
             ],
             "Type": "static"
@@ -62,18 +74,6 @@
           {
             "DestinationCidrBlock": "10.65.0.0/16",
             "State": "blackhole",
-            "Type": "static"
-          },
-          {
-            "DestinationCidrBlock": "10.64.0.0/16",
-            "State": "active",
-            "TransitGatewayAttachments": [
-              {
-                "ResourceId": "vpc-baf044cc",
-                "ResourceType": "vpc",
-                "TransitGatewayAttachmentId": "tgw-attach-066615616db99ef61"
-              }
-            ],
             "Type": "static"
           }
         ]

@@ -2,11 +2,11 @@
   "calls": [
     {
       "params": {
-        "MountTargetId": "fsmt-01d42c19e91d48119"
+        "MountTargetId": "fsmt-8ce5c2be424643d89"
       },
       "response": {
         "SecurityGroups": [
-          "sg-bb3624e3b61656762"
+          "sg-413e26e52f5ad84d7"
         ]
       }
     }

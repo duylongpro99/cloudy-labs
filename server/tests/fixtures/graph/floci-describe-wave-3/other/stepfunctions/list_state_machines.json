@@ -5,7 +5,7 @@
       "response": {
         "stateMachines": [
           {
-            "creationDate": "2026-10-31 23:25:12.671000+07:00",
+            "creationDate": "2026-11-01 16:05:41.940000+07:00",
             "name": "w3-order-flow",
             "stateMachineArn": "arn:aws:states:ap-southeast-2:000000000000:stateMachine:w3-order-flow",
             "type": "STANDARD"

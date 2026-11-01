@@ -1,0 +1,25 @@
+{
+  "calls": [
+    {
+      "params": {},
+      "response": {
+        "OriginAccessControlList": {
+          "IsTruncated": false,
+          "Items": [
+            {
+              "Description": "",
+              "Id": "e06c431e-daa7-4c92-baaf-39674ad835e9",
+              "Name": "w3-edge-oac",
+              "OriginAccessControlOriginType": "s3",
+              "SigningBehavior": "always",
+              "SigningProtocol": "sigv4"
+            }
+          ],
+          "Marker": "",
+          "MaxItems": 100,
+          "Quantity": 1
+        }
+      }
+    }
+  ]
+}

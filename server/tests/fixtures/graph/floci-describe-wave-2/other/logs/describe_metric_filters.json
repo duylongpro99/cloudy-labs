@@ -7,7 +7,7 @@
       "response": {
         "metricFilters": [
           {
-            "creationTime": 1793459769286,
+            "creationTime": 1793523921051,
             "filterName": "w2-errors",
             "filterPattern": "ERROR",
             "logGroupName": "w2-app-logs",

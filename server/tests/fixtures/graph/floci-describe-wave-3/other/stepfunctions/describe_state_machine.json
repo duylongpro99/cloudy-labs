@@ -5,7 +5,7 @@
         "stateMachineArn": "arn:aws:states:ap-southeast-2:000000000000:stateMachine:w3-order-flow"
       },
       "response": {
-        "creationDate": "2026-10-31 23:25:12.671000+07:00",
+        "creationDate": "2026-11-01 16:05:41.940000+07:00",
         "definition": "{\"StartAt\": \"Wait\", \"States\": {\"Wait\": {\"Type\": \"Wait\", \"Seconds\": 1, \"Next\": \"Process\"}, \"Process\": {\"Type\": \"Task\", \"Resource\": \"arn:aws:lambda:ap-southeast-2:000000000000:function:w3-msg-consumer\", \"End\": true}}}",
         "encryptionConfiguration": {
           "type": "AWS_OWNED_KEY"
@@ -16,7 +16,7 @@
           "level": "OFF"
         },
         "name": "w3-order-flow",
-        "revisionId": "f6c1127d-2410-46df-9d42-6f750de4bf52",
+        "revisionId": "0136b53e-07c5-47d8-9d1f-3e2a73e0672a",
         "roleArn": "arn:aws:iam::000000000000:role/w3-msg-role",
         "stateMachineArn": "arn:aws:states:ap-southeast-2:000000000000:stateMachine:w3-order-flow",
         "status": "ACTIVE",

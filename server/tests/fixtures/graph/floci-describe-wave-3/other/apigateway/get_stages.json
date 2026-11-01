@@ -2,16 +2,16 @@
   "calls": [
     {
       "params": {
-        "restApiId": "d997462cf0"
+        "restApiId": "1ac0af70bb"
       },
       "response": {
         "item": [
           {
             "cacheClusterEnabled": false,
             "cacheClusterStatus": "NOT_AVAILABLE",
-            "createdDate": "2026-10-31 23:25:12+07:00",
-            "deploymentId": "f8eed074ae",
-            "lastUpdatedDate": "2026-10-31 23:25:12+07:00",
+            "createdDate": "2026-11-01 16:05:41+07:00",
+            "deploymentId": "62f19b554a",
+            "lastUpdatedDate": "2026-11-01 16:05:41+07:00",
             "stageName": "prod",
             "tracingEnabled": false
           }

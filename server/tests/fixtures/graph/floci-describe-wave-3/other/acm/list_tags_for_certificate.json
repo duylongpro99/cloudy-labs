@@ -2,7 +2,7 @@
   "calls": [
     {
       "params": {
-        "CertificateArn": "arn:aws:acm:ap-southeast-2:000000000000:certificate/7a4702a0-cfe3-4fff-8947-03af3fb36b4e"
+        "CertificateArn": "arn:aws:acm:ap-southeast-2:000000000000:certificate/cdfc61b2-7931-4669-838f-1d178d90c1e2"
       },
       "response": {
         "Tags": []

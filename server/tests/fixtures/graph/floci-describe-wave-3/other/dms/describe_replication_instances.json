@@ -9,12 +9,12 @@
             "AutoMinorVersionUpgrade": true,
             "AvailabilityZone": "ap-southeast-2a",
             "EngineVersion": "3.5.4",
-            "InstanceCreateTime": "2026-10-31 23:25:09.907000+07:00",
+            "InstanceCreateTime": "2026-11-01 16:05:39.182000+07:00",
             "MultiAZ": false,
             "NetworkType": "IPV4",
             "PreferredMaintenanceWindow": "sun:06:00-sun:06:30",
             "PubliclyAccessible": true,
-            "ReplicationInstanceArn": "arn:aws:dms:ap-southeast-2:000000000000:rep:JSOZ6ALQRNR7ME3KTCOCFMLKL5",
+            "ReplicationInstanceArn": "arn:aws:dms:ap-southeast-2:000000000000:rep:4Q3VZE4ZBCXQTPWTPHI4IENEWW",
             "ReplicationInstanceClass": "dms.t3.micro",
             "ReplicationInstanceIdentifier": "w3-dm-ri",
             "ReplicationInstancePrivateIpAddresses": [],
@@ -30,26 +30,26 @@
                   "SubnetAvailabilityZone": {
                     "Name": "ap-southeast-2a"
                   },
-                  "SubnetIdentifier": "subnet-85834620",
+                  "SubnetIdentifier": "subnet-959a86c4",
                   "SubnetStatus": "Active"
                 },
                 {
                   "SubnetAvailabilityZone": {
                     "Name": "ap-southeast-2b"
                   },
-                  "SubnetIdentifier": "subnet-1f1f0b5e",
+                  "SubnetIdentifier": "subnet-72a75d46",
                   "SubnetStatus": "Active"
                 }
               ],
               "SupportedNetworkTypes": [
                 "IPV4"
               ],
-              "VpcId": "vpc-51ff849d"
+              "VpcId": "vpc-733acc97"
             },
             "VpcSecurityGroups": [
               {
                 "Status": "active",
-                "VpcSecurityGroupId": "sg-6ab169e1e9cfbb053"
+                "VpcSecurityGroupId": "sg-ca05146b9adfdf3cb"
               }
             ]
           }

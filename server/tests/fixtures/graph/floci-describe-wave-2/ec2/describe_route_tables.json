@@ -41,12 +41,12 @@
                   "State": "associated"
                 },
                 "Main": true,
-                "RouteTableAssociationId": "rtbassoc-73e1b7304e5a38a81",
-                "RouteTableId": "rtb-cc496db505859a612"
+                "RouteTableAssociationId": "rtbassoc-e14c394faff7b024d",
+                "RouteTableId": "rtb-0337e9b3419015abb"
               }
             ],
             "OwnerId": "000000000000",
-            "RouteTableId": "rtb-cc496db505859a612",
+            "RouteTableId": "rtb-0337e9b3419015abb",
             "Routes": [
               {
                 "DestinationCidrBlock": "10.91.0.0/16",
@@ -56,7 +56,7 @@
               }
             ],
             "Tags": [],
-            "VpcId": "vpc-1db2f371"
+            "VpcId": "vpc-e033a7a4"
           }
         ]
       }

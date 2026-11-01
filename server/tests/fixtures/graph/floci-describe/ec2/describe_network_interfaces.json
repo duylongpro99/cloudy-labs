@@ -6,23 +6,23 @@
         "NetworkInterfaces": [
           {
             "Attachment": {
-              "AttachTime": "2026-10-31 14:41:10.667000+00:00",
-              "AttachmentId": "eni-attach-82f5386a23e4a217e",
+              "AttachTime": "2026-11-01 09:04:55.648000+00:00",
+              "AttachmentId": "eni-attach-52dcba8c38d63cbbe",
               "DeleteOnTermination": true,
               "DeviceIndex": 0,
-              "InstanceId": "i-ebd18d4a95b4c15f4",
+              "InstanceId": "i-6ce5a0f2ded19691c",
               "InstanceOwnerId": "000000000000",
               "Status": "attached"
             },
             "AvailabilityZone": "ap-southeast-2a",
             "Groups": [
               {
-                "GroupId": "sg-16d87565cacd7efa0",
+                "GroupId": "sg-798a86874fc416b96",
                 "GroupName": "wave1-web"
               }
             ],
             "InterfaceType": "interface",
-            "NetworkInterfaceId": "eni-b1e00e62a7140d9b8",
+            "NetworkInterfaceId": "eni-d2421f079a0274d0c",
             "OwnerId": "000000000000",
             "PrivateDnsName": "ip-10-80-1-10.ap-southeast-2.compute.internal",
             "PrivateIpAddress": "10.80.1.10",
@@ -36,22 +36,22 @@
             "RequesterManaged": false,
             "SourceDestCheck": true,
             "Status": "in-use",
-            "SubnetId": "subnet-2b9c9233",
+            "SubnetId": "subnet-427c8089",
             "TagSet": [],
-            "VpcId": "vpc-03e9e3f9"
+            "VpcId": "vpc-95741f0b"
           },
           {
             "AvailabilityZone": "ap-southeast-2b",
             "Description": "wave1 eni",
             "Groups": [
               {
-                "GroupId": "sg-5271729b7a5ffc3e2",
+                "GroupId": "sg-29c1453846337377c",
                 "GroupName": "wave1-app"
               }
             ],
             "InterfaceType": "interface",
-            "MacAddress": "02:b8:83:13:b2:04",
-            "NetworkInterfaceId": "eni-afbe03abb99391253",
+            "MacAddress": "02:4d:65:0c:e5:39",
+            "NetworkInterfaceId": "eni-85b433deff5092142",
             "OwnerId": "000000000000",
             "PrivateDnsName": "ip-10-80-2-10.ap-southeast-2.compute.internal",
             "PrivateIpAddress": "10.80.2.10",
@@ -65,34 +65,34 @@
             "RequesterManaged": false,
             "SourceDestCheck": true,
             "Status": "available",
-            "SubnetId": "subnet-4f1dede6",
+            "SubnetId": "subnet-b5c0089c",
             "TagSet": [
               {
                 "Key": "Name",
                 "Value": "wave1-eni"
               }
             ],
-            "VpcId": "vpc-03e9e3f9"
+            "VpcId": "vpc-95741f0b"
           },
           {
             "AvailabilityZone": "ap-southeast-2b",
-            "Description": "VPC Endpoint Interface vpce-db941ac67c6e58118",
+            "Description": "VPC Endpoint Interface vpce-d2a6930293d4934ea",
             "Groups": [
               {
-                "GroupId": "sg-5271729b7a5ffc3e2",
+                "GroupId": "sg-29c1453846337377c",
                 "GroupName": "wave1-app"
               }
             ],
             "InterfaceType": "vpc_endpoint",
-            "NetworkInterfaceId": "eni-ec98d81aae0d34869",
+            "NetworkInterfaceId": "eni-f9063d7f57373fcda",
             "OwnerId": "000000000000",
-            "PrivateIpAddress": "10.80.2.239",
+            "PrivateIpAddress": "10.80.2.242",
             "RequesterManaged": true,
             "SourceDestCheck": true,
             "Status": "in-use",
-            "SubnetId": "subnet-4f1dede6",
+            "SubnetId": "subnet-b5c0089c",
             "TagSet": [],
-            "VpcId": "vpc-03e9e3f9"
+            "VpcId": "vpc-95741f0b"
           }
         ]
       }

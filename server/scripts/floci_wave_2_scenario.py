@@ -10,6 +10,7 @@ from __future__ import annotations
 def build_monitoring_events(c):
     """CloudWatch, Logs, EventBridge, Scheduler and Backup: one of every kind, linked to each other."""
     import json
+    import time
 
     region = c("sts").meta.region_name
     tags = [{"Key": "Name", "Value": "w2-monitoring"}]
@@ -24,6 +25,9 @@ def build_monitoring_events(c):
     logs.put_metric_filter(logGroupName="w2-app-logs", filterName="w2-errors", filterPattern="ERROR",
                            metricTransformations=[{"metricName": "AppErrors", "metricNamespace": "w2/Logs",
                                                    "metricValue": "1", "defaultValue": 0}])
+    logs.create_log_stream(logGroupName="w2-app-logs", logStreamName="web-1")
+    logs.put_log_events(logGroupName="w2-app-logs", logStreamName="web-1",
+                        logEvents=[{"timestamp": int(time.time() * 1000), "message": "ERROR payment failed"}])
     logs.create_log_group(logGroupName="w2-rule-target", tags={"Name": "w2-rule-target"})
     lg_target = next(g["arn"].removesuffix(":*") for g in logs.describe_log_groups(logGroupNamePrefix="w2-rule-target")["logGroups"])
 

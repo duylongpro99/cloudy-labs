@@ -2,13 +2,13 @@
   "calls": [
     {
       "params": {
-        "AcceleratorArn": "arn:aws:globalaccelerator::000000000000:accelerator/4446017a-ee15-432b-aadc-908b93397ab3"
+        "AcceleratorArn": "arn:aws:globalaccelerator::000000000000:accelerator/9479869e-b9ba-4c95-92b5-59818f27a754"
       },
       "response": {
         "Listeners": [
           {
             "ClientAffinity": "NONE",
-            "ListenerArn": "arn:aws:globalaccelerator::000000000000:accelerator/4446017a-ee15-432b-aadc-908b93397ab3/listener/dq4uvwvb",
+            "ListenerArn": "arn:aws:globalaccelerator::000000000000:accelerator/9479869e-b9ba-4c95-92b5-59818f27a754/listener/yklsgwjs",
             "PortRanges": [
               {
                 "FromPort": 80,

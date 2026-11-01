@@ -2,11 +2,11 @@
   "calls": [
     {
       "params": {
-        "TaskArn": "arn:aws:datasync:ap-southeast-2:000000000000:task/task-57ed4ed9abc9a81ef"
+        "TaskArn": "arn:aws:datasync:ap-southeast-2:000000000000:task/task-a773ebaf1e0064fa9"
       },
       "response": {
-        "CreationTime": "2026-10-31 23:25:09.941000+07:00",
-        "DestinationLocationArn": "arn:aws:datasync:ap-southeast-2:000000000000:location/loc-a9b69b7c7a2f17dab",
+        "CreationTime": "2026-11-01 16:05:39.200000+07:00",
+        "DestinationLocationArn": "arn:aws:datasync:ap-southeast-2:000000000000:location/loc-163a397236375cdf3",
         "DestinationNetworkInterfaceArns": [],
         "Excludes": [],
         "Includes": [],
@@ -31,10 +31,10 @@
         "Schedule": {
           "ScheduleExpression": "rate(1 hour)"
         },
-        "SourceLocationArn": "arn:aws:datasync:ap-southeast-2:000000000000:location/loc-8ed178c806cd0da13",
+        "SourceLocationArn": "arn:aws:datasync:ap-southeast-2:000000000000:location/loc-89ba9f401a5184386",
         "SourceNetworkInterfaceArns": [],
         "Status": "AVAILABLE",
-        "TaskArn": "arn:aws:datasync:ap-southeast-2:000000000000:task/task-57ed4ed9abc9a81ef",
+        "TaskArn": "arn:aws:datasync:ap-southeast-2:000000000000:task/task-a773ebaf1e0064fa9",
         "TaskMode": "BASIC"
       }
     }

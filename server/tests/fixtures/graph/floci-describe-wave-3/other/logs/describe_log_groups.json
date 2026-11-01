@@ -6,7 +6,7 @@
         "logGroups": [
           {
             "arn": "arn:aws:logs:ap-southeast-2:000000000000:log-group:/aws/elasticache/cluster/w3-dm-memcached/engine-log:*",
-            "creationTime": 1793463910254,
+            "creationTime": 1793523939667,
             "deletionProtectionEnabled": false,
             "logGroupArn": "arn:aws:logs:ap-southeast-2:000000000000:log-group:/aws/elasticache/cluster/w3-dm-memcached/engine-log",
             "logGroupName": "/aws/elasticache/cluster/w3-dm-memcached/engine-log",
@@ -15,7 +15,7 @@
           },
           {
             "arn": "arn:aws:logs:ap-southeast-2:000000000000:log-group:/aws/elasticache/cluster/w3-dm-redis/engine-log:*",
-            "creationTime": 1793463910100,
+            "creationTime": 1793523939396,
             "deletionProtectionEnabled": false,
             "logGroupArn": "arn:aws:logs:ap-southeast-2:000000000000:log-group:/aws/elasticache/cluster/w3-dm-redis/engine-log",
             "logGroupName": "/aws/elasticache/cluster/w3-dm-redis/engine-log",
@@ -24,7 +24,7 @@
           },
           {
             "arn": "arn:aws:logs:ap-southeast-2:000000000000:log-group:/aws/rds/instance/w3-dm-db/error:*",
-            "creationTime": 1793463909302,
+            "creationTime": 1793523938825,
             "deletionProtectionEnabled": false,
             "logGroupArn": "arn:aws:logs:ap-southeast-2:000000000000:log-group:/aws/rds/instance/w3-dm-db/error",
             "logGroupName": "/aws/rds/instance/w3-dm-db/error",

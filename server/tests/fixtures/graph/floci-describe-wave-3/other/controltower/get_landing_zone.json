@@ -2,11 +2,11 @@
   "calls": [
     {
       "params": {
-        "landingZoneIdentifier": "arn:aws:controltower:ap-southeast-2:000000000000:landingzone/196fad8790da"
+        "landingZoneIdentifier": "arn:aws:controltower:ap-southeast-2:000000000000:landingzone/3dba975b3b45"
       },
       "response": {
         "landingZone": {
-          "arn": "arn:aws:controltower:ap-southeast-2:000000000000:landingzone/196fad8790da",
+          "arn": "arn:aws:controltower:ap-southeast-2:000000000000:landingzone/3dba975b3b45",
           "driftStatus": {
             "status": "IN_SYNC"
           },

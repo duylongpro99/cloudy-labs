@@ -118,9 +118,13 @@ def build() -> None:
         if ec2.describe_transit_gateways(TransitGatewayIds=[tgw])["TransitGateways"][0]["State"] == "available":
             break
         time.sleep(1)
-    ec2.create_transit_gateway_vpc_attachment(TransitGatewayId=tgw, VpcId=vpc_b, SubnetIds=[b1],
-                                              TagSpecifications=_tag("wave1-tgw-b", "transit-gateway-attachment"))
-    ec2.create_transit_gateway_route_table(TransitGatewayId=tgw, TagSpecifications=_tag("wave1-tgw-rt", "transit-gateway-route-table"))
+    att_b = ec2.create_transit_gateway_vpc_attachment(TransitGatewayId=tgw, VpcId=vpc_b, SubnetIds=[b1],
+                                                      TagSpecifications=_tag("wave1-tgw-b", "transit-gateway-attachment"))["TransitGatewayVpcAttachment"]["TransitGatewayAttachmentId"]
+    tgw_rt = ec2.create_transit_gateway_route_table(TransitGatewayId=tgw, TagSpecifications=_tag("wave1-tgw-rt", "transit-gateway-route-table"))["TransitGatewayRouteTable"]["TransitGatewayRouteTableId"]
+    # The extra table learns VPC B by propagation and holds a static route and a blackhole.
+    ec2.enable_transit_gateway_route_table_propagation(TransitGatewayRouteTableId=tgw_rt, TransitGatewayAttachmentId=att_b)
+    ec2.create_transit_gateway_route(TransitGatewayRouteTableId=tgw_rt, DestinationCidrBlock="10.90.0.0/16", TransitGatewayAttachmentId=att_b)
+    ec2.create_transit_gateway_route(TransitGatewayRouteTableId=tgw_rt, DestinationCidrBlock="10.91.0.0/16", Blackhole=True)
 
     ec2.create_network_interface(SubnetId=a2, Groups=[app], Description="wave1 eni",
                                  TagSpecifications=_tag("wave1-eni", "network-interface"))
@@ -140,6 +144,9 @@ def build() -> None:
     trust_lambda = json.dumps({"Version": "2012-10-17", "Statement": [{"Effect": "Allow", "Principal": {"Service": "lambda.amazonaws.com"}, "Action": "sts:AssumeRole"}]})
     role_arn = iam.create_role(RoleName="wave1-lambda-role", AssumeRolePolicyDocument=trust_lambda)["Role"]["Arn"]
     user_arn = iam.create_user(UserName="wave1-dev")["User"]["Arn"]
+    # A key the user stopped using: the graph shows its id and status, never its secret.
+    old_key = iam.create_access_key(UserName="wave1-dev")["AccessKey"]["AccessKeyId"]
+    iam.update_access_key(UserName="wave1-dev", AccessKeyId=old_key, Status="Inactive")
     trust_user = json.dumps({"Version": "2012-10-17", "Statement": [{"Effect": "Allow", "Principal": {"AWS": user_arn}, "Action": "sts:AssumeRole"}]})
     iam.create_role(RoleName="wave1-ops", AssumeRolePolicyDocument=trust_user)
     iam.create_group(GroupName="wave1-devs")

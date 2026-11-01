@@ -51,7 +51,7 @@
               ],
               "VpcId": "vpc-default-ap-southeast-2"
             },
-            "DbiResourceId": "db-B1F67A021EFC41C7B1D50AD8",
+            "DbiResourceId": "db-5CE0BCF09721435DB12F9628",
             "DeletionProtection": false,
             "Endpoint": {
               "Address": "172.27.0.3",
@@ -61,10 +61,10 @@
             "EngineLifecycleSupport": "open-source-rds-extended-support",
             "EngineVersion": "16.3",
             "IAMDatabaseAuthenticationEnabled": false,
-            "LatestRestorableTime": "2026-10-31 16:25:42.649999+00:00",
+            "LatestRestorableTime": "2026-11-01 09:05:45.244119+00:00",
             "MasterUserSecret": {
-              "KmsKeyId": "arn:aws:kms:ap-southeast-2:000000000000:key/a94d62cd-3158-427b-8123-cbcc967ecfc9",
-              "SecretArn": "arn:aws:secretsmanager:ap-southeast-2:000000000000:secret:rds!db-B1F67A021EFC41C7B1D50AD8-YJOLJK",
+              "KmsKeyId": "arn:aws:kms:ap-southeast-2:000000000000:key/1c6b2dd4-a61f-4f5a-baa9-8251d9362fc9",
+              "SecretArn": "arn:aws:secretsmanager:ap-southeast-2:000000000000:secret:rds!db-5CE0BCF09721435DB12F9628-ZIS7VP",
               "SecretStatus": "active"
             },
             "MasterUsername": "w3admin",

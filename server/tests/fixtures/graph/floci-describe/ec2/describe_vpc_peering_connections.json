@@ -12,7 +12,7 @@
                 "AllowDnsResolutionFromRemoteVpc": false
               },
               "Region": "ap-southeast-2",
-              "VpcId": "vpc-29250840"
+              "VpcId": "vpc-0359d433"
             },
             "RequesterVpcInfo": {
               "CidrBlock": "10.80.0.0/16",
@@ -21,7 +21,7 @@
                 "AllowDnsResolutionFromRemoteVpc": false
               },
               "Region": "ap-southeast-2",
-              "VpcId": "vpc-03e9e3f9"
+              "VpcId": "vpc-95741f0b"
             },
             "Status": {
               "Code": "active",
@@ -33,7 +33,7 @@
                 "Value": "wave1-peering"
               }
             ],
-            "VpcPeeringConnectionId": "pcx-d3e890e91e4299b2d"
+            "VpcPeeringConnectionId": "pcx-e39234371b42f79ca"
           }
         ]
       }

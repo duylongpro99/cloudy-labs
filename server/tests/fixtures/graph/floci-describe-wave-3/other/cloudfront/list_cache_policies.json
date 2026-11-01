@@ -1,0 +1,43 @@
+{
+  "calls": [
+    {
+      "params": {
+        "Type": "custom"
+      },
+      "response": {
+        "CachePolicyList": {
+          "Items": [
+            {
+              "CachePolicy": {
+                "CachePolicyConfig": {
+                  "Comment": "",
+                  "DefaultTTL": 300,
+                  "MaxTTL": 3600,
+                  "MinTTL": 1,
+                  "Name": "w3-edge-cache",
+                  "ParametersInCacheKeyAndForwardedToOrigin": {
+                    "CookiesConfig": {
+                      "CookieBehavior": "none"
+                    },
+                    "EnableAcceptEncodingGzip": true,
+                    "HeadersConfig": {
+                      "HeaderBehavior": "none"
+                    },
+                    "QueryStringsConfig": {
+                      "QueryStringBehavior": "none"
+                    }
+                  }
+                },
+                "Id": "0ec3cb72-f91a-4698-9892-9281f83361cb",
+                "LastModifiedTime": "2026-11-01 09:05:41.433983+00:00"
+              },
+              "Type": "custom"
+            }
+          ],
+          "MaxItems": 100,
+          "Quantity": 1
+        }
+      }
+    }
+  ]
+}

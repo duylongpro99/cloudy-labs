@@ -1,0 +1,33 @@
+{
+  "calls": [
+    {
+      "params": {
+        "limit": 50,
+        "logGroupName": "w2-app-logs"
+      },
+      "response": {
+        "logStreams": [
+          {
+            "arn": "arn:aws:logs:ap-southeast-2:000000000000:log-group:w2-app-logs:log-stream:web-1",
+            "creationTime": 1793523921053,
+            "firstEventTimestamp": 1793523921054,
+            "lastEventTimestamp": 1793523921054,
+            "lastIngestionTime": 1793523921055,
+            "logStreamName": "web-1",
+            "storedBytes": 46,
+            "uploadSequenceToken": "6bb27bb8-ad94-408d-9fb2-c1f4aa231b3f"
+          }
+        ]
+      }
+    },
+    {
+      "params": {
+        "limit": 50,
+        "logGroupName": "w2-rule-target"
+      },
+      "response": {
+        "logStreams": []
+      }
+    }
+  ]
+}

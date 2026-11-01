@@ -15,7 +15,7 @@
                 "SubnetAvailabilityZone": {
                   "Name": "ap-southeast-2a"
                 },
-                "SubnetIdentifier": "subnet-85834620",
+                "SubnetIdentifier": "subnet-959a86c4",
                 "SupportedNetworkTypes": [
                   "ipv4"
                 ]
@@ -24,7 +24,7 @@
                 "SubnetAvailabilityZone": {
                   "Name": "ap-southeast-2b"
                 },
-                "SubnetIdentifier": "subnet-1f1f0b5e",
+                "SubnetIdentifier": "subnet-72a75d46",
                 "SupportedNetworkTypes": [
                   "ipv4"
                 ]
@@ -33,7 +33,7 @@
             "SupportedNetworkTypes": [
               "ipv4"
             ],
-            "VpcId": "vpc-51ff849d"
+            "VpcId": "vpc-733acc97"
           }
         ]
       }
@@ -53,7 +53,7 @@
                 "SubnetAvailabilityZone": {
                   "Name": "ap-southeast-2a"
                 },
-                "SubnetIdentifier": "subnet-85834620",
+                "SubnetIdentifier": "subnet-959a86c4",
                 "SupportedNetworkTypes": [
                   "ipv4"
                 ]
@@ -62,7 +62,7 @@
                 "SubnetAvailabilityZone": {
                   "Name": "ap-southeast-2b"
                 },
-                "SubnetIdentifier": "subnet-1f1f0b5e",
+                "SubnetIdentifier": "subnet-72a75d46",
                 "SupportedNetworkTypes": [
                   "ipv4"
                 ]
@@ -71,7 +71,7 @@
             "SupportedNetworkTypes": [
               "ipv4"
             ],
-            "VpcId": "vpc-51ff849d"
+            "VpcId": "vpc-733acc97"
           }
         ]
       }

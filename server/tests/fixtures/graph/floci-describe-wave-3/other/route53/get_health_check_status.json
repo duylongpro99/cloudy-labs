@@ -2,7 +2,7 @@
   "calls": [
     {
       "params": {
-        "HealthCheckId": "e3444407-d988-4961-be66-64b459c57cfa"
+        "HealthCheckId": "e09d9cb0-2937-40d8-972d-226519504a70"
       },
       "response": {
         "HealthCheckObservations": [
@@ -10,7 +10,7 @@
             "IPAddress": "1.2.3.4",
             "Region": "us-east-1",
             "StatusReport": {
-              "CheckedTime": "2026-10-31 16:25:42.609720+00:00",
+              "CheckedTime": "2026-11-01 09:05:45.200249+00:00",
               "Status": "Success: HTTP Status Code 200, OK"
             }
           }

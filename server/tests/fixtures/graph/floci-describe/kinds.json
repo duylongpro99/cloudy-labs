@@ -40,6 +40,7 @@
   "db-snapshot",
   "db-cluster-snapshot",
   "db-proxy",
+  "rds-event-subscription",
   "s3-bucket",
   "s3-multipart-upload"
 ]

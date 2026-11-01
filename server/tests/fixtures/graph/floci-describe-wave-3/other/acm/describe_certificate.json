@@ -2,12 +2,12 @@
   "calls": [
     {
       "params": {
-        "CertificateArn": "arn:aws:acm:ap-southeast-2:000000000000:certificate/7a4702a0-cfe3-4fff-8947-03af3fb36b4e"
+        "CertificateArn": "arn:aws:acm:ap-southeast-2:000000000000:certificate/cdfc61b2-7931-4669-838f-1d178d90c1e2"
       },
       "response": {
         "Certificate": {
-          "CertificateArn": "arn:aws:acm:ap-southeast-2:000000000000:certificate/7a4702a0-cfe3-4fff-8947-03af3fb36b4e",
-          "CreatedAt": "2026-10-31 23:25:11.987000+07:00",
+          "CertificateArn": "arn:aws:acm:ap-southeast-2:000000000000:certificate/cdfc61b2-7931-4669-838f-1d178d90c1e2",
+          "CreatedAt": "2026-11-01 16:05:41.384000+07:00",
           "DomainName": "w3-edge.example.com",
           "DomainValidationOptions": [
             {
@@ -33,7 +33,7 @@
             }
           ],
           "InUseBy": [],
-          "IssuedAt": "2026-10-31 23:25:11.987000+07:00",
+          "IssuedAt": "2026-11-01 16:05:41.384000+07:00",
           "Issuer": "CN=Floci Local CA",
           "KeyAlgorithm": "RSA-2048",
           "KeyUsages": [
@@ -44,14 +44,14 @@
               "Name": "KEY_ENCIPHERMENT"
             }
           ],
-          "NotAfter": "2027-10-31 23:25:11+07:00",
-          "NotBefore": "2026-10-31 23:25:11+07:00",
+          "NotAfter": "2027-11-01 16:05:41+07:00",
+          "NotBefore": "2026-11-01 16:05:41+07:00",
           "Options": {
             "CertificateTransparencyLoggingPreference": "ENABLED",
             "Export": "DISABLED"
           },
           "RenewalEligibility": "INELIGIBLE",
-          "Serial": "6c:18:46:78:07:04:c9:d1:d0:71:bb:e4:93:03:da:12",
+          "Serial": "c3:ce:fb:d8:cf:4f:fe:e6:e0:d7:3e:73:33:18:19:97",
           "SignatureAlgorithm": "SHA512WITHRSA",
           "Status": "ISSUED",
           "Subject": "CN=w3-edge.example.com",

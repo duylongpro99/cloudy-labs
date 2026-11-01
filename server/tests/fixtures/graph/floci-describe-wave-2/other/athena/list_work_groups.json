@@ -1,0 +1,15 @@
+{
+  "calls": [
+    {
+      "params": {},
+      "response": {
+        "WorkGroups": [
+          {
+            "Name": "primary",
+            "State": "ENABLED"
+          }
+        ]
+      }
+    }
+  ]
+}

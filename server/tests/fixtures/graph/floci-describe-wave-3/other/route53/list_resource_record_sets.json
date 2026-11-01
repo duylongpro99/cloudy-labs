@@ -2,7 +2,7 @@
   "calls": [
     {
       "params": {
-        "HostedZoneId": "/hostedzone/Z6WG0M5Q336PDHF"
+        "HostedZoneId": "/hostedzone/Z4HMOJ1ZS4SW4F9"
       },
       "response": {
         "IsTruncated": false,
@@ -10,7 +10,7 @@
         "ResourceRecordSets": [
           {
             "Failover": "PRIMARY",
-            "HealthCheckId": "e3444407-d988-4961-be66-64b459c57cfa",
+            "HealthCheckId": "e09d9cb0-2937-40d8-972d-226519504a70",
             "Name": "app.w3-edge.example.com.",
             "ResourceRecords": [
               {

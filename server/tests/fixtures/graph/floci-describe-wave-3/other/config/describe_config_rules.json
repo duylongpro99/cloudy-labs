@@ -5,8 +5,8 @@
       "response": {
         "ConfigRules": [
           {
-            "ConfigRuleArn": "arn:aws:config:ap-southeast-2:000000000000:config-rule/config-rule-546801e25f30",
-            "ConfigRuleId": "config-rule-546801e25f30",
+            "ConfigRuleArn": "arn:aws:config:ap-southeast-2:000000000000:config-rule/config-rule-4a3a4f28ff52",
+            "ConfigRuleId": "config-rule-4a3a4f28ff52",
             "ConfigRuleName": "w3-bucket-versioning",
             "ConfigRuleState": "ACTIVE",
             "EvaluationModes": [

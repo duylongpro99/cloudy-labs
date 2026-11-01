@@ -211,6 +211,19 @@ def s3_uri_bucket(ctx, client, item: dict, args: dict) -> dict:
     return {args.get("as", "_Buckets"): arns} if arns else {}
 
 
+def ga_endpoint_groups(ctx, client, item: dict, args: dict) -> dict:
+    """A Global Accelerator's endpoint groups: ListEndpointGroups answers one listener at a time, and an
+    enrich call takes one parameter set. Each group keeps the ARN of the listener it belongs to."""
+    groups = []
+    for listener in item.get("_Listeners") or []:
+        try:
+            found = client.list_endpoint_groups(ListenerArn=listener["ListenerArn"]).get("EndpointGroups", [])
+        except ClientError:  # the listener went away between the two calls
+            continue
+        groups += [{**g, "ListenerArn": listener["ListenerArn"]} for g in found]
+    return {"_EndpointGroups": groups}
+
+
 HOOKS: dict[str, Callable[..., Any]] = {
     "common.tags": tags,
     "ec2.subnet_visibility": subnet_visibility,
@@ -226,4 +239,5 @@ HOOKS: dict[str, Callable[..., Any]] = {
     "test.items": test_only_items,
     "common.last_segment": last_segment,
     "common.s3_uri_bucket": s3_uri_bucket,
+    "globalaccelerator.endpoint_groups": ga_endpoint_groups,
 }

@@ -71,15 +71,15 @@
             "MapPublicIpOnLaunch": false,
             "OwnerId": "000000000000",
             "State": "available",
-            "SubnetArn": "arn:aws:ec2:ap-southeast-2:000000000000:subnet/subnet-99826efa",
-            "SubnetId": "subnet-99826efa",
+            "SubnetArn": "arn:aws:ec2:ap-southeast-2:000000000000:subnet/subnet-9863b9a7",
+            "SubnetId": "subnet-9863b9a7",
             "Tags": [
               {
                 "Key": "Name",
                 "Value": "w2-net-b"
               }
             ],
-            "VpcId": "vpc-1db2f371"
+            "VpcId": "vpc-e033a7a4"
           },
           {
             "AssignIpv6AddressOnCreation": false,
@@ -94,15 +94,15 @@
             "MapPublicIpOnLaunch": false,
             "OwnerId": "000000000000",
             "State": "available",
-            "SubnetArn": "arn:aws:ec2:ap-southeast-2:000000000000:subnet/subnet-5c186171",
-            "SubnetId": "subnet-5c186171",
+            "SubnetArn": "arn:aws:ec2:ap-southeast-2:000000000000:subnet/subnet-595709ec",
+            "SubnetId": "subnet-595709ec",
             "Tags": [
               {
                 "Key": "Name",
                 "Value": "w2-net-a"
               }
             ],
-            "VpcId": "vpc-1db2f371"
+            "VpcId": "vpc-e033a7a4"
           }
         ]
       }

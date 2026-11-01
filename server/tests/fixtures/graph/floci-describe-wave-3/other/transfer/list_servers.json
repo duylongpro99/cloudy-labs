@@ -5,12 +5,12 @@
       "response": {
         "Servers": [
           {
-            "Arn": "arn:aws:transfer:ap-southeast-2:000000000000:server/s-5f25bf4cc12f4b3bb",
+            "Arn": "arn:aws:transfer:ap-southeast-2:000000000000:server/s-9f27bcb53c884c8eb",
             "Domain": "S3",
             "EndpointType": "VPC",
             "IdentityProviderType": "SERVICE_MANAGED",
             "LoggingRole": "arn:aws:iam::000000000000:role/w3-dm-role",
-            "ServerId": "s-5f25bf4cc12f4b3bb",
+            "ServerId": "s-9f27bcb53c884c8eb",
             "State": "ONLINE",
             "UserCount": 0
           }

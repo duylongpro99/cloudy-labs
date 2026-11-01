@@ -5,87 +5,6 @@
       "response": {
         "SecurityGroups": [
           {
-            "Description": "rx-sg-open-b",
-            "GroupId": "sg-e948d1b67b6f8f893",
-            "GroupName": "rx-sg-open-b",
-            "IpPermissions": [
-              {
-                "IpProtocol": "-1",
-                "IpRanges": [
-                  {
-                    "CidrIp": "0.0.0.0/0"
-                  }
-                ],
-                "Ipv6Ranges": [],
-                "PrefixListIds": [],
-                "UserIdGroupPairs": []
-              }
-            ],
-            "IpPermissionsEgress": [
-              {
-                "IpProtocol": "-1",
-                "IpRanges": [
-                  {
-                    "CidrIp": "0.0.0.0/0"
-                  }
-                ],
-                "Ipv6Ranges": [],
-                "PrefixListIds": [],
-                "UserIdGroupPairs": []
-              }
-            ],
-            "OwnerId": "000000000000",
-            "Tags": [
-              {
-                "Key": "Name",
-                "Value": "rx-sg-open-b"
-              }
-            ],
-            "VpcId": "vpc-31a790ed"
-          },
-          {
-            "Description": "rx-sg-app",
-            "GroupId": "sg-bfa31ef62fd0ba111",
-            "GroupName": "rx-sg-app",
-            "IpPermissions": [
-              {
-                "FromPort": 8080,
-                "IpProtocol": "tcp",
-                "IpRanges": [],
-                "Ipv6Ranges": [],
-                "PrefixListIds": [],
-                "ToPort": 8080,
-                "UserIdGroupPairs": [
-                  {
-                    "GroupId": "sg-0ce61b20372180cec",
-                    "UserId": "000000000000"
-                  }
-                ]
-              }
-            ],
-            "IpPermissionsEgress": [
-              {
-                "IpProtocol": "-1",
-                "IpRanges": [
-                  {
-                    "CidrIp": "0.0.0.0/0"
-                  }
-                ],
-                "Ipv6Ranges": [],
-                "PrefixListIds": [],
-                "UserIdGroupPairs": []
-              }
-            ],
-            "OwnerId": "000000000000",
-            "Tags": [
-              {
-                "Key": "Name",
-                "Value": "rx-sg-app"
-              }
-            ],
-            "VpcId": "vpc-ae467f29"
-          },
-          {
             "Description": "default VPC security group",
             "GroupId": "sg-default-ap-southeast-2",
             "GroupName": "default",
@@ -108,10 +27,25 @@
             "VpcId": "vpc-default-ap-southeast-2"
           },
           {
-            "Description": "default VPC security group",
-            "GroupId": "sg-1db203647fc6d6302",
-            "GroupName": "default",
-            "IpPermissions": [],
+            "Description": "rx-sg-db",
+            "GroupId": "sg-85ae714e2c63f0981",
+            "GroupName": "rx-sg-db",
+            "IpPermissions": [
+              {
+                "FromPort": 5432,
+                "IpProtocol": "tcp",
+                "IpRanges": [],
+                "Ipv6Ranges": [],
+                "PrefixListIds": [],
+                "ToPort": 5432,
+                "UserIdGroupPairs": [
+                  {
+                    "GroupId": "sg-3cc1f6173438ea8f6",
+                    "UserId": "000000000000"
+                  }
+                ]
+              }
+            ],
             "IpPermissionsEgress": [
               {
                 "IpProtocol": "-1",
@@ -126,12 +60,17 @@
               }
             ],
             "OwnerId": "000000000000",
-            "Tags": [],
-            "VpcId": "vpc-baf044cc"
+            "Tags": [
+              {
+                "Key": "Name",
+                "Value": "rx-sg-db"
+              }
+            ],
+            "VpcId": "vpc-6359315f"
           },
           {
             "Description": "rx-sg-open-e",
-            "GroupId": "sg-79dcb28955f68a0b5",
+            "GroupId": "sg-081e7d2edf379e750",
             "GroupName": "rx-sg-open-e",
             "IpPermissions": [
               {
@@ -166,168 +105,11 @@
                 "Value": "rx-sg-open-e"
               }
             ],
-            "VpcId": "vpc-baf044cc"
-          },
-          {
-            "Description": "rx-sg-locked",
-            "GroupId": "sg-b517f156cc2fe5286",
-            "GroupName": "rx-sg-locked",
-            "IpPermissions": [],
-            "IpPermissionsEgress": [],
-            "OwnerId": "000000000000",
-            "Tags": [
-              {
-                "Key": "Name",
-                "Value": "rx-sg-locked"
-              }
-            ],
-            "VpcId": "vpc-ae467f29"
-          },
-          {
-            "Description": "rx-sg-open-d",
-            "GroupId": "sg-5d404ff822f69b2d4",
-            "GroupName": "rx-sg-open-d",
-            "IpPermissions": [
-              {
-                "IpProtocol": "-1",
-                "IpRanges": [
-                  {
-                    "CidrIp": "0.0.0.0/0"
-                  }
-                ],
-                "Ipv6Ranges": [],
-                "PrefixListIds": [],
-                "UserIdGroupPairs": []
-              }
-            ],
-            "IpPermissionsEgress": [
-              {
-                "IpProtocol": "-1",
-                "IpRanges": [
-                  {
-                    "CidrIp": "0.0.0.0/0"
-                  }
-                ],
-                "Ipv6Ranges": [],
-                "PrefixListIds": [],
-                "UserIdGroupPairs": []
-              }
-            ],
-            "OwnerId": "000000000000",
-            "Tags": [
-              {
-                "Key": "Name",
-                "Value": "rx-sg-open-d"
-              }
-            ],
-            "VpcId": "vpc-c34cd66d"
-          },
-          {
-            "Description": "rx-sg-db",
-            "GroupId": "sg-7922c298150d7675f",
-            "GroupName": "rx-sg-db",
-            "IpPermissions": [
-              {
-                "FromPort": 5432,
-                "IpProtocol": "tcp",
-                "IpRanges": [],
-                "Ipv6Ranges": [],
-                "PrefixListIds": [],
-                "ToPort": 5432,
-                "UserIdGroupPairs": [
-                  {
-                    "GroupId": "sg-bfa31ef62fd0ba111",
-                    "UserId": "000000000000"
-                  }
-                ]
-              }
-            ],
-            "IpPermissionsEgress": [
-              {
-                "IpProtocol": "-1",
-                "IpRanges": [
-                  {
-                    "CidrIp": "0.0.0.0/0"
-                  }
-                ],
-                "Ipv6Ranges": [],
-                "PrefixListIds": [],
-                "UserIdGroupPairs": []
-              }
-            ],
-            "OwnerId": "000000000000",
-            "Tags": [
-              {
-                "Key": "Name",
-                "Value": "rx-sg-db"
-              }
-            ],
-            "VpcId": "vpc-ae467f29"
-          },
-          {
-            "Description": "rx-sg-open-a",
-            "GroupId": "sg-5fbfd4cbc8e8a1dfa",
-            "GroupName": "rx-sg-open-a",
-            "IpPermissions": [
-              {
-                "IpProtocol": "-1",
-                "IpRanges": [
-                  {
-                    "CidrIp": "0.0.0.0/0"
-                  }
-                ],
-                "Ipv6Ranges": [],
-                "PrefixListIds": [],
-                "UserIdGroupPairs": []
-              }
-            ],
-            "IpPermissionsEgress": [
-              {
-                "IpProtocol": "-1",
-                "IpRanges": [
-                  {
-                    "CidrIp": "0.0.0.0/0"
-                  }
-                ],
-                "Ipv6Ranges": [],
-                "PrefixListIds": [],
-                "UserIdGroupPairs": []
-              }
-            ],
-            "OwnerId": "000000000000",
-            "Tags": [
-              {
-                "Key": "Name",
-                "Value": "rx-sg-open-a"
-              }
-            ],
-            "VpcId": "vpc-ae467f29"
-          },
-          {
-            "Description": "default VPC security group",
-            "GroupId": "sg-79dc3ec0e5928f1ec",
-            "GroupName": "default",
-            "IpPermissions": [],
-            "IpPermissionsEgress": [
-              {
-                "IpProtocol": "-1",
-                "IpRanges": [
-                  {
-                    "CidrIp": "0.0.0.0/0"
-                  }
-                ],
-                "Ipv6Ranges": [],
-                "PrefixListIds": [],
-                "UserIdGroupPairs": []
-              }
-            ],
-            "OwnerId": "000000000000",
-            "Tags": [],
-            "VpcId": "vpc-31a790ed"
+            "VpcId": "vpc-95a4a5fc"
           },
           {
             "Description": "rx-sg-open-c",
-            "GroupId": "sg-7edce1892523fe1e9",
+            "GroupId": "sg-3f6cf7975dc298f27",
             "GroupName": "rx-sg-open-c",
             "IpPermissions": [
               {
@@ -362,11 +144,107 @@
                 "Value": "rx-sg-open-c"
               }
             ],
-            "VpcId": "vpc-5daae3bf"
+            "VpcId": "vpc-c0971ebc"
+          },
+          {
+            "Description": "rx-sg-app",
+            "GroupId": "sg-3cc1f6173438ea8f6",
+            "GroupName": "rx-sg-app",
+            "IpPermissions": [
+              {
+                "FromPort": 8080,
+                "IpProtocol": "tcp",
+                "IpRanges": [],
+                "Ipv6Ranges": [],
+                "PrefixListIds": [],
+                "ToPort": 8080,
+                "UserIdGroupPairs": [
+                  {
+                    "GroupId": "sg-294901f3527c9a5e1",
+                    "UserId": "000000000000"
+                  }
+                ]
+              }
+            ],
+            "IpPermissionsEgress": [
+              {
+                "IpProtocol": "-1",
+                "IpRanges": [
+                  {
+                    "CidrIp": "0.0.0.0/0"
+                  }
+                ],
+                "Ipv6Ranges": [],
+                "PrefixListIds": [],
+                "UserIdGroupPairs": []
+              }
+            ],
+            "OwnerId": "000000000000",
+            "Tags": [
+              {
+                "Key": "Name",
+                "Value": "rx-sg-app"
+              }
+            ],
+            "VpcId": "vpc-6359315f"
+          },
+          {
+            "Description": "rx-sg-locked",
+            "GroupId": "sg-5d599c7888dd51bd3",
+            "GroupName": "rx-sg-locked",
+            "IpPermissions": [],
+            "IpPermissionsEgress": [],
+            "OwnerId": "000000000000",
+            "Tags": [
+              {
+                "Key": "Name",
+                "Value": "rx-sg-locked"
+              }
+            ],
+            "VpcId": "vpc-6359315f"
+          },
+          {
+            "Description": "rx-sg-open-b",
+            "GroupId": "sg-69843da15996e4393",
+            "GroupName": "rx-sg-open-b",
+            "IpPermissions": [
+              {
+                "IpProtocol": "-1",
+                "IpRanges": [
+                  {
+                    "CidrIp": "0.0.0.0/0"
+                  }
+                ],
+                "Ipv6Ranges": [],
+                "PrefixListIds": [],
+                "UserIdGroupPairs": []
+              }
+            ],
+            "IpPermissionsEgress": [
+              {
+                "IpProtocol": "-1",
+                "IpRanges": [
+                  {
+                    "CidrIp": "0.0.0.0/0"
+                  }
+                ],
+                "Ipv6Ranges": [],
+                "PrefixListIds": [],
+                "UserIdGroupPairs": []
+              }
+            ],
+            "OwnerId": "000000000000",
+            "Tags": [
+              {
+                "Key": "Name",
+                "Value": "rx-sg-open-b"
+              }
+            ],
+            "VpcId": "vpc-7352eb5f"
           },
           {
             "Description": "default VPC security group",
-            "GroupId": "sg-116066604731e4b9b",
+            "GroupId": "sg-b2086406d88ad2aa0",
             "GroupName": "default",
             "IpPermissions": [],
             "IpPermissionsEgress": [
@@ -384,11 +262,11 @@
             ],
             "OwnerId": "000000000000",
             "Tags": [],
-            "VpcId": "vpc-c34cd66d"
+            "VpcId": "vpc-6359315f"
           },
           {
             "Description": "default VPC security group",
-            "GroupId": "sg-e1ba5b1efa2d1efe9",
+            "GroupId": "sg-d9508a388552ee0a2",
             "GroupName": "default",
             "IpPermissions": [],
             "IpPermissionsEgress": [
@@ -406,33 +284,11 @@
             ],
             "OwnerId": "000000000000",
             "Tags": [],
-            "VpcId": "vpc-ae467f29"
-          },
-          {
-            "Description": "default VPC security group",
-            "GroupId": "sg-cd75b7dac7bfa2fdf",
-            "GroupName": "default",
-            "IpPermissions": [],
-            "IpPermissionsEgress": [
-              {
-                "IpProtocol": "-1",
-                "IpRanges": [
-                  {
-                    "CidrIp": "0.0.0.0/0"
-                  }
-                ],
-                "Ipv6Ranges": [],
-                "PrefixListIds": [],
-                "UserIdGroupPairs": []
-              }
-            ],
-            "OwnerId": "000000000000",
-            "Tags": [],
-            "VpcId": "vpc-5daae3bf"
+            "VpcId": "vpc-c0971ebc"
           },
           {
             "Description": "rx-sg-web",
-            "GroupId": "sg-0ce61b20372180cec",
+            "GroupId": "sg-294901f3527c9a5e1",
             "GroupName": "rx-sg-web",
             "IpPermissions": [
               {
@@ -455,7 +311,7 @@
                 "Ipv6Ranges": [],
                 "PrefixListIds": [
                   {
-                    "PrefixListId": "pl-6eae03fb542cc67d2"
+                    "PrefixListId": "pl-ebf1dca8711a63874"
                   }
                 ],
                 "ToPort": 22,
@@ -482,7 +338,151 @@
                 "Value": "rx-sg-web"
               }
             ],
-            "VpcId": "vpc-ae467f29"
+            "VpcId": "vpc-6359315f"
+          },
+          {
+            "Description": "rx-sg-open-d",
+            "GroupId": "sg-0d6944482d62085a5",
+            "GroupName": "rx-sg-open-d",
+            "IpPermissions": [
+              {
+                "IpProtocol": "-1",
+                "IpRanges": [
+                  {
+                    "CidrIp": "0.0.0.0/0"
+                  }
+                ],
+                "Ipv6Ranges": [],
+                "PrefixListIds": [],
+                "UserIdGroupPairs": []
+              }
+            ],
+            "IpPermissionsEgress": [
+              {
+                "IpProtocol": "-1",
+                "IpRanges": [
+                  {
+                    "CidrIp": "0.0.0.0/0"
+                  }
+                ],
+                "Ipv6Ranges": [],
+                "PrefixListIds": [],
+                "UserIdGroupPairs": []
+              }
+            ],
+            "OwnerId": "000000000000",
+            "Tags": [
+              {
+                "Key": "Name",
+                "Value": "rx-sg-open-d"
+              }
+            ],
+            "VpcId": "vpc-0199f38c"
+          },
+          {
+            "Description": "default VPC security group",
+            "GroupId": "sg-ae35e5b6d63216278",
+            "GroupName": "default",
+            "IpPermissions": [],
+            "IpPermissionsEgress": [
+              {
+                "IpProtocol": "-1",
+                "IpRanges": [
+                  {
+                    "CidrIp": "0.0.0.0/0"
+                  }
+                ],
+                "Ipv6Ranges": [],
+                "PrefixListIds": [],
+                "UserIdGroupPairs": []
+              }
+            ],
+            "OwnerId": "000000000000",
+            "Tags": [],
+            "VpcId": "vpc-0199f38c"
+          },
+          {
+            "Description": "default VPC security group",
+            "GroupId": "sg-c3ca2eed79d3fac9d",
+            "GroupName": "default",
+            "IpPermissions": [],
+            "IpPermissionsEgress": [
+              {
+                "IpProtocol": "-1",
+                "IpRanges": [
+                  {
+                    "CidrIp": "0.0.0.0/0"
+                  }
+                ],
+                "Ipv6Ranges": [],
+                "PrefixListIds": [],
+                "UserIdGroupPairs": []
+              }
+            ],
+            "OwnerId": "000000000000",
+            "Tags": [],
+            "VpcId": "vpc-7352eb5f"
+          },
+          {
+            "Description": "rx-sg-open-a",
+            "GroupId": "sg-962675f9957bef36f",
+            "GroupName": "rx-sg-open-a",
+            "IpPermissions": [
+              {
+                "IpProtocol": "-1",
+                "IpRanges": [
+                  {
+                    "CidrIp": "0.0.0.0/0"
+                  }
+                ],
+                "Ipv6Ranges": [],
+                "PrefixListIds": [],
+                "UserIdGroupPairs": []
+              }
+            ],
+            "IpPermissionsEgress": [
+              {
+                "IpProtocol": "-1",
+                "IpRanges": [
+                  {
+                    "CidrIp": "0.0.0.0/0"
+                  }
+                ],
+                "Ipv6Ranges": [],
+                "PrefixListIds": [],
+                "UserIdGroupPairs": []
+              }
+            ],
+            "OwnerId": "000000000000",
+            "Tags": [
+              {
+                "Key": "Name",
+                "Value": "rx-sg-open-a"
+              }
+            ],
+            "VpcId": "vpc-6359315f"
+          },
+          {
+            "Description": "default VPC security group",
+            "GroupId": "sg-41d1109d098d99fc2",
+            "GroupName": "default",
+            "IpPermissions": [],
+            "IpPermissionsEgress": [
+              {
+                "IpProtocol": "-1",
+                "IpRanges": [
+                  {
+                    "CidrIp": "0.0.0.0/0"
+                  }
+                ],
+                "Ipv6Ranges": [],
+                "PrefixListIds": [],
+                "UserIdGroupPairs": []
+              }
+            ],
+            "OwnerId": "000000000000",
+            "Tags": [],
+            "VpcId": "vpc-95a4a5fc"
           }
         ]
       }

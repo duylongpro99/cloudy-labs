@@ -5,12 +5,12 @@
       "response": {
         "VpcEndpoints": [
           {
-            "CreationTimestamp": "2026-10-31 14:34:04.144000+00:00",
+            "CreationTimestamp": "2026-11-01 09:02:05.791000+00:00",
             "Groups": [],
             "IpAddressType": "ipv4",
             "PrivateDnsEnabled": false,
             "RouteTableIds": [
-              "rtb-58bb470e"
+              "rtb-60a76e0a"
             ],
             "ServiceName": "com.amazonaws.ap-southeast-2.s3",
             "State": "available",
@@ -21,9 +21,9 @@
                 "Value": "rx-s3-endpoint"
               }
             ],
-            "VpcEndpointId": "vpce-467e07ac312c89376",
+            "VpcEndpointId": "vpce-f8a1e3d24c0df6dc2",
             "VpcEndpointType": "Gateway",
-            "VpcId": "vpc-ae467f29"
+            "VpcId": "vpc-6359315f"
           }
         ]
       }

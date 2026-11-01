@@ -1,0 +1,16 @@
+{
+  "calls": [
+    {
+      "params": {
+        "Type": "custom"
+      },
+      "response": {
+        "CachePolicyList": {
+          "Items": [],
+          "MaxItems": 100,
+          "Quantity": 0
+        }
+      }
+    }
+  ]
+}

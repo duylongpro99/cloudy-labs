@@ -6,7 +6,7 @@
         "Endpoints": [
           {
             "DatabaseName": "postgres",
-            "EndpointArn": "arn:aws:dms:ap-southeast-2:000000000000:endpoint:5BMIDRU5MGUNHOIU4HK5QBWASA",
+            "EndpointArn": "arn:aws:dms:ap-southeast-2:000000000000:endpoint:4MUAQGYVKTV47FWZ2SBOSN2BBC",
             "EndpointIdentifier": "w3-dm-src",
             "EndpointType": "SOURCE",
             "EngineName": "postgres",
@@ -17,7 +17,7 @@
             "Username": "w3admin"
           },
           {
-            "EndpointArn": "arn:aws:dms:ap-southeast-2:000000000000:endpoint:74ETK3CSBCD7IVPEGCR7KR7ZAS",
+            "EndpointArn": "arn:aws:dms:ap-southeast-2:000000000000:endpoint:EI2RMA2H5QAISDOSXAI37J6U5A",
             "EndpointIdentifier": "w3-dm-tgt",
             "EndpointType": "TARGET",
             "EngineName": "s3",

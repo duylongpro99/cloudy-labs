@@ -2,19 +2,19 @@
   "calls": [
     {
       "params": {
-        "Id": "6fdea9e8-028a-4786-9398-70895c9cb7e1",
+        "Id": "5a727a5e-2344-430d-a2ad-ac3d38d9d7d6",
         "Name": "w3-edge-acl",
         "Scope": "REGIONAL"
       },
       "response": {
-        "LockToken": "35b7f513-09cb-4ef7-929f-78bd27216f5a",
+        "LockToken": "43bd058f-6152-43dd-ad01-a01ba3263d98",
         "WebACL": {
-          "ARN": "arn:aws:wafv2:ap-southeast-2:000000000000:regional/webacl/w3-edge-acl/6fdea9e8-028a-4786-9398-70895c9cb7e1",
+          "ARN": "arn:aws:wafv2:ap-southeast-2:000000000000:regional/webacl/w3-edge-acl/5a727a5e-2344-430d-a2ad-ac3d38d9d7d6",
           "Capacity": 1,
           "DefaultAction": {
             "Allow": {}
           },
-          "Id": "6fdea9e8-028a-4786-9398-70895c9cb7e1",
+          "Id": "5a727a5e-2344-430d-a2ad-ac3d38d9d7d6",
           "LabelNamespace": "awswaf:000000000000:webacl:w3-edge-acl:",
           "ManagedByFirewallManager": false,
           "Name": "w3-edge-acl",

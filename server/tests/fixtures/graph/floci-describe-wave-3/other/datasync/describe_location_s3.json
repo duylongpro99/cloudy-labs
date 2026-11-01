@@ -2,30 +2,30 @@
   "calls": [
     {
       "params": {
-        "LocationArn": "arn:aws:datasync:ap-southeast-2:000000000000:location/loc-8ed178c806cd0da13"
+        "LocationArn": "arn:aws:datasync:ap-southeast-2:000000000000:location/loc-163a397236375cdf3"
       },
       "response": {
-        "CreationTime": "2026-10-31 23:25:09.935000+07:00",
-        "LocationArn": "arn:aws:datasync:ap-southeast-2:000000000000:location/loc-8ed178c806cd0da13",
-        "LocationUri": "s3://w3-dm-bucket/in",
-        "S3Config": {
-          "BucketAccessRoleArn": "arn:aws:iam::000000000000:role/w3-dm-role"
-        },
-        "S3StorageClass": "STANDARD"
-      }
-    },
-    {
-      "params": {
-        "LocationArn": "arn:aws:datasync:ap-southeast-2:000000000000:location/loc-a9b69b7c7a2f17dab"
-      },
-      "response": {
-        "CreationTime": "2026-10-31 23:25:09.939000+07:00",
-        "LocationArn": "arn:aws:datasync:ap-southeast-2:000000000000:location/loc-a9b69b7c7a2f17dab",
+        "CreationTime": "2026-11-01 16:05:39.199000+07:00",
+        "LocationArn": "arn:aws:datasync:ap-southeast-2:000000000000:location/loc-163a397236375cdf3",
         "LocationUri": "s3://w3-dm-bucket/archive",
         "S3Config": {
           "BucketAccessRoleArn": "arn:aws:iam::000000000000:role/w3-dm-role"
         },
         "S3StorageClass": "STANDARD_IA"
+      }
+    },
+    {
+      "params": {
+        "LocationArn": "arn:aws:datasync:ap-southeast-2:000000000000:location/loc-89ba9f401a5184386"
+      },
+      "response": {
+        "CreationTime": "2026-11-01 16:05:39.197000+07:00",
+        "LocationArn": "arn:aws:datasync:ap-southeast-2:000000000000:location/loc-89ba9f401a5184386",
+        "LocationUri": "s3://w3-dm-bucket/in",
+        "S3Config": {
+          "BucketAccessRoleArn": "arn:aws:iam::000000000000:role/w3-dm-role"
+        },
+        "S3StorageClass": "STANDARD"
       }
     }
   ]

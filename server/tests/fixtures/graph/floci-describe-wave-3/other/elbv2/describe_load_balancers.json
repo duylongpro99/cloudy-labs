@@ -7,19 +7,19 @@
           {
             "AvailabilityZones": [
               {
-                "SubnetId": "subnet-014b6ddb",
+                "SubnetId": "subnet-2de03173",
                 "ZoneName": "ap-southeast-2a"
               },
               {
-                "SubnetId": "subnet-e2c97ce3",
+                "SubnetId": "subnet-303a6937",
                 "ZoneName": "ap-southeast-2b"
               }
             ],
             "CanonicalHostedZoneId": "Z1GM3OXH4ZPM65",
-            "CreatedTime": "2026-10-31 16:25:11.403000+00:00",
-            "DNSName": "w3-edge-alb-69f799da92464b34.elb.localhost.floci.io",
+            "CreatedTime": "2026-11-01 09:05:40.768000+00:00",
+            "DNSName": "w3-edge-alb-7004a8a039ba453d.elb.localhost.floci.io",
             "IpAddressType": "ipv4",
-            "LoadBalancerArn": "arn:aws:elasticloadbalancing:ap-southeast-2:000000000000:loadbalancer/app/w3-edge-alb/69f799da92464b34",
+            "LoadBalancerArn": "arn:aws:elasticloadbalancing:ap-southeast-2:000000000000:loadbalancer/app/w3-edge-alb/7004a8a039ba453d",
             "LoadBalancerName": "w3-edge-alb",
             "Scheme": "internet-facing",
             "SecurityGroups": [],
@@ -27,7 +27,7 @@
               "Code": "active"
             },
             "Type": "application",
-            "VpcId": "vpc-126a9f97"
+            "VpcId": "vpc-0fbdc61e"
           }
         ],
         "NextMarker": ""

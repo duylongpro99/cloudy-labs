@@ -1,0 +1,8 @@
+{
+  "calls": [
+    {
+      "error": "ResourceNotFoundException",
+      "params": {}
+    }
+  ]
+}

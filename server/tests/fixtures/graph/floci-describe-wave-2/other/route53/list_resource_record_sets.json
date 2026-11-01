@@ -2,7 +2,7 @@
   "calls": [
     {
       "params": {
-        "HostedZoneId": "/hostedzone/Z45OBADPP2X6797"
+        "HostedZoneId": "/hostedzone/ZLILUB282Q45AJT"
       },
       "response": {
         "IsTruncated": false,
@@ -10,7 +10,7 @@
         "ResourceRecordSets": [
           {
             "AliasTarget": {
-              "DNSName": "w2-alb-74ca62bb5d81462c.elb.localhost.floci.io",
+              "DNSName": "w2-alb-3208d4a460774ed9.elb.localhost.floci.io",
               "EvaluateTargetHealth": false,
               "HostedZoneId": "Z1GM3OXH4ZPM65"
             },

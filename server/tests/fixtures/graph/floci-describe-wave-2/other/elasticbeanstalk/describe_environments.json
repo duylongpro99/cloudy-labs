@@ -1,0 +1,12 @@
+{
+  "calls": [
+    {
+      "params": {
+        "IncludeDeleted": false
+      },
+      "response": {
+        "Environments": []
+      }
+    }
+  ]
+}

@@ -1,63 +1,83 @@
 {
   "contains": [
     {
-      "child": "/hostedzone/Z6WG0M5Q336PDHF",
+      "child": "/hostedzone/Z4HMOJ1ZS4SW4F9",
       "parent": "global"
     },
     {
-      "child": "/hostedzone/Z6WG0M5Q336PDHF/app.w3-edge.example.com./A/primary",
+      "child": "/hostedzone/Z4HMOJ1ZS4SW4F9/app.w3-edge.example.com./A/primary",
       "parent": "global"
     },
     {
-      "child": "/hostedzone/Z6WG0M5Q336PDHF/app.w3-edge.example.com./A/secondary",
+      "child": "/hostedzone/Z4HMOJ1ZS4SW4F9/app.w3-edge.example.com./A/secondary",
       "parent": "global"
     },
     {
-      "child": "3f82f0f4ab014996945ba0bb19cb348f",
+      "child": "0ec3cb72-f91a-4698-9892-9281f83361cb",
+      "parent": "global"
+    },
+    {
+      "child": "1ac0af70bb",
       "parent": "ap-southeast-2"
     },
     {
-      "child": "53e9b9a7ac",
+      "child": "2df70c1041",
       "parent": "ap-southeast-2"
     },
     {
-      "child": "ESUZGTI490RL77",
+      "child": "4fc0fb52f4",
+      "parent": "ap-southeast-2"
+    },
+    {
+      "child": "6d77101f8c",
+      "parent": "ap-southeast-2"
+    },
+    {
+      "child": "96d6e3d0-e1e7-4b01-8356-4b005984efa1",
+      "parent": "ap-southeast-2"
+    },
+    {
+      "child": "9f86b2b073c44494991049ed4c716ba1",
+      "parent": "ap-southeast-2"
+    },
+    {
+      "child": "E8BB5X0F4F2EJA",
       "parent": "global"
     },
     {
-      "child": "acl-8cc9e4dca657a5a52",
-      "parent": "vpc-51ff849d"
+      "child": "acl-58ee71b59c82e07a8",
+      "parent": "vpc-7f4a8d38"
     },
     {
-      "child": "acl-dd17e81e1ea199fb3",
-      "parent": "vpc-c238e6aa"
+      "child": "acl-a1b9f4cfa265159af",
+      "parent": "vpc-733acc97"
+    },
+    {
+      "child": "acl-b4bfbeb3845314ff3",
+      "parent": "vpc-0fbdc61e"
     },
     {
       "child": "acl-default",
       "parent": "vpc-default-ap-southeast-2"
     },
     {
-      "child": "acl-e3b2f413f541d345e",
-      "parent": "vpc-126a9f97"
-    },
-    {
       "child": "ap-southeast-2",
       "parent": "000000000000"
     },
     {
-      "child": "ap-southeast-2:55869260-0b9e-4e86-b37c-5e9ddde28c1b",
+      "child": "ap-southeast-2:503dcfe1-e5cc-41e1-8f5e-bad3a65b692c",
       "parent": "ap-southeast-2"
     },
     {
-      "child": "ap-southeast-2_52b1a1ca3",
+      "child": "ap-southeast-2_b5a52cd75",
       "parent": "ap-southeast-2"
     },
     {
-      "child": "ap-southeast-2_52b1a1ca3/w3-oidc",
+      "child": "ap-southeast-2_b5a52cd75/w3-oidc",
       "parent": "ap-southeast-2"
     },
     {
-      "child": "arn:aws:acm:ap-southeast-2:000000000000:certificate/7a4702a0-cfe3-4fff-8947-03af3fb36b4e",
+      "child": "arn:aws:acm:ap-southeast-2:000000000000:certificate/cdfc61b2-7931-4669-838f-1d178d90c1e2",
       "parent": "ap-southeast-2"
     },
     {
@@ -93,39 +113,39 @@
       "parent": "ap-southeast-2"
     },
     {
-      "child": "arn:aws:config:ap-southeast-2:000000000000:config-rule/config-rule-546801e25f30",
+      "child": "arn:aws:config:ap-southeast-2:000000000000:config-rule/config-rule-4a3a4f28ff52",
       "parent": "ap-southeast-2"
     },
     {
-      "child": "arn:aws:controltower:ap-southeast-2:000000000000:landingzone/196fad8790da",
+      "child": "arn:aws:controltower:ap-southeast-2:000000000000:landingzone/3dba975b3b45",
       "parent": "ap-southeast-2"
     },
     {
-      "child": "arn:aws:datasync:ap-southeast-2:000000000000:location/loc-8ed178c806cd0da13",
+      "child": "arn:aws:datasync:ap-southeast-2:000000000000:location/loc-163a397236375cdf3",
       "parent": "ap-southeast-2"
     },
     {
-      "child": "arn:aws:datasync:ap-southeast-2:000000000000:location/loc-a9b69b7c7a2f17dab",
+      "child": "arn:aws:datasync:ap-southeast-2:000000000000:location/loc-89ba9f401a5184386",
       "parent": "ap-southeast-2"
     },
     {
-      "child": "arn:aws:datasync:ap-southeast-2:000000000000:task/task-57ed4ed9abc9a81ef",
+      "child": "arn:aws:datasync:ap-southeast-2:000000000000:task/task-a773ebaf1e0064fa9",
       "parent": "ap-southeast-2"
     },
     {
-      "child": "arn:aws:dms:ap-southeast-2:000000000000:endpoint:5BMIDRU5MGUNHOIU4HK5QBWASA",
+      "child": "arn:aws:dms:ap-southeast-2:000000000000:endpoint:4MUAQGYVKTV47FWZ2SBOSN2BBC",
       "parent": "ap-southeast-2"
     },
     {
-      "child": "arn:aws:dms:ap-southeast-2:000000000000:endpoint:74ETK3CSBCD7IVPEGCR7KR7ZAS",
+      "child": "arn:aws:dms:ap-southeast-2:000000000000:endpoint:EI2RMA2H5QAISDOSXAI37J6U5A",
       "parent": "ap-southeast-2"
     },
     {
-      "child": "arn:aws:dms:ap-southeast-2:000000000000:rep:JSOZ6ALQRNR7ME3KTCOCFMLKL5",
-      "parent": "vpc-51ff849d"
+      "child": "arn:aws:dms:ap-southeast-2:000000000000:rep:4Q3VZE4ZBCXQTPWTPHI4IENEWW",
+      "parent": "vpc-733acc97"
     },
     {
-      "child": "arn:aws:dms:ap-southeast-2:000000000000:task:LIZ5P75OCMWZK7OHFMLARUXPQ3",
+      "child": "arn:aws:dms:ap-southeast-2:000000000000:task:WRB34GCDTVAQXMLJ44J7WSRWHC",
       "parent": "ap-southeast-2"
     },
     {
@@ -142,11 +162,11 @@
     },
     {
       "child": "arn:aws:elasticache:ap-southeast-2:000000000000:cluster:w3-dm-memcached",
-      "parent": "vpc-51ff849d"
+      "parent": "vpc-733acc97"
     },
     {
       "child": "arn:aws:elasticache:ap-southeast-2:000000000000:replicationgroup:w3-dm-redis",
-      "parent": "vpc-51ff849d"
+      "parent": "vpc-733acc97"
     },
     {
       "child": "arn:aws:elasticbeanstalk:ap-southeast-2:000000000000:application/w3-delivery-web",
@@ -157,12 +177,12 @@
       "parent": "arn:aws:elasticbeanstalk:ap-southeast-2:000000000000:application/w3-delivery-web"
     },
     {
-      "child": "arn:aws:elasticloadbalancing:ap-southeast-2:000000000000:listener/app/w3-edge-alb/69f799da92464b34/d283f3a73f4e40a9",
+      "child": "arn:aws:elasticloadbalancing:ap-southeast-2:000000000000:listener/app/w3-edge-alb/7004a8a039ba453d/15c914b075444661",
       "parent": "ap-southeast-2"
     },
     {
-      "child": "arn:aws:elasticloadbalancing:ap-southeast-2:000000000000:loadbalancer/app/w3-edge-alb/69f799da92464b34",
-      "parent": "vpc-126a9f97"
+      "child": "arn:aws:elasticloadbalancing:ap-southeast-2:000000000000:loadbalancer/app/w3-edge-alb/7004a8a039ba453d",
+      "parent": "vpc-0fbdc61e"
     },
     {
       "child": "arn:aws:events:ap-southeast-2:000000000000:event-bus/default",
@@ -173,7 +193,7 @@
       "parent": "arn:aws:events:ap-southeast-2:000000000000:event-bus/default"
     },
     {
-      "child": "arn:aws:globalaccelerator::000000000000:accelerator/4446017a-ee15-432b-aadc-908b93397ab3",
+      "child": "arn:aws:globalaccelerator::000000000000:accelerator/9479869e-b9ba-4c95-92b5-59818f27a754",
       "parent": "global"
     },
     {
@@ -209,11 +229,11 @@
       "parent": "ap-southeast-2"
     },
     {
-      "child": "arn:aws:lambda:ap-southeast-2:000000000000:event-source-mapping:00c5105e-4894-449e-8a80-ee47ed3f4545",
+      "child": "arn:aws:lambda:ap-southeast-2:000000000000:event-source-mapping:028cf16c-1a43-4c91-b811-fce2caa55138",
       "parent": "ap-southeast-2"
     },
     {
-      "child": "arn:aws:lambda:ap-southeast-2:000000000000:event-source-mapping:a6b7e70f-ddd7-457f-bada-6e64e3d48f04",
+      "child": "arn:aws:lambda:ap-southeast-2:000000000000:event-source-mapping:14c27525-c974-4dfc-9620-05399ed3f1be",
       "parent": "ap-southeast-2"
     },
     {
@@ -246,22 +266,22 @@
     },
     {
       "child": "arn:aws:network-firewall:ap-southeast-2:000000000000:firewall/w3-firewall",
-      "parent": "vpc-c238e6aa"
+      "parent": "vpc-7f4a8d38"
     },
     {
       "child": "arn:aws:network-firewall:ap-southeast-2:000000000000:stateful-rulegroup/w3-allow-web",
       "parent": "ap-southeast-2"
     },
     {
-      "child": "arn:aws:organizations::000000000000:account/o-1pln15fyv4/000000000000",
+      "child": "arn:aws:organizations::000000000000:account/o-p2d5zb71e3/000000000000",
       "parent": "global"
     },
     {
-      "child": "arn:aws:organizations::000000000000:account/o-1pln15fyv4/381802961456",
+      "child": "arn:aws:organizations::000000000000:account/o-p2d5zb71e3/798322081289",
       "parent": "global"
     },
     {
-      "child": "arn:aws:organizations::000000000000:ou/o-1pln15fyv4/ou-gt0v-tp01c9ap",
+      "child": "arn:aws:organizations::000000000000:ou/o-p2d5zb71e3/ou-y8ib-wlss3zes",
       "parent": "global"
     },
     {
@@ -289,7 +309,7 @@
       "parent": "ap-southeast-2"
     },
     {
-      "child": "arn:aws:secretsmanager:ap-southeast-2:000000000000:secret:rds!db-B1F67A021EFC41C7B1D50AD8-YJOLJK",
+      "child": "arn:aws:secretsmanager:ap-southeast-2:000000000000:secret:rds!db-5CE0BCF09721435DB12F9628-ZIS7VP",
       "parent": "ap-southeast-2"
     },
     {
@@ -305,11 +325,11 @@
       "parent": "ap-southeast-2"
     },
     {
-      "child": "arn:aws:sns:ap-southeast-2:000000000000:w3-order-events:41933c49-cfbb-49a7-875b-9cba9af258c8",
+      "child": "arn:aws:sns:ap-southeast-2:000000000000:w3-order-events:2cb1dfb7-73e9-4046-bcb1-ca4535e0dd9b",
       "parent": "arn:aws:sns:ap-southeast-2:000000000000:w3-order-events"
     },
     {
-      "child": "arn:aws:sns:ap-southeast-2:000000000000:w3-order-events:74e891d3-d2dc-40d8-ae2c-06ae23572a9f",
+      "child": "arn:aws:sns:ap-southeast-2:000000000000:w3-order-events:f8fd6355-f497-4f42-ad09-47528a163c1f",
       "parent": "arn:aws:sns:ap-southeast-2:000000000000:w3-order-events"
     },
     {
@@ -325,7 +345,7 @@
       "parent": "ap-southeast-2"
     },
     {
-      "child": "arn:aws:wafv2:ap-southeast-2:000000000000:regional/webacl/w3-edge-acl/6fdea9e8-028a-4786-9398-70895c9cb7e1",
+      "child": "arn:aws:wafv2:ap-southeast-2:000000000000:regional/webacl/w3-edge-acl/5a727a5e-2344-430d-a2ad-ac3d38d9d7d6",
       "parent": "ap-southeast-2"
     },
     {
@@ -333,19 +353,19 @@
       "parent": "ap-southeast-2"
     },
     {
-      "child": "cff6abb4-80e8-43cd-a569-644e8e3e3dc5",
-      "parent": "ap-southeast-2"
+      "child": "bed7e4c2-4d0a-4e65-911a-0452c5ca96fe",
+      "parent": "global"
     },
     {
       "child": "config-recorder/ap-southeast-2/w3-recorder",
       "parent": "ap-southeast-2"
     },
     {
-      "child": "d997462cf0",
-      "parent": "ap-southeast-2"
+      "child": "e06c431e-daa7-4c92-baaf-39674ad835e9",
+      "parent": "global"
     },
     {
-      "child": "e3444407-d988-4961-be66-64b459c57cfa",
+      "child": "e09d9cb0-2937-40d8-972d-226519504a70",
       "parent": "global"
     },
     {
@@ -365,64 +385,68 @@
       "parent": "ap-southeast-2"
     },
     {
-      "child": "r-gt0v",
+      "child": "r-y8ib",
       "parent": "global"
     },
     {
-      "child": "rtb-270c03552994eff37",
-      "parent": "vpc-126a9f97"
+      "child": "rtb-03dba76352ca83f05",
+      "parent": "vpc-7f4a8d38"
     },
     {
-      "child": "rtb-6b9b67d15aa199c8d",
-      "parent": "vpc-51ff849d"
+      "child": "rtb-66d340a44085c5a7d",
+      "parent": "vpc-733acc97"
     },
     {
-      "child": "rtb-ac278eb3cf9747306",
-      "parent": "vpc-c238e6aa"
+      "child": "rtb-a8f5c13bdd2e6c6e6",
+      "parent": "vpc-0fbdc61e"
     },
     {
       "child": "rtb-default",
       "parent": "vpc-default-ap-southeast-2"
     },
     {
-      "child": "s-5f25bf4cc12f4b3bb",
-      "parent": "vpc-51ff849d"
+      "child": "s-9f27bcb53c884c8eb",
+      "parent": "vpc-733acc97"
     },
     {
-      "child": "sg-6ab169e1e9cfbb053",
-      "parent": "vpc-51ff849d"
+      "child": "sg-3392826f79ca01876",
+      "parent": "vpc-7f4a8d38"
     },
     {
-      "child": "sg-7bc96a71d0de3e99e",
-      "parent": "vpc-51ff849d"
+      "child": "sg-4d59440ff6090fc1a",
+      "parent": "vpc-0fbdc61e"
     },
     {
-      "child": "sg-806d5719db1444e2a",
-      "parent": "vpc-126a9f97"
-    },
-    {
-      "child": "sg-d945fe5c7e3ea5ad0",
-      "parent": "vpc-c238e6aa"
+      "child": "sg-ca05146b9adfdf3cb",
+      "parent": "vpc-733acc97"
     },
     {
       "child": "sg-default-ap-southeast-2",
       "parent": "vpc-default-ap-southeast-2"
     },
     {
-      "child": "subnet-014b6ddb",
-      "parent": "vpc-126a9f97/ap-southeast-2a"
+      "child": "sg-f7cd8eb85cc9178bd",
+      "parent": "vpc-733acc97"
     },
     {
-      "child": "subnet-1f1f0b5e",
-      "parent": "vpc-51ff849d/ap-southeast-2b"
+      "child": "subnet-2de03173",
+      "parent": "vpc-0fbdc61e/ap-southeast-2a"
     },
     {
-      "child": "subnet-52650042",
-      "parent": "vpc-c238e6aa/ap-southeast-2a"
+      "child": "subnet-303a6937",
+      "parent": "vpc-0fbdc61e/ap-southeast-2b"
     },
     {
-      "child": "subnet-85834620",
-      "parent": "vpc-51ff849d/ap-southeast-2a"
+      "child": "subnet-615ab73b",
+      "parent": "vpc-7f4a8d38/ap-southeast-2a"
+    },
+    {
+      "child": "subnet-72a75d46",
+      "parent": "vpc-733acc97/ap-southeast-2b"
+    },
+    {
+      "child": "subnet-959a86c4",
+      "parent": "vpc-733acc97/ap-southeast-2a"
     },
     {
       "child": "subnet-default-ap-southeast-2-a",
@@ -437,40 +461,36 @@
       "parent": "vpc-default-ap-southeast-2/ap-southeast-2c"
     },
     {
-      "child": "subnet-e2c97ce3",
-      "parent": "vpc-126a9f97/ap-southeast-2b"
-    },
-    {
-      "child": "vpc-126a9f97",
+      "child": "vpc-0fbdc61e",
       "parent": "ap-southeast-2"
     },
     {
-      "child": "vpc-126a9f97/ap-southeast-2a",
-      "parent": "vpc-126a9f97"
+      "child": "vpc-0fbdc61e/ap-southeast-2a",
+      "parent": "vpc-0fbdc61e"
     },
     {
-      "child": "vpc-126a9f97/ap-southeast-2b",
-      "parent": "vpc-126a9f97"
+      "child": "vpc-0fbdc61e/ap-southeast-2b",
+      "parent": "vpc-0fbdc61e"
     },
     {
-      "child": "vpc-51ff849d",
+      "child": "vpc-733acc97",
       "parent": "ap-southeast-2"
     },
     {
-      "child": "vpc-51ff849d/ap-southeast-2a",
-      "parent": "vpc-51ff849d"
+      "child": "vpc-733acc97/ap-southeast-2a",
+      "parent": "vpc-733acc97"
     },
     {
-      "child": "vpc-51ff849d/ap-southeast-2b",
-      "parent": "vpc-51ff849d"
+      "child": "vpc-733acc97/ap-southeast-2b",
+      "parent": "vpc-733acc97"
     },
     {
-      "child": "vpc-c238e6aa",
+      "child": "vpc-7f4a8d38",
       "parent": "ap-southeast-2"
     },
     {
-      "child": "vpc-c238e6aa/ap-southeast-2a",
-      "parent": "vpc-c238e6aa"
+      "child": "vpc-7f4a8d38/ap-southeast-2a",
+      "parent": "vpc-7f4a8d38"
     },
     {
       "child": "vpc-default-ap-southeast-2",
@@ -498,46 +518,53 @@
       "to": "arn:aws:sns:ap-southeast-2:000000000000:w3-order-events"
     },
     {
-      "from": "sg-6ab169e1e9cfbb053",
-      "id": "attached:sg-6ab169e1e9cfbb053->arn:aws:dms:ap-southeast-2:000000000000:rep:JSOZ6ALQRNR7ME3KTCOCFMLKL5",
-      "kind": "attached",
+      "from": "2df70c1041",
+      "id": "allows-key:2df70c1041->4fc0fb52f4",
+      "kind": "allows-key",
       "label": "",
-      "to": "arn:aws:dms:ap-southeast-2:000000000000:rep:JSOZ6ALQRNR7ME3KTCOCFMLKL5"
+      "to": "4fc0fb52f4"
     },
     {
-      "from": "sg-6ab169e1e9cfbb053",
-      "id": "attached:sg-6ab169e1e9cfbb053->arn:aws:elasticache:ap-southeast-2:000000000000:cluster:w3-dm-memcached",
+      "from": "sg-ca05146b9adfdf3cb",
+      "id": "attached:sg-ca05146b9adfdf3cb->arn:aws:dms:ap-southeast-2:000000000000:rep:4Q3VZE4ZBCXQTPWTPHI4IENEWW",
+      "kind": "attached",
+      "label": "",
+      "to": "arn:aws:dms:ap-southeast-2:000000000000:rep:4Q3VZE4ZBCXQTPWTPHI4IENEWW"
+    },
+    {
+      "from": "sg-ca05146b9adfdf3cb",
+      "id": "attached:sg-ca05146b9adfdf3cb->arn:aws:elasticache:ap-southeast-2:000000000000:cluster:w3-dm-memcached",
       "kind": "attached",
       "label": "",
       "to": "arn:aws:elasticache:ap-southeast-2:000000000000:cluster:w3-dm-memcached"
     },
     {
-      "from": "arn:aws:datasync:ap-southeast-2:000000000000:task/task-57ed4ed9abc9a81ef",
-      "id": "copies-from:arn:aws:datasync:ap-southeast-2:000000000000:task/task-57ed4ed9abc9a81ef->arn:aws:datasync:ap-southeast-2:000000000000:location/loc-8ed178c806cd0da13",
+      "from": "arn:aws:datasync:ap-southeast-2:000000000000:task/task-a773ebaf1e0064fa9",
+      "id": "copies-from:arn:aws:datasync:ap-southeast-2:000000000000:task/task-a773ebaf1e0064fa9->arn:aws:datasync:ap-southeast-2:000000000000:location/loc-89ba9f401a5184386",
       "kind": "copies-from",
       "label": "",
-      "to": "arn:aws:datasync:ap-southeast-2:000000000000:location/loc-8ed178c806cd0da13"
+      "to": "arn:aws:datasync:ap-southeast-2:000000000000:location/loc-89ba9f401a5184386"
     },
     {
-      "from": "arn:aws:dms:ap-southeast-2:000000000000:task:LIZ5P75OCMWZK7OHFMLARUXPQ3",
-      "id": "copies-from:arn:aws:dms:ap-southeast-2:000000000000:task:LIZ5P75OCMWZK7OHFMLARUXPQ3->arn:aws:dms:ap-southeast-2:000000000000:endpoint:5BMIDRU5MGUNHOIU4HK5QBWASA",
+      "from": "arn:aws:dms:ap-southeast-2:000000000000:task:WRB34GCDTVAQXMLJ44J7WSRWHC",
+      "id": "copies-from:arn:aws:dms:ap-southeast-2:000000000000:task:WRB34GCDTVAQXMLJ44J7WSRWHC->arn:aws:dms:ap-southeast-2:000000000000:endpoint:4MUAQGYVKTV47FWZ2SBOSN2BBC",
       "kind": "copies-from",
       "label": "",
-      "to": "arn:aws:dms:ap-southeast-2:000000000000:endpoint:5BMIDRU5MGUNHOIU4HK5QBWASA"
+      "to": "arn:aws:dms:ap-southeast-2:000000000000:endpoint:4MUAQGYVKTV47FWZ2SBOSN2BBC"
     },
     {
-      "from": "arn:aws:datasync:ap-southeast-2:000000000000:task/task-57ed4ed9abc9a81ef",
-      "id": "copies-to:arn:aws:datasync:ap-southeast-2:000000000000:task/task-57ed4ed9abc9a81ef->arn:aws:datasync:ap-southeast-2:000000000000:location/loc-a9b69b7c7a2f17dab",
+      "from": "arn:aws:datasync:ap-southeast-2:000000000000:task/task-a773ebaf1e0064fa9",
+      "id": "copies-to:arn:aws:datasync:ap-southeast-2:000000000000:task/task-a773ebaf1e0064fa9->arn:aws:datasync:ap-southeast-2:000000000000:location/loc-163a397236375cdf3",
       "kind": "copies-to",
       "label": "",
-      "to": "arn:aws:datasync:ap-southeast-2:000000000000:location/loc-a9b69b7c7a2f17dab"
+      "to": "arn:aws:datasync:ap-southeast-2:000000000000:location/loc-163a397236375cdf3"
     },
     {
-      "from": "arn:aws:dms:ap-southeast-2:000000000000:task:LIZ5P75OCMWZK7OHFMLARUXPQ3",
-      "id": "copies-to:arn:aws:dms:ap-southeast-2:000000000000:task:LIZ5P75OCMWZK7OHFMLARUXPQ3->arn:aws:dms:ap-southeast-2:000000000000:endpoint:74ETK3CSBCD7IVPEGCR7KR7ZAS",
+      "from": "arn:aws:dms:ap-southeast-2:000000000000:task:WRB34GCDTVAQXMLJ44J7WSRWHC",
+      "id": "copies-to:arn:aws:dms:ap-southeast-2:000000000000:task:WRB34GCDTVAQXMLJ44J7WSRWHC->arn:aws:dms:ap-southeast-2:000000000000:endpoint:EI2RMA2H5QAISDOSXAI37J6U5A",
       "kind": "copies-to",
       "label": "",
-      "to": "arn:aws:dms:ap-southeast-2:000000000000:endpoint:74ETK3CSBCD7IVPEGCR7KR7ZAS"
+      "to": "arn:aws:dms:ap-southeast-2:000000000000:endpoint:EI2RMA2H5QAISDOSXAI37J6U5A"
     },
     {
       "from": "glue-crawler:ap-southeast-2:w3-dm-crawler",
@@ -568,18 +595,18 @@
       "to": "arn:aws:s3:::w3-governance-logs"
     },
     {
-      "from": "arn:aws:sns:ap-southeast-2:000000000000:w3-order-events:41933c49-cfbb-49a7-875b-9cba9af258c8",
-      "id": "delivers-to:arn:aws:sns:ap-southeast-2:000000000000:w3-order-events:41933c49-cfbb-49a7-875b-9cba9af258c8->arn:aws:sqs:ap-southeast-2:000000000000:w3-orders",
-      "kind": "delivers-to",
-      "label": "",
-      "to": "arn:aws:sqs:ap-southeast-2:000000000000:w3-orders"
-    },
-    {
-      "from": "arn:aws:sns:ap-southeast-2:000000000000:w3-order-events:74e891d3-d2dc-40d8-ae2c-06ae23572a9f",
-      "id": "delivers-to:arn:aws:sns:ap-southeast-2:000000000000:w3-order-events:74e891d3-d2dc-40d8-ae2c-06ae23572a9f->arn:aws:lambda:ap-southeast-2:000000000000:function:w3-msg-consumer",
+      "from": "arn:aws:sns:ap-southeast-2:000000000000:w3-order-events:2cb1dfb7-73e9-4046-bcb1-ca4535e0dd9b",
+      "id": "delivers-to:arn:aws:sns:ap-southeast-2:000000000000:w3-order-events:2cb1dfb7-73e9-4046-bcb1-ca4535e0dd9b->arn:aws:lambda:ap-southeast-2:000000000000:function:w3-msg-consumer",
       "kind": "delivers-to",
       "label": "",
       "to": "arn:aws:lambda:ap-southeast-2:000000000000:function:w3-msg-consumer"
+    },
+    {
+      "from": "arn:aws:sns:ap-southeast-2:000000000000:w3-order-events:f8fd6355-f497-4f42-ad09-47528a163c1f",
+      "id": "delivers-to:arn:aws:sns:ap-southeast-2:000000000000:w3-order-events:f8fd6355-f497-4f42-ad09-47528a163c1f->arn:aws:sqs:ap-southeast-2:000000000000:w3-orders",
+      "kind": "delivers-to",
+      "label": "",
+      "to": "arn:aws:sqs:ap-southeast-2:000000000000:w3-orders"
     },
     {
       "from": "athena-workgroup:ap-southeast-2:w3-dm-wg",
@@ -596,32 +623,39 @@
       "to": "arn:aws:s3:::w3-governance-logs"
     },
     {
-      "from": "arn:aws:dms:ap-southeast-2:000000000000:endpoint:5BMIDRU5MGUNHOIU4HK5QBWASA",
-      "id": "endpoint-database:arn:aws:dms:ap-southeast-2:000000000000:endpoint:5BMIDRU5MGUNHOIU4HK5QBWASA->arn:aws:rds:ap-southeast-2:000000000000:db:w3-dm-db",
+      "from": "arn:aws:dms:ap-southeast-2:000000000000:endpoint:4MUAQGYVKTV47FWZ2SBOSN2BBC",
+      "id": "endpoint-database:arn:aws:dms:ap-southeast-2:000000000000:endpoint:4MUAQGYVKTV47FWZ2SBOSN2BBC->arn:aws:rds:ap-southeast-2:000000000000:db:w3-dm-db",
       "kind": "endpoint-database",
       "label": "",
       "to": "arn:aws:rds:ap-southeast-2:000000000000:db:w3-dm-db"
     },
     {
-      "from": "s-5f25bf4cc12f4b3bb",
-      "id": "endpoint-subnet:s-5f25bf4cc12f4b3bb->subnet-85834620",
+      "from": "s-9f27bcb53c884c8eb",
+      "id": "endpoint-subnet:s-9f27bcb53c884c8eb->subnet-959a86c4",
       "kind": "endpoint-subnet",
       "label": "",
-      "to": "subnet-85834620"
+      "to": "subnet-959a86c4"
+    },
+    {
+      "from": "arn:aws:globalaccelerator::000000000000:accelerator/9479869e-b9ba-4c95-92b5-59818f27a754",
+      "id": "endpoint:arn:aws:globalaccelerator::000000000000:accelerator/9479869e-b9ba-4c95-92b5-59818f27a754->arn:aws:elasticloadbalancing:ap-southeast-2:000000000000:loadbalancer/app/w3-edge-alb/7004a8a039ba453d",
+      "kind": "endpoint",
+      "label": "",
+      "to": "arn:aws:elasticloadbalancing:ap-southeast-2:000000000000:loadbalancer/app/w3-edge-alb/7004a8a039ba453d"
     },
     {
       "from": "arn:aws:kinesis:ap-southeast-2:000000000000:stream/w3-clicks",
-      "id": "event-source:arn:aws:kinesis:ap-southeast-2:000000000000:stream/w3-clicks->arn:aws:lambda:ap-southeast-2:000000000000:event-source-mapping:a6b7e70f-ddd7-457f-bada-6e64e3d48f04",
+      "id": "event-source:arn:aws:kinesis:ap-southeast-2:000000000000:stream/w3-clicks->arn:aws:lambda:ap-southeast-2:000000000000:event-source-mapping:14c27525-c974-4dfc-9620-05399ed3f1be",
       "kind": "event-source",
       "label": "",
-      "to": "arn:aws:lambda:ap-southeast-2:000000000000:event-source-mapping:a6b7e70f-ddd7-457f-bada-6e64e3d48f04"
+      "to": "arn:aws:lambda:ap-southeast-2:000000000000:event-source-mapping:14c27525-c974-4dfc-9620-05399ed3f1be"
     },
     {
       "from": "arn:aws:sqs:ap-southeast-2:000000000000:w3-orders",
-      "id": "event-source:arn:aws:sqs:ap-southeast-2:000000000000:w3-orders->arn:aws:lambda:ap-southeast-2:000000000000:event-source-mapping:00c5105e-4894-449e-8a80-ee47ed3f4545",
+      "id": "event-source:arn:aws:sqs:ap-southeast-2:000000000000:w3-orders->arn:aws:lambda:ap-southeast-2:000000000000:event-source-mapping:028cf16c-1a43-4c91-b811-fce2caa55138",
       "kind": "event-source",
       "label": "",
-      "to": "arn:aws:lambda:ap-southeast-2:000000000000:event-source-mapping:00c5105e-4894-449e-8a80-ee47ed3f4545"
+      "to": "arn:aws:lambda:ap-southeast-2:000000000000:event-source-mapping:028cf16c-1a43-4c91-b811-fce2caa55138"
     },
     {
       "from": "arn:aws:codebuild:ap-southeast-2:000000000000:project/w3-delivery-build",
@@ -638,22 +672,22 @@
       "to": "arn:aws:iam::000000000000:role/w3-delivery-role"
     },
     {
-      "from": "arn:aws:datasync:ap-southeast-2:000000000000:location/loc-8ed178c806cd0da13",
-      "id": "execution-role:arn:aws:datasync:ap-southeast-2:000000000000:location/loc-8ed178c806cd0da13->arn:aws:iam::000000000000:role/w3-dm-role",
+      "from": "arn:aws:datasync:ap-southeast-2:000000000000:location/loc-163a397236375cdf3",
+      "id": "execution-role:arn:aws:datasync:ap-southeast-2:000000000000:location/loc-163a397236375cdf3->arn:aws:iam::000000000000:role/w3-dm-role",
       "kind": "execution-role",
       "label": "",
       "to": "arn:aws:iam::000000000000:role/w3-dm-role"
     },
     {
-      "from": "arn:aws:datasync:ap-southeast-2:000000000000:location/loc-a9b69b7c7a2f17dab",
-      "id": "execution-role:arn:aws:datasync:ap-southeast-2:000000000000:location/loc-a9b69b7c7a2f17dab->arn:aws:iam::000000000000:role/w3-dm-role",
+      "from": "arn:aws:datasync:ap-southeast-2:000000000000:location/loc-89ba9f401a5184386",
+      "id": "execution-role:arn:aws:datasync:ap-southeast-2:000000000000:location/loc-89ba9f401a5184386->arn:aws:iam::000000000000:role/w3-dm-role",
       "kind": "execution-role",
       "label": "",
       "to": "arn:aws:iam::000000000000:role/w3-dm-role"
     },
     {
-      "from": "arn:aws:dms:ap-southeast-2:000000000000:endpoint:74ETK3CSBCD7IVPEGCR7KR7ZAS",
-      "id": "execution-role:arn:aws:dms:ap-southeast-2:000000000000:endpoint:74ETK3CSBCD7IVPEGCR7KR7ZAS->arn:aws:iam::000000000000:role/w3-dm-role",
+      "from": "arn:aws:dms:ap-southeast-2:000000000000:endpoint:EI2RMA2H5QAISDOSXAI37J6U5A",
+      "id": "execution-role:arn:aws:dms:ap-southeast-2:000000000000:endpoint:EI2RMA2H5QAISDOSXAI37J6U5A->arn:aws:iam::000000000000:role/w3-dm-role",
       "kind": "execution-role",
       "label": "",
       "to": "arn:aws:iam::000000000000:role/w3-dm-role"
@@ -708,123 +742,137 @@
       "to": "arn:aws:iam::000000000000:role/w3-dm-role"
     },
     {
-      "from": "s-5f25bf4cc12f4b3bb",
-      "id": "execution-role:s-5f25bf4cc12f4b3bb->arn:aws:iam::000000000000:role/w3-dm-role",
+      "from": "s-9f27bcb53c884c8eb",
+      "id": "execution-role:s-9f27bcb53c884c8eb->arn:aws:iam::000000000000:role/w3-dm-role",
       "kind": "execution-role",
       "label": "",
       "to": "arn:aws:iam::000000000000:role/w3-dm-role"
     },
     {
-      "from": "ap-southeast-2:55869260-0b9e-4e86-b37c-5e9ddde28c1b",
-      "id": "federates:ap-southeast-2:55869260-0b9e-4e86-b37c-5e9ddde28c1b->ap-southeast-2_52b1a1ca3",
+      "from": "ap-southeast-2:503dcfe1-e5cc-41e1-8f5e-bad3a65b692c",
+      "id": "federates:ap-southeast-2:503dcfe1-e5cc-41e1-8f5e-bad3a65b692c->ap-southeast-2_b5a52cd75",
       "kind": "federates",
       "label": "",
-      "to": "ap-southeast-2_52b1a1ca3"
+      "to": "ap-southeast-2_b5a52cd75"
     },
     {
       "from": "arn:aws:network-firewall:ap-southeast-2:000000000000:firewall/w3-firewall",
-      "id": "firewall-subnet:arn:aws:network-firewall:ap-southeast-2:000000000000:firewall/w3-firewall->subnet-52650042",
+      "id": "firewall-subnet:arn:aws:network-firewall:ap-southeast-2:000000000000:firewall/w3-firewall->subnet-615ab73b",
       "kind": "firewall-subnet",
       "label": "",
-      "to": "subnet-52650042"
+      "to": "subnet-615ab73b"
     },
     {
-      "from": "53e9b9a7ac",
-      "id": "invokes:53e9b9a7ac->arn:aws:lambda:ap-southeast-2:000000000000:function:w3-edge-fn",
+      "from": "1ac0af70bb",
+      "id": "invokes:1ac0af70bb->arn:aws:lambda:ap-southeast-2:000000000000:function:w3-edge-fn",
       "kind": "invokes",
       "label": "",
       "to": "arn:aws:lambda:ap-southeast-2:000000000000:function:w3-edge-fn"
     },
     {
-      "from": "ESUZGTI490RL77",
-      "id": "invokes:ESUZGTI490RL77->arn:aws:lambda:ap-southeast-2:000000000000:function:w3-edge-fn:1",
+      "from": "6d77101f8c",
+      "id": "invokes:6d77101f8c->arn:aws:lambda:ap-southeast-2:000000000000:function:w3-edge-fn",
+      "kind": "invokes",
+      "label": "",
+      "to": "arn:aws:lambda:ap-southeast-2:000000000000:function:w3-edge-fn"
+    },
+    {
+      "from": "E8BB5X0F4F2EJA",
+      "id": "invokes:E8BB5X0F4F2EJA->arn:aws:lambda:ap-southeast-2:000000000000:function:w3-edge-fn:1",
       "kind": "invokes",
       "label": "",
       "to": "arn:aws:lambda:ap-southeast-2:000000000000:function:w3-edge-fn:1"
     },
     {
-      "from": "arn:aws:lambda:ap-southeast-2:000000000000:event-source-mapping:00c5105e-4894-449e-8a80-ee47ed3f4545",
-      "id": "invokes:arn:aws:lambda:ap-southeast-2:000000000000:event-source-mapping:00c5105e-4894-449e-8a80-ee47ed3f4545->arn:aws:lambda:ap-southeast-2:000000000000:function:w3-msg-consumer",
+      "from": "arn:aws:lambda:ap-southeast-2:000000000000:event-source-mapping:028cf16c-1a43-4c91-b811-fce2caa55138",
+      "id": "invokes:arn:aws:lambda:ap-southeast-2:000000000000:event-source-mapping:028cf16c-1a43-4c91-b811-fce2caa55138->arn:aws:lambda:ap-southeast-2:000000000000:function:w3-msg-consumer",
       "kind": "invokes",
       "label": "",
       "to": "arn:aws:lambda:ap-southeast-2:000000000000:function:w3-msg-consumer"
     },
     {
-      "from": "arn:aws:lambda:ap-southeast-2:000000000000:event-source-mapping:a6b7e70f-ddd7-457f-bada-6e64e3d48f04",
-      "id": "invokes:arn:aws:lambda:ap-southeast-2:000000000000:event-source-mapping:a6b7e70f-ddd7-457f-bada-6e64e3d48f04->arn:aws:lambda:ap-southeast-2:000000000000:function:w3-msg-consumer",
+      "from": "arn:aws:lambda:ap-southeast-2:000000000000:event-source-mapping:14c27525-c974-4dfc-9620-05399ed3f1be",
+      "id": "invokes:arn:aws:lambda:ap-southeast-2:000000000000:event-source-mapping:14c27525-c974-4dfc-9620-05399ed3f1be->arn:aws:lambda:ap-southeast-2:000000000000:function:w3-msg-consumer",
       "kind": "invokes",
       "label": "",
       "to": "arn:aws:lambda:ap-southeast-2:000000000000:function:w3-msg-consumer"
     },
     {
-      "from": "d997462cf0",
-      "id": "invokes:d997462cf0->arn:aws:lambda:ap-southeast-2:000000000000:function:w3-edge-fn",
-      "kind": "invokes",
-      "label": "",
-      "to": "arn:aws:lambda:ap-southeast-2:000000000000:function:w3-edge-fn"
-    },
-    {
-      "from": "arn:aws:elasticloadbalancing:ap-southeast-2:000000000000:loadbalancer/app/w3-edge-alb/69f799da92464b34",
-      "id": "lb-subnet:arn:aws:elasticloadbalancing:ap-southeast-2:000000000000:loadbalancer/app/w3-edge-alb/69f799da92464b34->subnet-014b6ddb",
+      "from": "arn:aws:elasticloadbalancing:ap-southeast-2:000000000000:loadbalancer/app/w3-edge-alb/7004a8a039ba453d",
+      "id": "lb-subnet:arn:aws:elasticloadbalancing:ap-southeast-2:000000000000:loadbalancer/app/w3-edge-alb/7004a8a039ba453d->subnet-2de03173",
       "kind": "lb-subnet",
       "label": "",
-      "to": "subnet-014b6ddb"
+      "to": "subnet-2de03173"
     },
     {
-      "from": "arn:aws:elasticloadbalancing:ap-southeast-2:000000000000:loadbalancer/app/w3-edge-alb/69f799da92464b34",
-      "id": "lb-subnet:arn:aws:elasticloadbalancing:ap-southeast-2:000000000000:loadbalancer/app/w3-edge-alb/69f799da92464b34->subnet-e2c97ce3",
+      "from": "arn:aws:elasticloadbalancing:ap-southeast-2:000000000000:loadbalancer/app/w3-edge-alb/7004a8a039ba453d",
+      "id": "lb-subnet:arn:aws:elasticloadbalancing:ap-southeast-2:000000000000:loadbalancer/app/w3-edge-alb/7004a8a039ba453d->subnet-303a6937",
       "kind": "lb-subnet",
       "label": "",
-      "to": "subnet-e2c97ce3"
+      "to": "subnet-303a6937"
     },
     {
-      "from": "arn:aws:elasticloadbalancing:ap-southeast-2:000000000000:listener/app/w3-edge-alb/69f799da92464b34/d283f3a73f4e40a9",
-      "id": "listener-of:arn:aws:elasticloadbalancing:ap-southeast-2:000000000000:listener/app/w3-edge-alb/69f799da92464b34/d283f3a73f4e40a9->arn:aws:elasticloadbalancing:ap-southeast-2:000000000000:loadbalancer/app/w3-edge-alb/69f799da92464b34",
+      "from": "arn:aws:elasticloadbalancing:ap-southeast-2:000000000000:listener/app/w3-edge-alb/7004a8a039ba453d/15c914b075444661",
+      "id": "listener-of:arn:aws:elasticloadbalancing:ap-southeast-2:000000000000:listener/app/w3-edge-alb/7004a8a039ba453d/15c914b075444661->arn:aws:elasticloadbalancing:ap-southeast-2:000000000000:loadbalancer/app/w3-edge-alb/7004a8a039ba453d",
       "kind": "listener-of",
       "label": "",
-      "to": "arn:aws:elasticloadbalancing:ap-southeast-2:000000000000:loadbalancer/app/w3-edge-alb/69f799da92464b34"
+      "to": "arn:aws:elasticloadbalancing:ap-southeast-2:000000000000:loadbalancer/app/w3-edge-alb/7004a8a039ba453d"
     },
     {
-      "from": "arn:aws:organizations::000000000000:account/o-1pln15fyv4/000000000000",
-      "id": "member-of:arn:aws:organizations::000000000000:account/o-1pln15fyv4/000000000000->r-gt0v",
+      "from": "arn:aws:organizations::000000000000:account/o-p2d5zb71e3/000000000000",
+      "id": "member-of:arn:aws:organizations::000000000000:account/o-p2d5zb71e3/000000000000->r-y8ib",
       "kind": "member-of",
       "label": "",
-      "to": "r-gt0v"
+      "to": "r-y8ib"
     },
     {
-      "from": "arn:aws:organizations::000000000000:account/o-1pln15fyv4/381802961456",
-      "id": "member-of:arn:aws:organizations::000000000000:account/o-1pln15fyv4/381802961456->arn:aws:organizations::000000000000:ou/o-1pln15fyv4/ou-gt0v-tp01c9ap",
+      "from": "arn:aws:organizations::000000000000:account/o-p2d5zb71e3/798322081289",
+      "id": "member-of:arn:aws:organizations::000000000000:account/o-p2d5zb71e3/798322081289->arn:aws:organizations::000000000000:ou/o-p2d5zb71e3/ou-y8ib-wlss3zes",
       "kind": "member-of",
       "label": "",
-      "to": "arn:aws:organizations::000000000000:ou/o-1pln15fyv4/ou-gt0v-tp01c9ap"
+      "to": "arn:aws:organizations::000000000000:ou/o-p2d5zb71e3/ou-y8ib-wlss3zes"
     },
     {
-      "from": "arn:aws:organizations::000000000000:ou/o-1pln15fyv4/ou-gt0v-tp01c9ap",
-      "id": "member-of:arn:aws:organizations::000000000000:ou/o-1pln15fyv4/ou-gt0v-tp01c9ap->r-gt0v",
+      "from": "arn:aws:organizations::000000000000:ou/o-p2d5zb71e3/ou-y8ib-wlss3zes",
+      "id": "member-of:arn:aws:organizations::000000000000:ou/o-p2d5zb71e3/ou-y8ib-wlss3zes->r-y8ib",
       "kind": "member-of",
       "label": "",
-      "to": "r-gt0v"
+      "to": "r-y8ib"
     },
     {
-      "from": "acl-8cc9e4dca657a5a52",
-      "id": "nacl-association:acl-8cc9e4dca657a5a52->subnet-1f1f0b5e",
+      "from": "acl-58ee71b59c82e07a8",
+      "id": "nacl-association:acl-58ee71b59c82e07a8->subnet-615ab73b",
       "kind": "nacl-association",
       "label": "",
-      "to": "subnet-1f1f0b5e"
+      "to": "subnet-615ab73b"
     },
     {
-      "from": "acl-8cc9e4dca657a5a52",
-      "id": "nacl-association:acl-8cc9e4dca657a5a52->subnet-85834620",
+      "from": "acl-a1b9f4cfa265159af",
+      "id": "nacl-association:acl-a1b9f4cfa265159af->subnet-72a75d46",
       "kind": "nacl-association",
       "label": "",
-      "to": "subnet-85834620"
+      "to": "subnet-72a75d46"
     },
     {
-      "from": "acl-dd17e81e1ea199fb3",
-      "id": "nacl-association:acl-dd17e81e1ea199fb3->subnet-52650042",
+      "from": "acl-a1b9f4cfa265159af",
+      "id": "nacl-association:acl-a1b9f4cfa265159af->subnet-959a86c4",
       "kind": "nacl-association",
       "label": "",
-      "to": "subnet-52650042"
+      "to": "subnet-959a86c4"
+    },
+    {
+      "from": "acl-b4bfbeb3845314ff3",
+      "id": "nacl-association:acl-b4bfbeb3845314ff3->subnet-2de03173",
+      "kind": "nacl-association",
+      "label": "",
+      "to": "subnet-2de03173"
+    },
+    {
+      "from": "acl-b4bfbeb3845314ff3",
+      "id": "nacl-association:acl-b4bfbeb3845314ff3->subnet-303a6937",
+      "kind": "nacl-association",
+      "label": "",
+      "to": "subnet-303a6937"
     },
     {
       "from": "acl-default",
@@ -848,20 +896,6 @@
       "to": "subnet-default-ap-southeast-2-c"
     },
     {
-      "from": "acl-e3b2f413f541d345e",
-      "id": "nacl-association:acl-e3b2f413f541d345e->subnet-014b6ddb",
-      "kind": "nacl-association",
-      "label": "",
-      "to": "subnet-014b6ddb"
-    },
-    {
-      "from": "acl-e3b2f413f541d345e",
-      "id": "nacl-association:acl-e3b2f413f541d345e->subnet-e2c97ce3",
-      "kind": "nacl-association",
-      "label": "",
-      "to": "subnet-e2c97ce3"
-    },
-    {
       "from": "arn:aws:rds:ap-southeast-2:000000000000:es:w3-dm-db-events",
       "id": "notifies:arn:aws:rds:ap-southeast-2:000000000000:es:w3-dm-db-events->arn:aws:sns:ap-southeast-2:000000000000:w3-dm-events",
       "kind": "notifies",
@@ -869,15 +903,15 @@
       "to": "arn:aws:sns:ap-southeast-2:000000000000:w3-dm-events"
     },
     {
-      "from": "ESUZGTI490RL77",
-      "id": "origin:ESUZGTI490RL77->arn:aws:elasticloadbalancing:ap-southeast-2:000000000000:loadbalancer/app/w3-edge-alb/69f799da92464b34",
+      "from": "E8BB5X0F4F2EJA",
+      "id": "origin:E8BB5X0F4F2EJA->arn:aws:elasticloadbalancing:ap-southeast-2:000000000000:loadbalancer/app/w3-edge-alb/7004a8a039ba453d",
       "kind": "origin",
       "label": "",
-      "to": "arn:aws:elasticloadbalancing:ap-southeast-2:000000000000:loadbalancer/app/w3-edge-alb/69f799da92464b34"
+      "to": "arn:aws:elasticloadbalancing:ap-southeast-2:000000000000:loadbalancer/app/w3-edge-alb/7004a8a039ba453d"
     },
     {
-      "from": "ESUZGTI490RL77",
-      "id": "origin:ESUZGTI490RL77->arn:aws:s3:::w3-edge-origin",
+      "from": "E8BB5X0F4F2EJA",
+      "id": "origin:E8BB5X0F4F2EJA->arn:aws:s3:::w3-edge-origin",
       "kind": "origin",
       "label": "",
       "to": "arn:aws:s3:::w3-edge-origin"
@@ -904,32 +938,32 @@
       "to": "arn:aws:codepipeline:ap-southeast-2:000000000000:w3-delivery-pipeline"
     },
     {
-      "from": "ap-southeast-2:55869260-0b9e-4e86-b37c-5e9ddde28c1b",
-      "id": "pool-role:ap-southeast-2:55869260-0b9e-4e86-b37c-5e9ddde28c1b->arn:aws:iam::000000000000:role/w3-cognito-auth",
+      "from": "ap-southeast-2:503dcfe1-e5cc-41e1-8f5e-bad3a65b692c",
+      "id": "pool-role:ap-southeast-2:503dcfe1-e5cc-41e1-8f5e-bad3a65b692c->arn:aws:iam::000000000000:role/w3-cognito-auth",
       "kind": "pool-role",
       "label": "",
       "to": "arn:aws:iam::000000000000:role/w3-cognito-auth"
     },
     {
-      "from": "ap-southeast-2_52b1a1ca3/w3-oidc",
-      "id": "provider-of:ap-southeast-2_52b1a1ca3/w3-oidc->ap-southeast-2_52b1a1ca3",
+      "from": "ap-southeast-2_b5a52cd75/w3-oidc",
+      "id": "provider-of:ap-southeast-2_b5a52cd75/w3-oidc->ap-southeast-2_b5a52cd75",
       "kind": "provider-of",
       "label": "",
-      "to": "ap-southeast-2_52b1a1ca3"
+      "to": "ap-southeast-2_b5a52cd75"
     },
     {
-      "from": "/hostedzone/Z6WG0M5Q336PDHF/app.w3-edge.example.com./A/primary",
-      "id": "record-of:/hostedzone/Z6WG0M5Q336PDHF/app.w3-edge.example.com./A/primary->/hostedzone/Z6WG0M5Q336PDHF",
+      "from": "/hostedzone/Z4HMOJ1ZS4SW4F9/app.w3-edge.example.com./A/primary",
+      "id": "record-of:/hostedzone/Z4HMOJ1ZS4SW4F9/app.w3-edge.example.com./A/primary->/hostedzone/Z4HMOJ1ZS4SW4F9",
       "kind": "record-of",
       "label": "",
-      "to": "/hostedzone/Z6WG0M5Q336PDHF"
+      "to": "/hostedzone/Z4HMOJ1ZS4SW4F9"
     },
     {
-      "from": "/hostedzone/Z6WG0M5Q336PDHF/app.w3-edge.example.com./A/secondary",
-      "id": "record-of:/hostedzone/Z6WG0M5Q336PDHF/app.w3-edge.example.com./A/secondary->/hostedzone/Z6WG0M5Q336PDHF",
+      "from": "/hostedzone/Z4HMOJ1ZS4SW4F9/app.w3-edge.example.com./A/secondary",
+      "id": "record-of:/hostedzone/Z4HMOJ1ZS4SW4F9/app.w3-edge.example.com./A/secondary->/hostedzone/Z4HMOJ1ZS4SW4F9",
       "kind": "record-of",
       "label": "",
-      "to": "/hostedzone/Z6WG0M5Q336PDHF"
+      "to": "/hostedzone/Z4HMOJ1ZS4SW4F9"
     },
     {
       "from": "rtb-default",
@@ -939,53 +973,53 @@
       "to": "igw-default"
     },
     {
-      "from": "arn:aws:dms:ap-southeast-2:000000000000:task:LIZ5P75OCMWZK7OHFMLARUXPQ3",
-      "id": "runs-on:arn:aws:dms:ap-southeast-2:000000000000:task:LIZ5P75OCMWZK7OHFMLARUXPQ3->arn:aws:dms:ap-southeast-2:000000000000:rep:JSOZ6ALQRNR7ME3KTCOCFMLKL5",
+      "from": "arn:aws:dms:ap-southeast-2:000000000000:task:WRB34GCDTVAQXMLJ44J7WSRWHC",
+      "id": "runs-on:arn:aws:dms:ap-southeast-2:000000000000:task:WRB34GCDTVAQXMLJ44J7WSRWHC->arn:aws:dms:ap-southeast-2:000000000000:rep:4Q3VZE4ZBCXQTPWTPHI4IENEWW",
       "kind": "runs-on",
       "label": "",
-      "to": "arn:aws:dms:ap-southeast-2:000000000000:rep:JSOZ6ALQRNR7ME3KTCOCFMLKL5"
+      "to": "arn:aws:dms:ap-southeast-2:000000000000:rep:4Q3VZE4ZBCXQTPWTPHI4IENEWW"
     },
     {
-      "from": "arn:aws:dms:ap-southeast-2:000000000000:rep:JSOZ6ALQRNR7ME3KTCOCFMLKL5",
-      "id": "subnet-group-member:arn:aws:dms:ap-southeast-2:000000000000:rep:JSOZ6ALQRNR7ME3KTCOCFMLKL5->subnet-1f1f0b5e",
+      "from": "arn:aws:dms:ap-southeast-2:000000000000:rep:4Q3VZE4ZBCXQTPWTPHI4IENEWW",
+      "id": "subnet-group-member:arn:aws:dms:ap-southeast-2:000000000000:rep:4Q3VZE4ZBCXQTPWTPHI4IENEWW->subnet-72a75d46",
       "kind": "subnet-group-member",
       "label": "",
-      "to": "subnet-1f1f0b5e"
+      "to": "subnet-72a75d46"
     },
     {
-      "from": "arn:aws:dms:ap-southeast-2:000000000000:rep:JSOZ6ALQRNR7ME3KTCOCFMLKL5",
-      "id": "subnet-group-member:arn:aws:dms:ap-southeast-2:000000000000:rep:JSOZ6ALQRNR7ME3KTCOCFMLKL5->subnet-85834620",
+      "from": "arn:aws:dms:ap-southeast-2:000000000000:rep:4Q3VZE4ZBCXQTPWTPHI4IENEWW",
+      "id": "subnet-group-member:arn:aws:dms:ap-southeast-2:000000000000:rep:4Q3VZE4ZBCXQTPWTPHI4IENEWW->subnet-959a86c4",
       "kind": "subnet-group-member",
       "label": "",
-      "to": "subnet-85834620"
-    },
-    {
-      "from": "arn:aws:elasticache:ap-southeast-2:000000000000:cluster:w3-dm-memcached",
-      "id": "subnet-group-member:arn:aws:elasticache:ap-southeast-2:000000000000:cluster:w3-dm-memcached->subnet-1f1f0b5e",
-      "kind": "subnet-group-member",
-      "label": "",
-      "to": "subnet-1f1f0b5e"
+      "to": "subnet-959a86c4"
     },
     {
       "from": "arn:aws:elasticache:ap-southeast-2:000000000000:cluster:w3-dm-memcached",
-      "id": "subnet-group-member:arn:aws:elasticache:ap-southeast-2:000000000000:cluster:w3-dm-memcached->subnet-85834620",
+      "id": "subnet-group-member:arn:aws:elasticache:ap-southeast-2:000000000000:cluster:w3-dm-memcached->subnet-72a75d46",
       "kind": "subnet-group-member",
       "label": "",
-      "to": "subnet-85834620"
+      "to": "subnet-72a75d46"
+    },
+    {
+      "from": "arn:aws:elasticache:ap-southeast-2:000000000000:cluster:w3-dm-memcached",
+      "id": "subnet-group-member:arn:aws:elasticache:ap-southeast-2:000000000000:cluster:w3-dm-memcached->subnet-959a86c4",
+      "kind": "subnet-group-member",
+      "label": "",
+      "to": "subnet-959a86c4"
     },
     {
       "from": "arn:aws:elasticache:ap-southeast-2:000000000000:replicationgroup:w3-dm-redis",
-      "id": "subnet-group-member:arn:aws:elasticache:ap-southeast-2:000000000000:replicationgroup:w3-dm-redis->subnet-1f1f0b5e",
+      "id": "subnet-group-member:arn:aws:elasticache:ap-southeast-2:000000000000:replicationgroup:w3-dm-redis->subnet-72a75d46",
       "kind": "subnet-group-member",
       "label": "",
-      "to": "subnet-1f1f0b5e"
+      "to": "subnet-72a75d46"
     },
     {
       "from": "arn:aws:elasticache:ap-southeast-2:000000000000:replicationgroup:w3-dm-redis",
-      "id": "subnet-group-member:arn:aws:elasticache:ap-southeast-2:000000000000:replicationgroup:w3-dm-redis->subnet-85834620",
+      "id": "subnet-group-member:arn:aws:elasticache:ap-southeast-2:000000000000:replicationgroup:w3-dm-redis->subnet-959a86c4",
       "kind": "subnet-group-member",
       "label": "",
-      "to": "subnet-85834620"
+      "to": "subnet-959a86c4"
     },
     {
       "from": "arn:aws:events:ap-southeast-2:000000000000:rule/w3-orders-rule",
@@ -1030,39 +1064,39 @@
       "to": "arn:aws:codeartifact:ap-southeast-2:000000000000:repository/w3-delivery/w3-delivery-npm-store"
     },
     {
-      "from": "arn:aws:datasync:ap-southeast-2:000000000000:location/loc-8ed178c806cd0da13",
-      "id": "uses-bucket:arn:aws:datasync:ap-southeast-2:000000000000:location/loc-8ed178c806cd0da13->arn:aws:s3:::w3-dm-bucket",
+      "from": "arn:aws:datasync:ap-southeast-2:000000000000:location/loc-163a397236375cdf3",
+      "id": "uses-bucket:arn:aws:datasync:ap-southeast-2:000000000000:location/loc-163a397236375cdf3->arn:aws:s3:::w3-dm-bucket",
       "kind": "uses-bucket",
       "label": "",
       "to": "arn:aws:s3:::w3-dm-bucket"
     },
     {
-      "from": "arn:aws:datasync:ap-southeast-2:000000000000:location/loc-a9b69b7c7a2f17dab",
-      "id": "uses-bucket:arn:aws:datasync:ap-southeast-2:000000000000:location/loc-a9b69b7c7a2f17dab->arn:aws:s3:::w3-dm-bucket",
+      "from": "arn:aws:datasync:ap-southeast-2:000000000000:location/loc-89ba9f401a5184386",
+      "id": "uses-bucket:arn:aws:datasync:ap-southeast-2:000000000000:location/loc-89ba9f401a5184386->arn:aws:s3:::w3-dm-bucket",
       "kind": "uses-bucket",
       "label": "",
       "to": "arn:aws:s3:::w3-dm-bucket"
     },
     {
-      "from": "arn:aws:dms:ap-southeast-2:000000000000:endpoint:74ETK3CSBCD7IVPEGCR7KR7ZAS",
-      "id": "uses-bucket:arn:aws:dms:ap-southeast-2:000000000000:endpoint:74ETK3CSBCD7IVPEGCR7KR7ZAS->arn:aws:s3:::w3-dm-bucket",
+      "from": "arn:aws:dms:ap-southeast-2:000000000000:endpoint:EI2RMA2H5QAISDOSXAI37J6U5A",
+      "id": "uses-bucket:arn:aws:dms:ap-southeast-2:000000000000:endpoint:EI2RMA2H5QAISDOSXAI37J6U5A->arn:aws:s3:::w3-dm-bucket",
       "kind": "uses-bucket",
       "label": "",
       "to": "arn:aws:s3:::w3-dm-bucket"
     },
     {
-      "from": "ESUZGTI490RL77",
-      "id": "uses-certificate:ESUZGTI490RL77->arn:aws:acm:ap-southeast-2:000000000000:certificate/7a4702a0-cfe3-4fff-8947-03af3fb36b4e",
+      "from": "E8BB5X0F4F2EJA",
+      "id": "uses-certificate:E8BB5X0F4F2EJA->arn:aws:acm:ap-southeast-2:000000000000:certificate/cdfc61b2-7931-4669-838f-1d178d90c1e2",
       "kind": "uses-certificate",
       "label": "",
-      "to": "arn:aws:acm:ap-southeast-2:000000000000:certificate/7a4702a0-cfe3-4fff-8947-03af3fb36b4e"
+      "to": "arn:aws:acm:ap-southeast-2:000000000000:certificate/cdfc61b2-7931-4669-838f-1d178d90c1e2"
     },
     {
-      "from": "arn:aws:elasticloadbalancing:ap-southeast-2:000000000000:listener/app/w3-edge-alb/69f799da92464b34/d283f3a73f4e40a9",
-      "id": "uses-certificate:arn:aws:elasticloadbalancing:ap-southeast-2:000000000000:listener/app/w3-edge-alb/69f799da92464b34/d283f3a73f4e40a9->arn:aws:acm:ap-southeast-2:000000000000:certificate/7a4702a0-cfe3-4fff-8947-03af3fb36b4e",
+      "from": "arn:aws:elasticloadbalancing:ap-southeast-2:000000000000:listener/app/w3-edge-alb/7004a8a039ba453d/15c914b075444661",
+      "id": "uses-certificate:arn:aws:elasticloadbalancing:ap-southeast-2:000000000000:listener/app/w3-edge-alb/7004a8a039ba453d/15c914b075444661->arn:aws:acm:ap-southeast-2:000000000000:certificate/cdfc61b2-7931-4669-838f-1d178d90c1e2",
       "kind": "uses-certificate",
       "label": "",
-      "to": "arn:aws:acm:ap-southeast-2:000000000000:certificate/7a4702a0-cfe3-4fff-8947-03af3fb36b4e"
+      "to": "arn:aws:acm:ap-southeast-2:000000000000:certificate/cdfc61b2-7931-4669-838f-1d178d90c1e2"
     },
     {
       "from": "arn:aws:network-firewall:ap-southeast-2:000000000000:firewall/w3-firewall",
@@ -1072,11 +1106,32 @@
       "to": "arn:aws:network-firewall:ap-southeast-2:000000000000:firewall-policy/w3-policy"
     },
     {
-      "from": "/hostedzone/Z6WG0M5Q336PDHF/app.w3-edge.example.com./A/primary",
-      "id": "uses-health-check:/hostedzone/Z6WG0M5Q336PDHF/app.w3-edge.example.com./A/primary->e3444407-d988-4961-be66-64b459c57cfa",
+      "from": "/hostedzone/Z4HMOJ1ZS4SW4F9/app.w3-edge.example.com./A/primary",
+      "id": "uses-health-check:/hostedzone/Z4HMOJ1ZS4SW4F9/app.w3-edge.example.com./A/primary->e09d9cb0-2937-40d8-972d-226519504a70",
       "kind": "uses-health-check",
       "label": "",
-      "to": "e3444407-d988-4961-be66-64b459c57cfa"
+      "to": "e09d9cb0-2937-40d8-972d-226519504a70"
+    },
+    {
+      "from": "E8BB5X0F4F2EJA",
+      "id": "uses-oac:E8BB5X0F4F2EJA->e06c431e-daa7-4c92-baaf-39674ad835e9",
+      "kind": "uses-oac",
+      "label": "",
+      "to": "e06c431e-daa7-4c92-baaf-39674ad835e9"
+    },
+    {
+      "from": "E8BB5X0F4F2EJA",
+      "id": "uses-policy:E8BB5X0F4F2EJA->0ec3cb72-f91a-4698-9892-9281f83361cb",
+      "kind": "uses-policy",
+      "label": "",
+      "to": "0ec3cb72-f91a-4698-9892-9281f83361cb"
+    },
+    {
+      "from": "E8BB5X0F4F2EJA",
+      "id": "uses-policy:E8BB5X0F4F2EJA->bed7e4c2-4d0a-4e65-911a-0452c5ca96fe",
+      "kind": "uses-policy",
+      "label": "",
+      "to": "bed7e4c2-4d0a-4e65-911a-0452c5ca96fe"
     },
     {
       "from": "arn:aws:network-firewall:ap-southeast-2:000000000000:firewall-policy/w3-policy",
@@ -1100,17 +1155,17 @@
       "to": "arn:aws:rds:ap-southeast-2:000000000000:db:w3-dm-db"
     },
     {
-      "from": "arn:aws:wafv2:ap-southeast-2:000000000000:regional/webacl/w3-edge-acl/6fdea9e8-028a-4786-9398-70895c9cb7e1",
-      "id": "web-acl-for:arn:aws:wafv2:ap-southeast-2:000000000000:regional/webacl/w3-edge-acl/6fdea9e8-028a-4786-9398-70895c9cb7e1->arn:aws:elasticloadbalancing:ap-southeast-2:000000000000:loadbalancer/app/w3-edge-alb/69f799da92464b34",
+      "from": "arn:aws:wafv2:ap-southeast-2:000000000000:regional/webacl/w3-edge-acl/5a727a5e-2344-430d-a2ad-ac3d38d9d7d6",
+      "id": "web-acl-for:arn:aws:wafv2:ap-southeast-2:000000000000:regional/webacl/w3-edge-acl/5a727a5e-2344-430d-a2ad-ac3d38d9d7d6->arn:aws:elasticloadbalancing:ap-southeast-2:000000000000:loadbalancer/app/w3-edge-alb/7004a8a039ba453d",
       "kind": "web-acl-for",
       "label": "",
-      "to": "arn:aws:elasticloadbalancing:ap-southeast-2:000000000000:loadbalancer/app/w3-edge-alb/69f799da92464b34"
+      "to": "arn:aws:elasticloadbalancing:ap-southeast-2:000000000000:loadbalancer/app/w3-edge-alb/7004a8a039ba453d"
     }
   ],
   "emulator": "floci",
   "nodes": [
     {
-      "id": "/hostedzone/Z6WG0M5Q336PDHF",
+      "id": "/hostedzone/Z4HMOJ1ZS4SW4F9",
       "kind": "hosted-zone",
       "label": "w3-edge.example.com.",
       "props": {
@@ -1119,7 +1174,7 @@
       }
     },
     {
-      "id": "/hostedzone/Z6WG0M5Q336PDHF/app.w3-edge.example.com./A/primary",
+      "id": "/hostedzone/Z4HMOJ1ZS4SW4F9/app.w3-edge.example.com./A/primary",
       "kind": "record-set",
       "label": "app.w3-edge.example.com. A",
       "props": {
@@ -1130,11 +1185,11 @@
         "values": [
           "10.153.1.10"
         ],
-        "zone": "/hostedzone/Z6WG0M5Q336PDHF"
+        "zone": "/hostedzone/Z4HMOJ1ZS4SW4F9"
       }
     },
     {
-      "id": "/hostedzone/Z6WG0M5Q336PDHF/app.w3-edge.example.com./A/secondary",
+      "id": "/hostedzone/Z4HMOJ1ZS4SW4F9/app.w3-edge.example.com./A/secondary",
       "kind": "record-set",
       "label": "app.w3-edge.example.com. A",
       "props": {
@@ -1145,7 +1200,7 @@
         "values": [
           "10.153.2.10"
         ],
-        "zone": "/hostedzone/Z6WG0M5Q336PDHF"
+        "zone": "/hostedzone/Z4HMOJ1ZS4SW4F9"
       }
     },
     {
@@ -1155,21 +1210,79 @@
       "props": {}
     },
     {
-      "id": "3f82f0f4ab014996945ba0bb19cb348f",
-      "kind": "guardduty-detector",
-      "label": "3f82f0f4ab014996945ba0bb19cb348f",
+      "id": "0ec3cb72-f91a-4698-9892-9281f83361cb",
+      "kind": "cloudfront-cache-policy",
+      "label": "w3-edge-cache",
       "props": {
-        "createdAt": "2026-10-31T16:25:12.548Z",
-        "findingFrequency": "FIFTEEN_MINUTES",
-        "status": "ENABLED"
+        "cacheKey": {
+          "brotli": null,
+          "cookies": "none",
+          "gzip": true,
+          "headers": "none",
+          "queryStrings": "none"
+        },
+        "comment": "",
+        "etag": "7d20eb73-76aa-422a-b435-34479c6c0839",
+        "ttl": {
+          "default": 300,
+          "max": 3600,
+          "min": 1
+        }
       }
     },
     {
-      "id": "53e9b9a7ac",
+      "id": "1ac0af70bb",
+      "kind": "apigateway-rest-api",
+      "label": "w3-edge-rest",
+      "props": {
+        "apiKeySource": "HEADER",
+        "endpointTypes": [
+          "REGIONAL"
+        ],
+        "integrations": [
+          "AWS_PROXY arn:aws:apigateway:ap-southeast-2:lambda:path/2015-03-31/functions/arn:aws:lambda:ap-southeast-2:000000000000:function:w3-edge-fn/invocations"
+        ],
+        "methods": [
+          {
+            "methods": [
+              "GET"
+            ],
+            "path": "/items"
+          }
+        ],
+        "paths": [
+          "/",
+          "/items"
+        ],
+        "stages": [
+          "prod"
+        ]
+      }
+    },
+    {
+      "id": "2df70c1041",
+      "kind": "apigateway-usage-plan",
+      "label": "w3-edge-plan",
+      "props": {
+        "keys": [
+          "w3-edge-key"
+        ]
+      }
+    },
+    {
+      "id": "4fc0fb52f4",
+      "kind": "apigateway-api-key",
+      "label": "w3-edge-key",
+      "props": {
+        "enabled": true
+      }
+    },
+    {
+      "id": "6d77101f8c",
       "kind": "apigateway-http-api",
       "label": "w3-edge-http",
       "props": {
-        "endpoint": "https://53e9b9a7ac.execute-api.ap-southeast-2.amazonaws.com",
+        "endpoint": "https://6d77101f8c.execute-api.ap-southeast-2.amazonaws.com",
         "integrations": [
           "AWS_PROXY arn:aws:lambda:ap-southeast-2:000000000000:function:w3-edge-fn"
         ],
@@ -1179,7 +1292,26 @@
       }
     },
     {
-      "id": "ESUZGTI490RL77",
+      "id": "96d6e3d0-e1e7-4b01-8356-4b005984efa1",
+      "kind": "codedeploy-application",
+      "label": "w3-delivery-deploy",
+      "props": {
+        "computePlatform": "Server",
+        "linkedToGitHub": false
+      }
+    },
+    {
+      "id": "9f86b2b073c44494991049ed4c716ba1",
+      "kind": "guardduty-detector",
+      "label": "9f86b2b073c44494991049ed4c716ba1",
+      "props": {
+        "createdAt": "2026-11-01T09:05:41.811Z",
+        "findingFrequency": "FIFTEEN_MINUTES",
+        "status": "ENABLED"
+      }
+    },
+    {
+      "id": "E8BB5X0F4F2EJA",
       "kind": "cloudfront-distribution",
       "label": "w3-edge-cf",
       "props": {
@@ -1187,7 +1319,7 @@
           "w3-edge.example.com"
         ],
         "certificate": {
-          "acmCertificate": "arn:aws:acm:ap-southeast-2:000000000000:certificate/7a4702a0-cfe3-4fff-8947-03af3fb36b4e",
+          "acmCertificate": "arn:aws:acm:ap-southeast-2:000000000000:certificate/cdfc61b2-7931-4669-838f-1d178d90c1e2",
           "cloudFrontDefault": null,
           "minimumProtocolVersion": "TLSv1.2_2021"
         },
@@ -1196,26 +1328,26 @@
             "GET",
             "HEAD"
           ],
-          "cachePolicy": "658327ea-f89d-4fab-a63d-7e88639e58f6",
+          "cachePolicy": "0ec3cb72-f91a-4698-9892-9281f83361cb",
           "compress": false,
           "origin": "s3",
           "viewerProtocolPolicy": "redirect-to-https"
         },
         "defaultRootObject": "",
-        "domainName": "esuzgti490rl77.cloudfront.net",
+        "domainName": "e8bb5x0f4f2eja.cloudfront.net",
         "enabled": true,
-        "etag": "1e272556-d874-4b3d-9bc6-e1567362c6ba",
+        "etag": "ce4c9e50-286f-43ca-a8f8-d37f4863db84",
         "origins": [
           {
             "domainName": "w3-edge-origin.s3.ap-southeast-2.amazonaws.com",
             "id": "s3",
-            "originAccessControl": null,
+            "originAccessControl": "e06c431e-daa7-4c92-baaf-39674ad835e9",
             "path": "",
             "protocolPolicy": null,
             "s3": true
           },
           {
-            "domainName": "w3-edge-alb-69f799da92464b34.elb.localhost.floci.io",
+            "domainName": "w3-edge-alb-7004a8a039ba453d.elb.localhost.floci.io",
             "id": "alb",
             "originAccessControl": null,
             "path": "",
@@ -1228,13 +1360,12 @@
       }
     },
     {
-      "id": "acl-8cc9e4dca657a5a52",
+      "id": "acl-58ee71b59c82e07a8",
       "kind": "network-acl",
-      "label": "acl-8cc9e4dca657a5a52",
+      "label": "acl-58ee71b59c82e07a8",
       "props": {
         "associations": [
-          "subnet-1f1f0b5e",
-          "subnet-85834620"
+          "subnet-615ab73b"
         ],
         "entries": [
           {
@@ -1274,12 +1405,59 @@
       }
     },
     {
-      "id": "acl-dd17e81e1ea199fb3",
+      "id": "acl-a1b9f4cfa265159af",
       "kind": "network-acl",
-      "label": "acl-dd17e81e1ea199fb3",
+      "label": "acl-a1b9f4cfa265159af",
       "props": {
         "associations": [
-          "subnet-52650042"
+          "subnet-72a75d46",
+          "subnet-959a86c4"
+        ],
+        "entries": [
+          {
+            "action": "allow",
+            "cidr": "0.0.0.0/0",
+            "egress": false,
+            "port_range": null,
+            "protocol": "-1",
+            "rule_number": 100
+          },
+          {
+            "action": "deny",
+            "cidr": "0.0.0.0/0",
+            "egress": false,
+            "port_range": null,
+            "protocol": "-1",
+            "rule_number": 32767
+          },
+          {
+            "action": "allow",
+            "cidr": "0.0.0.0/0",
+            "egress": true,
+            "port_range": null,
+            "protocol": "-1",
+            "rule_number": 100
+          },
+          {
+            "action": "deny",
+            "cidr": "0.0.0.0/0",
+            "egress": true,
+            "port_range": null,
+            "protocol": "-1",
+            "rule_number": 32767
+          }
+        ],
+        "isDefault": true
+      }
+    },
+    {
+      "id": "acl-b4bfbeb3845314ff3",
+      "kind": "network-acl",
+      "label": "acl-b4bfbeb3845314ff3",
+      "props": {
+        "associations": [
+          "subnet-2de03173",
+          "subnet-303a6937"
         ],
         "entries": [
           {
@@ -1366,59 +1544,13 @@
       }
     },
     {
-      "id": "acl-e3b2f413f541d345e",
-      "kind": "network-acl",
-      "label": "acl-e3b2f413f541d345e",
-      "props": {
-        "associations": [
-          "subnet-014b6ddb",
-          "subnet-e2c97ce3"
-        ],
-        "entries": [
-          {
-            "action": "allow",
-            "cidr": "0.0.0.0/0",
-            "egress": false,
-            "port_range": null,
-            "protocol": "-1",
-            "rule_number": 100
-          },
-          {
-            "action": "deny",
-            "cidr": "0.0.0.0/0",
-            "egress": false,
-            "port_range": null,
-            "protocol": "-1",
-            "rule_number": 32767
-          },
-          {
-            "action": "allow",
-            "cidr": "0.0.0.0/0",
-            "egress": true,
-            "port_range": null,
-            "protocol": "-1",
-            "rule_number": 100
-          },
-          {
-            "action": "deny",
-            "cidr": "0.0.0.0/0",
-            "egress": true,
-            "port_range": null,
-            "protocol": "-1",
-            "rule_number": 32767
-          }
-        ],
-        "isDefault": true
-      }
-    },
-    {
       "id": "ap-southeast-2",
       "kind": "region",
       "label": "ap-southeast-2",
       "props": {}
     },
     {
-      "id": "ap-southeast-2:55869260-0b9e-4e86-b37c-5e9ddde28c1b",
+      "id": "ap-southeast-2:503dcfe1-e5cc-41e1-8f5e-bad3a65b692c",
       "kind": "cognito-identity-pool",
       "label": "w3_identities",
       "props": {
@@ -1426,16 +1558,16 @@
         "authenticatedRole": "arn:aws:iam::000000000000:role/w3-cognito-auth",
         "classicFlow": false,
         "userPoolProviders": [
-          "cognito-idp.ap-southeast-2.amazonaws.com/ap-southeast-2_52b1a1ca3"
+          "cognito-idp.ap-southeast-2.amazonaws.com/ap-southeast-2_b5a52cd75"
         ]
       }
     },
     {
-      "id": "ap-southeast-2_52b1a1ca3",
+      "id": "ap-southeast-2_b5a52cd75",
       "kind": "cognito-user-pool",
       "label": "w3-users",
       "props": {
-        "arn": "arn:aws:cognito-idp:ap-southeast-2:000000000000:userpool/ap-southeast-2_52b1a1ca3",
+        "arn": "arn:aws:cognito-idp:ap-southeast-2:000000000000:userpool/ap-southeast-2_b5a52cd75",
         "deletionProtection": "INACTIVE",
         "estimatedUsers": 0,
         "mfa": "OFF",
@@ -1444,7 +1576,7 @@
       }
     },
     {
-      "id": "ap-southeast-2_52b1a1ca3/w3-oidc",
+      "id": "ap-southeast-2_b5a52cd75/w3-oidc",
       "kind": "cognito-identity-provider",
       "label": "w3-oidc",
       "props": {
@@ -1452,11 +1584,11 @@
           "email": "email"
         },
         "providerType": "OIDC",
-        "userPool": "ap-southeast-2_52b1a1ca3"
+        "userPool": "ap-southeast-2_b5a52cd75"
       }
     },
     {
-      "id": "arn:aws:acm:ap-southeast-2:000000000000:certificate/7a4702a0-cfe3-4fff-8947-03af3fb36b4e",
+      "id": "arn:aws:acm:ap-southeast-2:000000000000:certificate/cdfc61b2-7931-4669-838f-1d178d90c1e2",
       "kind": "acm-certificate",
       "label": "w3-edge.example.com",
       "props": {
@@ -1602,7 +1734,7 @@
       }
     },
     {
-      "id": "arn:aws:config:ap-southeast-2:000000000000:config-rule/config-rule-546801e25f30",
+      "id": "arn:aws:config:ap-southeast-2:000000000000:config-rule/config-rule-4a3a4f28ff52",
       "kind": "config-rule",
       "label": "w3-bucket-versioning",
       "props": {
@@ -1616,7 +1748,7 @@
       }
     },
     {
-      "id": "arn:aws:controltower:ap-southeast-2:000000000000:landingzone/196fad8790da",
+      "id": "arn:aws:controltower:ap-southeast-2:000000000000:landingzone/3dba975b3b45",
       "kind": "landing-zone",
       "label": "Landing zone 3.3",
       "props": {
@@ -1630,17 +1762,7 @@
       }
     },
     {
-      "id": "arn:aws:datasync:ap-southeast-2:000000000000:location/loc-8ed178c806cd0da13",
-      "kind": "datasync-location",
-      "label": "s3://w3-dm-bucket/in",
-      "props": {
-        "accessRole": "arn:aws:iam::000000000000:role/w3-dm-role",
-        "storageClass": "STANDARD",
-        "uri": "s3://w3-dm-bucket/in"
-      }
-    },
-    {
-      "id": "arn:aws:datasync:ap-southeast-2:000000000000:location/loc-a9b69b7c7a2f17dab",
+      "id": "arn:aws:datasync:ap-southeast-2:000000000000:location/loc-163a397236375cdf3",
       "kind": "datasync-location",
       "label": "s3://w3-dm-bucket/archive",
       "props": {
@@ -1650,7 +1772,17 @@
       }
     },
     {
-      "id": "arn:aws:datasync:ap-southeast-2:000000000000:task/task-57ed4ed9abc9a81ef",
+      "id": "arn:aws:datasync:ap-southeast-2:000000000000:location/loc-89ba9f401a5184386",
+      "kind": "datasync-location",
+      "label": "s3://w3-dm-bucket/in",
+      "props": {
+        "accessRole": "arn:aws:iam::000000000000:role/w3-dm-role",
+        "storageClass": "STANDARD",
+        "uri": "s3://w3-dm-bucket/in"
+      }
+    },
+    {
+      "id": "arn:aws:datasync:ap-southeast-2:000000000000:task/task-a773ebaf1e0064fa9",
       "kind": "datasync-task",
       "label": "w3-dm-sync",
       "props": {
@@ -1663,7 +1795,7 @@
       }
     },
     {
-      "id": "arn:aws:dms:ap-southeast-2:000000000000:endpoint:5BMIDRU5MGUNHOIU4HK5QBWASA",
+      "id": "arn:aws:dms:ap-southeast-2:000000000000:endpoint:4MUAQGYVKTV47FWZ2SBOSN2BBC",
       "kind": "dms-endpoint",
       "label": "w3-dm-src",
       "props": {
@@ -1677,7 +1809,7 @@
       }
     },
     {
-      "id": "arn:aws:dms:ap-southeast-2:000000000000:endpoint:74ETK3CSBCD7IVPEGCR7KR7ZAS",
+      "id": "arn:aws:dms:ap-southeast-2:000000000000:endpoint:EI2RMA2H5QAISDOSXAI37J6U5A",
       "kind": "dms-endpoint",
       "label": "w3-dm-tgt",
       "props": {
@@ -1691,7 +1823,7 @@
       }
     },
     {
-      "id": "arn:aws:dms:ap-southeast-2:000000000000:rep:JSOZ6ALQRNR7ME3KTCOCFMLKL5",
+      "id": "arn:aws:dms:ap-southeast-2:000000000000:rep:4Q3VZE4ZBCXQTPWTPHI4IENEWW",
       "kind": "dms-replication-instance",
       "label": "w3-dm-ri",
       "props": {
@@ -1704,13 +1836,13 @@
         "storage": 20,
         "subnetGroup": "w3-dm-rsg",
         "subnets": [
-          "subnet-1f1f0b5e",
-          "subnet-85834620"
+          "subnet-72a75d46",
+          "subnet-959a86c4"
         ]
       }
     },
     {
-      "id": "arn:aws:dms:ap-southeast-2:000000000000:task:LIZ5P75OCMWZK7OHFMLARUXPQ3",
+      "id": "arn:aws:dms:ap-southeast-2:000000000000:task:WRB34GCDTVAQXMLJ44J7WSRWHC",
       "kind": "dms-replication-task",
       "label": "w3-dm-task",
       "props": {
@@ -1754,7 +1886,7 @@
         "privateEndpoint": false,
         "publicEndpoint": true,
         "role": "arn:aws:iam::000000000000:role/w3-delivery-role",
-        "status": "ACTIVE",
+        "status": "CREATING",
         "version": "1.29"
       }
     },
@@ -1771,7 +1903,7 @@
         "nodes": 1,
         "port": 11211,
         "securityGroups": [
-          "sg-6ab169e1e9cfbb053"
+          "sg-ca05146b9adfdf3cb"
         ],
         "status": "available",
         "subnetGroup": "w3-dm-csg"
@@ -1822,8 +1954,8 @@
         "application": "w3-delivery-web",
         "cname": "w3-delivery-web-dev.elasticbeanstalk.local",
         "deploymentPolicy": "Rolling",
-        "endpoint": "awseb-e-6bed9wc573.ap-southeast-2.elasticbeanstalk.local",
-        "envId": "e-6bed9wc573",
+        "endpoint": "awseb-e-gpc8suqpb4.ap-southeast-2.elasticbeanstalk.local",
+        "envId": "e-gpc8suqpb4",
         "health": "Green",
         "healthStatus": "Ok",
         "platform": "64bit Amazon Linux 2023 v4.3.0 running Docker",
@@ -1832,7 +1964,7 @@
       }
     },
     {
-      "id": "arn:aws:elasticloadbalancing:ap-southeast-2:000000000000:listener/app/w3-edge-alb/69f799da92464b34/d283f3a73f4e40a9",
+      "id": "arn:aws:elasticloadbalancing:ap-southeast-2:000000000000:listener/app/w3-edge-alb/7004a8a039ba453d/15c914b075444661",
       "kind": "listener",
       "label": "HTTPS:443",
       "props": {
@@ -1850,7 +1982,7 @@
       }
     },
     {
-      "id": "arn:aws:elasticloadbalancing:ap-southeast-2:000000000000:loadbalancer/app/w3-edge-alb/69f799da92464b34",
+      "id": "arn:aws:elasticloadbalancing:ap-southeast-2:000000000000:loadbalancer/app/w3-edge-alb/7004a8a039ba453d",
       "kind": "load-balancer",
       "label": "w3-edge-alb",
       "props": {
@@ -1858,13 +1990,13 @@
           "ap-southeast-2a",
           "ap-southeast-2b"
         ],
-        "dnsName": "w3-edge-alb-69f799da92464b34.elb.localhost.floci.io",
+        "dnsName": "w3-edge-alb-7004a8a039ba453d.elb.localhost.floci.io",
         "ipAddressType": "ipv4",
         "scheme": "internet-facing",
         "state": "active",
         "subnets": [
-          "subnet-014b6ddb",
-          "subnet-e2c97ce3"
+          "subnet-2de03173",
+          "subnet-303a6937"
         ],
         "type": "application"
       }
@@ -1894,19 +2026,35 @@
       }
     },
     {
-      "id": "arn:aws:globalaccelerator::000000000000:accelerator/4446017a-ee15-432b-aadc-908b93397ab3",
+      "id": "arn:aws:globalaccelerator::000000000000:accelerator/9479869e-b9ba-4c95-92b5-59818f27a754",
       "kind": "global-accelerator",
       "label": "w3-edge-ga",
       "props": {
-        "dnsName": "afc7fee269b090d57.awsglobalaccelerator.com",
+        "dnsName": "aaeb15d04fd24df2f.awsglobalaccelerator.com",
         "enabled": true,
+        "endpointGroups": [
+          {
+            "endpoints": [
+              {
+                "health": "HEALTHY",
+                "id": "arn:aws:elasticloadbalancing:ap-southeast-2:000000000000:loadbalancer/app/w3-edge-alb/7004a8a039ba453d",
+                "weight": 100
+              }
+            ],
+            "healthCheck": "TCP:80",
+            "listener": "arn:aws:globalaccelerator::000000000000:accelerator/9479869e-b9ba-4c95-92b5-59818f27a754/listener/yklsgwjs",
+            "region": "ap-southeast-2",
+            "trafficDial": 100.0
+          }
+        ],
         "ipAddressType": "IPV4",
         "ips": [
-          "75.2.203.59",
-          "99.83.235.43"
+          "75.2.74.28",
+          "99.83.101.40"
         ],
         "listeners": [
           {
+            "arn": "arn:aws:globalaccelerator::000000000000:accelerator/9479869e-b9ba-4c95-92b5-59818f27a754/listener/yklsgwjs",
             "clientAffinity": "NONE",
             "ports": [
               "80-80"
@@ -2009,9 +2157,9 @@
       }
     },
     {
-      "id": "arn:aws:lambda:ap-southeast-2:000000000000:event-source-mapping:00c5105e-4894-449e-8a80-ee47ed3f4545",
+      "id": "arn:aws:lambda:ap-southeast-2:000000000000:event-source-mapping:028cf16c-1a43-4c91-b811-fce2caa55138",
       "kind": "lambda-event-source",
-      "label": "00c5105e-4894-449e-8a80-ee47ed3f4545",
+      "label": "028cf16c-1a43-4c91-b811-fce2caa55138",
       "props": {
         "batchSize": 10,
         "source": "arn:aws:sqs:ap-southeast-2:000000000000:w3-orders",
@@ -2019,9 +2167,9 @@
       }
     },
     {
-      "id": "arn:aws:lambda:ap-southeast-2:000000000000:event-source-mapping:a6b7e70f-ddd7-457f-bada-6e64e3d48f04",
+      "id": "arn:aws:lambda:ap-southeast-2:000000000000:event-source-mapping:14c27525-c974-4dfc-9620-05399ed3f1be",
       "kind": "lambda-event-source",
-      "label": "a6b7e70f-ddd7-457f-bada-6e64e3d48f04",
+      "label": "14c27525-c974-4dfc-9620-05399ed3f1be",
       "props": {
         "batchSize": 100,
         "source": "arn:aws:kinesis:ap-southeast-2:000000000000:stream/w3-clicks",
@@ -2078,6 +2226,12 @@
       "label": "/aws/elasticache/cluster/w3-dm-memcached/engine-log",
       "props": {
         "deletionProtection": false,
+        "logStreams": [
+          {
+            "lastEvent": null,
+            "name": "2026/11/01/748943d3"
+          }
+        ],
         "metricFilters": 0,
         "storedBytes": 0
       }
@@ -2088,6 +2242,12 @@
       "label": "/aws/elasticache/cluster/w3-dm-redis/engine-log",
       "props": {
         "deletionProtection": false,
+        "logStreams": [
+          {
+            "lastEvent": 1793523939498,
+            "name": "2026/11/01/33b4a042"
+          }
+        ],
         "metricFilters": 0,
         "storedBytes": 1175
       }
@@ -2098,6 +2258,12 @@
       "label": "/aws/rds/instance/w3-dm-db/error",
       "props": {
         "deletionProtection": false,
+        "logStreams": [
+          {
+            "lastEvent": 1793523938833,
+            "name": "2026/11/01/e5cf2390"
+          }
+        ],
         "metricFilters": 0,
         "storedBytes": 4418
       }
@@ -2119,7 +2285,7 @@
         "statelessFragmentDefaultActions": [
           "aws:forward_to_sfe"
         ],
-        "updateToken": "a5dcc45b-3ae4-4580-9cdf-13079c2479d9"
+        "updateToken": "ad4848bf-164f-46f8-825d-9d086b631bfb"
       }
     },
     {
@@ -2136,7 +2302,7 @@
         "status": "READY",
         "subnetChangeProtection": false,
         "subnets": [
-          "subnet-52650042"
+          "subnet-615ab73b"
         ],
         "syncState": "IN_SYNC"
       }
@@ -2151,42 +2317,42 @@
         "statefulRules": 0,
         "statelessRules": 0,
         "type": "STATEFUL",
-        "updateToken": "0f9f0555-d4e5-4a41-930c-a76ba29d1957"
+        "updateToken": "95693a01-face-4e74-b3c1-c676a155a5ce"
       }
     },
     {
-      "id": "arn:aws:organizations::000000000000:account/o-1pln15fyv4/000000000000",
+      "id": "arn:aws:organizations::000000000000:account/o-p2d5zb71e3/000000000000",
       "kind": "org-account",
       "label": "management-account",
       "props": {
         "accountId": "000000000000",
         "joinedMethod": "INVITED",
-        "parentId": "r-gt0v",
+        "parentId": "r-y8ib",
         "parentType": "ROOT",
         "state": "ACTIVE",
         "status": "ACTIVE"
       }
     },
     {
-      "id": "arn:aws:organizations::000000000000:account/o-1pln15fyv4/381802961456",
+      "id": "arn:aws:organizations::000000000000:account/o-p2d5zb71e3/798322081289",
       "kind": "org-account",
       "label": "w3-member",
       "props": {
-        "accountId": "381802961456",
+        "accountId": "798322081289",
         "joinedMethod": "CREATED",
-        "parentId": "ou-gt0v-tp01c9ap",
+        "parentId": "ou-y8ib-wlss3zes",
         "parentType": "ORGANIZATIONAL_UNIT",
         "state": "ACTIVE",
         "status": "ACTIVE"
       }
     },
     {
-      "id": "arn:aws:organizations::000000000000:ou/o-1pln15fyv4/ou-gt0v-tp01c9ap",
+      "id": "arn:aws:organizations::000000000000:ou/o-p2d5zb71e3/ou-y8ib-wlss3zes",
       "kind": "organizational-unit",
       "label": "w3-workloads",
       "props": {
-        "ouId": "ou-gt0v-tp01c9ap",
-        "parentId": "r-gt0v"
+        "ouId": "ou-y8ib-wlss3zes",
+        "parentId": "r-y8ib"
       }
     },
     {
@@ -2302,12 +2468,12 @@
       }
     },
     {
-      "id": "arn:aws:secretsmanager:ap-southeast-2:000000000000:secret:rds!db-B1F67A021EFC41C7B1D50AD8-YJOLJK",
+      "id": "arn:aws:secretsmanager:ap-southeast-2:000000000000:secret:rds!db-5CE0BCF09721435DB12F9628-ZIS7VP",
       "kind": "secretsmanager-secret",
-      "label": "rds!db-B1F67A021EFC41C7B1D50AD8",
+      "label": "rds!db-5CE0BCF09721435DB12F9628",
       "props": {
         "description": "Managed RDS master user secret for w3-dm-db",
-        "lastChanged": "2026-10-31 23:25:09.304000+07:00",
+        "lastChanged": "2026-11-01 16:05:38.827000+07:00",
         "owningService": "rds",
         "pendingRotation": false,
         "rotationEnabled": false,
@@ -2350,7 +2516,19 @@
       }
     },
     {
-      "id": "arn:aws:sns:ap-southeast-2:000000000000:w3-order-events:41933c49-cfbb-49a7-875b-9cba9af258c8",
+      "id": "arn:aws:sns:ap-southeast-2:000000000000:w3-order-events:2cb1dfb7-73e9-4046-bcb1-ca4535e0dd9b",
+      "kind": "sns-subscription",
+      "label": "lambda: w3-msg-consumer",
+      "props": {
+        "endpoint": "arn:aws:lambda:ap-southeast-2:000000000000:function:w3-msg-consumer",
+        "filterPolicyScope": "MessageAttributes",
+        "pendingConfirmation": "false",
+        "protocol": "lambda",
+        "rawMessageDelivery": "false"
+      }
+    },
+    {
+      "id": "arn:aws:sns:ap-southeast-2:000000000000:w3-order-events:f8fd6355-f497-4f42-ad09-47528a163c1f",
       "kind": "sns-subscription",
       "label": "sqs: w3-orders",
       "props": {
@@ -2359,18 +2537,6 @@
         "filterPolicyScope": "MessageAttributes",
         "pendingConfirmation": "false",
         "protocol": "sqs",
-        "rawMessageDelivery": "false"
-      }
-    },
-    {
-      "id": "arn:aws:sns:ap-southeast-2:000000000000:w3-order-events:74e891d3-d2dc-40d8-ae2c-06ae23572a9f",
-      "kind": "sns-subscription",
-      "label": "lambda: w3-msg-consumer",
-      "props": {
-        "endpoint": "arn:aws:lambda:ap-southeast-2:000000000000:function:w3-msg-consumer",
-        "filterPolicyScope": "MessageAttributes",
-        "pendingConfirmation": "false",
-        "protocol": "lambda",
         "rawMessageDelivery": "false"
       }
     },
@@ -2415,7 +2581,7 @@
       "label": "w3-order-flow",
       "props": {
         "loggingLevel": "OFF",
-        "revision": "f6c1127d-2410-46df-9d42-6f750de4bf52",
+        "revision": "0136b53e-07c5-47d8-9d1f-3e2a73e0672a",
         "role": "arn:aws:iam::000000000000:role/w3-msg-role",
         "status": "ACTIVE",
         "tracing": false,
@@ -2423,7 +2589,7 @@
       }
     },
     {
-      "id": "arn:aws:wafv2:ap-southeast-2:000000000000:regional/webacl/w3-edge-acl/6fdea9e8-028a-4786-9398-70895c9cb7e1",
+      "id": "arn:aws:wafv2:ap-southeast-2:000000000000:regional/webacl/w3-edge-acl/5a727a5e-2344-430d-a2ad-ac3d38d9d7d6",
       "kind": "waf-web-acl",
       "label": "w3-edge-acl",
       "props": {
@@ -2435,7 +2601,7 @@
           "sampledRequests": true
         },
         "resources": [
-          "arn:aws:elasticloadbalancing:ap-southeast-2:000000000000:loadbalancer/app/w3-edge-alb/69f799da92464b34"
+          "arn:aws:elasticloadbalancing:ap-southeast-2:000000000000:loadbalancer/app/w3-edge-alb/7004a8a039ba453d"
         ],
         "rules": [
           {
@@ -2460,12 +2626,17 @@
       }
     },
     {
-      "id": "cff6abb4-80e8-43cd-a569-644e8e3e3dc5",
-      "kind": "codedeploy-application",
-      "label": "w3-delivery-deploy",
+      "id": "bed7e4c2-4d0a-4e65-911a-0452c5ca96fe",
+      "kind": "cloudfront-origin-request-policy",
+      "label": "w3-edge-orp",
       "props": {
-        "computePlatform": "Server",
-        "linkedToGitHub": false
+        "comment": "",
+        "etag": "b8bc93ac-aff0-4c0f-8fc5-ceb978f4dd2d",
+        "forwards": {
+          "cookies": "none",
+          "headers": "none",
+          "queryStrings": "all"
+        }
       }
     },
     {
@@ -2482,36 +2653,18 @@
       }
     },
     {
-      "id": "d997462cf0",
-      "kind": "apigateway-rest-api",
-      "label": "w3-edge-rest",
+      "id": "e06c431e-daa7-4c92-baaf-39674ad835e9",
+      "kind": "cloudfront-origin-access-control",
+      "label": "w3-edge-oac",
       "props": {
-        "apiKeySource": "HEADER",
-        "endpointTypes": [
-          "REGIONAL"
-        ],
-        "integrations": [
-          "AWS_PROXY arn:aws:apigateway:ap-southeast-2:lambda:path/2015-03-31/functions/arn:aws:lambda:ap-southeast-2:000000000000:function:w3-edge-fn/invocations"
-        ],
-        "methods": [
-          {
-            "methods": [
-              "GET"
-            ],
-            "path": "/items"
-          }
-        ],
-        "paths": [
-          "/",
-          "/items"
-        ],
-        "stages": [
-          "prod"
-        ]
+        "description": "",
+        "etag": "8dbf6b03-fafb-48e5-9e95-4064dd936dd2",
+        "originType": "s3",
+        "signing": "sigv4 always"
       }
     },
     {
-      "id": "e3444407-d988-4961-be66-64b459c57cfa",
+      "id": "e09d9cb0-2937-40d8-972d-226519504a70",
       "kind": "route53-health-check",
       "label": "w3-edge-hc",
       "props": {
@@ -2519,7 +2672,7 @@
         "interval": 30,
         "status": "Success: HTTP Status Code 200, OK",
         "target": {
-          "fqdn": "w3-edge-alb-69f799da92464b34.elb.localhost.floci.io",
+          "fqdn": "w3-edge-alb-7004a8a039ba453d.elb.localhost.floci.io",
           "ip": null,
           "path": "/",
           "port": 80,
@@ -2561,29 +2714,29 @@
       "kind": "inspector",
       "label": "Inspector 000000000000",
       "props": {
-        "ec2": "ENABLED",
-        "ecr": "ENABLED",
+        "ec2": "ENABLING",
+        "ecr": "ENABLING",
         "lambda": "DISABLED",
         "lambdaCode": "DISABLED",
-        "status": "ENABLED"
+        "status": "ENABLING"
       }
     },
     {
-      "id": "r-gt0v",
+      "id": "r-y8ib",
       "kind": "organization",
-      "label": "o-1pln15fyv4",
+      "label": "o-p2d5zb71e3",
       "props": {
-        "arn": "arn:aws:organizations::000000000000:organization/o-1pln15fyv4",
+        "arn": "arn:aws:organizations::000000000000:organization/o-p2d5zb71e3",
         "featureSet": "ALL",
         "managementAccount": "000000000000",
-        "organizationId": "o-1pln15fyv4",
-        "rootId": "r-gt0v"
+        "organizationId": "o-p2d5zb71e3",
+        "rootId": "r-y8ib"
       }
     },
     {
-      "id": "rtb-270c03552994eff37",
+      "id": "rtb-03dba76352ca83f05",
       "kind": "route-table",
-      "label": "rtb-270c03552994eff37",
+      "label": "rtb-03dba76352ca83f05",
       "props": {
         "associations": [
           {
@@ -2594,7 +2747,7 @@
         "main": true,
         "routes": [
           {
-            "destination": "10.153.0.0/16",
+            "destination": "10.71.0.0/16",
             "state": "active",
             "target": "local"
           }
@@ -2602,9 +2755,9 @@
       }
     },
     {
-      "id": "rtb-6b9b67d15aa199c8d",
+      "id": "rtb-66d340a44085c5a7d",
       "kind": "route-table",
-      "label": "rtb-6b9b67d15aa199c8d",
+      "label": "rtb-66d340a44085c5a7d",
       "props": {
         "associations": [
           {
@@ -2623,9 +2776,9 @@
       }
     },
     {
-      "id": "rtb-ac278eb3cf9747306",
+      "id": "rtb-a8f5c13bdd2e6c6e6",
       "kind": "route-table",
-      "label": "rtb-ac278eb3cf9747306",
+      "label": "rtb-a8f5c13bdd2e6c6e6",
       "props": {
         "associations": [
           {
@@ -2636,7 +2789,7 @@
         "main": true,
         "routes": [
           {
-            "destination": "10.71.0.0/16",
+            "destination": "10.153.0.0/16",
             "state": "active",
             "target": "local"
           }
@@ -2670,7 +2823,7 @@
       }
     },
     {
-      "id": "s-5f25bf4cc12f4b3bb",
+      "id": "s-9f27bcb53c884c8eb",
       "kind": "transfer-server",
       "label": "w3-dm-sftp",
       "props": {
@@ -2686,7 +2839,43 @@
       }
     },
     {
-      "id": "sg-6ab169e1e9cfbb053",
+      "id": "sg-3392826f79ca01876",
+      "kind": "security-group",
+      "label": "default",
+      "props": {
+        "egress": [
+          {
+            "from": null,
+            "protocol": "-1",
+            "sources": [
+              "0.0.0.0/0"
+            ],
+            "to": null
+          }
+        ],
+        "groupName": "default"
+      }
+    },
+    {
+      "id": "sg-4d59440ff6090fc1a",
+      "kind": "security-group",
+      "label": "default",
+      "props": {
+        "egress": [
+          {
+            "from": null,
+            "protocol": "-1",
+            "sources": [
+              "0.0.0.0/0"
+            ],
+            "to": null
+          }
+        ],
+        "groupName": "default"
+      }
+    },
+    {
+      "id": "sg-ca05146b9adfdf3cb",
       "kind": "security-group",
       "label": "w3-dm-sg",
       "props": {
@@ -2701,60 +2890,6 @@
           }
         ],
         "groupName": "w3-dm-sg"
-      }
-    },
-    {
-      "id": "sg-7bc96a71d0de3e99e",
-      "kind": "security-group",
-      "label": "default",
-      "props": {
-        "egress": [
-          {
-            "from": null,
-            "protocol": "-1",
-            "sources": [
-              "0.0.0.0/0"
-            ],
-            "to": null
-          }
-        ],
-        "groupName": "default"
-      }
-    },
-    {
-      "id": "sg-806d5719db1444e2a",
-      "kind": "security-group",
-      "label": "default",
-      "props": {
-        "egress": [
-          {
-            "from": null,
-            "protocol": "-1",
-            "sources": [
-              "0.0.0.0/0"
-            ],
-            "to": null
-          }
-        ],
-        "groupName": "default"
-      }
-    },
-    {
-      "id": "sg-d945fe5c7e3ea5ad0",
-      "kind": "security-group",
-      "label": "default",
-      "props": {
-        "egress": [
-          {
-            "from": null,
-            "protocol": "-1",
-            "sources": [
-              "0.0.0.0/0"
-            ],
-            "to": null
-          }
-        ],
-        "groupName": "default"
       }
     },
     {
@@ -2776,9 +2911,27 @@
       }
     },
     {
-      "id": "subnet-014b6ddb",
+      "id": "sg-f7cd8eb85cc9178bd",
+      "kind": "security-group",
+      "label": "default",
+      "props": {
+        "egress": [
+          {
+            "from": null,
+            "protocol": "-1",
+            "sources": [
+              "0.0.0.0/0"
+            ],
+            "to": null
+          }
+        ],
+        "groupName": "default"
+      }
+    },
+    {
+      "id": "subnet-2de03173",
       "kind": "subnet-private",
-      "label": "subnet-014b6ddb",
+      "label": "subnet-2de03173",
       "props": {
         "az": "ap-southeast-2a",
         "cidr": "10.153.1.0/24",
@@ -2786,17 +2939,17 @@
       }
     },
     {
-      "id": "subnet-1f1f0b5e",
+      "id": "subnet-303a6937",
       "kind": "subnet-private",
-      "label": "w3-dm-b",
+      "label": "subnet-303a6937",
       "props": {
         "az": "ap-southeast-2b",
-        "cidr": "10.72.2.0/24",
+        "cidr": "10.153.2.0/24",
         "mapPublicIpOnLaunch": false
       }
     },
     {
-      "id": "subnet-52650042",
+      "id": "subnet-615ab73b",
       "kind": "subnet-private",
       "label": "w3-firewall",
       "props": {
@@ -2806,7 +2959,17 @@
       }
     },
     {
-      "id": "subnet-85834620",
+      "id": "subnet-72a75d46",
+      "kind": "subnet-private",
+      "label": "w3-dm-b",
+      "props": {
+        "az": "ap-southeast-2b",
+        "cidr": "10.72.2.0/24",
+        "mapPublicIpOnLaunch": false
+      }
+    },
+    {
+      "id": "subnet-959a86c4",
       "kind": "subnet-private",
       "label": "w3-dm-a",
       "props": {
@@ -2846,17 +3009,7 @@
       }
     },
     {
-      "id": "subnet-e2c97ce3",
-      "kind": "subnet-private",
-      "label": "subnet-e2c97ce3",
-      "props": {
-        "az": "ap-southeast-2b",
-        "cidr": "10.153.2.0/24",
-        "mapPublicIpOnLaunch": false
-      }
-    },
-    {
-      "id": "vpc-126a9f97",
+      "id": "vpc-0fbdc61e",
       "kind": "vpc",
       "label": "w3-edge-vpc",
       "props": {
@@ -2865,19 +3018,19 @@
       }
     },
     {
-      "id": "vpc-126a9f97/ap-southeast-2a",
+      "id": "vpc-0fbdc61e/ap-southeast-2a",
       "kind": "az",
       "label": "ap-southeast-2a",
       "props": {}
     },
     {
-      "id": "vpc-126a9f97/ap-southeast-2b",
+      "id": "vpc-0fbdc61e/ap-southeast-2b",
       "kind": "az",
       "label": "ap-southeast-2b",
       "props": {}
     },
     {
-      "id": "vpc-51ff849d",
+      "id": "vpc-733acc97",
       "kind": "vpc",
       "label": "w3-dm-vpc",
       "props": {
@@ -2886,19 +3039,19 @@
       }
     },
     {
-      "id": "vpc-51ff849d/ap-southeast-2a",
+      "id": "vpc-733acc97/ap-southeast-2a",
       "kind": "az",
       "label": "ap-southeast-2a",
       "props": {}
     },
     {
-      "id": "vpc-51ff849d/ap-southeast-2b",
+      "id": "vpc-733acc97/ap-southeast-2b",
       "kind": "az",
       "label": "ap-southeast-2b",
       "props": {}
     },
     {
-      "id": "vpc-c238e6aa",
+      "id": "vpc-7f4a8d38",
       "kind": "vpc",
       "label": "w3-inspection",
       "props": {
@@ -2907,7 +3060,7 @@
       }
     },
     {
-      "id": "vpc-c238e6aa/ap-southeast-2a",
+      "id": "vpc-7f4a8d38/ap-southeast-2a",
       "kind": "az",
       "label": "ap-southeast-2a",
       "props": {}

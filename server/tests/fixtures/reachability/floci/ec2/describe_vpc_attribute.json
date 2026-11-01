@@ -3,37 +3,49 @@
     {
       "params": {
         "Attribute": "enableDnsHostnames",
-        "VpcId": "vpc-31a790ed"
+        "VpcId": "vpc-95a4a5fc"
       },
       "response": {
         "EnableDnsHostnames": {
           "Value": false
         },
-        "VpcId": "vpc-31a790ed"
+        "VpcId": "vpc-95a4a5fc"
       }
     },
     {
       "params": {
         "Attribute": "enableDnsHostnames",
-        "VpcId": "vpc-c34cd66d"
+        "VpcId": "vpc-6359315f"
       },
       "response": {
         "EnableDnsHostnames": {
           "Value": false
         },
-        "VpcId": "vpc-c34cd66d"
+        "VpcId": "vpc-6359315f"
       }
     },
     {
       "params": {
         "Attribute": "enableDnsHostnames",
-        "VpcId": "vpc-5daae3bf"
+        "VpcId": "vpc-0199f38c"
       },
       "response": {
         "EnableDnsHostnames": {
           "Value": false
         },
-        "VpcId": "vpc-5daae3bf"
+        "VpcId": "vpc-0199f38c"
+      }
+    },
+    {
+      "params": {
+        "Attribute": "enableDnsHostnames",
+        "VpcId": "vpc-7352eb5f"
+      },
+      "response": {
+        "EnableDnsHostnames": {
+          "Value": false
+        },
+        "VpcId": "vpc-7352eb5f"
       }
     },
     {
@@ -51,25 +63,13 @@
     {
       "params": {
         "Attribute": "enableDnsHostnames",
-        "VpcId": "vpc-ae467f29"
+        "VpcId": "vpc-c0971ebc"
       },
       "response": {
         "EnableDnsHostnames": {
           "Value": false
         },
-        "VpcId": "vpc-ae467f29"
-      }
-    },
-    {
-      "params": {
-        "Attribute": "enableDnsHostnames",
-        "VpcId": "vpc-baf044cc"
-      },
-      "response": {
-        "EnableDnsHostnames": {
-          "Value": false
-        },
-        "VpcId": "vpc-baf044cc"
+        "VpcId": "vpc-c0971ebc"
       }
     }
   ]

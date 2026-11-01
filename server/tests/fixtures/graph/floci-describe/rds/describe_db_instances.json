@@ -31,23 +31,23 @@
                   "SubnetAvailabilityZone": {
                     "Name": "ap-southeast-2a"
                   },
-                  "SubnetIdentifier": "subnet-2b9c9233",
+                  "SubnetIdentifier": "subnet-427c8089",
                   "SubnetStatus": "Active"
                 },
                 {
                   "SubnetAvailabilityZone": {
                     "Name": "ap-southeast-2b"
                   },
-                  "SubnetIdentifier": "subnet-4f1dede6",
+                  "SubnetIdentifier": "subnet-b5c0089c",
                   "SubnetStatus": "Active"
                 }
               ],
-              "VpcId": "vpc-03e9e3f9"
+              "VpcId": "vpc-95741f0b"
             },
-            "DbiResourceId": "db-26F81008F4BE4869A32C4766",
+            "DbiResourceId": "db-6832AB4903554CE097F46773",
             "DeletionProtection": false,
             "Endpoint": {
-              "Address": "172.27.0.3",
+              "Address": "172.27.0.2",
               "Port": 7002
             },
             "Engine": "postgres",
@@ -83,7 +83,7 @@
             "VpcSecurityGroups": [
               {
                 "Status": "active",
-                "VpcSecurityGroupId": "sg-5271729b7a5ffc3e2"
+                "VpcSecurityGroupId": "sg-29c1453846337377c"
               }
             ]
           },
@@ -114,30 +114,30 @@
                   "SubnetAvailabilityZone": {
                     "Name": "ap-southeast-2a"
                   },
-                  "SubnetIdentifier": "subnet-2b9c9233",
+                  "SubnetIdentifier": "subnet-427c8089",
                   "SubnetStatus": "Active"
                 },
                 {
                   "SubnetAvailabilityZone": {
                     "Name": "ap-southeast-2b"
                   },
-                  "SubnetIdentifier": "subnet-4f1dede6",
+                  "SubnetIdentifier": "subnet-b5c0089c",
                   "SubnetStatus": "Active"
                 }
               ],
-              "VpcId": "vpc-03e9e3f9"
+              "VpcId": "vpc-95741f0b"
             },
-            "DbiResourceId": "db-BB561C051021409B8046BCAD",
+            "DbiResourceId": "db-8F95F7A473D24CE2BA5ACBE0",
             "DeletionProtection": false,
             "Endpoint": {
-              "Address": "172.27.0.3",
+              "Address": "172.27.0.2",
               "Port": 7001
             },
             "Engine": "postgres",
             "EngineLifecycleSupport": "open-source-rds-extended-support",
             "EngineVersion": "16.3",
             "IAMDatabaseAuthenticationEnabled": false,
-            "LatestRestorableTime": "2026-10-31 14:41:18.786912+00:00",
+            "LatestRestorableTime": "2026-11-01 09:05:03.543325+00:00",
             "MasterUsername": "wave1",
             "MonitoringInterval": 0,
             "MultiAZ": true,
@@ -160,7 +160,7 @@
             "VpcSecurityGroups": [
               {
                 "Status": "active",
-                "VpcSecurityGroupId": "sg-5271729b7a5ffc3e2"
+                "VpcSecurityGroupId": "sg-29c1453846337377c"
               }
             ]
           },
@@ -192,30 +192,30 @@
                   "SubnetAvailabilityZone": {
                     "Name": "ap-southeast-2a"
                   },
-                  "SubnetIdentifier": "subnet-2b9c9233",
+                  "SubnetIdentifier": "subnet-427c8089",
                   "SubnetStatus": "Active"
                 },
                 {
                   "SubnetAvailabilityZone": {
                     "Name": "ap-southeast-2b"
                   },
-                  "SubnetIdentifier": "subnet-4f1dede6",
+                  "SubnetIdentifier": "subnet-b5c0089c",
                   "SubnetStatus": "Active"
                 }
               ],
-              "VpcId": "vpc-03e9e3f9"
+              "VpcId": "vpc-95741f0b"
             },
-            "DbiResourceId": "db-A8BC20E374A34875AFCA4286",
+            "DbiResourceId": "db-EDAD8E054C844B8EBBBD216F",
             "DeletionProtection": false,
             "Endpoint": {
-              "Address": "172.27.0.3",
+              "Address": "172.27.0.2",
               "Port": 7004
             },
             "Engine": "aurora-postgresql",
             "EngineLifecycleSupport": "open-source-rds-extended-support",
             "EngineVersion": "16.3",
             "IAMDatabaseAuthenticationEnabled": false,
-            "LatestRestorableTime": "2026-10-31 14:41:18.789361+00:00",
+            "LatestRestorableTime": "2026-11-01 09:05:03.547714+00:00",
             "MasterUsername": "wave1",
             "MonitoringInterval": 0,
             "MultiAZ": false,

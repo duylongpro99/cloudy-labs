@@ -24,29 +24,6 @@
           },
           {
             "AssignIpv6AddressOnCreation": false,
-            "AvailabilityZone": "ap-southeast-2a",
-            "AvailabilityZoneId": "apse2-az1",
-            "AvailableIpAddressCount": 250,
-            "CidrBlock": "10.80.1.0/24",
-            "DefaultForAz": false,
-            "EnableDns64": false,
-            "Ipv6CidrBlockAssociationSet": [],
-            "MapCustomerOwnedIpOnLaunch": false,
-            "MapPublicIpOnLaunch": false,
-            "OwnerId": "000000000000",
-            "State": "available",
-            "SubnetArn": "arn:aws:ec2:ap-southeast-2:000000000000:subnet/subnet-2b9c9233",
-            "SubnetId": "subnet-2b9c9233",
-            "Tags": [
-              {
-                "Key": "Name",
-                "Value": "wave1-a1"
-              }
-            ],
-            "VpcId": "vpc-03e9e3f9"
-          },
-          {
-            "AssignIpv6AddressOnCreation": false,
             "AvailabilityZone": "ap-southeast-2b",
             "AvailabilityZoneId": "apse2-az2",
             "AvailableIpAddressCount": 4091,
@@ -94,15 +71,15 @@
             "MapPublicIpOnLaunch": false,
             "OwnerId": "000000000000",
             "State": "available",
-            "SubnetArn": "arn:aws:ec2:ap-southeast-2:000000000000:subnet/subnet-b7bc84c2",
-            "SubnetId": "subnet-b7bc84c2",
+            "SubnetArn": "arn:aws:ec2:ap-southeast-2:000000000000:subnet/subnet-28ddeb2e",
+            "SubnetId": "subnet-28ddeb2e",
             "Tags": [
               {
                 "Key": "Name",
                 "Value": "wave1-b1"
               }
             ],
-            "VpcId": "vpc-29250840"
+            "VpcId": "vpc-0359d433"
           },
           {
             "AssignIpv6AddressOnCreation": false,
@@ -117,15 +94,38 @@
             "MapPublicIpOnLaunch": false,
             "OwnerId": "000000000000",
             "State": "available",
-            "SubnetArn": "arn:aws:ec2:ap-southeast-2:000000000000:subnet/subnet-4f1dede6",
-            "SubnetId": "subnet-4f1dede6",
+            "SubnetArn": "arn:aws:ec2:ap-southeast-2:000000000000:subnet/subnet-b5c0089c",
+            "SubnetId": "subnet-b5c0089c",
             "Tags": [
               {
                 "Key": "Name",
                 "Value": "wave1-a2"
               }
             ],
-            "VpcId": "vpc-03e9e3f9"
+            "VpcId": "vpc-95741f0b"
+          },
+          {
+            "AssignIpv6AddressOnCreation": false,
+            "AvailabilityZone": "ap-southeast-2a",
+            "AvailabilityZoneId": "apse2-az1",
+            "AvailableIpAddressCount": 250,
+            "CidrBlock": "10.80.1.0/24",
+            "DefaultForAz": false,
+            "EnableDns64": false,
+            "Ipv6CidrBlockAssociationSet": [],
+            "MapCustomerOwnedIpOnLaunch": false,
+            "MapPublicIpOnLaunch": false,
+            "OwnerId": "000000000000",
+            "State": "available",
+            "SubnetArn": "arn:aws:ec2:ap-southeast-2:000000000000:subnet/subnet-427c8089",
+            "SubnetId": "subnet-427c8089",
+            "Tags": [
+              {
+                "Key": "Name",
+                "Value": "wave1-a1"
+              }
+            ],
+            "VpcId": "vpc-95741f0b"
           }
         ]
       }

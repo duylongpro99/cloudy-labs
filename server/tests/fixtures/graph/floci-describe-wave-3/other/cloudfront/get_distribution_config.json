@@ -2,7 +2,7 @@
   "calls": [
     {
       "params": {
-        "Id": "ESUZGTI490RL77"
+        "Id": "E8BB5X0F4F2EJA"
       },
       "response": {
         "DistributionConfig": {
@@ -28,7 +28,7 @@
               ],
               "Quantity": 2
             },
-            "CachePolicyId": "658327ea-f89d-4fab-a63d-7e88639e58f6",
+            "CachePolicyId": "0ec3cb72-f91a-4698-9892-9281f83361cb",
             "Compress": false,
             "FieldLevelEncryptionId": "",
             "FunctionAssociations": {
@@ -45,6 +45,7 @@
               "Quantity": 1
             },
             "MinTTL": 0,
+            "OriginRequestPolicyId": "bed7e4c2-4d0a-4e65-911a-0452c5ca96fe",
             "SmoothStreaming": false,
             "TargetOriginId": "s3",
             "TrustedKeyGroups": {
@@ -80,6 +81,7 @@
                 },
                 "DomainName": "w3-edge-origin.s3.ap-southeast-2.amazonaws.com",
                 "Id": "s3",
+                "OriginAccessControlId": "e06c431e-daa7-4c92-baaf-39674ad835e9",
                 "OriginPath": "",
                 "ResponseCompletionTimeout": 0,
                 "S3OriginConfig": {
@@ -105,7 +107,7 @@
                     "Quantity": 1
                   }
                 },
-                "DomainName": "w3-edge-alb-69f799da92464b34.elb.localhost.floci.io",
+                "DomainName": "w3-edge-alb-7004a8a039ba453d.elb.localhost.floci.io",
                 "Id": "alb",
                 "OriginPath": "",
                 "ResponseCompletionTimeout": 0
@@ -121,12 +123,12 @@
             }
           },
           "ViewerCertificate": {
-            "ACMCertificateArn": "arn:aws:acm:ap-southeast-2:000000000000:certificate/7a4702a0-cfe3-4fff-8947-03af3fb36b4e",
+            "ACMCertificateArn": "arn:aws:acm:ap-southeast-2:000000000000:certificate/cdfc61b2-7931-4669-838f-1d178d90c1e2",
             "MinimumProtocolVersion": "TLSv1.2_2021",
             "SSLSupportMethod": "sni-only"
           }
         },
-        "ETag": "1e272556-d874-4b3d-9bc6-e1567362c6ba"
+        "ETag": "ce4c9e50-286f-43ca-a8f8-d37f4863db84"
       }
     }
   ]

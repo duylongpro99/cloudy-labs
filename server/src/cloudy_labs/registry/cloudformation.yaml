@@ -45,7 +45,7 @@
     - {code: cfn-no-validation, prop: status, text: "Floci 2.3.0 reaches CREATE_COMPLETE for resource types it does not implement (with a placeholder physical id) and for properties AWS would reject, such as an invalid bucket name. A complete stack only proves the template parsed; check the resources it made."}
     - {code: cfn-capabilities-not-required, prop: capabilities, text: "Floci 2.3.0 creates IAM resources without CAPABILITY_IAM or CAPABILITY_NAMED_IAM and reports Capabilities as empty; AWS refuses such a stack until the capability is acknowledged."}
   builder: true
-  view: {role: block, category: management, icon: Res_AWS-CloudFormation_Stack_48.svg, source: Resource-Icons_07312026/Res_Management-Governance/Res_AWS-CloudFormation_Stack_48.svg, height: 0.4, order: 130, actions: [Stack]}
+  view: {role: block, category: management, icon: Res_AWS-CloudFormation_Stack_48.svg, source: Resource-Icons_07312026/Res_Management-Governance/Res_AWS-CloudFormation_Stack_48.svg, height: 0.4, order: 130, actions: [Stack, ChangeSet]}
   contract:
     create: {op: create-stack, params: {StackName: ct-stack}, save: stack}
     then:

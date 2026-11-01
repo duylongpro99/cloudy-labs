@@ -1,20 +1,24 @@
 {
   "contains": [
     {
-      "child": "acl-3014564bc9c904cad",
-      "parent": "vpc-03e9e3f9"
+      "child": "9292f8d0-fe01-44e3-9383-9fb4c02f540f",
+      "parent": "ap-southeast-2"
     },
     {
-      "child": "acl-3048f0353af957cb2",
-      "parent": "vpc-03e9e3f9"
+      "child": "acl-03235f1bf2575b71a",
+      "parent": "vpc-95741f0b"
     },
     {
-      "child": "acl-a6283b9187233a8f2",
-      "parent": "vpc-29250840"
+      "child": "acl-af3c78fa4e3710fd2",
+      "parent": "vpc-0359d433"
     },
     {
       "child": "acl-default",
       "parent": "vpc-default-ap-southeast-2"
+    },
+    {
+      "child": "acl-fc527e50745ddac7e",
+      "parent": "vpc-95741f0b"
     },
     {
       "child": "ap-southeast-2",
@@ -62,7 +66,7 @@
     },
     {
       "child": "arn:aws:lambda:ap-southeast-2:000000000000:function:wave1-vpc-fn",
-      "parent": "subnet-4f1dede6"
+      "parent": "subnet-b5c0089c"
     },
     {
       "child": "arn:aws:lambda:ap-southeast-2:000000000000:layer:wave1-layer",
@@ -81,8 +85,8 @@
       "parent": "arn:aws:rds:ap-southeast-2:000000000000:subgrp:wave1-db"
     },
     {
-      "child": "arn:aws:rds:ap-southeast-2:000000000000:db-proxy:prx-dba5f314ff484958a",
-      "parent": "vpc-03e9e3f9"
+      "child": "arn:aws:rds:ap-southeast-2:000000000000:db-proxy:prx-bf371c797eaf4f429",
+      "parent": "vpc-95741f0b"
     },
     {
       "child": "arn:aws:rds:ap-southeast-2:000000000000:db:wave1-aurora-1",
@@ -110,7 +114,7 @@
     },
     {
       "child": "arn:aws:rds:ap-southeast-2:000000000000:subgrp:wave1-db",
-      "parent": "vpc-03e9e3f9"
+      "parent": "vpc-95741f0b"
     },
     {
       "child": "arn:aws:s3:::wave1-dst",
@@ -129,92 +133,88 @@
       "parent": "ap-southeast-2"
     },
     {
-      "child": "e9c9b6d0-a862-4051-9e65-a3aba9ac0099",
-      "parent": "ap-southeast-2"
+      "child": "eni-85b433deff5092142",
+      "parent": "subnet-b5c0089c"
     },
     {
-      "child": "eni-afbe03abb99391253",
-      "parent": "subnet-4f1dede6"
-    },
-    {
-      "child": "fl-77c5d028459bcbdff",
-      "parent": "vpc-03e9e3f9"
+      "child": "fl-20d0f8a8ec1fa2b84",
+      "parent": "vpc-95741f0b"
     },
     {
       "child": "global",
       "parent": "000000000000"
     },
     {
-      "child": "i-ebd18d4a95b4c15f4",
-      "parent": "subnet-2b9c9233"
+      "child": "i-6ce5a0f2ded19691c",
+      "parent": "subnet-427c8089"
     },
     {
-      "child": "igw-8a9d8e36",
-      "parent": "vpc-03e9e3f9"
+      "child": "igw-89cb1765",
+      "parent": "vpc-95741f0b"
     },
     {
       "child": "igw-default",
       "parent": "vpc-default-ap-southeast-2"
     },
     {
-      "child": "lt-c812f7451d6cc16ed",
+      "child": "lt-965d9796e3025eed2",
       "parent": "ap-southeast-2"
     },
     {
-      "child": "pcx-d3e890e91e4299b2d",
+      "child": "pcx-e39234371b42f79ca",
       "parent": "ap-southeast-2"
     },
     {
-      "child": "pl-403ec40bdb5e527f2",
+      "child": "pl-ba3b541c5c90bb392",
       "parent": "ap-southeast-2"
     },
     {
-      "child": "rtb-5394e655",
-      "parent": "vpc-03e9e3f9"
+      "child": "rtb-7117010417434ae14",
+      "parent": "vpc-95741f0b"
     },
     {
-      "child": "rtb-6d078619c8d3b6df5",
-      "parent": "vpc-03e9e3f9"
+      "child": "rtb-8ae5665093623bf05",
+      "parent": "vpc-0359d433"
     },
     {
-      "child": "rtb-944fdcaad287b433a",
-      "parent": "vpc-29250840"
+      "child": "rtb-c0c65b43",
+      "parent": "vpc-95741f0b"
     },
     {
       "child": "rtb-default",
       "parent": "vpc-default-ap-southeast-2"
     },
     {
-      "child": "sg-16d87565cacd7efa0",
-      "parent": "vpc-03e9e3f9"
+      "child": "sg-0ade6c856bf0293e9",
+      "parent": "vpc-95741f0b"
     },
     {
-      "child": "sg-2559a8642555f05e7",
-      "parent": "vpc-29250840"
+      "child": "sg-29c1453846337377c",
+      "parent": "vpc-95741f0b"
     },
     {
-      "child": "sg-5271729b7a5ffc3e2",
-      "parent": "vpc-03e9e3f9"
+      "child": "sg-798a86874fc416b96",
+      "parent": "vpc-95741f0b"
     },
     {
-      "child": "sg-cc2f2105a40fceb16",
-      "parent": "vpc-03e9e3f9"
+      "child": "sg-8df4b2413a1af93a5",
+      "parent": "vpc-0359d433"
     },
     {
       "child": "sg-default-ap-southeast-2",
       "parent": "vpc-default-ap-southeast-2"
     },
     {
-      "child": "subnet-2b9c9233",
-      "parent": "vpc-03e9e3f9/ap-southeast-2a"
+      "child": "subnet-28ddeb2e",
+      "parent": "vpc-0359d433/ap-southeast-2a"
     },
     {
-      "child": "subnet-4f1dede6",
-      "parent": "vpc-03e9e3f9/ap-southeast-2b"
+      "child": "subnet-427c8089",
+      "parent": "vpc-95741f0b/ap-southeast-2a"
     },
     {
-      "child": "subnet-b7bc84c2",
-      "parent": "vpc-29250840/ap-southeast-2a"
+      "child": "subnet-b5c0089c",
+      "parent": "vpc-95741f0b/ap-southeast-2b"
     },
     {
       "child": "subnet-default-ap-southeast-2-a",
@@ -229,48 +229,48 @@
       "parent": "vpc-default-ap-southeast-2/ap-southeast-2c"
     },
     {
-      "child": "tgw-694378cffac133fc8",
+      "child": "tgw-7d32641965bf5b49c",
       "parent": "ap-southeast-2"
     },
     {
-      "child": "tgw-attach-2fc188cb4468af231",
-      "parent": "vpc-29250840"
+      "child": "tgw-attach-f65b20b05d2d6ceda",
+      "parent": "vpc-0359d433"
     },
     {
-      "child": "tgw-rtb-91762891d9f9209f7",
+      "child": "tgw-rtb-4712cf3954c739e35",
       "parent": "ap-southeast-2"
     },
     {
-      "child": "tgw-rtb-94e55f216fa9ff145",
+      "child": "tgw-rtb-52fea0ac9f29d14d9",
       "parent": "ap-southeast-2"
     },
     {
-      "child": "vol-0c91018448f66eb6a",
+      "child": "vol-280c941cacfc178fc",
       "parent": "ap-southeast-2"
     },
     {
-      "child": "vol-b09fc864be62d0919",
+      "child": "vol-341d2ffbfdb5e6195",
       "parent": "ap-southeast-2"
     },
     {
-      "child": "vpc-03e9e3f9",
+      "child": "vpc-0359d433",
       "parent": "ap-southeast-2"
     },
     {
-      "child": "vpc-03e9e3f9/ap-southeast-2a",
-      "parent": "vpc-03e9e3f9"
+      "child": "vpc-0359d433/ap-southeast-2a",
+      "parent": "vpc-0359d433"
     },
     {
-      "child": "vpc-03e9e3f9/ap-southeast-2b",
-      "parent": "vpc-03e9e3f9"
-    },
-    {
-      "child": "vpc-29250840",
+      "child": "vpc-95741f0b",
       "parent": "ap-southeast-2"
     },
     {
-      "child": "vpc-29250840/ap-southeast-2a",
-      "parent": "vpc-29250840"
+      "child": "vpc-95741f0b/ap-southeast-2a",
+      "parent": "vpc-95741f0b"
+    },
+    {
+      "child": "vpc-95741f0b/ap-southeast-2b",
+      "parent": "vpc-95741f0b"
     },
     {
       "child": "vpc-default-ap-southeast-2",
@@ -289,12 +289,12 @@
       "parent": "vpc-default-ap-southeast-2"
     },
     {
-      "child": "vpce-479cfb7293de52075",
-      "parent": "vpc-03e9e3f9"
+      "child": "vpce-588b5d1f076aa74e3",
+      "parent": "vpc-95741f0b"
     },
     {
-      "child": "vpce-db941ac67c6e58118",
-      "parent": "vpc-03e9e3f9"
+      "child": "vpce-d2a6930293d4934ea",
+      "parent": "vpc-95741f0b"
     }
   ],
   "edges": [
@@ -306,11 +306,11 @@
       "to": "arn:aws:lambda:ap-southeast-2:000000000000:function:wave1-fn:1"
     },
     {
-      "from": "rtb-5394e655",
-      "id": "association:rtb-5394e655->subnet-2b9c9233",
+      "from": "rtb-c0c65b43",
+      "id": "association:rtb-c0c65b43->subnet-427c8089",
       "kind": "association",
       "label": "",
-      "to": "subnet-2b9c9233"
+      "to": "subnet-427c8089"
     },
     {
       "from": "arn:aws:iam::000000000000:user/wave1-dev",
@@ -341,74 +341,74 @@
       "to": "arn:aws:iam::000000000000:policy/wave1-read"
     },
     {
-      "from": "sg-16d87565cacd7efa0",
-      "id": "attached:sg-16d87565cacd7efa0->i-ebd18d4a95b4c15f4",
-      "kind": "attached",
-      "label": "",
-      "to": "i-ebd18d4a95b4c15f4"
-    },
-    {
-      "from": "sg-5271729b7a5ffc3e2",
-      "id": "attached:sg-5271729b7a5ffc3e2->arn:aws:lambda:ap-southeast-2:000000000000:function:wave1-vpc-fn",
+      "from": "sg-29c1453846337377c",
+      "id": "attached:sg-29c1453846337377c->arn:aws:lambda:ap-southeast-2:000000000000:function:wave1-vpc-fn",
       "kind": "attached",
       "label": "",
       "to": "arn:aws:lambda:ap-southeast-2:000000000000:function:wave1-vpc-fn"
     },
     {
-      "from": "sg-5271729b7a5ffc3e2",
-      "id": "attached:sg-5271729b7a5ffc3e2->arn:aws:rds:ap-southeast-2:000000000000:db-proxy:prx-dba5f314ff484958a",
+      "from": "sg-29c1453846337377c",
+      "id": "attached:sg-29c1453846337377c->arn:aws:rds:ap-southeast-2:000000000000:db-proxy:prx-bf371c797eaf4f429",
       "kind": "attached",
       "label": "",
-      "to": "arn:aws:rds:ap-southeast-2:000000000000:db-proxy:prx-dba5f314ff484958a"
+      "to": "arn:aws:rds:ap-southeast-2:000000000000:db-proxy:prx-bf371c797eaf4f429"
     },
     {
-      "from": "sg-5271729b7a5ffc3e2",
-      "id": "attached:sg-5271729b7a5ffc3e2->arn:aws:rds:ap-southeast-2:000000000000:db:wave1-pg",
+      "from": "sg-29c1453846337377c",
+      "id": "attached:sg-29c1453846337377c->arn:aws:rds:ap-southeast-2:000000000000:db:wave1-pg",
       "kind": "attached",
       "label": "",
       "to": "arn:aws:rds:ap-southeast-2:000000000000:db:wave1-pg"
     },
     {
-      "from": "sg-5271729b7a5ffc3e2",
-      "id": "attached:sg-5271729b7a5ffc3e2->arn:aws:rds:ap-southeast-2:000000000000:db:wave1-pg-rr",
+      "from": "sg-29c1453846337377c",
+      "id": "attached:sg-29c1453846337377c->arn:aws:rds:ap-southeast-2:000000000000:db:wave1-pg-rr",
       "kind": "attached",
       "label": "",
       "to": "arn:aws:rds:ap-southeast-2:000000000000:db:wave1-pg-rr"
     },
     {
-      "from": "sg-5271729b7a5ffc3e2",
-      "id": "attached:sg-5271729b7a5ffc3e2->eni-afbe03abb99391253",
+      "from": "sg-29c1453846337377c",
+      "id": "attached:sg-29c1453846337377c->eni-85b433deff5092142",
       "kind": "attached",
       "label": "",
-      "to": "eni-afbe03abb99391253"
+      "to": "eni-85b433deff5092142"
     },
     {
-      "from": "sg-5271729b7a5ffc3e2",
-      "id": "attached:sg-5271729b7a5ffc3e2->vpce-db941ac67c6e58118",
+      "from": "sg-29c1453846337377c",
+      "id": "attached:sg-29c1453846337377c->vpce-d2a6930293d4934ea",
       "kind": "attached",
       "label": "",
-      "to": "vpce-db941ac67c6e58118"
+      "to": "vpce-d2a6930293d4934ea"
     },
     {
-      "from": "vol-b09fc864be62d0919",
-      "id": "attached:vol-b09fc864be62d0919->i-ebd18d4a95b4c15f4",
+      "from": "sg-798a86874fc416b96",
+      "id": "attached:sg-798a86874fc416b96->i-6ce5a0f2ded19691c",
       "kind": "attached",
       "label": "",
-      "to": "i-ebd18d4a95b4c15f4"
+      "to": "i-6ce5a0f2ded19691c"
     },
     {
-      "from": "rtb-5394e655",
-      "id": "endpoint-route:rtb-5394e655->vpce-479cfb7293de52075",
+      "from": "vol-341d2ffbfdb5e6195",
+      "id": "attached:vol-341d2ffbfdb5e6195->i-6ce5a0f2ded19691c",
+      "kind": "attached",
+      "label": "",
+      "to": "i-6ce5a0f2ded19691c"
+    },
+    {
+      "from": "rtb-c0c65b43",
+      "id": "endpoint-route:rtb-c0c65b43->vpce-588b5d1f076aa74e3",
       "kind": "endpoint-route",
       "label": "",
-      "to": "vpce-479cfb7293de52075"
+      "to": "vpce-588b5d1f076aa74e3"
     },
     {
-      "from": "vpce-db941ac67c6e58118",
-      "id": "endpoint-subnet:vpce-db941ac67c6e58118->subnet-4f1dede6",
+      "from": "vpce-d2a6930293d4934ea",
+      "id": "endpoint-subnet:vpce-d2a6930293d4934ea->subnet-b5c0089c",
       "kind": "endpoint-subnet",
       "label": "",
-      "to": "subnet-4f1dede6"
+      "to": "subnet-b5c0089c"
     },
     {
       "from": "arn:aws:lambda:ap-southeast-2:000000000000:function:wave1-fn",
@@ -425,8 +425,8 @@
       "to": "arn:aws:iam::000000000000:role/wave1-lambda-role"
     },
     {
-      "from": "arn:aws:rds:ap-southeast-2:000000000000:db-proxy:prx-dba5f314ff484958a",
-      "id": "execution-role:arn:aws:rds:ap-southeast-2:000000000000:db-proxy:prx-dba5f314ff484958a->arn:aws:iam::000000000000:role/wave1-lambda-role",
+      "from": "arn:aws:rds:ap-southeast-2:000000000000:db-proxy:prx-bf371c797eaf4f429",
+      "id": "execution-role:arn:aws:rds:ap-southeast-2:000000000000:db-proxy:prx-bf371c797eaf4f429->arn:aws:iam::000000000000:role/wave1-lambda-role",
       "kind": "execution-role",
       "label": "",
       "to": "arn:aws:iam::000000000000:role/wave1-lambda-role"
@@ -446,25 +446,18 @@
       "to": "arn:aws:iam::000000000000:group/wave1-devs"
     },
     {
-      "from": "acl-3014564bc9c904cad",
-      "id": "nacl-association:acl-3014564bc9c904cad->subnet-2b9c9233",
+      "from": "acl-03235f1bf2575b71a",
+      "id": "nacl-association:acl-03235f1bf2575b71a->subnet-b5c0089c",
       "kind": "nacl-association",
       "label": "",
-      "to": "subnet-2b9c9233"
+      "to": "subnet-b5c0089c"
     },
     {
-      "from": "acl-3048f0353af957cb2",
-      "id": "nacl-association:acl-3048f0353af957cb2->subnet-4f1dede6",
+      "from": "acl-af3c78fa4e3710fd2",
+      "id": "nacl-association:acl-af3c78fa4e3710fd2->subnet-28ddeb2e",
       "kind": "nacl-association",
       "label": "",
-      "to": "subnet-4f1dede6"
-    },
-    {
-      "from": "acl-a6283b9187233a8f2",
-      "id": "nacl-association:acl-a6283b9187233a8f2->subnet-b7bc84c2",
-      "kind": "nacl-association",
-      "label": "",
-      "to": "subnet-b7bc84c2"
+      "to": "subnet-28ddeb2e"
     },
     {
       "from": "acl-default",
@@ -488,6 +481,13 @@
       "to": "subnet-default-ap-southeast-2-c"
     },
     {
+      "from": "acl-fc527e50745ddac7e",
+      "id": "nacl-association:acl-fc527e50745ddac7e->subnet-427c8089",
+      "kind": "nacl-association",
+      "label": "",
+      "to": "subnet-427c8089"
+    },
+    {
       "from": "arn:aws:s3:::wave1-src",
       "id": "notifies:arn:aws:s3:::wave1-src->arn:aws:lambda:ap-southeast-2:000000000000:function:wave1-fn",
       "kind": "notifies",
@@ -495,18 +495,18 @@
       "to": "arn:aws:lambda:ap-southeast-2:000000000000:function:wave1-fn"
     },
     {
-      "from": "pcx-d3e890e91e4299b2d",
-      "id": "peering:pcx-d3e890e91e4299b2d->vpc-03e9e3f9",
+      "from": "pcx-e39234371b42f79ca",
+      "id": "peering:pcx-e39234371b42f79ca->vpc-0359d433",
       "kind": "peering",
       "label": "",
-      "to": "vpc-03e9e3f9"
+      "to": "vpc-0359d433"
     },
     {
-      "from": "pcx-d3e890e91e4299b2d",
-      "id": "peering:pcx-d3e890e91e4299b2d->vpc-29250840",
+      "from": "pcx-e39234371b42f79ca",
+      "id": "peering:pcx-e39234371b42f79ca->vpc-95741f0b",
       "kind": "peering",
       "label": "",
-      "to": "vpc-29250840"
+      "to": "vpc-95741f0b"
     },
     {
       "from": "arn:aws:iam::000000000000:instance-profile/wave1-web-profile",
@@ -516,8 +516,8 @@
       "to": "arn:aws:iam::000000000000:role/wave1-ops"
     },
     {
-      "from": "arn:aws:rds:ap-southeast-2:000000000000:db-proxy:prx-dba5f314ff484958a",
-      "id": "proxy-target:arn:aws:rds:ap-southeast-2:000000000000:db-proxy:prx-dba5f314ff484958a->arn:aws:rds:ap-southeast-2:000000000000:db:wave1-pg",
+      "from": "arn:aws:rds:ap-southeast-2:000000000000:db-proxy:prx-bf371c797eaf4f429",
+      "id": "proxy-target:arn:aws:rds:ap-southeast-2:000000000000:db-proxy:prx-bf371c797eaf4f429->arn:aws:rds:ap-southeast-2:000000000000:db:wave1-pg",
       "kind": "proxy-target",
       "label": "",
       "to": "arn:aws:rds:ap-southeast-2:000000000000:db:wave1-pg"
@@ -537,18 +537,18 @@
       "to": "arn:aws:s3:::wave1-dst"
     },
     {
-      "from": "rtb-5394e655",
-      "id": "route:rtb-5394e655->igw-8a9d8e36:0.0.0.0/0",
+      "from": "rtb-c0c65b43",
+      "id": "route:rtb-c0c65b43->igw-89cb1765:0.0.0.0/0",
       "kind": "route",
       "label": "0.0.0.0/0",
-      "to": "igw-8a9d8e36"
+      "to": "igw-89cb1765"
     },
     {
-      "from": "rtb-5394e655",
-      "id": "route:rtb-5394e655->pcx-d3e890e91e4299b2d:10.81.0.0/16",
+      "from": "rtb-c0c65b43",
+      "id": "route:rtb-c0c65b43->pcx-e39234371b42f79ca:10.81.0.0/16",
       "kind": "route",
       "label": "10.81.0.0/16",
-      "to": "pcx-d3e890e91e4299b2d"
+      "to": "pcx-e39234371b42f79ca"
     },
     {
       "from": "rtb-default",
@@ -573,49 +573,49 @@
     },
     {
       "from": "arn:aws:rds:ap-southeast-2:000000000000:subgrp:wave1-db",
-      "id": "subnet-group-member:arn:aws:rds:ap-southeast-2:000000000000:subgrp:wave1-db->subnet-2b9c9233",
+      "id": "subnet-group-member:arn:aws:rds:ap-southeast-2:000000000000:subgrp:wave1-db->subnet-427c8089",
       "kind": "subnet-group-member",
       "label": "",
-      "to": "subnet-2b9c9233"
+      "to": "subnet-427c8089"
     },
     {
       "from": "arn:aws:rds:ap-southeast-2:000000000000:subgrp:wave1-db",
-      "id": "subnet-group-member:arn:aws:rds:ap-southeast-2:000000000000:subgrp:wave1-db->subnet-4f1dede6",
+      "id": "subnet-group-member:arn:aws:rds:ap-southeast-2:000000000000:subgrp:wave1-db->subnet-b5c0089c",
       "kind": "subnet-group-member",
       "label": "",
-      "to": "subnet-4f1dede6"
+      "to": "subnet-b5c0089c"
     },
     {
-      "from": "tgw-attach-2fc188cb4468af231",
-      "id": "tgw-attached:tgw-attach-2fc188cb4468af231->tgw-694378cffac133fc8",
+      "from": "tgw-attach-f65b20b05d2d6ceda",
+      "id": "tgw-attached:tgw-attach-f65b20b05d2d6ceda->tgw-7d32641965bf5b49c",
       "kind": "tgw-attached",
       "label": "",
-      "to": "tgw-694378cffac133fc8"
+      "to": "tgw-7d32641965bf5b49c"
     },
     {
-      "from": "tgw-rtb-91762891d9f9209f7",
-      "id": "tgw-route-table-of:tgw-rtb-91762891d9f9209f7->tgw-694378cffac133fc8",
+      "from": "tgw-rtb-4712cf3954c739e35",
+      "id": "tgw-route-table-of:tgw-rtb-4712cf3954c739e35->tgw-7d32641965bf5b49c",
       "kind": "tgw-route-table-of",
       "label": "",
-      "to": "tgw-694378cffac133fc8"
+      "to": "tgw-7d32641965bf5b49c"
     },
     {
-      "from": "tgw-rtb-94e55f216fa9ff145",
-      "id": "tgw-route-table-of:tgw-rtb-94e55f216fa9ff145->tgw-694378cffac133fc8",
+      "from": "tgw-rtb-52fea0ac9f29d14d9",
+      "id": "tgw-route-table-of:tgw-rtb-52fea0ac9f29d14d9->tgw-7d32641965bf5b49c",
       "kind": "tgw-route-table-of",
       "label": "",
-      "to": "tgw-694378cffac133fc8"
+      "to": "tgw-7d32641965bf5b49c"
     },
     {
-      "from": "tgw-attach-2fc188cb4468af231",
-      "id": "tgw-subnet:tgw-attach-2fc188cb4468af231->subnet-b7bc84c2",
+      "from": "tgw-attach-f65b20b05d2d6ceda",
+      "id": "tgw-subnet:tgw-attach-f65b20b05d2d6ceda->subnet-28ddeb2e",
       "kind": "tgw-subnet",
       "label": "",
-      "to": "subnet-b7bc84c2"
+      "to": "subnet-28ddeb2e"
     },
     {
-      "from": "e9c9b6d0-a862-4051-9e65-a3aba9ac0099",
-      "id": "upload-to:e9c9b6d0-a862-4051-9e65-a3aba9ac0099->arn:aws:s3:::wave1-logs",
+      "from": "9292f8d0-fe01-44e3-9383-9fb4c02f540f",
+      "id": "upload-to:9292f8d0-fe01-44e3-9383-9fb4c02f540f->arn:aws:s3:::wave1-logs",
       "kind": "upload-to",
       "label": "",
       "to": "arn:aws:s3:::wave1-logs"
@@ -672,57 +672,21 @@
       "props": {}
     },
     {
-      "id": "acl-3014564bc9c904cad",
-      "kind": "network-acl",
-      "label": "acl-3014564bc9c904cad",
+      "id": "9292f8d0-fe01-44e3-9383-9fb4c02f540f",
+      "kind": "s3-multipart-upload",
+      "label": "tmp/big.bin",
       "props": {
-        "associations": [
-          "subnet-2b9c9233"
-        ],
-        "entries": [
-          {
-            "action": "allow",
-            "cidr": "0.0.0.0/0",
-            "egress": false,
-            "port_range": null,
-            "protocol": "-1",
-            "rule_number": 100
-          },
-          {
-            "action": "deny",
-            "cidr": "0.0.0.0/0",
-            "egress": false,
-            "port_range": null,
-            "protocol": "-1",
-            "rule_number": 32767
-          },
-          {
-            "action": "allow",
-            "cidr": "0.0.0.0/0",
-            "egress": true,
-            "port_range": null,
-            "protocol": "-1",
-            "rule_number": 100
-          },
-          {
-            "action": "deny",
-            "cidr": "0.0.0.0/0",
-            "egress": true,
-            "port_range": null,
-            "protocol": "-1",
-            "rule_number": 32767
-          }
-        ],
-        "isDefault": true
+        "initiated": "2026-11-01 09:04:57+00:00",
+        "key": "tmp/big.bin"
       }
     },
     {
-      "id": "acl-3048f0353af957cb2",
+      "id": "acl-03235f1bf2575b71a",
       "kind": "network-acl",
-      "label": "acl-3048f0353af957cb2",
+      "label": "acl-03235f1bf2575b71a",
       "props": {
         "associations": [
-          "subnet-4f1dede6"
+          "subnet-b5c0089c"
         ],
         "entries": [
           {
@@ -776,12 +740,12 @@
       }
     },
     {
-      "id": "acl-a6283b9187233a8f2",
+      "id": "acl-af3c78fa4e3710fd2",
       "kind": "network-acl",
-      "label": "acl-a6283b9187233a8f2",
+      "label": "acl-af3c78fa4e3710fd2",
       "props": {
         "associations": [
-          "subnet-b7bc84c2"
+          "subnet-28ddeb2e"
         ],
         "entries": [
           {
@@ -829,6 +793,51 @@
           "subnet-default-ap-southeast-2-a",
           "subnet-default-ap-southeast-2-b",
           "subnet-default-ap-southeast-2-c"
+        ],
+        "entries": [
+          {
+            "action": "allow",
+            "cidr": "0.0.0.0/0",
+            "egress": false,
+            "port_range": null,
+            "protocol": "-1",
+            "rule_number": 100
+          },
+          {
+            "action": "deny",
+            "cidr": "0.0.0.0/0",
+            "egress": false,
+            "port_range": null,
+            "protocol": "-1",
+            "rule_number": 32767
+          },
+          {
+            "action": "allow",
+            "cidr": "0.0.0.0/0",
+            "egress": true,
+            "port_range": null,
+            "protocol": "-1",
+            "rule_number": 100
+          },
+          {
+            "action": "deny",
+            "cidr": "0.0.0.0/0",
+            "egress": true,
+            "port_range": null,
+            "protocol": "-1",
+            "rule_number": 32767
+          }
+        ],
+        "isDefault": true
+      }
+    },
+    {
+      "id": "acl-fc527e50745ddac7e",
+      "kind": "network-acl",
+      "label": "acl-fc527e50745ddac7e",
+      "props": {
+        "associations": [
+          "subnet-427c8089"
         ],
         "entries": [
           {
@@ -944,6 +953,12 @@
       "kind": "iam-user",
       "label": "wave1-dev",
       "props": {
+        "accessKeys": [
+          {
+            "id": "AKIA8XQVY093J8LRK30F",
+            "status": "Inactive"
+          }
+        ],
         "groups": [
           "wave1-devs"
         ],
@@ -1023,10 +1038,10 @@
         "runtime": "python3.12",
         "state": "Active",
         "subnets": [
-          "subnet-4f1dede6"
+          "subnet-b5c0089c"
         ],
         "timeout": 3,
-        "vpc": "vpc-03e9e3f9"
+        "vpc": "vpc-95741f0b"
       }
     },
     {
@@ -1066,7 +1081,7 @@
       "kind": "db-cluster",
       "label": "wave1-aurora",
       "props": {
-        "endpoint": "172.27.0.3",
+        "endpoint": "172.27.0.2",
         "engine": "aurora-postgresql",
         "engineVersion": "16.3",
         "members": [
@@ -1077,22 +1092,22 @@
         ],
         "multiAz": false,
         "port": 7003,
-        "readerEndpoint": "172.27.0.3",
+        "readerEndpoint": "172.27.0.2",
         "status": "available"
       }
     },
     {
-      "id": "arn:aws:rds:ap-southeast-2:000000000000:db-proxy:prx-dba5f314ff484958a",
+      "id": "arn:aws:rds:ap-southeast-2:000000000000:db-proxy:prx-bf371c797eaf4f429",
       "kind": "db-proxy",
       "label": "wave1-proxy",
       "props": {
-        "endpoint": "172.27.0.3",
+        "endpoint": "172.27.0.2",
         "engineFamily": "POSTGRESQL",
         "requireTls": false,
         "status": "available",
         "subnets": [
-          "subnet-2b9c9233",
-          "subnet-4f1dede6"
+          "subnet-427c8089",
+          "subnet-b5c0089c"
         ],
         "targets": [
           {
@@ -1110,7 +1125,7 @@
       "props": {
         "az": "ap-southeast-2b",
         "backupRetention": 1,
-        "endpoint": "172.27.0.3",
+        "endpoint": "172.27.0.2",
         "engine": "aurora-postgresql",
         "engineVersion": "16.3",
         "instanceClass": "db.t3.medium",
@@ -1128,7 +1143,7 @@
       "props": {
         "az": "ap-southeast-2b",
         "backupRetention": 1,
-        "endpoint": "172.27.0.3",
+        "endpoint": "172.27.0.2",
         "engine": "postgres",
         "engineVersion": "16.3",
         "instanceClass": "db.t3.micro",
@@ -1149,7 +1164,7 @@
       "props": {
         "az": "ap-southeast-2b",
         "backupRetention": 0,
-        "endpoint": "172.27.0.3",
+        "endpoint": "172.27.0.2",
         "engine": "postgres",
         "engineVersion": "16.3",
         "instanceClass": "db.t3.micro",
@@ -1203,8 +1218,8 @@
         "description": "wave1",
         "status": "Complete",
         "subnets": [
-          "subnet-2b9c9233",
-          "subnet-4f1dede6"
+          "subnet-427c8089",
+          "subnet-b5c0089c"
         ]
       }
     },
@@ -1312,16 +1327,7 @@
       }
     },
     {
-      "id": "e9c9b6d0-a862-4051-9e65-a3aba9ac0099",
-      "kind": "s3-multipart-upload",
-      "label": "tmp/big.bin",
-      "props": {
-        "initiated": "2026-10-31 14:41:12+00:00",
-        "key": "tmp/big.bin"
-      }
-    },
-    {
-      "id": "eni-afbe03abb99391253",
+      "id": "eni-85b433deff5092142",
       "kind": "network-interface",
       "label": "wave1-eni",
       "props": {
@@ -1331,9 +1337,9 @@
       }
     },
     {
-      "id": "fl-77c5d028459bcbdff",
+      "id": "fl-20d0f8a8ec1fa2b84",
       "kind": "flow-log",
-      "label": "fl-77c5d028459bcbdff",
+      "label": "fl-20d0f8a8ec1fa2b84",
       "props": {
         "destination": "arn:aws:s3:::wave1-logs",
         "destinationType": "s3",
@@ -1348,7 +1354,7 @@
       "props": {}
     },
     {
-      "id": "i-ebd18d4a95b4c15f4",
+      "id": "i-6ce5a0f2ded19691c",
       "kind": "instance",
       "label": "wave1-web-1",
       "props": {
@@ -1359,11 +1365,11 @@
       }
     },
     {
-      "id": "igw-8a9d8e36",
+      "id": "igw-89cb1765",
       "kind": "igw",
       "label": "wave1-igw",
       "props": {
-        "attachedVpc": "vpc-03e9e3f9"
+        "attachedVpc": "vpc-95741f0b"
       }
     },
     {
@@ -1375,7 +1381,7 @@
       }
     },
     {
-      "id": "lt-c812f7451d6cc16ed",
+      "id": "lt-965d9796e3025eed2",
       "kind": "launch-template",
       "label": "wave1-lt",
       "props": {
@@ -1384,20 +1390,20 @@
       }
     },
     {
-      "id": "pcx-d3e890e91e4299b2d",
+      "id": "pcx-e39234371b42f79ca",
       "kind": "vpc-peering",
       "label": "wave1-peering",
       "props": {
         "accepterCidr": "10.81.0.0/16",
         "accepterRegion": "ap-southeast-2",
-        "accepterVpc": "vpc-29250840",
+        "accepterVpc": "vpc-0359d433",
         "requesterCidr": "10.80.0.0/16",
-        "requesterVpc": "vpc-03e9e3f9",
+        "requesterVpc": "vpc-95741f0b",
         "status": "active"
       }
     },
     {
-      "id": "pl-403ec40bdb5e527f2",
+      "id": "pl-ba3b541c5c90bb392",
       "kind": "prefix-list",
       "label": "wave1-office",
       "props": {
@@ -1409,21 +1415,63 @@
       }
     },
     {
-      "id": "rtb-5394e655",
+      "id": "rtb-7117010417434ae14",
+      "kind": "route-table",
+      "label": "rtb-7117010417434ae14",
+      "props": {
+        "associations": [
+          {
+            "main": true,
+            "subnet": null
+          }
+        ],
+        "main": true,
+        "routes": [
+          {
+            "destination": "10.80.0.0/16",
+            "state": "active",
+            "target": "local"
+          }
+        ]
+      }
+    },
+    {
+      "id": "rtb-8ae5665093623bf05",
+      "kind": "route-table",
+      "label": "rtb-8ae5665093623bf05",
+      "props": {
+        "associations": [
+          {
+            "main": true,
+            "subnet": null
+          }
+        ],
+        "main": true,
+        "routes": [
+          {
+            "destination": "10.81.0.0/16",
+            "state": "active",
+            "target": "local"
+          }
+        ]
+      }
+    },
+    {
+      "id": "rtb-c0c65b43",
       "kind": "route-table",
       "label": "wave1-public-rt",
       "props": {
         "associations": [
           {
             "main": false,
-            "subnet": "subnet-2b9c9233"
+            "subnet": "subnet-427c8089"
           }
         ],
         "routes": [
           {
             "destination": "0.0.0.0/0",
             "state": "active",
-            "target": "igw-8a9d8e36"
+            "target": "igw-89cb1765"
           },
           {
             "destination": "10.80.0.0/16",
@@ -1433,49 +1481,7 @@
           {
             "destination": "10.81.0.0/16",
             "state": "active",
-            "target": "pcx-d3e890e91e4299b2d"
-          }
-        ]
-      }
-    },
-    {
-      "id": "rtb-6d078619c8d3b6df5",
-      "kind": "route-table",
-      "label": "rtb-6d078619c8d3b6df5",
-      "props": {
-        "associations": [
-          {
-            "main": true,
-            "subnet": null
-          }
-        ],
-        "main": true,
-        "routes": [
-          {
-            "destination": "10.80.0.0/16",
-            "state": "active",
-            "target": "local"
-          }
-        ]
-      }
-    },
-    {
-      "id": "rtb-944fdcaad287b433a",
-      "kind": "route-table",
-      "label": "rtb-944fdcaad287b433a",
-      "props": {
-        "associations": [
-          {
-            "main": true,
-            "subnet": null
-          }
-        ],
-        "main": true,
-        "routes": [
-          {
-            "destination": "10.81.0.0/16",
-            "state": "active",
-            "target": "local"
+            "target": "pcx-e39234371b42f79ca"
           }
         ]
       }
@@ -1507,51 +1513,7 @@
       }
     },
     {
-      "id": "sg-16d87565cacd7efa0",
-      "kind": "security-group",
-      "label": "wave1-web",
-      "props": {
-        "egress": [
-          {
-            "from": null,
-            "protocol": "-1",
-            "sources": [
-              "0.0.0.0/0"
-            ],
-            "to": null
-          },
-          {
-            "from": 5432,
-            "protocol": "tcp",
-            "sources": [
-              "sg-5271729b7a5ffc3e2"
-            ],
-            "to": 5432
-          }
-        ],
-        "groupName": "wave1-web",
-        "ingress": [
-          {
-            "from": 22,
-            "protocol": "tcp",
-            "sources": [
-              "pl-403ec40bdb5e527f2"
-            ],
-            "to": 22
-          },
-          {
-            "from": 443,
-            "protocol": "tcp",
-            "sources": [
-              "0.0.0.0/0"
-            ],
-            "to": 443
-          }
-        ]
-      }
-    },
-    {
-      "id": "sg-2559a8642555f05e7",
+      "id": "sg-0ade6c856bf0293e9",
       "kind": "security-group",
       "label": "default",
       "props": {
@@ -1569,7 +1531,7 @@
       }
     },
     {
-      "id": "sg-5271729b7a5ffc3e2",
+      "id": "sg-29c1453846337377c",
       "kind": "security-group",
       "label": "wave1-app",
       "props": {
@@ -1589,7 +1551,7 @@
             "from": 5432,
             "protocol": "tcp",
             "sources": [
-              "sg-16d87565cacd7efa0"
+              "sg-798a86874fc416b96"
             ],
             "to": 5432
           }
@@ -1597,7 +1559,51 @@
       }
     },
     {
-      "id": "sg-cc2f2105a40fceb16",
+      "id": "sg-798a86874fc416b96",
+      "kind": "security-group",
+      "label": "wave1-web",
+      "props": {
+        "egress": [
+          {
+            "from": null,
+            "protocol": "-1",
+            "sources": [
+              "0.0.0.0/0"
+            ],
+            "to": null
+          },
+          {
+            "from": 5432,
+            "protocol": "tcp",
+            "sources": [
+              "sg-29c1453846337377c"
+            ],
+            "to": 5432
+          }
+        ],
+        "groupName": "wave1-web",
+        "ingress": [
+          {
+            "from": 22,
+            "protocol": "tcp",
+            "sources": [
+              "pl-ba3b541c5c90bb392"
+            ],
+            "to": 22
+          },
+          {
+            "from": 443,
+            "protocol": "tcp",
+            "sources": [
+              "0.0.0.0/0"
+            ],
+            "to": 443
+          }
+        ]
+      }
+    },
+    {
+      "id": "sg-8df4b2413a1af93a5",
       "kind": "security-group",
       "label": "default",
       "props": {
@@ -1633,7 +1639,17 @@
       }
     },
     {
-      "id": "subnet-2b9c9233",
+      "id": "subnet-28ddeb2e",
+      "kind": "subnet-private",
+      "label": "wave1-b1",
+      "props": {
+        "az": "ap-southeast-2a",
+        "cidr": "10.81.1.0/24",
+        "mapPublicIpOnLaunch": false
+      }
+    },
+    {
+      "id": "subnet-427c8089",
       "kind": "subnet-public",
       "label": "wave1-a1",
       "props": {
@@ -1643,22 +1659,12 @@
       }
     },
     {
-      "id": "subnet-4f1dede6",
+      "id": "subnet-b5c0089c",
       "kind": "subnet-private",
       "label": "wave1-a2",
       "props": {
         "az": "ap-southeast-2b",
         "cidr": "10.80.2.0/24",
-        "mapPublicIpOnLaunch": false
-      }
-    },
-    {
-      "id": "subnet-b7bc84c2",
-      "kind": "subnet-private",
-      "label": "wave1-b1",
-      "props": {
-        "az": "ap-southeast-2a",
-        "cidr": "10.81.1.0/24",
         "mapPublicIpOnLaunch": false
       }
     },
@@ -1693,47 +1699,75 @@
       }
     },
     {
-      "id": "tgw-694378cffac133fc8",
+      "id": "tgw-7d32641965bf5b49c",
       "kind": "transit-gateway",
       "label": "wave1-tgw",
       "props": {
         "asn": 64512,
-        "defaultRouteTable": "tgw-rtb-91762891d9f9209f7",
+        "defaultRouteTable": "tgw-rtb-52fea0ac9f29d14d9",
         "state": "available"
       }
     },
     {
-      "id": "tgw-attach-2fc188cb4468af231",
+      "id": "tgw-attach-f65b20b05d2d6ceda",
       "kind": "tgw-attachment",
       "label": "wave1-tgw-b",
       "props": {
-        "routeTable": "tgw-rtb-91762891d9f9209f7",
+        "routeTable": "tgw-rtb-52fea0ac9f29d14d9",
         "state": "available",
         "subnets": [
-          "subnet-b7bc84c2"
+          "subnet-28ddeb2e"
         ]
       }
     },
     {
-      "id": "tgw-rtb-91762891d9f9209f7",
-      "kind": "tgw-route-table",
-      "label": "tgw-rtb-91762891d9f9209f7",
-      "props": {
-        "defaultAssociation": true,
-        "state": "available"
-      }
-    },
-    {
-      "id": "tgw-rtb-94e55f216fa9ff145",
+      "id": "tgw-rtb-4712cf3954c739e35",
       "kind": "tgw-route-table",
       "label": "wave1-tgw-rt",
       "props": {
         "defaultAssociation": false,
+        "defaultPropagation": false,
+        "propagations": [
+          {
+            "attachment": "tgw-attach-f65b20b05d2d6ceda",
+            "state": "enabled"
+          }
+        ],
+        "routes": [
+          {
+            "attachment": "tgw-attach-f65b20b05d2d6ceda",
+            "destination": "10.81.0.0/16",
+            "state": "active",
+            "type": "propagated"
+          },
+          {
+            "attachment": "tgw-attach-f65b20b05d2d6ceda",
+            "destination": "10.90.0.0/16",
+            "state": "active",
+            "type": "static"
+          },
+          {
+            "attachment": null,
+            "destination": "10.91.0.0/16",
+            "state": "blackhole",
+            "type": "static"
+          }
+        ],
         "state": "available"
       }
     },
     {
-      "id": "vol-0c91018448f66eb6a",
+      "id": "tgw-rtb-52fea0ac9f29d14d9",
+      "kind": "tgw-route-table",
+      "label": "tgw-rtb-52fea0ac9f29d14d9",
+      "props": {
+        "defaultAssociation": true,
+        "defaultPropagation": true,
+        "state": "available"
+      }
+    },
+    {
+      "id": "vol-280c941cacfc178fc",
       "kind": "ebs-volume",
       "label": "wave1-spare",
       "props": {
@@ -1745,7 +1779,7 @@
       }
     },
     {
-      "id": "vol-b09fc864be62d0919",
+      "id": "vol-341d2ffbfdb5e6195",
       "kind": "ebs-volume",
       "label": "wave1-data",
       "props": {
@@ -1758,28 +1792,7 @@
       }
     },
     {
-      "id": "vpc-03e9e3f9",
-      "kind": "vpc",
-      "label": "wave1-a",
-      "props": {
-        "cidr": "10.80.0.0/16",
-        "enableDnsHostnames": false
-      }
-    },
-    {
-      "id": "vpc-03e9e3f9/ap-southeast-2a",
-      "kind": "az",
-      "label": "ap-southeast-2a",
-      "props": {}
-    },
-    {
-      "id": "vpc-03e9e3f9/ap-southeast-2b",
-      "kind": "az",
-      "label": "ap-southeast-2b",
-      "props": {}
-    },
-    {
-      "id": "vpc-29250840",
+      "id": "vpc-0359d433",
       "kind": "vpc",
       "label": "wave1-b",
       "props": {
@@ -1788,9 +1801,30 @@
       }
     },
     {
-      "id": "vpc-29250840/ap-southeast-2a",
+      "id": "vpc-0359d433/ap-southeast-2a",
       "kind": "az",
       "label": "ap-southeast-2a",
+      "props": {}
+    },
+    {
+      "id": "vpc-95741f0b",
+      "kind": "vpc",
+      "label": "wave1-a",
+      "props": {
+        "cidr": "10.80.0.0/16",
+        "enableDnsHostnames": false
+      }
+    },
+    {
+      "id": "vpc-95741f0b/ap-southeast-2a",
+      "kind": "az",
+      "label": "ap-southeast-2a",
+      "props": {}
+    },
+    {
+      "id": "vpc-95741f0b/ap-southeast-2b",
+      "kind": "az",
+      "label": "ap-southeast-2b",
       "props": {}
     },
     {
@@ -1822,12 +1856,12 @@
       "props": {}
     },
     {
-      "id": "vpce-479cfb7293de52075",
+      "id": "vpce-588b5d1f076aa74e3",
       "kind": "vpc-endpoint",
       "label": "wave1-s3-endpoint",
       "props": {
         "routeTables": [
-          "rtb-5394e655"
+          "rtb-c0c65b43"
         ],
         "serviceName": "com.amazonaws.ap-southeast-2.s3",
         "state": "available",
@@ -1835,14 +1869,14 @@
       }
     },
     {
-      "id": "vpce-db941ac67c6e58118",
+      "id": "vpce-d2a6930293d4934ea",
       "kind": "vpc-endpoint",
       "label": "wave1-sqs-endpoint",
       "props": {
         "serviceName": "com.amazonaws.ap-southeast-2.sqs",
         "state": "available",
         "subnets": [
-          "subnet-4f1dede6"
+          "subnet-b5c0089c"
         ],
         "type": "Interface"
       }

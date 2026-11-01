@@ -1,0 +1,37 @@
+{
+  "calls": [
+    {
+      "params": {
+        "Type": "custom"
+      },
+      "response": {
+        "OriginRequestPolicyList": {
+          "Items": [
+            {
+              "OriginRequestPolicy": {
+                "Id": "bed7e4c2-4d0a-4e65-911a-0452c5ca96fe",
+                "LastModifiedTime": "2026-11-01 09:05:41.436283+00:00",
+                "OriginRequestPolicyConfig": {
+                  "Comment": "",
+                  "CookiesConfig": {
+                    "CookieBehavior": "none"
+                  },
+                  "HeadersConfig": {
+                    "HeaderBehavior": "none"
+                  },
+                  "Name": "w3-edge-orp",
+                  "QueryStringsConfig": {
+                    "QueryStringBehavior": "all"
+                  }
+                }
+              },
+              "Type": "custom"
+            }
+          ],
+          "MaxItems": 100,
+          "Quantity": 1
+        }
+      }
+    }
+  ]
+}

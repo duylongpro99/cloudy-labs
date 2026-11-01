@@ -5,25 +5,25 @@
       "response": {
         "EventSourceMappings": [
           {
-            "BatchSize": 100,
-            "EventSourceArn": "arn:aws:kinesis:ap-southeast-2:000000000000:stream/w3-clicks",
-            "EventSourceMappingArn": "arn:aws:lambda:ap-southeast-2:000000000000:event-source-mapping:a6b7e70f-ddd7-457f-bada-6e64e3d48f04",
-            "FunctionArn": "arn:aws:lambda:ap-southeast-2:000000000000:function:w3-msg-consumer",
-            "FunctionResponseTypes": [],
-            "LastModified": "2026-10-31 23:25:12.664000+07:00",
-            "StartingPosition": "LATEST",
-            "State": "Enabled",
-            "UUID": "a6b7e70f-ddd7-457f-bada-6e64e3d48f04"
-          },
-          {
             "BatchSize": 10,
             "EventSourceArn": "arn:aws:sqs:ap-southeast-2:000000000000:w3-orders",
-            "EventSourceMappingArn": "arn:aws:lambda:ap-southeast-2:000000000000:event-source-mapping:00c5105e-4894-449e-8a80-ee47ed3f4545",
+            "EventSourceMappingArn": "arn:aws:lambda:ap-southeast-2:000000000000:event-source-mapping:028cf16c-1a43-4c91-b811-fce2caa55138",
             "FunctionArn": "arn:aws:lambda:ap-southeast-2:000000000000:function:w3-msg-consumer",
             "FunctionResponseTypes": [],
-            "LastModified": "2026-10-31 23:25:12.632000+07:00",
+            "LastModified": "2026-11-01 16:05:41.900000+07:00",
             "State": "Enabled",
-            "UUID": "00c5105e-4894-449e-8a80-ee47ed3f4545"
+            "UUID": "028cf16c-1a43-4c91-b811-fce2caa55138"
+          },
+          {
+            "BatchSize": 100,
+            "EventSourceArn": "arn:aws:kinesis:ap-southeast-2:000000000000:stream/w3-clicks",
+            "EventSourceMappingArn": "arn:aws:lambda:ap-southeast-2:000000000000:event-source-mapping:14c27525-c974-4dfc-9620-05399ed3f1be",
+            "FunctionArn": "arn:aws:lambda:ap-southeast-2:000000000000:function:w3-msg-consumer",
+            "FunctionResponseTypes": [],
+            "LastModified": "2026-11-01 16:05:41.933000+07:00",
+            "StartingPosition": "LATEST",
+            "State": "Enabled",
+            "UUID": "14c27525-c974-4dfc-9620-05399ed3f1be"
           }
         ]
       }

@@ -10,7 +10,8 @@ from graph_fixtures import WAVE_3_DESCRIBED, WAVE_3_GOLDEN, wave_3_graph
 BUILT = {
     # edge
     "cloudfront-distribution", "apigateway-rest-api", "apigateway-http-api", "global-accelerator", "acm-certificate",
-    "waf-web-acl", "route53-health-check",
+    "waf-web-acl", "route53-health-check", "cloudfront-cache-policy", "cloudfront-origin-request-policy",
+    "cloudfront-origin-access-control", "apigateway-api-key", "apigateway-usage-plan",
     # messaging
     "sqs-queue", "sns-topic", "sns-subscription", "kinesis-stream", "state-machine",
     # delivery
@@ -48,7 +49,7 @@ def test_every_recorded_edge_joins_two_drawn_nodes_and_the_services_link_up():
     ids = {n.id for n in g.nodes}
     assert all(e.from_ in ids and e.to in ids for e in g.edges)
     assert {
-        "origin", "uses-certificate", "web-acl-for", "uses-health-check",  # edge
+        "origin", "uses-certificate", "web-acl-for", "uses-health-check", "uses-policy", "uses-oac", "allows-key", "endpoint",  # edge
         "dead-letter", "event-source", "targets", "invokes",  # messaging
         "pipeline-source", "pipeline-action", "upload-to", "upstream", "runs-on",  # delivery
         "endpoint-database", "copies-from", "copies-to", "crawls", "crawls-into", "uses-bucket", "notifies",  # data

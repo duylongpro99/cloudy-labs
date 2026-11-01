@@ -8,7 +8,7 @@
             "Architectures": [
               "x86_64"
             ],
-            "CodeSha256": "HRxum6iqUvBJwsBQZwwxx6iC8WIBbERdy95YGunMYfs=",
+            "CodeSha256": "3uq7bB5G5QXWKmnv1jUOwaHvHSaLu31tNIRA10liXpE=",
             "CodeSize": 188,
             "EphemeralStorage": {
               "Size": 512
@@ -16,7 +16,7 @@
             "FunctionArn": "arn:aws:lambda:ap-southeast-2:000000000000:function:w3-edge-fn",
             "FunctionName": "w3-edge-fn",
             "Handler": "index.handler",
-            "LastModified": "2026-10-31T16:25:12.014+0000",
+            "LastModified": "2026-11-01T09:05:41.415+0000",
             "LastUpdateStatus": "Successful",
             "LoggingConfig": {
               "LogFormat": "Text",
@@ -24,7 +24,7 @@
             },
             "MemorySize": 128,
             "PackageType": "Zip",
-            "RevisionId": "f17973cc-4f50-4a30-b995-0b45c0de2d68",
+            "RevisionId": "4dfa2773-bb9c-463c-849f-4cc5e803e591",
             "Role": "arn:aws:iam::000000000000:role/w3-edge-fn-role",
             "Runtime": "python3.12",
             "RuntimeVersionConfig": {
@@ -45,7 +45,7 @@
             "Architectures": [
               "x86_64"
             ],
-            "CodeSha256": "68AyWfj8OB8ltvALuTaOHqHMeJJe5BfjqL24btzLCYk=",
+            "CodeSha256": "j/4geuYhjFu5ZLR+JOHTt4aK+zWoMB2tmjjrBWyoOYs=",
             "CodeSize": 187,
             "EphemeralStorage": {
               "Size": 512
@@ -53,7 +53,7 @@
             "FunctionArn": "arn:aws:lambda:ap-southeast-2:000000000000:function:w3-msg-consumer",
             "FunctionName": "w3-msg-consumer",
             "Handler": "lambda_function.lambda_handler",
-            "LastModified": "2026-10-31T16:25:12.594+0000",
+            "LastModified": "2026-11-01T09:05:41.860+0000",
             "LastUpdateStatus": "Successful",
             "LoggingConfig": {
               "LogFormat": "Text",
@@ -61,7 +61,7 @@
             },
             "MemorySize": 128,
             "PackageType": "Zip",
-            "RevisionId": "73b660e3-9ca1-47c6-b7cd-381fd5bad921",
+            "RevisionId": "5fa76d51-3489-4bbf-a3c7-9a4f819f32e8",
             "Role": "arn:aws:iam::000000000000:role/w3-msg-role",
             "Runtime": "python3.12",
             "RuntimeVersionConfig": {

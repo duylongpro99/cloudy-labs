@@ -2,7 +2,7 @@
   "calls": [
     {
       "params": {
-        "IdentityPoolId": "ap-southeast-2:55869260-0b9e-4e86-b37c-5e9ddde28c1b"
+        "IdentityPoolId": "ap-southeast-2:503dcfe1-e5cc-41e1-8f5e-bad3a65b692c"
       },
       "response": {
         "AllowClassicFlow": false,
@@ -10,11 +10,11 @@
         "CognitoIdentityProviders": [
           {
             "ClientId": "dummy-client",
-            "ProviderName": "cognito-idp.ap-southeast-2.amazonaws.com/ap-southeast-2_52b1a1ca3",
+            "ProviderName": "cognito-idp.ap-southeast-2.amazonaws.com/ap-southeast-2_b5a52cd75",
             "ServerSideTokenCheck": false
           }
         ],
-        "IdentityPoolId": "ap-southeast-2:55869260-0b9e-4e86-b37c-5e9ddde28c1b",
+        "IdentityPoolId": "ap-southeast-2:503dcfe1-e5cc-41e1-8f5e-bad3a65b692c",
         "IdentityPoolName": "w3_identities",
         "IdentityPoolTags": {},
         "OpenIdConnectProviderARNs": [],

@@ -12,12 +12,12 @@
                 "SecretArn": "arn:aws:secretsmanager:ap-southeast-2:000000000000:secret:wave1-db"
               }
             ],
-            "CreatedDate": "2026-10-31 14:41:17.897780+00:00",
-            "DBProxyArn": "arn:aws:rds:ap-southeast-2:000000000000:db-proxy:prx-dba5f314ff484958a",
+            "CreatedDate": "2026-11-01 09:05:02.179794+00:00",
+            "DBProxyArn": "arn:aws:rds:ap-southeast-2:000000000000:db-proxy:prx-bf371c797eaf4f429",
             "DBProxyName": "wave1-proxy",
             "DebugLogging": false,
             "DefaultAuthScheme": "NONE",
-            "Endpoint": "172.27.0.3",
+            "Endpoint": "172.27.0.2",
             "EndpointNetworkType": "IPV4",
             "EngineFamily": "POSTGRESQL",
             "IdleClientTimeout": 1800,
@@ -25,14 +25,14 @@
             "RoleArn": "arn:aws:iam::000000000000:role/wave1-lambda-role",
             "Status": "available",
             "TargetConnectionNetworkType": "IPV4",
-            "UpdatedDate": "2026-10-31 14:41:17.897780+00:00",
-            "VpcId": "vpc-03e9e3f9",
+            "UpdatedDate": "2026-11-01 09:05:02.179794+00:00",
+            "VpcId": "vpc-95741f0b",
             "VpcSecurityGroupIds": [
-              "sg-5271729b7a5ffc3e2"
+              "sg-29c1453846337377c"
             ],
             "VpcSubnetIds": [
-              "subnet-2b9c9233",
-              "subnet-4f1dede6"
+              "subnet-427c8089",
+              "subnet-b5c0089c"
             ]
           }
         ]

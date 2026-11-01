@@ -5,17 +5,17 @@
       "response": {
         "TransitGateways": [
           {
-            "CreationTime": "2026-10-31 14:41:10.372000+00:00",
+            "CreationTime": "2026-11-01 09:04:55.164000+00:00",
             "Description": "wave1",
             "Options": {
               "AmazonSideAsn": 64512,
-              "AssociationDefaultRouteTableId": "tgw-rtb-91762891d9f9209f7",
+              "AssociationDefaultRouteTableId": "tgw-rtb-52fea0ac9f29d14d9",
               "AutoAcceptSharedAttachments": "disable",
               "DefaultRouteTableAssociation": "enable",
               "DefaultRouteTablePropagation": "enable",
               "DnsSupport": "enable",
               "MulticastSupport": "disable",
-              "PropagationDefaultRouteTableId": "tgw-rtb-91762891d9f9209f7",
+              "PropagationDefaultRouteTableId": "tgw-rtb-52fea0ac9f29d14d9",
               "SecurityGroupReferencingSupport": "disable",
               "VpnEcmpSupport": "enable"
             },
@@ -27,8 +27,8 @@
                 "Value": "wave1-tgw"
               }
             ],
-            "TransitGatewayArn": "arn:aws:ec2:ap-southeast-2:000000000000:transit-gateway/tgw-694378cffac133fc8",
-            "TransitGatewayId": "tgw-694378cffac133fc8"
+            "TransitGatewayArn": "arn:aws:ec2:ap-southeast-2:000000000000:transit-gateway/tgw-7d32641965bf5b49c",
+            "TransitGatewayId": "tgw-7d32641965bf5b49c"
           }
         ]
       }

@@ -7,7 +7,7 @@
       "response": {
         "IdentityPools": [
           {
-            "IdentityPoolId": "ap-southeast-2:55869260-0b9e-4e86-b37c-5e9ddde28c1b",
+            "IdentityPoolId": "ap-southeast-2:503dcfe1-e5cc-41e1-8f5e-bad3a65b692c",
             "IdentityPoolName": "w3_identities"
           }
         ]

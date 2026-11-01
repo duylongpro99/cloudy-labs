@@ -1,0 +1,27 @@
+{
+  "calls": [
+    {
+      "params": {
+        "TransitGatewayRouteTableId": "tgw-rtb-52fea0ac9f29d14d9"
+      },
+      "response": {
+        "TransitGatewayRouteTablePropagations": []
+      }
+    },
+    {
+      "params": {
+        "TransitGatewayRouteTableId": "tgw-rtb-4712cf3954c739e35"
+      },
+      "response": {
+        "TransitGatewayRouteTablePropagations": [
+          {
+            "ResourceId": "vpc-0359d433",
+            "ResourceType": "vpc",
+            "State": "enabled",
+            "TransitGatewayAttachmentId": "tgw-attach-f65b20b05d2d6ceda"
+          }
+        ]
+      }
+    }
+  ]
+}

@@ -5,11 +5,11 @@
       "response": {
         "LaunchTemplates": [
           {
-            "CreateTime": "2026-10-31 14:41:10.644000+00:00",
+            "CreateTime": "2026-11-01 09:04:55.632000+00:00",
             "CreatedBy": "arn:aws:iam::000000000000:root",
             "DefaultVersionNumber": 1,
             "LatestVersionNumber": 1,
-            "LaunchTemplateId": "lt-c812f7451d6cc16ed",
+            "LaunchTemplateId": "lt-965d9796e3025eed2",
             "LaunchTemplateName": "wave1-lt",
             "Tags": []
           }

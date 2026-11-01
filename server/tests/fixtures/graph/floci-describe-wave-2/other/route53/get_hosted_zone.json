@@ -2,7 +2,7 @@
   "calls": [
     {
       "params": {
-        "Id": "/hostedzone/Z45OBADPP2X6797"
+        "Id": "/hostedzone/ZLILUB282Q45AJT"
       },
       "response": {
         "DelegationSet": {
@@ -19,13 +19,13 @@
             "Comment": "w2 private zone",
             "PrivateZone": true
           },
-          "Id": "/hostedzone/Z45OBADPP2X6797",
+          "Id": "/hostedzone/ZLILUB282Q45AJT",
           "Name": "w2.internal.",
           "ResourceRecordSetCount": 4
         },
         "VPCs": [
           {
-            "VPCId": "vpc-1db2f371",
+            "VPCId": "vpc-e033a7a4",
             "VPCRegion": "ap-southeast-2"
           }
         ]

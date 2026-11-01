@@ -47,3 +47,8 @@ def test_no_parameter_or_secret_value_is_recorded_or_drawn():
     for value in ("w2-dummy", "w2-dummy-token", "db.internal", "from-cfn"):
         assert value not in recorded and value not in drawn, value
 
+
+
+def test_a_log_group_lists_its_streams():
+    [group] = [n for n in wave_2_graph().nodes if n.kind == "log-group" and n.label == "w2-app-logs"]
+    assert [s["name"] for s in group.props["logStreams"]] == ["web-1"]

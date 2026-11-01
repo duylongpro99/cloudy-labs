@@ -2,24 +2,24 @@
   "calls": [
     {
       "params": {
-        "UserPoolId": "ap-southeast-2_52b1a1ca3"
+        "UserPoolId": "ap-southeast-2_b5a52cd75"
       },
       "response": {
         "UserPool": {
           "AccountRecoverySetting": {},
           "AdminCreateUserConfig": {},
           "AliasAttributes": [],
-          "Arn": "arn:aws:cognito-idp:ap-southeast-2:000000000000:userpool/ap-southeast-2_52b1a1ca3",
+          "Arn": "arn:aws:cognito-idp:ap-southeast-2:000000000000:userpool/ap-southeast-2_b5a52cd75",
           "AutoVerifiedAttributes": [],
-          "CreationDate": "2026-10-31 23:25:12+07:00",
+          "CreationDate": "2026-11-01 16:05:41+07:00",
           "DeletionProtection": "INACTIVE",
           "EmailConfiguration": {
             "EmailSendingAccount": "COGNITO_DEFAULT"
           },
           "EstimatedNumberOfUsers": 0,
-          "Id": "ap-southeast-2_52b1a1ca3",
+          "Id": "ap-southeast-2_b5a52cd75",
           "LambdaConfig": {},
-          "LastModifiedDate": "2026-10-31 23:25:12+07:00",
+          "LastModifiedDate": "2026-11-01 16:05:41+07:00",
           "MfaConfiguration": "OFF",
           "Name": "w3-users",
           "Policies": {

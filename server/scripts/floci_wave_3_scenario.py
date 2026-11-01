@@ -44,15 +44,27 @@ def build_edge(c):
     fn = lam.create_function(FunctionName="w3-edge-fn", Runtime="python3.12", Role=role, Handler="index.handler",
                              Code={"ZipFile": code.getvalue()})["FunctionArn"]
     version = lam.publish_version(FunctionName="w3-edge-fn")["FunctionArn"]
-    # CloudFront: the bucket and the ALB as origins, the certificate, Lambda@Edge on viewer requests.
-    c("cloudfront").create_distribution(DistributionConfig={
+    # CloudFront: the bucket (signed through an OAC) and the ALB as origins, the account's own cache
+    # and origin request policies, the certificate, Lambda@Edge on viewer requests.
+    cf = c("cloudfront")
+    cache_policy = cf.create_cache_policy(CachePolicyConfig={
+        "Name": "w3-edge-cache", "MinTTL": 1, "DefaultTTL": 300, "MaxTTL": 3600,
+        "ParametersInCacheKeyAndForwardedToOrigin": {"EnableAcceptEncodingGzip": True, "HeadersConfig": {"HeaderBehavior": "none"},
+                                                     "CookiesConfig": {"CookieBehavior": "none"}, "QueryStringsConfig": {"QueryStringBehavior": "none"}}})["CachePolicy"]["Id"]
+    request_policy = cf.create_origin_request_policy(OriginRequestPolicyConfig={
+        "Name": "w3-edge-orp", "HeadersConfig": {"HeaderBehavior": "none"}, "CookiesConfig": {"CookieBehavior": "none"},
+        "QueryStringsConfig": {"QueryStringBehavior": "all"}})["OriginRequestPolicy"]["Id"]
+    oac = cf.create_origin_access_control(OriginAccessControlConfig={
+        "Name": "w3-edge-oac", "SigningProtocol": "sigv4", "SigningBehavior": "always", "OriginAccessControlOriginType": "s3"})["OriginAccessControl"]["Id"]
+    cf.create_distribution(DistributionConfig={
         "CallerReference": "w3-edge-cf", "Comment": "w3-edge-cf", "Enabled": True,
         "Aliases": {"Quantity": 1, "Items": ["w3-edge.example.com"]},
         "Origins": {"Quantity": 2, "Items": [
-            {"Id": "s3", "DomainName": f"{bucket}.s3.{region}.amazonaws.com", "S3OriginConfig": {"OriginAccessIdentity": ""}},
+            {"Id": "s3", "DomainName": f"{bucket}.s3.{region}.amazonaws.com", "S3OriginConfig": {"OriginAccessIdentity": ""},
+             "OriginAccessControlId": oac},
             {"Id": "alb", "DomainName": lb["DNSName"], "CustomOriginConfig": {"HTTPPort": 80, "HTTPSPort": 443, "OriginProtocolPolicy": "https-only"}}]},
         "DefaultCacheBehavior": {"TargetOriginId": "s3", "ViewerProtocolPolicy": "redirect-to-https",
-                                 "CachePolicyId": "658327ea-f89d-4fab-a63d-7e88639e58f6",
+                                 "CachePolicyId": cache_policy, "OriginRequestPolicyId": request_policy,
                                  "LambdaFunctionAssociations": {"Quantity": 1, "Items": [{"LambdaFunctionARN": version, "EventType": "viewer-request"}]}},
         "ViewerCertificate": {"ACMCertificateArn": cert, "SSLSupportMethod": "sni-only", "MinimumProtocolVersion": "TLSv1.2_2021"}})
     # REST API: GET /items with a Lambda proxy integration, deployed to prod.
@@ -63,6 +75,11 @@ def build_edge(c):
     ag.put_integration(restApiId=api["id"], resourceId=items, httpMethod="GET", type="AWS_PROXY", integrationHttpMethod="POST",
                        uri=f"arn:aws:apigateway:{region}:lambda:path/2015-03-31/functions/{fn}/invocations")
     ag.create_deployment(restApiId=api["id"], stageName="prod")
+    # An API key in a usage plan that meters the prod stage.
+    key = ag.create_api_key(name="w3-edge-key", enabled=True)["id"]
+    plan = ag.create_usage_plan(name="w3-edge-plan", throttle={"rateLimit": 10, "burstLimit": 20},
+                                quota={"limit": 1000, "period": "DAY"}, apiStages=[{"apiId": api["id"], "stage": "prod"}])["id"]
+    ag.create_usage_plan_key(usagePlanId=plan, keyId=key, keyType="API_KEY")
     # HTTP API, quick-created on the function.
     c("apigatewayv2").create_api(Name="w3-edge-http", ProtocolType="HTTP", Target=fn)
     # Global Accelerator: a TCP 80 listener sending traffic to the ALB.

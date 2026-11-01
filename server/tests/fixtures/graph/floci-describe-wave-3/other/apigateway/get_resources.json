@@ -6,17 +6,13 @@
           "methods"
         ],
         "limit": 500,
-        "restApiId": "d997462cf0"
+        "restApiId": "1ac0af70bb"
       },
       "response": {
         "items": [
           {
-            "id": "a5393f89",
-            "path": "/"
-          },
-          {
-            "id": "b57aa69d",
-            "parentId": "a5393f89",
+            "id": "c3893527",
+            "parentId": "1e732ec1",
             "path": "/items",
             "pathPart": "items",
             "resourceMethods": {
@@ -26,7 +22,7 @@
                 "httpMethod": "GET",
                 "methodIntegration": {
                   "cacheKeyParameters": [],
-                  "cacheNamespace": "b57aa69d",
+                  "cacheNamespace": "c3893527",
                   "connectionType": "INTERNET",
                   "httpMethod": "POST",
                   "passthroughBehavior": "WHEN_NO_MATCH",
@@ -37,6 +33,10 @@
                 }
               }
             }
+          },
+          {
+            "id": "1e732ec1",
+            "path": "/"
           }
         ]
       }

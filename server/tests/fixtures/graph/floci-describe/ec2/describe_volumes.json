@@ -6,34 +6,9 @@
         "NextToken": "",
         "Volumes": [
           {
-            "Attachments": [
-              {
-                "AttachTime": "2026-10-31 14:41:11.699000+00:00",
-                "DeleteOnTermination": false,
-                "Device": "/dev/sdf",
-                "InstanceId": "i-ebd18d4a95b4c15f4",
-                "State": "attached",
-                "VolumeId": "vol-b09fc864be62d0919"
-              }
-            ],
-            "AvailabilityZone": "ap-southeast-2a",
-            "CreateTime": "2026-10-31 14:41:10.387000+00:00",
-            "Encrypted": false,
-            "Size": 8,
-            "State": "in-use",
-            "Tags": [
-              {
-                "Key": "Name",
-                "Value": "wave1-data"
-              }
-            ],
-            "VolumeId": "vol-b09fc864be62d0919",
-            "VolumeType": "gp2"
-          },
-          {
             "Attachments": [],
             "AvailabilityZone": "ap-southeast-2b",
-            "CreateTime": "2026-10-31 14:41:10.586000+00:00",
+            "CreateTime": "2026-11-01 09:04:55.507000+00:00",
             "Encrypted": false,
             "Size": 4,
             "State": "available",
@@ -43,27 +18,52 @@
                 "Value": "wave1-spare"
               }
             ],
-            "VolumeId": "vol-0c91018448f66eb6a",
+            "VolumeId": "vol-280c941cacfc178fc",
             "VolumeType": "gp2"
           },
           {
             "Attachments": [
               {
-                "AttachTime": "2026-10-31 14:41:10.667000+00:00",
-                "DeleteOnTermination": true,
-                "Device": "/dev/xvda",
-                "InstanceId": "i-ebd18d4a95b4c15f4",
+                "AttachTime": "2026-11-01 09:04:56.670000+00:00",
+                "DeleteOnTermination": false,
+                "Device": "/dev/sdf",
+                "InstanceId": "i-6ce5a0f2ded19691c",
                 "State": "attached",
-                "VolumeId": "vol-0a128ed5485438720"
+                "VolumeId": "vol-341d2ffbfdb5e6195"
               }
             ],
             "AvailabilityZone": "ap-southeast-2a",
-            "CreateTime": "2026-10-31 14:41:10.667000+00:00",
+            "CreateTime": "2026-11-01 09:04:55.197000+00:00",
+            "Encrypted": false,
+            "Size": 8,
+            "State": "in-use",
+            "Tags": [
+              {
+                "Key": "Name",
+                "Value": "wave1-data"
+              }
+            ],
+            "VolumeId": "vol-341d2ffbfdb5e6195",
+            "VolumeType": "gp2"
+          },
+          {
+            "Attachments": [
+              {
+                "AttachTime": "2026-11-01 09:04:55.648000+00:00",
+                "DeleteOnTermination": true,
+                "Device": "/dev/xvda",
+                "InstanceId": "i-6ce5a0f2ded19691c",
+                "State": "attached",
+                "VolumeId": "vol-a59938c37ae51d951"
+              }
+            ],
+            "AvailabilityZone": "ap-southeast-2a",
+            "CreateTime": "2026-11-01 09:04:55.648000+00:00",
             "Encrypted": false,
             "Size": 8,
             "State": "in-use",
             "Tags": [],
-            "VolumeId": "vol-0a128ed5485438720",
+            "VolumeId": "vol-a59938c37ae51d951",
             "VolumeType": "gp2"
           }
         ]

@@ -16,7 +16,7 @@
           "OpenShardCount": 1,
           "RetentionPeriodHours": 24,
           "StreamARN": "arn:aws:kinesis:ap-southeast-2:000000000000:stream/w3-clicks",
-          "StreamCreationTimestamp": "2026-10-31 23:25:12.656000+07:00",
+          "StreamCreationTimestamp": "2026-11-01 16:05:41.925000+07:00",
           "StreamModeDetails": {
             "StreamMode": "PROVISIONED"
           },

@@ -1,0 +1,19 @@
+{
+  "calls": [
+    {
+      "params": {
+        "usagePlanId": "2df70c1041"
+      },
+      "response": {
+        "items": [
+          {
+            "id": "4fc0fb52f4",
+            "name": "w3-edge-key",
+            "type": "API_KEY",
+            "value": "8276319549e640518a21f46517e30f77"
+          }
+        ]
+      }
+    }
+  ]
+}

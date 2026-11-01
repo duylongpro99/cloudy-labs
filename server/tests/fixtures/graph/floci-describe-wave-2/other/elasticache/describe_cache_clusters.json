@@ -1,0 +1,13 @@
+{
+  "calls": [
+    {
+      "params": {
+        "ShowCacheNodeInfo": true
+      },
+      "response": {
+        "CacheClusters": [],
+        "Marker": ""
+      }
+    }
+  ]
+}

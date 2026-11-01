@@ -3,13 +3,13 @@
     {
       "params": {
         "MaxResults": 60,
-        "UserPoolId": "ap-southeast-2_52b1a1ca3"
+        "UserPoolId": "ap-southeast-2_b5a52cd75"
       },
       "response": {
         "Providers": [
           {
-            "CreationDate": "2026-10-31 23:25:12+07:00",
-            "LastModifiedDate": "2026-10-31 23:25:12+07:00",
+            "CreationDate": "2026-11-01 16:05:41+07:00",
+            "LastModifiedDate": "2026-11-01 16:05:41+07:00",
             "ProviderName": "w3-oidc",
             "ProviderType": "OIDC"
           }

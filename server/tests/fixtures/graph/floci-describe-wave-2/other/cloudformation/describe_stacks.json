@@ -6,12 +6,12 @@
         "Stacks": [
           {
             "Capabilities": [],
-            "CreationTime": "2026-10-31 15:16:09.245770+00:00",
+            "CreationTime": "2026-11-01 09:05:21.013534+00:00",
             "EnableTerminationProtection": false,
-            "LastUpdatedTime": "2026-10-31 15:16:09.248908+00:00",
+            "LastUpdatedTime": "2026-11-01 09:05:21.016365+00:00",
             "Outputs": [],
             "Parameters": [],
-            "StackId": "arn:aws:cloudformation:ap-southeast-2:000000000000:stack/w2-stack/ddaa2528-cfe7-45aa-8b6a-2fcce41f32cc",
+            "StackId": "arn:aws:cloudformation:ap-southeast-2:000000000000:stack/w2-stack/b32603f1-6960-4155-8f40-dc6f576f5fae",
             "StackName": "w2-stack",
             "StackStatus": "CREATE_COMPLETE",
             "Tags": [

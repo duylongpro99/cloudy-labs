@@ -7,7 +7,7 @@
           "IsTruncated": false,
           "Items": [
             {
-              "ARN": "arn:aws:cloudfront::000000000000:distribution/ESUZGTI490RL77",
+              "ARN": "arn:aws:cloudfront::000000000000:distribution/E8BB5X0F4F2EJA",
               "Aliases": {
                 "Items": [
                   "w3-edge.example.com"
@@ -15,12 +15,12 @@
                 "Quantity": 1
               },
               "Comment": "w3-edge-cf",
-              "DomainName": "esuzgti490rl77.cloudfront.net",
+              "DomainName": "e8bb5x0f4f2eja.cloudfront.net",
               "Enabled": true,
               "HttpVersion": "http2",
-              "Id": "ESUZGTI490RL77",
+              "Id": "E8BB5X0F4F2EJA",
               "IsIPV6Enabled": true,
-              "LastModifiedTime": "2026-10-31 16:25:12.052183+00:00",
+              "LastModifiedTime": "2026-11-01 09:05:41.441255+00:00",
               "OriginGroups": {
                 "Quantity": 0
               },
@@ -34,6 +34,7 @@
                     },
                     "DomainName": "w3-edge-origin.s3.ap-southeast-2.amazonaws.com",
                     "Id": "s3",
+                    "OriginAccessControlId": "e06c431e-daa7-4c92-baaf-39674ad835e9",
                     "OriginPath": "",
                     "ResponseCompletionTimeout": 0,
                     "S3OriginConfig": {
@@ -59,7 +60,7 @@
                         "Quantity": 1
                       }
                     },
-                    "DomainName": "w3-edge-alb-69f799da92464b34.elb.localhost.floci.io",
+                    "DomainName": "w3-edge-alb-7004a8a039ba453d.elb.localhost.floci.io",
                     "Id": "alb",
                     "OriginPath": "",
                     "ResponseCompletionTimeout": 0
@@ -76,7 +77,7 @@
               },
               "Status": "Deployed",
               "ViewerCertificate": {
-                "ACMCertificateArn": "arn:aws:acm:ap-southeast-2:000000000000:certificate/7a4702a0-cfe3-4fff-8947-03af3fb36b4e",
+                "ACMCertificateArn": "arn:aws:acm:ap-southeast-2:000000000000:certificate/cdfc61b2-7931-4669-838f-1d178d90c1e2",
                 "MinimumProtocolVersion": "TLSv1.2_2021",
                 "SSLSupportMethod": "sni-only"
               }

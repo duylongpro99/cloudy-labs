@@ -2,7 +2,7 @@
   "calls": [
     {
       "params": {
-        "Resource": "arn:aws:cloudfront::000000000000:distribution/ESUZGTI490RL77"
+        "Resource": "arn:aws:cloudfront::000000000000:distribution/E8BB5X0F4F2EJA"
       },
       "response": {
         "Tags": {

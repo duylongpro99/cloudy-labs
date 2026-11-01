@@ -8,7 +8,7 @@
             "CidrBlock": "10.91.0.0/16",
             "CidrBlockAssociationSet": [
               {
-                "AssociationId": "vpc-cidr-assoc-cd98ae20",
+                "AssociationId": "vpc-cidr-assoc-5096a70e",
                 "CidrBlock": "10.91.0.0/16",
                 "CidrBlockState": {
                   "State": "associated"
@@ -27,7 +27,7 @@
                 "Value": "w2-net-vpc"
               }
             ],
-            "VpcId": "vpc-1db2f371"
+            "VpcId": "vpc-e033a7a4"
           },
           {
             "CidrBlock": "172.31.0.0/16",

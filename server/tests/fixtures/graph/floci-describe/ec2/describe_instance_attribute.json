@@ -3,10 +3,10 @@
     {
       "params": {
         "Attribute": "userData",
-        "InstanceId": "i-ebd18d4a95b4c15f4"
+        "InstanceId": "i-6ce5a0f2ded19691c"
       },
       "response": {
-        "InstanceId": "i-ebd18d4a95b4c15f4",
+        "InstanceId": "i-6ce5a0f2ded19691c",
         "UserData": {}
       }
     }

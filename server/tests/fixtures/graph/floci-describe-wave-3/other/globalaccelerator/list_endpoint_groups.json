@@ -1,0 +1,32 @@
+{
+  "calls": [
+    {
+      "params": {
+        "ListenerArn": "arn:aws:globalaccelerator::000000000000:accelerator/9479869e-b9ba-4c95-92b5-59818f27a754/listener/yklsgwjs"
+      },
+      "response": {
+        "EndpointGroups": [
+          {
+            "EndpointDescriptions": [
+              {
+                "ClientIPPreservationEnabled": true,
+                "EndpointId": "arn:aws:elasticloadbalancing:ap-southeast-2:000000000000:loadbalancer/app/w3-edge-alb/7004a8a039ba453d",
+                "HealthState": "HEALTHY",
+                "Weight": 100
+              }
+            ],
+            "EndpointGroupArn": "arn:aws:globalaccelerator::000000000000:accelerator/9479869e-b9ba-4c95-92b5-59818f27a754/listener/yklsgwjs/endpoint-group/5qqtcbr83fac",
+            "EndpointGroupRegion": "ap-southeast-2",
+            "HealthCheckIntervalSeconds": 30,
+            "HealthCheckPath": "/",
+            "HealthCheckPort": 80,
+            "HealthCheckProtocol": "TCP",
+            "PortOverrides": [],
+            "ThresholdCount": 3,
+            "TrafficDialPercentage": 100.0
+          }
+        ]
+      }
+    }
+  ]
+}

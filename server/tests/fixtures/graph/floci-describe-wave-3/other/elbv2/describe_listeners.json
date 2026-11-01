@@ -2,7 +2,7 @@
   "calls": [
     {
       "params": {
-        "LoadBalancerArn": "arn:aws:elasticloadbalancing:ap-southeast-2:000000000000:loadbalancer/app/w3-edge-alb/69f799da92464b34"
+        "LoadBalancerArn": "arn:aws:elasticloadbalancing:ap-southeast-2:000000000000:loadbalancer/app/w3-edge-alb/7004a8a039ba453d"
       },
       "response": {
         "Listeners": [
@@ -10,7 +10,7 @@
             "AlpnPolicy": [],
             "Certificates": [
               {
-                "CertificateArn": "arn:aws:acm:ap-southeast-2:000000000000:certificate/7a4702a0-cfe3-4fff-8947-03af3fb36b4e"
+                "CertificateArn": "arn:aws:acm:ap-southeast-2:000000000000:certificate/cdfc61b2-7931-4669-838f-1d178d90c1e2"
               }
             ],
             "DefaultActions": [
@@ -21,8 +21,8 @@
                 "Type": "fixed-response"
               }
             ],
-            "ListenerArn": "arn:aws:elasticloadbalancing:ap-southeast-2:000000000000:listener/app/w3-edge-alb/69f799da92464b34/d283f3a73f4e40a9",
-            "LoadBalancerArn": "arn:aws:elasticloadbalancing:ap-southeast-2:000000000000:loadbalancer/app/w3-edge-alb/69f799da92464b34",
+            "ListenerArn": "arn:aws:elasticloadbalancing:ap-southeast-2:000000000000:listener/app/w3-edge-alb/7004a8a039ba453d/15c914b075444661",
+            "LoadBalancerArn": "arn:aws:elasticloadbalancing:ap-southeast-2:000000000000:loadbalancer/app/w3-edge-alb/7004a8a039ba453d",
             "Port": 443,
             "Protocol": "HTTPS",
             "SslPolicy": ""

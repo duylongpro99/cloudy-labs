@@ -642,19 +642,22 @@
   filter: {path: State, not_in: [deleted, deleting]}
   enrich:
     - {method: search_transit_gateway_routes, params: {TransitGatewayRouteTableId: TransitGatewayRouteTableId}, const: {Filters: [{Name: state, Values: [active, blackhole]}]}, pick: Routes, merge_as: _Routes}
+    - {method: get_transit_gateway_route_table_propagations, params: {TransitGatewayRouteTableId: TransitGatewayRouteTableId}, pick: TransitGatewayRouteTablePropagations, merge_as: _Propagations}
   id: TransitGatewayRouteTableId
   name: ["Tags[?Key=='Name'].Value | [0]", TransitGatewayRouteTableId]
   parent: [{kind: region}]
   props:
     state: State
     defaultAssociation: DefaultAssociationRouteTable
+    defaultPropagation: DefaultPropagationRouteTable
     routes: "sort_by(_Routes, &DestinationCidrBlock)[].{destination: DestinationCidrBlock, attachment: TransitGatewayAttachments[0].TransitGatewayAttachmentId, type: Type, state: State}"
+    propagations: "sort_by(_Propagations || `[]`, &TransitGatewayAttachmentId)[].{attachment: TransitGatewayAttachmentId, state: State}"
     tags: {hook: common.tags}
-  chat_props: [state, defaultAssociation]
+  chat_props: [state, defaultAssociation, defaultPropagation, routes, propagations]
   edges:
     - {kind: tgw-route-table-of, target: TransitGatewayId, to: transit-gateway, style: reference}
   builder: true
-  view: {role: block, category: networking, icon: Res_AWS-Cloud-WAN_Transit-Gateway-Route-Table-Attachment_48.svg, source: Resource-Icons_07312026/Res_Networking-Content-Delivery/Res_AWS-Cloud-WAN_Transit-Gateway-Route-Table-Attachment_48.svg, height: 0.4, order: 47, actions: [TransitGatewayRouteTable]}
+  view: {role: block, category: networking, icon: Res_AWS-Cloud-WAN_Transit-Gateway-Route-Table-Attachment_48.svg, source: Resource-Icons_07312026/Res_Networking-Content-Delivery/Res_AWS-Cloud-WAN_Transit-Gateway-Route-Table-Attachment_48.svg, height: 0.4, order: 47, actions: [TransitGatewayRouteTable, TransitGatewayRoute, TransitGatewayRouteTablePropagation, TransitGatewayRouteTableAssociation]}
   contract:
     needs: [{op: create-transit-gateway, params: {Description: contract test}, save: tgw}]
     create: {op: create-transit-gateway-route-table, params: {TransitGatewayId: "{tgw}"}}
@@ -666,6 +669,30 @@
       fields: [{name: TransitGatewayId, ref: transit-gateway}]
       result_id: TransitGatewayRouteTable.TransitGatewayRouteTableId
       note: "Create one more route table on a Transit Gateway."
+    - id: associate-transit-gateway-route-table
+      api: AssociateTransitGatewayRouteTable
+      gesture: attribute
+      title: "Gắn attachment vào TGW route table"
+      fields: [{name: TransitGatewayRouteTableId, ref: tgw-route-table}, {name: TransitGatewayAttachmentId, ref: tgw-attachment}]
+      targets: [tgw-route-table]
+      target_param: TransitGatewayRouteTableId
+      note: "Make this route table decide where traffic arriving from the attachment goes. An attachment has one associated table; one already associated (with the default table) must be disassociated first."
+    - id: enable-transit-gateway-route-table-propagation
+      api: EnableTransitGatewayRouteTablePropagation
+      gesture: attribute
+      title: "Bật propagation từ attachment"
+      fields: [{name: TransitGatewayRouteTableId, ref: tgw-route-table}, {name: TransitGatewayAttachmentId, ref: tgw-attachment}]
+      targets: [tgw-route-table]
+      target_param: TransitGatewayRouteTableId
+      note: "Let the attachment's VPC CIDR appear in this route table as a propagated route, so traffic for that VPC goes to its attachment."
+    - id: create-transit-gateway-route
+      api: CreateTransitGatewayRoute
+      gesture: attribute
+      title: "Thêm route tĩnh vào TGW route table"
+      fields: [{name: TransitGatewayRouteTableId, ref: tgw-route-table}, DestinationCidrBlock, {name: TransitGatewayAttachmentId, ref: tgw-attachment}, Blackhole]
+      targets: [tgw-route-table]
+      target_param: TransitGatewayRouteTableId
+      note: "A static route: traffic for DestinationCidrBlock goes to the attachment. With Blackhole true and no attachment, matching traffic is dropped."
 
 - kind: network-interface
   service: ec2

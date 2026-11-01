@@ -6,17 +6,17 @@
         "logGroups": [
           {
             "arn": "arn:aws:logs:ap-southeast-2:000000000000:log-group:w2-app-logs:*",
-            "creationTime": 1793459769282,
+            "creationTime": 1793523921047,
             "deletionProtectionEnabled": false,
             "logGroupArn": "arn:aws:logs:ap-southeast-2:000000000000:log-group:w2-app-logs",
             "logGroupName": "w2-app-logs",
             "metricFilterCount": 1,
             "retentionInDays": 7,
-            "storedBytes": 0
+            "storedBytes": 46
           },
           {
             "arn": "arn:aws:logs:ap-southeast-2:000000000000:log-group:w2-rule-target:*",
-            "creationTime": 1793459769288,
+            "creationTime": 1793523921057,
             "deletionProtectionEnabled": false,
             "logGroupArn": "arn:aws:logs:ap-southeast-2:000000000000:log-group:w2-rule-target",
             "logGroupName": "w2-rule-target",

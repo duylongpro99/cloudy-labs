@@ -82,8 +82,13 @@ Cloudy Labs **sửa đổi** các icon này lúc chạy: path SVG được ép �
 | `Res_AWS-Backup_Backup-Plan_48.svg` | backup-plan | `Resource-Icons_07312026/Res_Storage/Res_AWS-Backup_Backup-Plan_48.svg` |
 | `Arch_AWS-Backup_48.svg` | backup-selection | `Architecture-Service-Icons_07312026/Arch_Storage/48/Arch_AWS-Backup_48.svg` |
 | `Res_Amazon-CloudFront_Download-Distribution_48.svg` | cloudfront-distribution | `Resource-Icons_07312026/Res_Networking-Content-Delivery/Res_Amazon-CloudFront_Download-Distribution_48.svg` |
+| `Res_Document_48_Light.svg` | cloudfront-cache-policy | `Resource-Icons_07312026/Res_General-Icons/Res_48_Light/Res_Document_48_Light.svg` |
+| `Res_Document_48_Light.svg` | cloudfront-origin-request-policy | `Resource-Icons_07312026/Res_General-Icons/Res_48_Light/Res_Document_48_Light.svg` |
+| `Res_Gear_48_Light.svg` | cloudfront-origin-access-control | `Resource-Icons_07312026/Res_General-Icons/Res_48_Light/Res_Gear_48_Light.svg` |
 | `Arch_Amazon-API-Gateway_48.svg` | apigateway-rest-api | `Architecture-Service-Icons_07312026/Arch_Networking-Content-Delivery/48/Arch_Amazon-API-Gateway_48.svg` |
 | `Res_Amazon-API-Gateway_Endpoint_48.svg` | apigateway-http-api | `Resource-Icons_07312026/Res_Networking-Content-Delivery/Res_Amazon-API-Gateway_Endpoint_48.svg` |
+| `Res_Client_48_Light.svg` | apigateway-api-key | `Resource-Icons_07312026/Res_General-Icons/Res_48_Light/Res_Client_48_Light.svg` |
+| `Res_Metrics_48_Light.svg` | apigateway-usage-plan | `Resource-Icons_07312026/Res_General-Icons/Res_48_Light/Res_Metrics_48_Light.svg` |
 | `Arch_AWS-Global-Accelerator_48.svg` | global-accelerator | `Architecture-Service-Icons_07312026/Arch_Networking-Content-Delivery/48/Arch_AWS-Global-Accelerator_48.svg` |
 | `Arch_AWS-Certificate-Manager_48.svg` | acm-certificate | `Architecture-Service-Icons_07312026/Arch_Security-Identity/48/Arch_AWS-Certificate-Manager_48.svg` |
 | `Arch_AWS-WAF_48.svg` | waf-web-acl | `Architecture-Service-Icons_07312026/Arch_Security-Identity/48/Arch_AWS-WAF_48.svg` |

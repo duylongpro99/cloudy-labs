@@ -7,7 +7,7 @@
           {
             "apiKeySource": "HEADER",
             "apiStatus": "AVAILABLE",
-            "createdDate": "2026-10-31 23:25:12+07:00",
+            "createdDate": "2026-11-01 16:05:41+07:00",
             "disableExecuteApiEndpoint": false,
             "endpointConfiguration": {
               "types": [
@@ -15,9 +15,9 @@
               ],
               "vpcEndpointIds": []
             },
-            "id": "d997462cf0",
+            "id": "1ac0af70bb",
             "name": "w3-edge-rest",
-            "rootResourceId": "a5393f89"
+            "rootResourceId": "1e732ec1"
           }
         ]
       }

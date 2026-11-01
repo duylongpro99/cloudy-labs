@@ -1,0 +1,20 @@
+{
+  "calls": [
+    {
+      "params": {
+        "TransitGatewayRouteTableId": "tgw-rtb-a69a2921d7b5846b5"
+      },
+      "response": {
+        "TransitGatewayRouteTablePropagations": []
+      }
+    },
+    {
+      "params": {
+        "TransitGatewayRouteTableId": "tgw-rtb-a14f6cd8331ebe83e"
+      },
+      "response": {
+        "TransitGatewayRouteTablePropagations": []
+      }
+    }
+  ]
+}

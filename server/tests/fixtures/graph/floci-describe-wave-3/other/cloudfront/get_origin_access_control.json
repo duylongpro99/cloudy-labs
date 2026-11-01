@@ -1,0 +1,22 @@
+{
+  "calls": [
+    {
+      "params": {
+        "Id": "e06c431e-daa7-4c92-baaf-39674ad835e9"
+      },
+      "response": {
+        "ETag": "8dbf6b03-fafb-48e5-9e95-4064dd936dd2",
+        "OriginAccessControl": {
+          "Id": "e06c431e-daa7-4c92-baaf-39674ad835e9",
+          "OriginAccessControlConfig": {
+            "Description": "",
+            "Name": "w3-edge-oac",
+            "OriginAccessControlOriginType": "s3",
+            "SigningBehavior": "always",
+            "SigningProtocol": "sigv4"
+          }
+        }
+      }
+    }
+  ]
+}

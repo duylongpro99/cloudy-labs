@@ -11,30 +11,6 @@
                   "State": "associated"
                 },
                 "Main": true,
-                "RouteTableAssociationId": "rtbassoc-76678c135b73ba59d",
-                "RouteTableId": "rtb-ac278eb3cf9747306"
-              }
-            ],
-            "OwnerId": "000000000000",
-            "RouteTableId": "rtb-ac278eb3cf9747306",
-            "Routes": [
-              {
-                "DestinationCidrBlock": "10.71.0.0/16",
-                "GatewayId": "local",
-                "Origin": "CreateRouteTable",
-                "State": "active"
-              }
-            ],
-            "Tags": [],
-            "VpcId": "vpc-c238e6aa"
-          },
-          {
-            "Associations": [
-              {
-                "AssociationState": {
-                  "State": "associated"
-                },
-                "Main": true,
                 "RouteTableAssociationId": "rtbassoc-default",
                 "RouteTableId": "rtb-default"
               }
@@ -65,22 +41,22 @@
                   "State": "associated"
                 },
                 "Main": true,
-                "RouteTableAssociationId": "rtbassoc-b934c842c6fab4e63",
-                "RouteTableId": "rtb-270c03552994eff37"
+                "RouteTableAssociationId": "rtbassoc-a019d0e546da3609d",
+                "RouteTableId": "rtb-03dba76352ca83f05"
               }
             ],
             "OwnerId": "000000000000",
-            "RouteTableId": "rtb-270c03552994eff37",
+            "RouteTableId": "rtb-03dba76352ca83f05",
             "Routes": [
               {
-                "DestinationCidrBlock": "10.153.0.0/16",
+                "DestinationCidrBlock": "10.71.0.0/16",
                 "GatewayId": "local",
                 "Origin": "CreateRouteTable",
                 "State": "active"
               }
             ],
             "Tags": [],
-            "VpcId": "vpc-126a9f97"
+            "VpcId": "vpc-7f4a8d38"
           },
           {
             "Associations": [
@@ -89,12 +65,12 @@
                   "State": "associated"
                 },
                 "Main": true,
-                "RouteTableAssociationId": "rtbassoc-38670322bc06e5d4a",
-                "RouteTableId": "rtb-6b9b67d15aa199c8d"
+                "RouteTableAssociationId": "rtbassoc-b8cbddb0646bb33cc",
+                "RouteTableId": "rtb-66d340a44085c5a7d"
               }
             ],
             "OwnerId": "000000000000",
-            "RouteTableId": "rtb-6b9b67d15aa199c8d",
+            "RouteTableId": "rtb-66d340a44085c5a7d",
             "Routes": [
               {
                 "DestinationCidrBlock": "10.72.0.0/16",
@@ -104,7 +80,31 @@
               }
             ],
             "Tags": [],
-            "VpcId": "vpc-51ff849d"
+            "VpcId": "vpc-733acc97"
+          },
+          {
+            "Associations": [
+              {
+                "AssociationState": {
+                  "State": "associated"
+                },
+                "Main": true,
+                "RouteTableAssociationId": "rtbassoc-4cfc3c47f4d69c9c7",
+                "RouteTableId": "rtb-a8f5c13bdd2e6c6e6"
+              }
+            ],
+            "OwnerId": "000000000000",
+            "RouteTableId": "rtb-a8f5c13bdd2e6c6e6",
+            "Routes": [
+              {
+                "DestinationCidrBlock": "10.153.0.0/16",
+                "GatewayId": "local",
+                "Origin": "CreateRouteTable",
+                "State": "active"
+              }
+            ],
+            "Tags": [],
+            "VpcId": "vpc-0fbdc61e"
           }
         ]
       }

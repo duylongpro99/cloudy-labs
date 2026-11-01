@@ -2,7 +2,7 @@
   "calls": [
     {
       "params": {
-        "SubscriptionArn": "arn:aws:sns:ap-southeast-2:000000000000:w3-order-events:41933c49-cfbb-49a7-875b-9cba9af258c8"
+        "SubscriptionArn": "arn:aws:sns:ap-southeast-2:000000000000:w3-order-events:f8fd6355-f497-4f42-ad09-47528a163c1f"
       },
       "response": {
         "Attributes": {
@@ -14,14 +14,14 @@
           "PendingConfirmation": "false",
           "Protocol": "sqs",
           "RawMessageDelivery": "false",
-          "SubscriptionArn": "arn:aws:sns:ap-southeast-2:000000000000:w3-order-events:41933c49-cfbb-49a7-875b-9cba9af258c8",
+          "SubscriptionArn": "arn:aws:sns:ap-southeast-2:000000000000:w3-order-events:f8fd6355-f497-4f42-ad09-47528a163c1f",
           "TopicArn": "arn:aws:sns:ap-southeast-2:000000000000:w3-order-events"
         }
       }
     },
     {
       "params": {
-        "SubscriptionArn": "arn:aws:sns:ap-southeast-2:000000000000:w3-order-events:74e891d3-d2dc-40d8-ae2c-06ae23572a9f"
+        "SubscriptionArn": "arn:aws:sns:ap-southeast-2:000000000000:w3-order-events:2cb1dfb7-73e9-4046-bcb1-ca4535e0dd9b"
       },
       "response": {
         "Attributes": {
@@ -32,7 +32,7 @@
           "PendingConfirmation": "false",
           "Protocol": "lambda",
           "RawMessageDelivery": "false",
-          "SubscriptionArn": "arn:aws:sns:ap-southeast-2:000000000000:w3-order-events:74e891d3-d2dc-40d8-ae2c-06ae23572a9f",
+          "SubscriptionArn": "arn:aws:sns:ap-southeast-2:000000000000:w3-order-events:2cb1dfb7-73e9-4046-bcb1-ca4535e0dd9b",
           "TopicArn": "arn:aws:sns:ap-southeast-2:000000000000:w3-order-events"
         }
       }

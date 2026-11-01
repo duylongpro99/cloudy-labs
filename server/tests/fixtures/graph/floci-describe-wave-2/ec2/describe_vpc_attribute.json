@@ -3,13 +3,13 @@
     {
       "params": {
         "Attribute": "enableDnsHostnames",
-        "VpcId": "vpc-1db2f371"
+        "VpcId": "vpc-e033a7a4"
       },
       "response": {
         "EnableDnsHostnames": {
           "Value": false
         },
-        "VpcId": "vpc-1db2f371"
+        "VpcId": "vpc-e033a7a4"
       }
     },
     {

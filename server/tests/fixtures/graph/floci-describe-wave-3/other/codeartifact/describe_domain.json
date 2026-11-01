@@ -8,7 +8,7 @@
         "domain": {
           "arn": "arn:aws:codeartifact:ap-southeast-2:000000000000:domain/w3-delivery",
           "assetSizeBytes": 0,
-          "createdTime": "2026-10-31 23:25:11+07:00",
+          "createdTime": "2026-11-01 16:05:40+07:00",
           "encryptionKey": "arn:aws:kms:ap-southeast-2:000000000000:alias/aws/codeartifact",
           "name": "w3-delivery",
           "owner": "000000000000",
@@ -26,7 +26,7 @@
         "domain": {
           "arn": "arn:aws:codeartifact:ap-southeast-2:000000000000:domain/w3-delivery",
           "assetSizeBytes": 0,
-          "createdTime": "2026-10-31 23:25:11+07:00",
+          "createdTime": "2026-11-01 16:05:40+07:00",
           "encryptionKey": "arn:aws:kms:ap-southeast-2:000000000000:alias/aws/codeartifact",
           "name": "w3-delivery",
           "owner": "000000000000",
@@ -44,7 +44,7 @@
         "domain": {
           "arn": "arn:aws:codeartifact:ap-southeast-2:000000000000:domain/w3-delivery",
           "assetSizeBytes": 0,
-          "createdTime": "2026-10-31 23:25:11+07:00",
+          "createdTime": "2026-11-01 16:05:40+07:00",
           "encryptionKey": "arn:aws:kms:ap-southeast-2:000000000000:alias/aws/codeartifact",
           "name": "w3-delivery",
           "owner": "000000000000",

@@ -3,13 +3,13 @@
     {
       "params": {
         "ResourceArns": [
-          "arn:aws:elasticloadbalancing:ap-southeast-2:000000000000:loadbalancer/app/w2-alb/74ca62bb5d81462c"
+          "arn:aws:elasticloadbalancing:ap-southeast-2:000000000000:loadbalancer/app/w2-alb/3208d4a460774ed9"
         ]
       },
       "response": {
         "TagDescriptions": [
           {
-            "ResourceArn": "arn:aws:elasticloadbalancing:ap-southeast-2:000000000000:loadbalancer/app/w2-alb/74ca62bb5d81462c",
+            "ResourceArn": "arn:aws:elasticloadbalancing:ap-southeast-2:000000000000:loadbalancer/app/w2-alb/3208d4a460774ed9",
             "Tags": [
               {
                 "Key": "Name",
@@ -23,13 +23,13 @@
     {
       "params": {
         "ResourceArns": [
-          "arn:aws:elasticloadbalancing:ap-southeast-2:000000000000:targetgroup/w2-tg/d4fadde448d443e1"
+          "arn:aws:elasticloadbalancing:ap-southeast-2:000000000000:targetgroup/w2-tg/793cf05a4840403f"
         ]
       },
       "response": {
         "TagDescriptions": [
           {
-            "ResourceArn": "arn:aws:elasticloadbalancing:ap-southeast-2:000000000000:targetgroup/w2-tg/d4fadde448d443e1",
+            "ResourceArn": "arn:aws:elasticloadbalancing:ap-southeast-2:000000000000:targetgroup/w2-tg/793cf05a4840403f",
             "Tags": [
               {
                 "Key": "Name",

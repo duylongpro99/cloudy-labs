@@ -5,7 +5,7 @@
       "response": {
         "TransitGatewayVpcAttachments": [
           {
-            "CreationTime": "2026-10-31 14:41:10.376000+00:00",
+            "CreationTime": "2026-11-01 09:04:55.168000+00:00",
             "Options": {
               "ApplianceModeSupport": "disable",
               "DnsSupport": "enable",
@@ -14,7 +14,7 @@
             },
             "State": "available",
             "SubnetIds": [
-              "subnet-b7bc84c2"
+              "subnet-28ddeb2e"
             ],
             "Tags": [
               {
@@ -22,9 +22,9 @@
                 "Value": "wave1-tgw-b"
               }
             ],
-            "TransitGatewayAttachmentId": "tgw-attach-2fc188cb4468af231",
-            "TransitGatewayId": "tgw-694378cffac133fc8",
-            "VpcId": "vpc-29250840",
+            "TransitGatewayAttachmentId": "tgw-attach-f65b20b05d2d6ceda",
+            "TransitGatewayId": "tgw-7d32641965bf5b49c",
+            "VpcId": "vpc-0359d433",
             "VpcOwnerId": "000000000000"
           }
         ]

@@ -5,7 +5,7 @@
       "response": {
         "TransitGatewayVpcAttachments": [
           {
-            "CreationTime": "2026-10-31 14:34:04.200000+00:00",
+            "CreationTime": "2026-11-01 09:02:05.856000+00:00",
             "Options": {
               "ApplianceModeSupport": "disable",
               "DnsSupport": "enable",
@@ -14,30 +14,7 @@
             },
             "State": "available",
             "SubnetIds": [
-              "subnet-ae000fb0"
-            ],
-            "Tags": [
-              {
-                "Key": "Name",
-                "Value": "rx-att-d"
-              }
-            ],
-            "TransitGatewayAttachmentId": "tgw-attach-5cfaf68c6d1f51594",
-            "TransitGatewayId": "tgw-6387b2ce851a1c9a3",
-            "VpcId": "vpc-c34cd66d",
-            "VpcOwnerId": "000000000000"
-          },
-          {
-            "CreationTime": "2026-10-31 14:34:04.202000+00:00",
-            "Options": {
-              "ApplianceModeSupport": "disable",
-              "DnsSupport": "enable",
-              "Ipv6Support": "disable",
-              "SecurityGroupReferencingSupport": "enable"
-            },
-            "State": "available",
-            "SubnetIds": [
-              "subnet-028bf74f"
+              "subnet-beee1094"
             ],
             "Tags": [
               {
@@ -45,9 +22,32 @@
                 "Value": "rx-att-e"
               }
             ],
-            "TransitGatewayAttachmentId": "tgw-attach-066615616db99ef61",
-            "TransitGatewayId": "tgw-6387b2ce851a1c9a3",
-            "VpcId": "vpc-baf044cc",
+            "TransitGatewayAttachmentId": "tgw-attach-7958403249f4a2f66",
+            "TransitGatewayId": "tgw-dba1ac8e853f7a9ff",
+            "VpcId": "vpc-95a4a5fc",
+            "VpcOwnerId": "000000000000"
+          },
+          {
+            "CreationTime": "2026-11-01 09:02:05.854000+00:00",
+            "Options": {
+              "ApplianceModeSupport": "disable",
+              "DnsSupport": "enable",
+              "Ipv6Support": "disable",
+              "SecurityGroupReferencingSupport": "enable"
+            },
+            "State": "available",
+            "SubnetIds": [
+              "subnet-d86c505b"
+            ],
+            "Tags": [
+              {
+                "Key": "Name",
+                "Value": "rx-att-d"
+              }
+            ],
+            "TransitGatewayAttachmentId": "tgw-attach-4ece5085886b16f0c",
+            "TransitGatewayId": "tgw-dba1ac8e853f7a9ff",
+            "VpcId": "vpc-0199f38c",
             "VpcOwnerId": "000000000000"
           }
         ]

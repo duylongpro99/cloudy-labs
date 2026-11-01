@@ -1,0 +1,12 @@
+{
+  "calls": [
+    {
+      "params": {
+        "AccountId": "000000000000"
+      },
+      "response": {
+        "Budgets": []
+      }
+    }
+  ]
+}

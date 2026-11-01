@@ -6,8 +6,8 @@
         "InstanceProfiles": [
           {
             "Arn": "arn:aws:iam::000000000000:instance-profile/wave1-web-profile",
-            "CreateDate": "2026-10-31 14:41:11.906000+00:00",
-            "InstanceProfileId": "AIPAAWG39BGCOAMGFI5G",
+            "CreateDate": "2026-11-01 09:04:56.918000+00:00",
+            "InstanceProfileId": "AIPAV2DC1AVUDW6TV640",
             "InstanceProfileName": "wave1-web-profile",
             "Path": "/",
             "Roles": [
@@ -25,10 +25,10 @@
                   ],
                   "Version": "2012-10-17"
                 },
-                "CreateDate": "2026-10-31 14:41:11.878000+00:00",
+                "CreateDate": "2026-11-01 09:04:56.895000+00:00",
                 "MaxSessionDuration": 3600,
                 "Path": "/",
-                "RoleId": "AROAXVS6YO2GXIPDAEJB",
+                "RoleId": "AROANJV1P8PFS22ZNZ58",
                 "RoleName": "wave1-ops"
               }
             ]

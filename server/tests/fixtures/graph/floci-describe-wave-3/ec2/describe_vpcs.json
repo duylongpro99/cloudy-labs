@@ -8,7 +8,7 @@
             "CidrBlock": "10.71.0.0/16",
             "CidrBlockAssociationSet": [
               {
-                "AssociationId": "vpc-cidr-assoc-716328be",
+                "AssociationId": "vpc-cidr-assoc-a36e1117",
                 "CidrBlock": "10.71.0.0/16",
                 "CidrBlockState": {
                   "State": "associated"
@@ -27,38 +27,13 @@
                 "Value": "w3-inspection"
               }
             ],
-            "VpcId": "vpc-c238e6aa"
-          },
-          {
-            "CidrBlock": "10.72.0.0/16",
-            "CidrBlockAssociationSet": [
-              {
-                "AssociationId": "vpc-cidr-assoc-ebb6b866",
-                "CidrBlock": "10.72.0.0/16",
-                "CidrBlockState": {
-                  "State": "associated"
-                }
-              }
-            ],
-            "DhcpOptionsId": "dopt-default",
-            "InstanceTenancy": "default",
-            "Ipv6CidrBlockAssociationSet": [],
-            "IsDefault": false,
-            "OwnerId": "000000000000",
-            "State": "available",
-            "Tags": [
-              {
-                "Key": "Name",
-                "Value": "w3-dm-vpc"
-              }
-            ],
-            "VpcId": "vpc-51ff849d"
+            "VpcId": "vpc-7f4a8d38"
           },
           {
             "CidrBlock": "10.153.0.0/16",
             "CidrBlockAssociationSet": [
               {
-                "AssociationId": "vpc-cidr-assoc-db0a3992",
+                "AssociationId": "vpc-cidr-assoc-0c105da3",
                 "CidrBlock": "10.153.0.0/16",
                 "CidrBlockState": {
                   "State": "associated"
@@ -77,7 +52,7 @@
                 "Value": "w3-edge-vpc"
               }
             ],
-            "VpcId": "vpc-126a9f97"
+            "VpcId": "vpc-0fbdc61e"
           },
           {
             "CidrBlock": "172.31.0.0/16",
@@ -98,6 +73,31 @@
             "State": "available",
             "Tags": [],
             "VpcId": "vpc-default-ap-southeast-2"
+          },
+          {
+            "CidrBlock": "10.72.0.0/16",
+            "CidrBlockAssociationSet": [
+              {
+                "AssociationId": "vpc-cidr-assoc-f06ba836",
+                "CidrBlock": "10.72.0.0/16",
+                "CidrBlockState": {
+                  "State": "associated"
+                }
+              }
+            ],
+            "DhcpOptionsId": "dopt-default",
+            "InstanceTenancy": "default",
+            "Ipv6CidrBlockAssociationSet": [],
+            "IsDefault": false,
+            "OwnerId": "000000000000",
+            "State": "available",
+            "Tags": [
+              {
+                "Key": "Name",
+                "Value": "w3-dm-vpc"
+              }
+            ],
+            "VpcId": "vpc-733acc97"
           }
         ]
       }

@@ -7,7 +7,7 @@
           {
             "Name": "w3-dm-sync",
             "Status": "AVAILABLE",
-            "TaskArn": "arn:aws:datasync:ap-southeast-2:000000000000:task/task-57ed4ed9abc9a81ef",
+            "TaskArn": "arn:aws:datasync:ap-southeast-2:000000000000:task/task-a773ebaf1e0064fa9",
             "TaskMode": "BASIC"
           }
         ]

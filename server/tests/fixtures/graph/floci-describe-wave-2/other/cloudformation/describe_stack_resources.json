@@ -2,7 +2,7 @@
   "calls": [
     {
       "params": {
-        "StackName": "arn:aws:cloudformation:ap-southeast-2:000000000000:stack/w2-stack/ddaa2528-cfe7-45aa-8b6a-2fcce41f32cc"
+        "StackName": "arn:aws:cloudformation:ap-southeast-2:000000000000:stack/w2-stack/b32603f1-6960-4155-8f40-dc6f576f5fae"
       },
       "response": {
         "StackResources": [
@@ -12,7 +12,7 @@
             "ResourceStatus": "CREATE_COMPLETE",
             "ResourceType": "AWS::SSM::Parameter",
             "StackName": "w2-stack",
-            "Timestamp": "2026-10-31 15:16:09.246260+00:00"
+            "Timestamp": "2026-11-01 09:05:21.014236+00:00"
           }
         ]
       }

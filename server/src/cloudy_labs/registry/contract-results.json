@@ -7,7 +7,7 @@
    "step": "create",
    "op": "request-certificate",
    "result": "pass",
-   "seconds": 0.67,
+   "seconds": 0.69,
    "max_seconds": 2.0
   },
   {
@@ -15,7 +15,7 @@
    "step": "then",
    "op": "delete-certificate",
    "result": "pass",
-   "seconds": 1.05,
+   "seconds": 0.41,
    "max_seconds": 2.0
   },
   {
@@ -23,7 +23,15 @@
    "step": "then",
    "op": "update-certificate-options",
    "result": "pass",
-   "seconds": 1.79,
+   "seconds": 1.41,
+   "max_seconds": 2.0
+  },
+  {
+   "kind": "apigateway-api-key",
+   "step": "create",
+   "op": "create-api-key",
+   "result": "pass",
+   "seconds": 0.49,
    "max_seconds": 2.0
   },
   {
@@ -31,7 +39,7 @@
    "step": "create",
    "op": "create-http-api",
    "result": "pass",
-   "seconds": 0.51,
+   "seconds": 0.67,
    "max_seconds": 2.0
   },
   {
@@ -39,7 +47,7 @@
    "step": "then",
    "op": "delete-http-api",
    "result": "pass",
-   "seconds": 0.69,
+   "seconds": 0.65,
    "max_seconds": 2.0
   },
   {
@@ -47,7 +55,7 @@
    "step": "then",
    "op": "update-http-api",
    "result": "pass",
-   "seconds": 0.55,
+   "seconds": 0.99,
    "max_seconds": 2.0
   },
   {
@@ -55,7 +63,7 @@
    "step": "create",
    "op": "create-rest-api",
    "result": "pass",
-   "seconds": 1.02,
+   "seconds": 0.53,
    "max_seconds": 2.0
   },
   {
@@ -63,7 +71,7 @@
    "step": "then",
    "op": "create-deployment",
    "result": "pass",
-   "seconds": 0.88,
+   "seconds": 0.7,
    "max_seconds": 2.0
   },
   {
@@ -71,7 +79,23 @@
    "step": "then",
    "op": "delete-rest-api",
    "result": "pass",
-   "seconds": 0.62,
+   "seconds": 0.67,
+   "max_seconds": 2.0
+  },
+  {
+   "kind": "apigateway-usage-plan",
+   "step": "create",
+   "op": "create-usage-plan",
+   "result": "pass",
+   "seconds": 0.8,
+   "max_seconds": 2.0
+  },
+  {
+   "kind": "apigateway-usage-plan",
+   "step": "then",
+   "op": "create-usage-plan-key",
+   "result": "pass",
+   "seconds": 0.51,
    "max_seconds": 2.0
   },
   {
@@ -79,7 +103,7 @@
    "step": "create",
    "op": "create-work-group",
    "result": "pass",
-   "seconds": 0.78,
+   "seconds": 0.62,
    "max_seconds": 2.0
   },
   {
@@ -87,7 +111,7 @@
    "step": "then",
    "op": "delete-work-group",
    "result": "pass",
-   "seconds": 0.75,
+   "seconds": 0.67,
    "max_seconds": 2.0
   },
   {
@@ -95,7 +119,7 @@
    "step": "then",
    "op": "update-work-group",
    "result": "pass",
-   "seconds": 0.85,
+   "seconds": 0.61,
    "max_seconds": 2.0
   },
   {
@@ -103,7 +127,7 @@
    "step": "create",
    "op": "create-auto-scaling-group",
    "result": "pass",
-   "seconds": 0.94,
+   "seconds": 0.74,
    "max_seconds": 2.0
   },
   {
@@ -117,7 +141,7 @@
    "step": "then",
    "op": "update-auto-scaling-group",
    "result": "pass",
-   "seconds": 0.67,
+   "seconds": 0.63,
    "max_seconds": 2.0
   },
   {
@@ -125,7 +149,7 @@
    "step": "create",
    "op": "create-backup-plan",
    "result": "pass",
-   "seconds": 1.17,
+   "seconds": 0.5,
    "max_seconds": 2.0
   },
   {
@@ -139,7 +163,7 @@
    "step": "create",
    "op": "create-backup-selection",
    "result": "pass",
-   "seconds": 0.0,
+   "seconds": 0.79,
    "max_seconds": 2.0
   },
   {
@@ -153,7 +177,7 @@
    "step": "create",
    "op": "create-backup-vault",
    "result": "pass",
-   "seconds": 0.8,
+   "seconds": 0.51,
    "max_seconds": 2.0
   },
   {
@@ -167,7 +191,7 @@
    "step": "then",
    "op": "put-backup-vault-lock-configuration",
    "result": "pass",
-   "seconds": 0.97,
+   "seconds": 0.71,
    "max_seconds": 2.0
   },
   {
@@ -175,7 +199,7 @@
    "step": "create",
    "op": "create-beanstalk-application",
    "result": "pass",
-   "seconds": 0.99,
+   "seconds": 0.98,
    "max_seconds": 2.0
   },
   {
@@ -183,7 +207,7 @@
    "step": "then",
    "op": "delete-beanstalk-application",
    "result": "pass",
-   "seconds": 0.77,
+   "seconds": 0.86,
    "max_seconds": 2.0
   },
   {
@@ -191,7 +215,7 @@
    "step": "then",
    "op": "update-beanstalk-application",
    "result": "pass",
-   "seconds": 0.87,
+   "seconds": 0.78,
    "max_seconds": 2.0
   },
   {
@@ -199,7 +223,7 @@
    "step": "create",
    "op": "create-beanstalk-environment",
    "result": "pass",
-   "seconds": 0.8,
+   "seconds": 1.24,
    "max_seconds": 2.0
   },
   {
@@ -207,7 +231,7 @@
    "step": "then",
    "op": "terminate-beanstalk-environment",
    "result": "pass",
-   "seconds": 0.94,
+   "seconds": 1.24,
    "max_seconds": 2.0
   },
   {
@@ -215,7 +239,7 @@
    "step": "then",
    "op": "update-beanstalk-environment",
    "result": "pass",
-   "seconds": 0.7,
+   "seconds": 1.15,
    "max_seconds": 2.0
   },
   {
@@ -223,7 +247,7 @@
    "step": "create",
    "op": "create-budget",
    "result": "pass",
-   "seconds": 1.07,
+   "seconds": 0.65,
    "max_seconds": 2.0
   },
   {
@@ -231,7 +255,7 @@
    "step": "then",
    "op": "delete-budget",
    "result": "pass",
-   "seconds": 0.69,
+   "seconds": 0.7,
    "max_seconds": 2.0
   },
   {
@@ -239,7 +263,7 @@
    "step": "then",
    "op": "update-budget",
    "result": "pass",
-   "seconds": 0.5,
+   "seconds": 0.69,
    "max_seconds": 2.0
   },
   {
@@ -247,7 +271,7 @@
    "step": "create",
    "op": "create-stack",
    "result": "pass",
-   "seconds": 0.54,
+   "seconds": 0.76,
    "max_seconds": 5.0
   },
   {
@@ -255,7 +279,7 @@
    "step": "then",
    "op": "delete-stack",
    "result": "pass",
-   "seconds": 0.77,
+   "seconds": 0.7,
    "max_seconds": 5.0
   },
   {
@@ -271,15 +295,39 @@
    "step": "then",
    "op": "update-termination-protection",
    "result": "pass",
-   "seconds": 0.74,
+   "seconds": 0.73,
    "max_seconds": 5.0
+  },
+  {
+   "kind": "cloudfront-cache-policy",
+   "step": "create",
+   "op": "create-cache-policy",
+   "result": "pass",
+   "seconds": 0.79,
+   "max_seconds": 2.0
   },
   {
    "kind": "cloudfront-distribution",
    "step": "create",
    "op": "create-distribution",
    "result": "pass",
-   "seconds": 0.74,
+   "seconds": 1.02,
+   "max_seconds": 2.0
+  },
+  {
+   "kind": "cloudfront-origin-access-control",
+   "step": "create",
+   "op": "create-origin-access-control",
+   "result": "pass",
+   "seconds": 0.72,
+   "max_seconds": 2.0
+  },
+  {
+   "kind": "cloudfront-origin-request-policy",
+   "step": "create",
+   "op": "create-origin-request-policy",
+   "result": "pass",
+   "seconds": 0.71,
    "max_seconds": 2.0
   },
   {
@@ -287,7 +335,7 @@
    "step": "create",
    "op": "create-trail",
    "result": "pass",
-   "seconds": 0.52,
+   "seconds": 0.73,
    "max_seconds": 2.0
   },
   {
@@ -295,7 +343,7 @@
    "step": "then",
    "op": "delete-trail",
    "result": "pass",
-   "seconds": 0.76,
+   "seconds": 0.73,
    "max_seconds": 2.0
   },
   {
@@ -303,7 +351,7 @@
    "step": "then",
    "op": "start-logging",
    "result": "pass",
-   "seconds": 0.72,
+   "seconds": 0.73,
    "max_seconds": 2.0
   },
   {
@@ -311,7 +359,7 @@
    "step": "create",
    "op": "put-metric-alarm",
    "result": "pass",
-   "seconds": 0.72,
+   "seconds": 0.77,
    "max_seconds": 2.0
   },
   {
@@ -325,7 +373,7 @@
    "step": "then",
    "op": "set-alarm-state",
    "result": "pass",
-   "seconds": 1.07,
+   "seconds": 1.02,
    "max_seconds": 2.0
   },
   {
@@ -333,7 +381,7 @@
    "step": "create",
    "op": "put-dashboard",
    "result": "pass",
-   "seconds": 0.75,
+   "seconds": 0.76,
    "max_seconds": 2.0
   },
   {
@@ -347,7 +395,7 @@
    "step": "create",
    "op": "create-codeartifact-domain",
    "result": "pass",
-   "seconds": 0.72,
+   "seconds": 0.77,
    "max_seconds": 2.0
   },
   {
@@ -355,7 +403,7 @@
    "step": "then",
    "op": "delete-codeartifact-domain",
    "result": "pass",
-   "seconds": 0.93,
+   "seconds": 0.83,
    "max_seconds": 2.0
   },
   {
@@ -363,7 +411,7 @@
    "step": "then",
    "op": "put-codeartifact-domain-policy",
    "result": "pass",
-   "seconds": 0.51,
+   "seconds": 0.67,
    "max_seconds": 2.0
   },
   {
@@ -371,7 +419,7 @@
    "step": "create",
    "op": "create-codeartifact-repository",
    "result": "pass",
-   "seconds": 0.78,
+   "seconds": 0.95,
    "max_seconds": 2.0
   },
   {
@@ -379,7 +427,7 @@
    "step": "then",
    "op": "delete-codeartifact-repository",
    "result": "pass",
-   "seconds": 0.75,
+   "seconds": 0.76,
    "max_seconds": 2.0
   },
   {
@@ -387,7 +435,7 @@
    "step": "then",
    "op": "update-codeartifact-repository",
    "result": "pass",
-   "seconds": 0.75,
+   "seconds": 0.55,
    "max_seconds": 2.0
   },
   {
@@ -395,7 +443,7 @@
    "step": "create",
    "op": "create-codebuild-project",
    "result": "pass",
-   "seconds": 0.7,
+   "seconds": 0.51,
    "max_seconds": 2.0
   },
   {
@@ -403,7 +451,7 @@
    "step": "then",
    "op": "delete-codebuild-project",
    "result": "pass",
-   "seconds": 0.69,
+   "seconds": 0.96,
    "max_seconds": 2.0
   },
   {
@@ -411,7 +459,7 @@
    "step": "then",
    "op": "update-codebuild-project",
    "result": "pass",
-   "seconds": 0.99,
+   "seconds": 0.69,
    "max_seconds": 2.0
   },
   {
@@ -419,7 +467,7 @@
    "step": "create",
    "op": "create-codedeploy-application",
    "result": "pass",
-   "seconds": 0.89,
+   "seconds": 0.68,
    "max_seconds": 2.0
   },
   {
@@ -427,7 +475,7 @@
    "step": "then",
    "op": "delete-codedeploy-application",
    "result": "pass",
-   "seconds": 0.96,
+   "seconds": 0.74,
    "max_seconds": 2.0
   },
   {
@@ -435,7 +483,7 @@
    "step": "then",
    "op": "rename-codedeploy-application",
    "result": "pass",
-   "seconds": 0.7,
+   "seconds": 0.42,
    "max_seconds": 2.0
   },
   {
@@ -443,7 +491,7 @@
    "step": "create",
    "op": "create-codepipeline-pipeline",
    "result": "pass",
-   "seconds": 0.68,
+   "seconds": 0.75,
    "max_seconds": 2.0
   },
   {
@@ -451,7 +499,7 @@
    "step": "then",
    "op": "delete-codepipeline-pipeline",
    "result": "pass",
-   "seconds": 1.01,
+   "seconds": 0.84,
    "max_seconds": 2.0
   },
   {
@@ -459,7 +507,7 @@
    "step": "then",
    "op": "update-codepipeline-pipeline",
    "result": "pass",
-   "seconds": 0.95,
+   "seconds": 0.72,
    "max_seconds": 2.0
   },
   {
@@ -467,7 +515,7 @@
    "step": "create",
    "op": "create-identity-pool",
    "result": "pass",
-   "seconds": 0.48,
+   "seconds": 0.71,
    "max_seconds": 2.0
   },
   {
@@ -475,7 +523,7 @@
    "step": "then",
    "op": "delete-identity-pool",
    "result": "pass",
-   "seconds": 0.94,
+   "seconds": 0.79,
    "max_seconds": 2.0
   },
   {
@@ -483,7 +531,7 @@
    "step": "then",
    "op": "set-identity-pool-roles",
    "result": "pass",
-   "seconds": 0.89,
+   "seconds": 1.08,
    "max_seconds": 2.0
   },
   {
@@ -491,7 +539,7 @@
    "step": "create",
    "op": "create-identity-provider",
    "result": "pass",
-   "seconds": 0.53,
+   "seconds": 0.72,
    "max_seconds": 2.0
   },
   {
@@ -499,7 +547,7 @@
    "step": "then",
    "op": "delete-identity-provider",
    "result": "pass",
-   "seconds": 0.79,
+   "seconds": 0.56,
    "max_seconds": 2.0
   },
   {
@@ -507,7 +555,7 @@
    "step": "then",
    "op": "update-identity-provider",
    "result": "pass",
-   "seconds": 0.44,
+   "seconds": 0.58,
    "max_seconds": 2.0
   },
   {
@@ -515,7 +563,7 @@
    "step": "create",
    "op": "create-user-pool",
    "result": "pass",
-   "seconds": 0.63,
+   "seconds": 1.0,
    "max_seconds": 2.0
   },
   {
@@ -523,7 +571,7 @@
    "step": "then",
    "op": "delete-user-pool",
    "result": "pass",
-   "seconds": 0.69,
+   "seconds": 0.12,
    "max_seconds": 2.0
   },
   {
@@ -531,7 +579,7 @@
    "step": "then",
    "op": "update-user-pool",
    "result": "pass",
-   "seconds": 0.8,
+   "seconds": 0.83,
    "max_seconds": 2.0
   },
   {
@@ -539,7 +587,7 @@
    "step": "then",
    "op": "update-user-pool",
    "result": "pass",
-   "seconds": 0.49,
+   "seconds": 0.65,
    "max_seconds": 2.0
   },
   {
@@ -547,7 +595,7 @@
    "step": "create",
    "op": "put-configuration-recorder",
    "result": "pass",
-   "seconds": 0.72,
+   "seconds": 0.75,
    "max_seconds": 2.0
   },
   {
@@ -555,7 +603,7 @@
    "step": "then",
    "op": "delete-configuration-recorder",
    "result": "pass",
-   "seconds": 0.69,
+   "seconds": 0.72,
    "max_seconds": 2.0
   },
   {
@@ -563,7 +611,7 @@
    "step": "then",
    "op": "put-delivery-channel",
    "result": "pass",
-   "seconds": 1.05,
+   "seconds": 0.83,
    "max_seconds": 2.0
   },
   {
@@ -571,7 +619,7 @@
    "step": "then",
    "op": "start-configuration-recorder",
    "result": "pass",
-   "seconds": 0.53,
+   "seconds": 0.82,
    "max_seconds": 2.0
   },
   {
@@ -579,7 +627,7 @@
    "step": "create",
    "op": "put-config-rule",
    "result": "pass",
-   "seconds": 0.99,
+   "seconds": 0.79,
    "max_seconds": 2.0
   },
   {
@@ -587,7 +635,7 @@
    "step": "then",
    "op": "delete-config-rule",
    "result": "pass",
-   "seconds": 0.9,
+   "seconds": 1.1,
    "max_seconds": 2.0
   },
   {
@@ -595,7 +643,7 @@
    "step": "then",
    "op": "start-config-rules-evaluation",
    "result": "pass",
-   "seconds": 0.7,
+   "seconds": 0.78,
    "max_seconds": 2.0
   },
   {
@@ -603,7 +651,7 @@
    "step": "create",
    "op": "create-location-s3",
    "result": "pass",
-   "seconds": 0.86,
+   "seconds": 0.78,
    "max_seconds": 2.0
   },
   {
@@ -611,7 +659,7 @@
    "step": "then",
    "op": "delete-datasync-location",
    "result": "pass",
-   "seconds": 0.69,
+   "seconds": 0.77,
    "max_seconds": 2.0
   },
   {
@@ -619,7 +667,7 @@
    "step": "then",
    "op": "update-location-s3",
    "result": "pass",
-   "seconds": 0.52,
+   "seconds": 0.89,
    "max_seconds": 2.0
   },
   {
@@ -627,7 +675,7 @@
    "step": "create",
    "op": "create-datasync-task",
    "result": "pass",
-   "seconds": 0.84,
+   "seconds": 0.54,
    "max_seconds": 2.0
   },
   {
@@ -635,7 +683,7 @@
    "step": "then",
    "op": "delete-datasync-task",
    "result": "pass",
-   "seconds": 0.77,
+   "seconds": 0.56,
    "max_seconds": 2.0
   },
   {
@@ -643,7 +691,7 @@
    "step": "then",
    "op": "update-datasync-task",
    "result": "pass",
-   "seconds": 0.82,
+   "seconds": 0.84,
    "max_seconds": 2.0
   },
   {
@@ -651,7 +699,7 @@
    "step": "create",
    "op": "create-db-cluster",
    "result": "pass",
-   "seconds": 1.22,
+   "seconds": 0.91,
    "max_seconds": 30.0
   },
   {
@@ -664,8 +712,8 @@
    "kind": "db-cluster-parameter-group",
    "step": "create",
    "op": "create-db-cluster-parameter-group",
-   "result": "slow",
-   "seconds": 2.59,
+   "result": "pass",
+   "seconds": 0.99,
    "max_seconds": 2.0
   },
   {
@@ -679,7 +727,7 @@
    "step": "create",
    "op": "create-db-instance",
    "result": "pass",
-   "seconds": 1.03,
+   "seconds": 0.9,
    "max_seconds": 30.0
   },
   {
@@ -693,7 +741,7 @@
    "step": "then",
    "op": "create-db-instance-read-replica",
    "result": "pass",
-   "seconds": 0.7,
+   "seconds": 1.25,
    "max_seconds": 30.0
   },
   {
@@ -701,7 +749,7 @@
    "step": "create",
    "op": "create-option-group",
    "result": "pass",
-   "seconds": 1.06,
+   "seconds": 0.98,
    "max_seconds": 2.0
   },
   {
@@ -715,7 +763,7 @@
    "step": "create",
    "op": "create-db-parameter-group",
    "result": "pass",
-   "seconds": 1.25,
+   "seconds": 1.03,
    "max_seconds": 2.0
   },
   {
@@ -729,7 +777,7 @@
    "step": "create",
    "op": "create-db-proxy",
    "result": "pass",
-   "seconds": 1.01,
+   "seconds": 1.02,
    "max_seconds": 2.0
   },
   {
@@ -743,7 +791,7 @@
    "step": "create",
    "op": "create-db-subnet-group",
    "result": "pass",
-   "seconds": 1.23,
+   "seconds": 1.25,
    "max_seconds": 2.0
   },
   {
@@ -757,7 +805,7 @@
    "step": "create",
    "op": "create-dms-endpoint",
    "result": "pass",
-   "seconds": 0.81,
+   "seconds": 0.74,
    "max_seconds": 2.0
   },
   {
@@ -765,7 +813,7 @@
    "step": "then",
    "op": "delete-dms-endpoint",
    "result": "pass",
-   "seconds": 0.88,
+   "seconds": 0.87,
    "max_seconds": 2.0
   },
   {
@@ -773,7 +821,7 @@
    "step": "then",
    "op": "modify-dms-endpoint",
    "result": "pass",
-   "seconds": 0.79,
+   "seconds": 1.1,
    "max_seconds": 2.0
   },
   {
@@ -781,7 +829,7 @@
    "step": "create",
    "op": "create-replication-instance",
    "result": "pass",
-   "seconds": 0.77,
+   "seconds": 0.63,
    "max_seconds": 2.0
   },
   {
@@ -789,7 +837,7 @@
    "step": "then",
    "op": "delete-replication-instance",
    "result": "pass",
-   "seconds": 0.81,
+   "seconds": 0.8,
    "max_seconds": 2.0
   },
   {
@@ -797,7 +845,7 @@
    "step": "then",
    "op": "modify-replication-instance",
    "result": "pass",
-   "seconds": 0.75,
+   "seconds": 0.77,
    "max_seconds": 2.0
   },
   {
@@ -805,7 +853,7 @@
    "step": "create",
    "op": "create-replication-task",
    "result": "pass",
-   "seconds": 1.0,
+   "seconds": 0.79,
    "max_seconds": 2.0
   },
   {
@@ -813,7 +861,7 @@
    "step": "then",
    "op": "delete-replication-task",
    "result": "pass",
-   "seconds": 0.74,
+   "seconds": 0.88,
    "max_seconds": 2.0
   },
   {
@@ -821,7 +869,7 @@
    "step": "then",
    "op": "start-replication-task",
    "result": "pass",
-   "seconds": 0.74,
+   "seconds": 0.82,
    "max_seconds": 2.0
   },
   {
@@ -829,7 +877,7 @@
    "step": "then",
    "op": "stop-replication-task",
    "result": "pass",
-   "seconds": 0.65,
+   "seconds": 0.81,
    "max_seconds": 2.0
   },
   {
@@ -837,7 +885,7 @@
    "step": "create",
    "op": "create-dynamodb-table",
    "result": "pass",
-   "seconds": 0.78,
+   "seconds": 0.6,
    "max_seconds": 2.0
   },
   {
@@ -851,7 +899,7 @@
    "step": "then",
    "op": "update-continuous-backups",
    "result": "pass",
-   "seconds": 0.86,
+   "seconds": 0.84,
    "max_seconds": 2.0
   },
   {
@@ -859,7 +907,7 @@
    "step": "then",
    "op": "update-dynamodb-stream",
    "result": "pass",
-   "seconds": 0.79,
+   "seconds": 0.83,
    "max_seconds": 2.0
   },
   {
@@ -867,7 +915,7 @@
    "step": "then",
    "op": "update-time-to-live",
    "result": "pass",
-   "seconds": 0.51,
+   "seconds": 1.08,
    "max_seconds": 2.0
   },
   {
@@ -875,7 +923,7 @@
    "step": "create",
    "op": "create-volume",
    "result": "pass",
-   "seconds": 0.64,
+   "seconds": 0.73,
    "max_seconds": 2.0
   },
   {
@@ -889,7 +937,7 @@
    "step": "create",
    "op": "create-ecr-repository",
    "result": "pass",
-   "seconds": 0.76,
+   "seconds": 0.81,
    "max_seconds": 2.0
   },
   {
@@ -897,7 +945,7 @@
    "step": "then",
    "op": "delete-ecr-repository",
    "result": "pass",
-   "seconds": 1.02,
+   "seconds": 0.85,
    "max_seconds": 2.0
   },
   {
@@ -905,7 +953,7 @@
    "step": "then",
    "op": "put-image-scanning-configuration",
    "result": "pass",
-   "seconds": 0.78,
+   "seconds": 0.32,
    "max_seconds": 2.0
   },
   {
@@ -913,7 +961,7 @@
    "step": "create",
    "op": "create-ecs-cluster",
    "result": "pass",
-   "seconds": 0.91,
+   "seconds": 0.86,
    "max_seconds": 2.0
   },
   {
@@ -921,7 +969,7 @@
    "step": "then",
    "op": "delete-ecs-cluster",
    "result": "pass",
-   "seconds": 0.81,
+   "seconds": 1.02,
    "max_seconds": 2.0
   },
   {
@@ -937,7 +985,7 @@
    "step": "create",
    "op": "create-access-point",
    "result": "pass",
-   "seconds": 0.92,
+   "seconds": 1.1,
    "max_seconds": 2.0
   },
   {
@@ -951,7 +999,7 @@
    "step": "create",
    "op": "create-file-system",
    "result": "pass",
-   "seconds": 0.95,
+   "seconds": 0.88,
    "max_seconds": 2.0
   },
   {
@@ -965,7 +1013,7 @@
    "step": "then",
    "op": "put-backup-policy",
    "result": "pass",
-   "seconds": 0.89,
+   "seconds": 0.81,
    "max_seconds": 2.0
   },
   {
@@ -973,7 +1021,7 @@
    "step": "then",
    "op": "put-lifecycle-configuration",
    "result": "pass",
-   "seconds": 1.23,
+   "seconds": 1.15,
    "max_seconds": 2.0
   },
   {
@@ -981,7 +1029,7 @@
    "step": "create",
    "op": "create-mount-target",
    "result": "pass",
-   "seconds": 0.32,
+   "seconds": 1.88,
    "max_seconds": 2.0
   },
   {
@@ -995,7 +1043,7 @@
    "step": "create",
    "op": "create-eks-cluster",
    "result": "pass",
-   "seconds": 0.7,
+   "seconds": 1.29,
    "max_seconds": 5.0
   },
   {
@@ -1003,7 +1051,7 @@
    "step": "then",
    "op": "delete-eks-cluster",
    "result": "pass",
-   "seconds": 0.84,
+   "seconds": 0.96,
    "max_seconds": 5.0
   },
   {
@@ -1011,7 +1059,7 @@
    "step": "create",
    "op": "allocate-address",
    "result": "pass",
-   "seconds": 0.77,
+   "seconds": 0.73,
    "max_seconds": 2.0
   },
   {
@@ -1025,7 +1073,7 @@
    "step": "create",
    "op": "create-cache-cluster",
    "result": "pass",
-   "seconds": 0.87,
+   "seconds": 0.79,
    "max_seconds": 10.0
   },
   {
@@ -1033,7 +1081,7 @@
    "step": "then",
    "op": "delete-cache-cluster",
    "result": "pass",
-   "seconds": 0.77,
+   "seconds": 0.75,
    "max_seconds": 10.0
   },
   {
@@ -1041,7 +1089,7 @@
    "step": "create",
    "op": "create-replication-group",
    "result": "pass",
-   "seconds": 0.76,
+   "seconds": 0.89,
    "max_seconds": 10.0
   },
   {
@@ -1049,7 +1097,7 @@
    "step": "then",
    "op": "delete-replication-group",
    "result": "pass",
-   "seconds": 0.9,
+   "seconds": 0.8,
    "max_seconds": 10.0
   },
   {
@@ -1057,7 +1105,7 @@
    "step": "then",
    "op": "modify-replication-group",
    "result": "pass",
-   "seconds": 0.85,
+   "seconds": 0.47,
    "max_seconds": 10.0
   },
   {
@@ -1065,7 +1113,7 @@
    "step": "create",
    "op": "create-event-bus",
    "result": "pass",
-   "seconds": 1.14,
+   "seconds": 1.74,
    "max_seconds": 2.0
   },
   {
@@ -1079,7 +1127,7 @@
    "step": "create",
    "op": "put-rule",
    "result": "pass",
-   "seconds": 1.38,
+   "seconds": 0.95,
    "max_seconds": 2.0
   },
   {
@@ -1101,7 +1149,7 @@
    "step": "then",
    "op": "put-targets",
    "result": "pass",
-   "seconds": 1.18,
+   "seconds": 1.12,
    "max_seconds": 2.0
   },
   {
@@ -1109,7 +1157,7 @@
    "step": "create",
    "op": "create-firewall-policy",
    "result": "pass",
-   "seconds": 0.95,
+   "seconds": 1.02,
    "max_seconds": 2.0
   },
   {
@@ -1117,7 +1165,7 @@
    "step": "then",
    "op": "delete-firewall-policy",
    "result": "pass",
-   "seconds": 0.9,
+   "seconds": 0.97,
    "max_seconds": 2.0
   },
   {
@@ -1125,7 +1173,7 @@
    "step": "create",
    "op": "create-firewall-rule-group",
    "result": "pass",
-   "seconds": 0.96,
+   "seconds": 1.17,
    "max_seconds": 2.0
   },
   {
@@ -1133,7 +1181,7 @@
    "step": "then",
    "op": "delete-firewall-rule-group",
    "result": "pass",
-   "seconds": 0.93,
+   "seconds": 1.09,
    "max_seconds": 2.0
   },
   {
@@ -1141,7 +1189,7 @@
    "step": "create",
    "op": "create-flow-logs",
    "result": "pass",
-   "seconds": 0.78,
+   "seconds": 0.31,
    "max_seconds": 2.0
   },
   {
@@ -1155,7 +1203,7 @@
    "step": "create",
    "op": "create-accelerator",
    "result": "pass",
-   "seconds": 0.91,
+   "seconds": 0.9,
    "max_seconds": 2.0
   },
   {
@@ -1163,7 +1211,7 @@
    "step": "then",
    "op": "delete-accelerator",
    "result": "pass",
-   "seconds": 1.02,
+   "seconds": 0.96,
    "max_seconds": 2.0
   },
   {
@@ -1171,7 +1219,7 @@
    "step": "then",
    "op": "update-accelerator",
    "result": "pass",
-   "seconds": 0.91,
+   "seconds": 0.94,
    "max_seconds": 2.0
   },
   {
@@ -1179,7 +1227,7 @@
    "step": "create",
    "op": "create-crawler",
    "result": "pass",
-   "seconds": 0.91,
+   "seconds": 0.93,
    "max_seconds": 2.0
   },
   {
@@ -1195,7 +1243,7 @@
    "step": "then",
    "op": "update-crawler",
    "result": "pass",
-   "seconds": 0.47,
+   "seconds": 0.95,
    "max_seconds": 2.0
   },
   {
@@ -1203,7 +1251,7 @@
    "step": "create",
    "op": "create-glue-database",
    "result": "pass",
-   "seconds": 0.9,
+   "seconds": 1.03,
    "max_seconds": 2.0
   },
   {
@@ -1211,7 +1259,7 @@
    "step": "then",
    "op": "delete-glue-database",
    "result": "pass",
-   "seconds": 1.24,
+   "seconds": 0.97,
    "max_seconds": 2.0
   },
   {
@@ -1219,7 +1267,7 @@
    "step": "create",
    "op": "create-hosted-zone",
    "result": "pass",
-   "seconds": 1.0,
+   "seconds": 1.36,
    "max_seconds": 2.0
   },
   {
@@ -1233,7 +1281,7 @@
    "step": "then",
    "op": "change-resource-record-sets",
    "result": "pass",
-   "seconds": 1.25,
+   "seconds": 1.13,
    "max_seconds": 2.0
   },
   {
@@ -1241,7 +1289,7 @@
    "step": "create",
    "op": "create-group",
    "result": "pass",
-   "seconds": 1.15,
+   "seconds": 0.97,
    "max_seconds": 2.0
   },
   {
@@ -1255,7 +1303,7 @@
    "step": "create",
    "op": "create-instance-profile",
    "result": "pass",
-   "seconds": 1.02,
+   "seconds": 0.94,
    "max_seconds": 2.0
   },
   {
@@ -1269,7 +1317,7 @@
    "step": "create",
    "op": "create-policy",
    "result": "pass",
-   "seconds": 1.0,
+   "seconds": 0.97,
    "max_seconds": 2.0
   },
   {
@@ -1283,7 +1331,7 @@
    "step": "create",
    "op": "create-role",
    "result": "pass",
-   "seconds": 0.72,
+   "seconds": 1.01,
    "max_seconds": 2.0
   },
   {
@@ -1297,7 +1345,7 @@
    "step": "then",
    "op": "attach-role-policy",
    "result": "pass",
-   "seconds": 0.93,
+   "seconds": 1.08,
    "max_seconds": 2.0
   },
   {
@@ -1305,7 +1353,7 @@
    "step": "create",
    "op": "create-user",
    "result": "pass",
-   "seconds": 0.93,
+   "seconds": 0.99,
    "max_seconds": 2.0
   },
   {
@@ -1319,7 +1367,7 @@
    "step": "create",
    "op": "create-internet-gateway",
    "result": "pass",
-   "seconds": 0.67,
+   "seconds": 0.91,
    "max_seconds": 2.0
   },
   {
@@ -1333,7 +1381,7 @@
    "step": "then",
    "op": "attach-internet-gateway",
    "result": "pass",
-   "seconds": 0.66,
+   "seconds": 0.93,
    "max_seconds": 2.0
   },
   {
@@ -1341,7 +1389,7 @@
    "step": "create",
    "op": "run-instances",
    "result": "pass",
-   "seconds": 0.93,
+   "seconds": 0.8,
    "max_seconds": 30.0
   },
   {
@@ -1355,7 +1403,7 @@
    "step": "then",
    "op": "modify-instance-attribute",
    "result": "pass",
-   "seconds": 1.12,
+   "seconds": 0.86,
    "max_seconds": 30.0
   },
   {
@@ -1363,7 +1411,7 @@
    "step": "create",
    "op": "create-key-pair",
    "result": "pass",
-   "seconds": 0.83,
+   "seconds": 0.76,
    "max_seconds": 2.0
   },
   {
@@ -1377,7 +1425,7 @@
    "step": "create",
    "op": "create-stream",
    "result": "pass",
-   "seconds": 1.18,
+   "seconds": 0.86,
    "max_seconds": 5.0
   },
   {
@@ -1385,7 +1433,7 @@
    "step": "then",
    "op": "delete-stream",
    "result": "pass",
-   "seconds": 1.27,
+   "seconds": 1.2,
    "max_seconds": 5.0
   },
   {
@@ -1393,7 +1441,7 @@
    "step": "then",
    "op": "update-shard-count",
    "result": "pass",
-   "seconds": 1.04,
+   "seconds": 0.96,
    "max_seconds": 5.0
   },
   {
@@ -1401,7 +1449,7 @@
    "step": "create",
    "op": "create-kms-alias",
    "result": "pass",
-   "seconds": 1.25,
+   "seconds": 1.24,
    "max_seconds": 2.0
   },
   {
@@ -1437,7 +1485,7 @@
    "step": "then",
    "op": "disable-kms-key",
    "result": "pass",
-   "seconds": 1.07,
+   "seconds": 1.15,
    "max_seconds": 2.0
   },
   {
@@ -1445,7 +1493,7 @@
    "step": "then",
    "op": "enable-key-rotation",
    "result": "pass",
-   "seconds": 1.13,
+   "seconds": 1.27,
    "max_seconds": 2.0
   },
   {
@@ -1453,7 +1501,7 @@
    "step": "create",
    "op": "create-function",
    "result": "pass",
-   "seconds": 1.04,
+   "seconds": 1.07,
    "max_seconds": 10.0
   },
   {
@@ -1467,7 +1515,7 @@
    "step": "then",
    "op": "publish-version",
    "result": "pass",
-   "seconds": 1.01,
+   "seconds": 1.34,
    "max_seconds": 10.0
   },
   {
@@ -1475,7 +1523,7 @@
    "step": "create",
    "op": "publish-layer-version",
    "result": "pass",
-   "seconds": 1.08,
+   "seconds": 1.05,
    "max_seconds": 2.0
   },
   {
@@ -1489,7 +1537,7 @@
    "step": "create",
    "op": "create-launch-template",
    "result": "pass",
-   "seconds": 0.82,
+   "seconds": 0.52,
    "max_seconds": 2.0
   },
   {
@@ -1503,7 +1551,7 @@
    "step": "create",
    "op": "create-listener",
    "result": "pass",
-   "seconds": 0.95,
+   "seconds": 0.87,
    "max_seconds": 2.0
   },
   {
@@ -1517,7 +1565,7 @@
    "step": "then",
    "op": "modify-listener",
    "result": "pass",
-   "seconds": 0.95,
+   "seconds": 1.06,
    "max_seconds": 2.0
   },
   {
@@ -1525,7 +1573,7 @@
    "step": "create",
    "op": "create-rule",
    "result": "pass",
-   "seconds": 1.4,
+   "seconds": 0.85,
    "max_seconds": 2.0
   },
   {
@@ -1539,7 +1587,7 @@
    "step": "create",
    "op": "create-load-balancer",
    "result": "pass",
-   "seconds": 1.13,
+   "seconds": 0.87,
    "max_seconds": 2.0
   },
   {
@@ -1553,7 +1601,7 @@
    "step": "then",
    "op": "set-security-groups",
    "result": "pass",
-   "seconds": 0.42,
+   "seconds": 0.72,
    "max_seconds": 2.0
   },
   {
@@ -1561,7 +1609,7 @@
    "step": "create",
    "op": "create-log-group",
    "result": "pass",
-   "seconds": 0.97,
+   "seconds": 0.96,
    "max_seconds": 2.0
   },
   {
@@ -1573,9 +1621,17 @@
   {
    "kind": "log-group",
    "step": "then",
+   "op": "create-log-stream",
+   "result": "pass",
+   "seconds": 0.71,
+   "max_seconds": 2.0
+  },
+  {
+   "kind": "log-group",
+   "step": "then",
    "op": "put-metric-filter",
    "result": "pass",
-   "seconds": 0.01,
+   "seconds": 1.06,
    "max_seconds": 2.0
   },
   {
@@ -1583,7 +1639,7 @@
    "step": "then",
    "op": "put-retention-policy",
    "result": "pass",
-   "seconds": 0.99,
+   "seconds": 1.09,
    "max_seconds": 2.0
   },
   {
@@ -1591,7 +1647,7 @@
    "step": "create",
    "op": "create-nat-gateway",
    "result": "pass",
-   "seconds": 0.54,
+   "seconds": 0.74,
    "max_seconds": 2.0
   },
   {
@@ -1605,7 +1661,7 @@
    "step": "create",
    "op": "create-network-acl",
    "result": "pass",
-   "seconds": 0.92,
+   "seconds": 0.73,
    "max_seconds": 2.0
   },
   {
@@ -1619,7 +1675,7 @@
    "step": "then",
    "op": "create-network-acl-entry",
    "result": "pass",
-   "seconds": 0.61,
+   "seconds": 0.9,
    "max_seconds": 2.0
   },
   {
@@ -1627,7 +1683,7 @@
    "step": "create",
    "op": "create-firewall",
    "result": "pass",
-   "seconds": 1.01,
+   "seconds": 0.77,
    "max_seconds": 2.0
   },
   {
@@ -1635,7 +1691,7 @@
    "step": "then",
    "op": "associate-firewall-policy",
    "result": "pass",
-   "seconds": 1.32,
+   "seconds": 1.12,
    "max_seconds": 2.0
   },
   {
@@ -1643,7 +1699,7 @@
    "step": "then",
    "op": "delete-firewall",
    "result": "pass",
-   "seconds": 0.95,
+   "seconds": 1.32,
    "max_seconds": 2.0
   },
   {
@@ -1651,7 +1707,7 @@
    "step": "create",
    "op": "create-network-interface",
    "result": "pass",
-   "seconds": 0.85,
+   "seconds": 0.64,
    "max_seconds": 2.0
   },
   {
@@ -1665,7 +1721,7 @@
    "step": "create",
    "op": "create-managed-prefix-list",
    "result": "pass",
-   "seconds": 0.84,
+   "seconds": 0.81,
    "max_seconds": 2.0
   },
   {
@@ -1679,7 +1735,7 @@
    "step": "create",
    "op": "create-event-subscription",
    "result": "pass",
-   "seconds": 1.01,
+   "seconds": 1.22,
    "max_seconds": 2.0
   },
   {
@@ -1687,7 +1743,7 @@
    "step": "then",
    "op": "delete-event-subscription",
    "result": "pass",
-   "seconds": 1.26,
+   "seconds": 1.14,
    "max_seconds": 2.0
   },
   {
@@ -1695,7 +1751,7 @@
    "step": "then",
    "op": "modify-event-subscription",
    "result": "pass",
-   "seconds": 0.97,
+   "seconds": 1.38,
    "max_seconds": 2.0
   },
   {
@@ -1703,7 +1759,7 @@
    "step": "create",
    "op": "create-route-table",
    "result": "pass",
-   "seconds": 0.76,
+   "seconds": 0.92,
    "max_seconds": 2.0
   },
   {
@@ -1717,7 +1773,7 @@
    "step": "then",
    "op": "associate-route-table",
    "result": "pass",
-   "seconds": 0.89,
+   "seconds": 0.76,
    "max_seconds": 2.0
   },
   {
@@ -1725,7 +1781,7 @@
    "step": "then",
    "op": "create-route",
    "result": "pass",
-   "seconds": 0.46,
+   "seconds": 0.71,
    "max_seconds": 2.0
   },
   {
@@ -1733,7 +1789,7 @@
    "step": "create",
    "op": "create-health-check",
    "result": "pass",
-   "seconds": 0.77,
+   "seconds": 1.19,
    "max_seconds": 2.0
   },
   {
@@ -1741,7 +1797,7 @@
    "step": "then",
    "op": "delete-health-check",
    "result": "pass",
-   "seconds": 1.12,
+   "seconds": 1.11,
    "max_seconds": 2.0
   },
   {
@@ -1749,7 +1805,7 @@
    "step": "then",
    "op": "update-health-check",
    "result": "pass",
-   "seconds": 1.12,
+   "seconds": 1.31,
    "max_seconds": 2.0
   },
   {
@@ -1757,7 +1813,7 @@
    "step": "create",
    "op": "create-bucket",
    "result": "pass",
-   "seconds": 1.35,
+   "seconds": 0.79,
    "max_seconds": 2.0
   },
   {
@@ -1771,7 +1827,7 @@
    "step": "then",
    "op": "put-bucket-versioning",
    "result": "pass",
-   "seconds": 1.46,
+   "seconds": 1.03,
    "max_seconds": 2.0
   },
   {
@@ -1779,7 +1835,7 @@
    "step": "create",
    "op": "create-multipart-upload",
    "result": "pass",
-   "seconds": 0.65,
+   "seconds": 1.25,
    "max_seconds": 2.0
   },
   {
@@ -1787,7 +1843,7 @@
    "step": "create",
    "op": "put-scaling-policy",
    "result": "pass",
-   "seconds": 0.73,
+   "seconds": 0.59,
    "max_seconds": 2.0
   },
   {
@@ -1801,7 +1857,7 @@
    "step": "create",
    "op": "create-schedule",
    "result": "pass",
-   "seconds": 1.59,
+   "seconds": 1.12,
    "max_seconds": 2.0
   },
   {
@@ -1809,7 +1865,7 @@
    "step": "then",
    "op": "delete-schedule",
    "result": "pass",
-   "seconds": 0.83,
+   "seconds": 1.14,
    "max_seconds": 2.0
   },
   {
@@ -1817,7 +1873,7 @@
    "step": "create",
    "op": "create-secret",
    "result": "pass",
-   "seconds": 1.28,
+   "seconds": 1.3,
    "max_seconds": 2.0
   },
   {
@@ -1825,7 +1881,7 @@
    "step": "then",
    "op": "delete-secret",
    "result": "pass",
-   "seconds": 1.06,
+   "seconds": 1.36,
    "max_seconds": 2.0
   },
   {
@@ -1833,7 +1889,7 @@
    "step": "create",
    "op": "create-security-group",
    "result": "pass",
-   "seconds": 0.83,
+   "seconds": 0.94,
    "max_seconds": 2.0
   },
   {
@@ -1847,7 +1903,7 @@
    "step": "then",
    "op": "authorize-security-group-ingress",
    "result": "pass",
-   "seconds": 0.76,
+   "seconds": 0.81,
    "max_seconds": 2.0
   },
   {
@@ -1855,7 +1911,7 @@
    "step": "create",
    "op": "subscribe",
    "result": "pass",
-   "seconds": 1.56,
+   "seconds": 1.39,
    "max_seconds": 5.0
   },
   {
@@ -1863,7 +1919,7 @@
    "step": "then",
    "op": "set-subscription-attributes",
    "result": "pass",
-   "seconds": 1.19,
+   "seconds": 1.58,
    "max_seconds": 5.0
   },
   {
@@ -1871,7 +1927,7 @@
    "step": "then",
    "op": "unsubscribe",
    "result": "pass",
-   "seconds": 1.76,
+   "seconds": 1.11,
    "max_seconds": 5.0
   },
   {
@@ -1879,7 +1935,7 @@
    "step": "create",
    "op": "create-topic",
    "result": "pass",
-   "seconds": 1.07,
+   "seconds": 1.17,
    "max_seconds": 2.0
   },
   {
@@ -1887,7 +1943,7 @@
    "step": "then",
    "op": "set-topic-attributes",
    "result": "pass",
-   "seconds": 1.21,
+   "seconds": 1.05,
    "max_seconds": 2.0
   },
   {
@@ -1895,7 +1951,7 @@
    "step": "create",
    "op": "create-queue",
    "result": "pass",
-   "seconds": 0.98,
+   "seconds": 1.15,
    "max_seconds": 5.0
   },
   {
@@ -1903,7 +1959,7 @@
    "step": "then",
    "op": "delete-queue",
    "result": "pass",
-   "seconds": 1.2,
+   "seconds": 1.06,
    "max_seconds": 5.0
   },
   {
@@ -1911,7 +1967,7 @@
    "step": "then",
    "op": "set-queue-attributes",
    "result": "pass",
-   "seconds": 1.0,
+   "seconds": 1.35,
    "max_seconds": 5.0
   },
   {
@@ -1919,7 +1975,7 @@
    "step": "create",
    "op": "put-ssm-parameter",
    "result": "pass",
-   "seconds": 1.08,
+   "seconds": 0.98,
    "max_seconds": 2.0
   },
   {
@@ -1927,7 +1983,7 @@
    "step": "then",
    "op": "delete-ssm-parameter",
    "result": "pass",
-   "seconds": 0.99,
+   "seconds": 0.83,
    "max_seconds": 2.0
   },
   {
@@ -1935,7 +1991,7 @@
    "step": "create",
    "op": "create-state-machine",
    "result": "pass",
-   "seconds": 1.03,
+   "seconds": 0.96,
    "max_seconds": 5.0
   },
   {
@@ -1943,7 +1999,7 @@
    "step": "then",
    "op": "delete-state-machine",
    "result": "pass",
-   "seconds": 1.06,
+   "seconds": 1.34,
    "max_seconds": 5.0
   },
   {
@@ -1951,7 +2007,7 @@
    "step": "then",
    "op": "update-state-machine",
    "result": "pass",
-   "seconds": 0.93,
+   "seconds": 1.28,
    "max_seconds": 5.0
   },
   {
@@ -1959,7 +2015,7 @@
    "step": "create",
    "op": "create-subnet",
    "result": "pass",
-   "seconds": 1.03,
+   "seconds": 0.92,
    "max_seconds": 2.0
   },
   {
@@ -1973,7 +2029,7 @@
    "step": "then",
    "op": "modify-subnet-attribute",
    "result": "pass",
-   "seconds": 0.73,
+   "seconds": 0.83,
    "max_seconds": 2.0
   },
   {
@@ -1981,7 +2037,7 @@
    "step": "create",
    "op": "create-target-group",
    "result": "pass",
-   "seconds": 1.08,
+   "seconds": 0.89,
    "max_seconds": 2.0
   },
   {
@@ -1995,7 +2051,7 @@
    "step": "then",
    "op": "modify-target-group",
    "result": "pass",
-   "seconds": 0.91,
+   "seconds": 0.92,
    "max_seconds": 2.0
   },
   {
@@ -2003,7 +2059,7 @@
    "step": "create",
    "op": "create-transit-gateway-vpc-attachment",
    "result": "pass",
-   "seconds": 1.06,
+   "seconds": 0.32,
    "max_seconds": 2.0
   },
   {
@@ -2017,7 +2073,7 @@
    "step": "create",
    "op": "create-transit-gateway-route-table",
    "result": "pass",
-   "seconds": 0.99,
+   "seconds": 0.51,
    "max_seconds": 2.0
   },
   {
@@ -2031,7 +2087,7 @@
    "step": "create",
    "op": "create-transfer-server",
    "result": "pass",
-   "seconds": 1.07,
+   "seconds": 1.28,
    "max_seconds": 2.0
   },
   {
@@ -2039,7 +2095,7 @@
    "step": "then",
    "op": "delete-transfer-server",
    "result": "pass",
-   "seconds": 0.94,
+   "seconds": 1.22,
    "max_seconds": 2.0
   },
   {
@@ -2047,7 +2103,7 @@
    "step": "then",
    "op": "start-transfer-server",
    "result": "pass",
-   "seconds": 0.89,
+   "seconds": 0.84,
    "max_seconds": 2.0
   },
   {
@@ -2055,7 +2111,7 @@
    "step": "then",
    "op": "stop-transfer-server",
    "result": "pass",
-   "seconds": 1.26,
+   "seconds": 1.18,
    "max_seconds": 2.0
   },
   {
@@ -2063,7 +2119,7 @@
    "step": "create",
    "op": "create-transit-gateway",
    "result": "pass",
-   "seconds": 0.73,
+   "seconds": 0.76,
    "max_seconds": 2.0
   },
   {
@@ -2077,7 +2133,7 @@
    "step": "create",
    "op": "create-vpc",
    "result": "pass",
-   "seconds": 0.81,
+   "seconds": 0.77,
    "max_seconds": 2.0
   },
   {
@@ -2091,7 +2147,7 @@
    "step": "then",
    "op": "modify-vpc-attribute",
    "result": "pass",
-   "seconds": 0.77,
+   "seconds": 0.8,
    "max_seconds": 2.0
   },
   {
@@ -2099,7 +2155,7 @@
    "step": "create",
    "op": "create-vpc-endpoint",
    "result": "pass",
-   "seconds": 0.27,
+   "seconds": 0.55,
    "max_seconds": 2.0
   },
   {
@@ -2113,7 +2169,7 @@
    "step": "create",
    "op": "create-vpc-peering-connection",
    "result": "pass",
-   "seconds": 0.88,
+   "seconds": 0.72,
    "max_seconds": 2.0
   },
   {
@@ -2127,7 +2183,7 @@
    "step": "then",
    "op": "accept-vpc-peering-connection",
    "result": "pass",
-   "seconds": 0.62,
+   "seconds": 0.88,
    "max_seconds": 2.0
   },
   {
@@ -2135,7 +2191,7 @@
    "step": "create",
    "op": "create-web-acl",
    "result": "pass",
-   "seconds": 0.95,
+   "seconds": 1.01,
    "max_seconds": 2.0
   },
   {
@@ -2143,7 +2199,7 @@
    "step": "then",
    "op": "associate-web-acl",
    "result": "pass",
-   "seconds": 1.07,
+   "seconds": 1.03,
    "max_seconds": 2.0
   }
  ]

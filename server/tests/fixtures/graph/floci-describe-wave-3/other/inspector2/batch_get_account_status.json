@@ -11,10 +11,10 @@
                 "status": "DISABLED"
               },
               "ec2": {
-                "status": "ENABLED"
+                "status": "ENABLING"
               },
               "ecr": {
-                "status": "ENABLED"
+                "status": "ENABLING"
               },
               "lambda": {
                 "status": "DISABLED"
@@ -24,7 +24,7 @@
               }
             },
             "state": {
-              "status": "ENABLED"
+              "status": "ENABLING"
             }
           }
         ],

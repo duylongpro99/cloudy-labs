@@ -6,28 +6,6 @@
         "SecurityGroups": [
           {
             "Description": "default VPC security group",
-            "GroupId": "sg-2559a8642555f05e7",
-            "GroupName": "default",
-            "IpPermissions": [],
-            "IpPermissionsEgress": [
-              {
-                "IpProtocol": "-1",
-                "IpRanges": [
-                  {
-                    "CidrIp": "0.0.0.0/0"
-                  }
-                ],
-                "Ipv6Ranges": [],
-                "PrefixListIds": [],
-                "UserIdGroupPairs": []
-              }
-            ],
-            "OwnerId": "000000000000",
-            "Tags": [],
-            "VpcId": "vpc-29250840"
-          },
-          {
-            "Description": "default VPC security group",
             "GroupId": "sg-default-ap-southeast-2",
             "GroupName": "default",
             "IpPermissions": [],
@@ -49,8 +27,45 @@
             "VpcId": "vpc-default-ap-southeast-2"
           },
           {
+            "Description": "app tier",
+            "GroupId": "sg-29c1453846337377c",
+            "GroupName": "wave1-app",
+            "IpPermissions": [
+              {
+                "FromPort": 5432,
+                "IpProtocol": "tcp",
+                "IpRanges": [],
+                "Ipv6Ranges": [],
+                "PrefixListIds": [],
+                "ToPort": 5432,
+                "UserIdGroupPairs": [
+                  {
+                    "GroupId": "sg-798a86874fc416b96",
+                    "UserId": "000000000000"
+                  }
+                ]
+              }
+            ],
+            "IpPermissionsEgress": [
+              {
+                "IpProtocol": "-1",
+                "IpRanges": [
+                  {
+                    "CidrIp": "0.0.0.0/0"
+                  }
+                ],
+                "Ipv6Ranges": [],
+                "PrefixListIds": [],
+                "UserIdGroupPairs": []
+              }
+            ],
+            "OwnerId": "000000000000",
+            "Tags": [],
+            "VpcId": "vpc-95741f0b"
+          },
+          {
             "Description": "web tier",
-            "GroupId": "sg-16d87565cacd7efa0",
+            "GroupId": "sg-798a86874fc416b96",
             "GroupName": "wave1-web",
             "IpPermissions": [
               {
@@ -73,7 +88,7 @@
                 "Ipv6Ranges": [],
                 "PrefixListIds": [
                   {
-                    "PrefixListId": "pl-403ec40bdb5e527f2"
+                    "PrefixListId": "pl-ba3b541c5c90bb392"
                   }
                 ],
                 "ToPort": 22,
@@ -101,7 +116,7 @@
                 "ToPort": 5432,
                 "UserIdGroupPairs": [
                   {
-                    "GroupId": "sg-5271729b7a5ffc3e2",
+                    "GroupId": "sg-29c1453846337377c",
                     "UserId": "000000000000"
                   }
                 ]
@@ -109,11 +124,11 @@
             ],
             "OwnerId": "000000000000",
             "Tags": [],
-            "VpcId": "vpc-03e9e3f9"
+            "VpcId": "vpc-95741f0b"
           },
           {
             "Description": "default VPC security group",
-            "GroupId": "sg-cc2f2105a40fceb16",
+            "GroupId": "sg-8df4b2413a1af93a5",
             "GroupName": "default",
             "IpPermissions": [],
             "IpPermissionsEgress": [
@@ -131,28 +146,13 @@
             ],
             "OwnerId": "000000000000",
             "Tags": [],
-            "VpcId": "vpc-03e9e3f9"
+            "VpcId": "vpc-0359d433"
           },
           {
-            "Description": "app tier",
-            "GroupId": "sg-5271729b7a5ffc3e2",
-            "GroupName": "wave1-app",
-            "IpPermissions": [
-              {
-                "FromPort": 5432,
-                "IpProtocol": "tcp",
-                "IpRanges": [],
-                "Ipv6Ranges": [],
-                "PrefixListIds": [],
-                "ToPort": 5432,
-                "UserIdGroupPairs": [
-                  {
-                    "GroupId": "sg-16d87565cacd7efa0",
-                    "UserId": "000000000000"
-                  }
-                ]
-              }
-            ],
+            "Description": "default VPC security group",
+            "GroupId": "sg-0ade6c856bf0293e9",
+            "GroupName": "default",
+            "IpPermissions": [],
             "IpPermissionsEgress": [
               {
                 "IpProtocol": "-1",
@@ -168,7 +168,7 @@
             ],
             "OwnerId": "000000000000",
             "Tags": [],
-            "VpcId": "vpc-03e9e3f9"
+            "VpcId": "vpc-95741f0b"
           }
         ]
       }

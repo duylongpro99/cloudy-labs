@@ -1,0 +1,12 @@
+{
+  "calls": [
+    {
+      "params": {
+        "MaxResults": 60
+      },
+      "response": {
+        "IdentityPools": []
+      }
+    }
+  ]
+}

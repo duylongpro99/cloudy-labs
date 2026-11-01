@@ -9,6 +9,7 @@
   list: {method: list_accelerators, items: Accelerators}
   enrich:
     - {method: list_listeners, params: {AcceleratorArn: AcceleratorArn}, pick: Listeners, merge_as: _Listeners}
+    - {hook: globalaccelerator.endpoint_groups}
     - {method: list_tags_for_resource, params: {ResourceArn: AcceleratorArn}, pick: Tags, merge_as: _Tags}
   id: AcceleratorArn
   name: [Name, AcceleratorArn]
@@ -19,14 +20,18 @@
     dnsName: DnsName
     ipAddressType: IpAddressType
     ips: "IpSets[].IpAddresses[]"
-    listeners: "sort_by(_Listeners || `[]`, &ListenerArn)[].{protocol: Protocol, ports: PortRanges[].join('-', [to_string(FromPort), to_string(ToPort)]), clientAffinity: ClientAffinity}"
+    listeners: "sort_by(_Listeners || `[]`, &ListenerArn)[].{arn: ListenerArn, protocol: Protocol, ports: PortRanges[].join('-', [to_string(FromPort), to_string(ToPort)]), clientAffinity: ClientAffinity}"
+    endpointGroups: "sort_by(_EndpointGroups || `[]`, &EndpointGroupArn)[].{listener: ListenerArn, region: EndpointGroupRegion, trafficDial: TrafficDialPercentage, healthCheck: join(':', [HealthCheckProtocol, to_string(HealthCheckPort)]), endpoints: EndpointDescriptions[].{id: EndpointId, weight: Weight, health: HealthState}}"
     tags: {hook: common.tags, args: {field: _Tags}}
-  chat_props: [enabled, status, dnsName, ipAddressType, ips, listeners]
+  chat_props: [enabled, status, dnsName, ipAddressType, ips, listeners, endpointGroups]
+  edges:
+    # An endpoint is a load balancer's ARN, an instance id or an Elastic IP's allocation id.
+    - {kind: endpoint, target: "(_EndpointGroups || `[]`)[].EndpointDescriptions[].EndpointId", to: [load-balancer, instance, elastic-ip], style: reference}
   caveats:
     - {code: globalaccelerator-config-only, prop: ips, text: "Floci 2.3.0 stores accelerators, listeners and endpoint groups but carries no traffic: the static IPs and DNS name answer nothing, and an endpoint group accepts any endpoint id, even one that does not exist, and reports it HEALTHY. Check the configuration."}
   floci: {status: control-plane-only, note: "Accelerators, listeners and endpoint groups are stored; no traffic is routed."}
   builder: true
-  view: {role: block, category: networking, icon: Arch_AWS-Global-Accelerator_48.svg, source: Architecture-Service-Icons_07312026/Arch_Networking-Content-Delivery/48/Arch_AWS-Global-Accelerator_48.svg, height: 0.6, order: 510, actions: [Accelerator, AcceleratorAttributes]}
+  view: {role: block, category: networking, icon: Arch_AWS-Global-Accelerator_48.svg, source: Architecture-Service-Icons_07312026/Arch_Networking-Content-Delivery/48/Arch_AWS-Global-Accelerator_48.svg, height: 0.6, order: 510, actions: [Accelerator, AcceleratorAttributes, Listener, EndpointGroup]}
   contract:
     create: {op: create-accelerator, params: {Name: ct-accelerator}, save: accelerator}
     then:
@@ -51,6 +56,25 @@
       choices: {IpAddressType: [IPV4, DUAL_STACK]}
       target_param: AcceleratorArn
       note: "Rename the accelerator, or enable or disable it (Enabled false stops traffic; it must be disabled before delete-accelerator)."
+    - id: create-ga-listener
+      api: CreateListener
+      gesture: attribute
+      title: "Thêm listener cho Global Accelerator"
+      fields: [{name: AcceleratorArn, ref: global-accelerator}, Protocol, {name: PortRanges, multiline: true}, ClientAffinity]
+      choices: {Protocol: [TCP, UDP], ClientAffinity: [NONE, SOURCE_IP]}
+      defaults: {Protocol: TCP, PortRanges: '[{"FromPort": 80, "ToPort": 80}]'}
+      targets: [global-accelerator]
+      target_param: AcceleratorArn
+      note: "Accept client traffic on ports of the accelerator's static IPs. PortRanges JSON: [{\"FromPort\": 80, \"ToPort\": 80}]. Its ARN (the listeners prop) is what create-endpoint-group takes."
+    - id: create-endpoint-group
+      api: CreateEndpointGroup
+      gesture: attribute
+      title: "Thêm endpoint group"
+      fields: [ListenerArn, EndpointGroupRegion, {name: EndpointConfigurations, multiline: true}, TrafficDialPercentage, HealthCheckProtocol, HealthCheckPort, HealthCheckPath]
+      choices: {HealthCheckProtocol: [TCP, HTTP, HTTPS]}
+      defaults: {EndpointConfigurations: '[{"EndpointId": "<load balancer ARN>", "Weight": 128}]'}
+      targets: [global-accelerator]
+      note: "Send a listener's traffic to endpoints in one region. ListenerArn: from the accelerator's listeners prop. EndpointConfigurations JSON: [{\"EndpointId\": <ALB/NLB ARN, instance id or Elastic IP allocation id>, \"Weight\": 128}]. TrafficDialPercentage (0-100) shifts traffic between regions' groups."
     - id: delete-accelerator
       api: DeleteAccelerator
       gesture: delete

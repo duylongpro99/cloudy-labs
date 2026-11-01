@@ -6,28 +6,28 @@
         "NatGateways": [
           {
             "ConnectivityType": "public",
-            "CreateTime": "2026-10-31 14:34:04.083000+00:00",
+            "CreateTime": "2026-11-01 09:02:05.702000+00:00",
             "NatGatewayAddresses": [
               {
-                "AllocationId": "eipalloc-6b37349c9ea896447",
-                "AssociationId": "eipassoc-5c798078d6af41e87",
+                "AllocationId": "eipalloc-bbffe8172bc115280",
+                "AssociationId": "eipassoc-cc8fb4cd5ba9a570c",
                 "IsPrimary": true,
-                "NetworkInterfaceId": "eni-99ffbbe0f8acc7559",
+                "NetworkInterfaceId": "eni-f36a628ca76715bd4",
                 "PrivateIp": "10.60.1.10",
-                "PublicIp": "54.86.188.97",
+                "PublicIp": "54.245.24.18",
                 "Status": "succeeded"
               }
             ],
-            "NatGatewayId": "nat-9a9648e32d4ed9df7",
+            "NatGatewayId": "nat-3441a361bd988f610",
             "State": "available",
-            "SubnetId": "subnet-aafaffcb",
+            "SubnetId": "subnet-2f1af3b5",
             "Tags": [
               {
                 "Key": "Name",
                 "Value": "rx-nat"
               }
             ],
-            "VpcId": "vpc-ae467f29"
+            "VpcId": "vpc-6359315f"
           }
         ]
       }

@@ -3,37 +3,25 @@
     {
       "params": {
         "Attribute": "enableDnsHostnames",
-        "VpcId": "vpc-c238e6aa"
+        "VpcId": "vpc-7f4a8d38"
       },
       "response": {
         "EnableDnsHostnames": {
           "Value": false
         },
-        "VpcId": "vpc-c238e6aa"
+        "VpcId": "vpc-7f4a8d38"
       }
     },
     {
       "params": {
         "Attribute": "enableDnsHostnames",
-        "VpcId": "vpc-51ff849d"
+        "VpcId": "vpc-0fbdc61e"
       },
       "response": {
         "EnableDnsHostnames": {
           "Value": false
         },
-        "VpcId": "vpc-51ff849d"
-      }
-    },
-    {
-      "params": {
-        "Attribute": "enableDnsHostnames",
-        "VpcId": "vpc-126a9f97"
-      },
-      "response": {
-        "EnableDnsHostnames": {
-          "Value": false
-        },
-        "VpcId": "vpc-126a9f97"
+        "VpcId": "vpc-0fbdc61e"
       }
     },
     {
@@ -46,6 +34,18 @@
           "Value": false
         },
         "VpcId": "vpc-default-ap-southeast-2"
+      }
+    },
+    {
+      "params": {
+        "Attribute": "enableDnsHostnames",
+        "VpcId": "vpc-733acc97"
+      },
+      "response": {
+        "EnableDnsHostnames": {
+          "Value": false
+        },
+        "VpcId": "vpc-733acc97"
       }
     }
   ]

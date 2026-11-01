@@ -31,20 +31,20 @@
                   "SubnetAvailabilityZone": {
                     "Name": "ap-southeast-2a"
                   },
-                  "SubnetIdentifier": "subnet-5bfd1da3",
+                  "SubnetIdentifier": "subnet-5ca0e2b2",
                   "SubnetStatus": "Active"
                 },
                 {
                   "SubnetAvailabilityZone": {
                     "Name": "ap-southeast-2b"
                   },
-                  "SubnetIdentifier": "subnet-7322989f",
+                  "SubnetIdentifier": "subnet-db9748ef",
                   "SubnetStatus": "Active"
                 }
               ],
-              "VpcId": "vpc-ae467f29"
+              "VpcId": "vpc-6359315f"
             },
-            "DbiResourceId": "db-AB12AFEC51D74631ABC3B3B1",
+            "DbiResourceId": "db-8615050E968E446AAB03B17A",
             "DeletionProtection": false,
             "Endpoint": {
               "Address": "172.27.0.3",
@@ -54,7 +54,7 @@
             "EngineLifecycleSupport": "open-source-rds-extended-support",
             "EngineVersion": "16.3",
             "IAMDatabaseAuthenticationEnabled": false,
-            "LatestRestorableTime": "2026-10-31 14:34:07.333371+00:00",
+            "LatestRestorableTime": "2026-11-01 09:02:09.741523+00:00",
             "MasterUsername": "rx",
             "MonitoringInterval": 0,
             "MultiAZ": false,
@@ -75,7 +75,7 @@
             "VpcSecurityGroups": [
               {
                 "Status": "active",
-                "VpcSecurityGroupId": "sg-7922c298150d7675f"
+                "VpcSecurityGroupId": "sg-85ae714e2c63f0981"
               }
             ]
           }

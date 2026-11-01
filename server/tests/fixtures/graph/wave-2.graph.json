@@ -1,15 +1,15 @@
 {
   "contains": [
     {
-      "child": "/hostedzone/Z45OBADPP2X6797",
+      "child": "/hostedzone/ZLILUB282Q45AJT",
       "parent": "global"
     },
     {
-      "child": "/hostedzone/Z45OBADPP2X6797/app.w2.internal./A",
+      "child": "/hostedzone/ZLILUB282Q45AJT/app.w2.internal./A",
       "parent": "global"
     },
     {
-      "child": "/hostedzone/Z45OBADPP2X6797/db.w2.internal./A",
+      "child": "/hostedzone/ZLILUB282Q45AJT/db.w2.internal./A",
       "parent": "global"
     },
     {
@@ -25,11 +25,7 @@
       "parent": "ap-southeast-2"
     },
     {
-      "child": "2c68298e-38b6-44d7-8c1d-7a5b35e1f5e9",
-      "parent": "a042f776-eaf9-464e-8f1e-8d88a6ad3967"
-    },
-    {
-      "child": "a042f776-eaf9-464e-8f1e-8d88a6ad3967",
+      "child": "81dc3600-5953-4af0-8855-77f86fd253b4",
       "parent": "ap-southeast-2"
     },
     {
@@ -49,7 +45,7 @@
       "parent": "ap-southeast-2"
     },
     {
-      "child": "arn:aws:cloudformation:ap-southeast-2:000000000000:stack/w2-stack/ddaa2528-cfe7-45aa-8b6a-2fcce41f32cc",
+      "child": "arn:aws:cloudformation:ap-southeast-2:000000000000:stack/w2-stack/b32603f1-6960-4155-8f40-dc6f576f5fae",
       "parent": "ap-southeast-2"
     },
     {
@@ -65,20 +61,20 @@
       "parent": "ap-southeast-2"
     },
     {
-      "child": "arn:aws:elasticloadbalancing:ap-southeast-2:000000000000:listener-rule/app/w2-alb/74ca62bb5d81462c/a5fd1a810d4f417a/836427531c514b87",
+      "child": "arn:aws:elasticloadbalancing:ap-southeast-2:000000000000:listener-rule/app/w2-alb/3208d4a460774ed9/cc5403fc2d8b46a8/21eff4f14b7a49c5",
       "parent": "ap-southeast-2"
     },
     {
-      "child": "arn:aws:elasticloadbalancing:ap-southeast-2:000000000000:listener/app/w2-alb/74ca62bb5d81462c/a5fd1a810d4f417a",
+      "child": "arn:aws:elasticloadbalancing:ap-southeast-2:000000000000:listener/app/w2-alb/3208d4a460774ed9/cc5403fc2d8b46a8",
       "parent": "ap-southeast-2"
     },
     {
-      "child": "arn:aws:elasticloadbalancing:ap-southeast-2:000000000000:loadbalancer/app/w2-alb/74ca62bb5d81462c",
-      "parent": "vpc-1db2f371"
+      "child": "arn:aws:elasticloadbalancing:ap-southeast-2:000000000000:loadbalancer/app/w2-alb/3208d4a460774ed9",
+      "parent": "vpc-e033a7a4"
     },
     {
-      "child": "arn:aws:elasticloadbalancing:ap-southeast-2:000000000000:targetgroup/w2-tg/d4fadde448d443e1",
-      "parent": "vpc-1db2f371"
+      "child": "arn:aws:elasticloadbalancing:ap-southeast-2:000000000000:targetgroup/w2-tg/793cf05a4840403f",
+      "parent": "vpc-e033a7a4"
     },
     {
       "child": "arn:aws:events:ap-southeast-2:000000000000:event-bus/default",
@@ -105,7 +101,7 @@
       "parent": "ap-southeast-2"
     },
     {
-      "child": "arn:aws:kms:ap-southeast-2:000000000000:key/b13ec560-c4f7-420a-9463-c4bddbe501c1",
+      "child": "arn:aws:kms:ap-southeast-2:000000000000:key/ef4cdec5-ea05-4214-8e8c-e5a6ee387ac9",
       "parent": "ap-southeast-2"
     },
     {
@@ -125,27 +121,31 @@
       "parent": "ap-southeast-2"
     },
     {
-      "child": "arn:aws:secretsmanager:ap-southeast-2:000000000000:secret:w2-db-password-4BZU6K",
+      "child": "arn:aws:secretsmanager:ap-southeast-2:000000000000:secret:w2-db-password-4EDJJ2",
       "parent": "ap-southeast-2"
     },
     {
-      "child": "fs-52d5401d27744359b",
+      "child": "bdf8a87d-f82a-4ac1-83a3-72d531663b2d",
+      "parent": "81dc3600-5953-4af0-8855-77f86fd253b4"
+    },
+    {
+      "child": "fs-172656eef7ba4c46b",
       "parent": "ap-southeast-2"
     },
     {
-      "child": "fsap-55193c50dc8a47628",
+      "child": "fsap-e1ff7fe20d1744929",
       "parent": "ap-southeast-2"
     },
     {
-      "child": "fsmt-01d42c19e91d48119",
-      "parent": "subnet-5c186171"
+      "child": "fsmt-8ce5c2be424643d89",
+      "parent": "subnet-595709ec"
     },
     {
       "child": "global",
       "parent": "000000000000"
     },
     {
-      "child": "lt-aff1b0b07a8eb90d9",
+      "child": "lt-852f81e82c5c65e3c",
       "parent": "ap-southeast-2"
     },
     {
@@ -153,24 +153,24 @@
       "parent": "ap-southeast-2"
     },
     {
-      "child": "sg-5bfd55daf853758d5",
-      "parent": "vpc-1db2f371"
+      "child": "sg-413e26e52f5ad84d7",
+      "parent": "vpc-e033a7a4"
     },
     {
-      "child": "sg-bb3624e3b61656762",
-      "parent": "vpc-1db2f371"
+      "child": "sg-8ed80a96045ce3e92",
+      "parent": "vpc-e033a7a4"
     },
     {
       "child": "sg-default-ap-southeast-2",
       "parent": "vpc-default-ap-southeast-2"
     },
     {
-      "child": "subnet-5c186171",
-      "parent": "vpc-1db2f371/ap-southeast-2a"
+      "child": "subnet-595709ec",
+      "parent": "vpc-e033a7a4/ap-southeast-2a"
     },
     {
-      "child": "subnet-99826efa",
-      "parent": "vpc-1db2f371/ap-southeast-2b"
+      "child": "subnet-9863b9a7",
+      "parent": "vpc-e033a7a4/ap-southeast-2b"
     },
     {
       "child": "subnet-default-ap-southeast-2-a",
@@ -183,18 +183,6 @@
     {
       "child": "subnet-default-ap-southeast-2-c",
       "parent": "vpc-default-ap-southeast-2/ap-southeast-2c"
-    },
-    {
-      "child": "vpc-1db2f371",
-      "parent": "ap-southeast-2"
-    },
-    {
-      "child": "vpc-1db2f371/ap-southeast-2a",
-      "parent": "vpc-1db2f371"
-    },
-    {
-      "child": "vpc-1db2f371/ap-southeast-2b",
-      "parent": "vpc-1db2f371"
     },
     {
       "child": "vpc-default-ap-southeast-2",
@@ -211,85 +199,90 @@
     {
       "child": "vpc-default-ap-southeast-2/ap-southeast-2c",
       "parent": "vpc-default-ap-southeast-2"
+    },
+    {
+      "child": "vpc-e033a7a4",
+      "parent": "ap-southeast-2"
+    },
+    {
+      "child": "vpc-e033a7a4/ap-southeast-2a",
+      "parent": "vpc-e033a7a4"
+    },
+    {
+      "child": "vpc-e033a7a4/ap-southeast-2b",
+      "parent": "vpc-e033a7a4"
     }
   ],
   "edges": [
     {
-      "from": "fsap-55193c50dc8a47628",
-      "id": "access-point-of:fsap-55193c50dc8a47628->fs-52d5401d27744359b",
+      "from": "fsap-e1ff7fe20d1744929",
+      "id": "access-point-of:fsap-e1ff7fe20d1744929->fs-172656eef7ba4c46b",
       "kind": "access-point-of",
       "label": "",
-      "to": "fs-52d5401d27744359b"
+      "to": "fs-172656eef7ba4c46b"
     },
     {
       "from": "arn:aws:kms:ap-southeast-2:000000000000:alias/w2-data-key",
-      "id": "alias-of:arn:aws:kms:ap-southeast-2:000000000000:alias/w2-data-key->arn:aws:kms:ap-southeast-2:000000000000:key/b13ec560-c4f7-420a-9463-c4bddbe501c1",
+      "id": "alias-of:arn:aws:kms:ap-southeast-2:000000000000:alias/w2-data-key->arn:aws:kms:ap-southeast-2:000000000000:key/ef4cdec5-ea05-4214-8e8c-e5a6ee387ac9",
       "kind": "alias-of",
       "label": "",
-      "to": "arn:aws:kms:ap-southeast-2:000000000000:key/b13ec560-c4f7-420a-9463-c4bddbe501c1"
+      "to": "arn:aws:kms:ap-southeast-2:000000000000:key/ef4cdec5-ea05-4214-8e8c-e5a6ee387ac9"
     },
     {
-      "from": "/hostedzone/Z45OBADPP2X6797/app.w2.internal./A",
-      "id": "alias-to:/hostedzone/Z45OBADPP2X6797/app.w2.internal./A->arn:aws:elasticloadbalancing:ap-southeast-2:000000000000:loadbalancer/app/w2-alb/74ca62bb5d81462c",
+      "from": "/hostedzone/ZLILUB282Q45AJT/app.w2.internal./A",
+      "id": "alias-to:/hostedzone/ZLILUB282Q45AJT/app.w2.internal./A->arn:aws:elasticloadbalancing:ap-southeast-2:000000000000:loadbalancer/app/w2-alb/3208d4a460774ed9",
       "kind": "alias-to",
       "label": "",
-      "to": "arn:aws:elasticloadbalancing:ap-southeast-2:000000000000:loadbalancer/app/w2-alb/74ca62bb5d81462c"
+      "to": "arn:aws:elasticloadbalancing:ap-southeast-2:000000000000:loadbalancer/app/w2-alb/3208d4a460774ed9"
     },
     {
       "from": "arn:aws:autoscaling:ap-southeast-2:000000000000:autoScalingGroup:w2-asg",
-      "id": "asg-target-group:arn:aws:autoscaling:ap-southeast-2:000000000000:autoScalingGroup:w2-asg->arn:aws:elasticloadbalancing:ap-southeast-2:000000000000:targetgroup/w2-tg/d4fadde448d443e1",
+      "id": "asg-target-group:arn:aws:autoscaling:ap-southeast-2:000000000000:autoScalingGroup:w2-asg->arn:aws:elasticloadbalancing:ap-southeast-2:000000000000:targetgroup/w2-tg/793cf05a4840403f",
       "kind": "asg-target-group",
       "label": "",
-      "to": "arn:aws:elasticloadbalancing:ap-southeast-2:000000000000:targetgroup/w2-tg/d4fadde448d443e1"
+      "to": "arn:aws:elasticloadbalancing:ap-southeast-2:000000000000:targetgroup/w2-tg/793cf05a4840403f"
     },
     {
-      "from": "sg-bb3624e3b61656762",
-      "id": "attached:sg-bb3624e3b61656762->arn:aws:elasticloadbalancing:ap-southeast-2:000000000000:loadbalancer/app/w2-alb/74ca62bb5d81462c",
+      "from": "sg-413e26e52f5ad84d7",
+      "id": "attached:sg-413e26e52f5ad84d7->arn:aws:elasticloadbalancing:ap-southeast-2:000000000000:loadbalancer/app/w2-alb/3208d4a460774ed9",
       "kind": "attached",
       "label": "",
-      "to": "arn:aws:elasticloadbalancing:ap-southeast-2:000000000000:loadbalancer/app/w2-alb/74ca62bb5d81462c"
+      "to": "arn:aws:elasticloadbalancing:ap-southeast-2:000000000000:loadbalancer/app/w2-alb/3208d4a460774ed9"
     },
     {
-      "from": "sg-bb3624e3b61656762",
-      "id": "attached:sg-bb3624e3b61656762->fsmt-01d42c19e91d48119",
+      "from": "sg-413e26e52f5ad84d7",
+      "id": "attached:sg-413e26e52f5ad84d7->fsmt-8ce5c2be424643d89",
       "kind": "attached",
       "label": "",
-      "to": "fsmt-01d42c19e91d48119"
+      "to": "fsmt-8ce5c2be424643d89"
     },
     {
-      "from": "a042f776-eaf9-464e-8f1e-8d88a6ad3967",
-      "id": "backs-up-to:a042f776-eaf9-464e-8f1e-8d88a6ad3967->arn:aws:backup:ap-southeast-2:000000000000:backup-vault:w2-vault",
+      "from": "81dc3600-5953-4af0-8855-77f86fd253b4",
+      "id": "backs-up-to:81dc3600-5953-4af0-8855-77f86fd253b4->arn:aws:backup:ap-southeast-2:000000000000:backup-vault:w2-vault",
       "kind": "backs-up-to",
       "label": "",
       "to": "arn:aws:backup:ap-southeast-2:000000000000:backup-vault:w2-vault"
     },
     {
       "from": "/w2/app/api-token",
-      "id": "encrypted-by:/w2/app/api-token->arn:aws:kms:ap-southeast-2:000000000000:key/b13ec560-c4f7-420a-9463-c4bddbe501c1",
+      "id": "encrypted-by:/w2/app/api-token->arn:aws:kms:ap-southeast-2:000000000000:key/ef4cdec5-ea05-4214-8e8c-e5a6ee387ac9",
       "kind": "encrypted-by",
       "label": "",
-      "to": "arn:aws:kms:ap-southeast-2:000000000000:key/b13ec560-c4f7-420a-9463-c4bddbe501c1"
+      "to": "arn:aws:kms:ap-southeast-2:000000000000:key/ef4cdec5-ea05-4214-8e8c-e5a6ee387ac9"
     },
     {
       "from": "arn:aws:dynamodb:ap-southeast-2:000000000000:table/w2-orders",
-      "id": "encrypted-by:arn:aws:dynamodb:ap-southeast-2:000000000000:table/w2-orders->arn:aws:kms:ap-southeast-2:000000000000:key/b13ec560-c4f7-420a-9463-c4bddbe501c1",
+      "id": "encrypted-by:arn:aws:dynamodb:ap-southeast-2:000000000000:table/w2-orders->arn:aws:kms:ap-southeast-2:000000000000:key/ef4cdec5-ea05-4214-8e8c-e5a6ee387ac9",
       "kind": "encrypted-by",
       "label": "",
-      "to": "arn:aws:kms:ap-southeast-2:000000000000:key/b13ec560-c4f7-420a-9463-c4bddbe501c1"
+      "to": "arn:aws:kms:ap-southeast-2:000000000000:key/ef4cdec5-ea05-4214-8e8c-e5a6ee387ac9"
     },
     {
-      "from": "arn:aws:secretsmanager:ap-southeast-2:000000000000:secret:w2-db-password-4BZU6K",
-      "id": "encrypted-by:arn:aws:secretsmanager:ap-southeast-2:000000000000:secret:w2-db-password-4BZU6K->arn:aws:kms:ap-southeast-2:000000000000:key/b13ec560-c4f7-420a-9463-c4bddbe501c1",
+      "from": "arn:aws:secretsmanager:ap-southeast-2:000000000000:secret:w2-db-password-4EDJJ2",
+      "id": "encrypted-by:arn:aws:secretsmanager:ap-southeast-2:000000000000:secret:w2-db-password-4EDJJ2->arn:aws:kms:ap-southeast-2:000000000000:key/ef4cdec5-ea05-4214-8e8c-e5a6ee387ac9",
       "kind": "encrypted-by",
       "label": "",
-      "to": "arn:aws:kms:ap-southeast-2:000000000000:key/b13ec560-c4f7-420a-9463-c4bddbe501c1"
-    },
-    {
-      "from": "2c68298e-38b6-44d7-8c1d-7a5b35e1f5e9",
-      "id": "execution-role:2c68298e-38b6-44d7-8c1d-7a5b35e1f5e9->arn:aws:iam::000000000000:role/w2-mon-role",
-      "kind": "execution-role",
-      "label": "",
-      "to": "arn:aws:iam::000000000000:role/w2-mon-role"
+      "to": "arn:aws:kms:ap-southeast-2:000000000000:key/ef4cdec5-ea05-4214-8e8c-e5a6ee387ac9"
     },
     {
       "from": "arn:aws:events:ap-southeast-2:000000000000:rule/w2-hourly",
@@ -306,6 +299,13 @@
       "to": "arn:aws:iam::000000000000:role/w2-mon-role"
     },
     {
+      "from": "bdf8a87d-f82a-4ac1-83a3-72d531663b2d",
+      "id": "execution-role:bdf8a87d-f82a-4ac1-83a3-72d531663b2d->arn:aws:iam::000000000000:role/w2-mon-role",
+      "kind": "execution-role",
+      "label": "",
+      "to": "arn:aws:iam::000000000000:role/w2-mon-role"
+    },
+    {
       "from": "metric-filter:ap-southeast-2:w2-app-logs:w2-errors",
       "id": "filter-of:metric-filter:ap-southeast-2:w2-app-logs:w2-errors->arn:aws:logs:ap-southeast-2:000000000000:log-group:w2-app-logs",
       "kind": "filter-of",
@@ -313,53 +313,53 @@
       "to": "arn:aws:logs:ap-southeast-2:000000000000:log-group:w2-app-logs"
     },
     {
-      "from": "arn:aws:elasticloadbalancing:ap-southeast-2:000000000000:listener-rule/app/w2-alb/74ca62bb5d81462c/a5fd1a810d4f417a/836427531c514b87",
-      "id": "forwards-to:arn:aws:elasticloadbalancing:ap-southeast-2:000000000000:listener-rule/app/w2-alb/74ca62bb5d81462c/a5fd1a810d4f417a/836427531c514b87->arn:aws:elasticloadbalancing:ap-southeast-2:000000000000:targetgroup/w2-tg/d4fadde448d443e1",
+      "from": "arn:aws:elasticloadbalancing:ap-southeast-2:000000000000:listener-rule/app/w2-alb/3208d4a460774ed9/cc5403fc2d8b46a8/21eff4f14b7a49c5",
+      "id": "forwards-to:arn:aws:elasticloadbalancing:ap-southeast-2:000000000000:listener-rule/app/w2-alb/3208d4a460774ed9/cc5403fc2d8b46a8/21eff4f14b7a49c5->arn:aws:elasticloadbalancing:ap-southeast-2:000000000000:targetgroup/w2-tg/793cf05a4840403f",
       "kind": "forwards-to",
       "label": "",
-      "to": "arn:aws:elasticloadbalancing:ap-southeast-2:000000000000:targetgroup/w2-tg/d4fadde448d443e1"
+      "to": "arn:aws:elasticloadbalancing:ap-southeast-2:000000000000:targetgroup/w2-tg/793cf05a4840403f"
     },
     {
-      "from": "arn:aws:elasticloadbalancing:ap-southeast-2:000000000000:listener/app/w2-alb/74ca62bb5d81462c/a5fd1a810d4f417a",
-      "id": "forwards-to:arn:aws:elasticloadbalancing:ap-southeast-2:000000000000:listener/app/w2-alb/74ca62bb5d81462c/a5fd1a810d4f417a->arn:aws:elasticloadbalancing:ap-southeast-2:000000000000:targetgroup/w2-tg/d4fadde448d443e1",
+      "from": "arn:aws:elasticloadbalancing:ap-southeast-2:000000000000:listener/app/w2-alb/3208d4a460774ed9/cc5403fc2d8b46a8",
+      "id": "forwards-to:arn:aws:elasticloadbalancing:ap-southeast-2:000000000000:listener/app/w2-alb/3208d4a460774ed9/cc5403fc2d8b46a8->arn:aws:elasticloadbalancing:ap-southeast-2:000000000000:targetgroup/w2-tg/793cf05a4840403f",
       "kind": "forwards-to",
       "label": "",
-      "to": "arn:aws:elasticloadbalancing:ap-southeast-2:000000000000:targetgroup/w2-tg/d4fadde448d443e1"
+      "to": "arn:aws:elasticloadbalancing:ap-southeast-2:000000000000:targetgroup/w2-tg/793cf05a4840403f"
     },
     {
-      "from": "arn:aws:elasticloadbalancing:ap-southeast-2:000000000000:loadbalancer/app/w2-alb/74ca62bb5d81462c",
-      "id": "lb-subnet:arn:aws:elasticloadbalancing:ap-southeast-2:000000000000:loadbalancer/app/w2-alb/74ca62bb5d81462c->subnet-5c186171",
+      "from": "arn:aws:elasticloadbalancing:ap-southeast-2:000000000000:loadbalancer/app/w2-alb/3208d4a460774ed9",
+      "id": "lb-subnet:arn:aws:elasticloadbalancing:ap-southeast-2:000000000000:loadbalancer/app/w2-alb/3208d4a460774ed9->subnet-595709ec",
       "kind": "lb-subnet",
       "label": "",
-      "to": "subnet-5c186171"
+      "to": "subnet-595709ec"
     },
     {
-      "from": "arn:aws:elasticloadbalancing:ap-southeast-2:000000000000:loadbalancer/app/w2-alb/74ca62bb5d81462c",
-      "id": "lb-subnet:arn:aws:elasticloadbalancing:ap-southeast-2:000000000000:loadbalancer/app/w2-alb/74ca62bb5d81462c->subnet-99826efa",
+      "from": "arn:aws:elasticloadbalancing:ap-southeast-2:000000000000:loadbalancer/app/w2-alb/3208d4a460774ed9",
+      "id": "lb-subnet:arn:aws:elasticloadbalancing:ap-southeast-2:000000000000:loadbalancer/app/w2-alb/3208d4a460774ed9->subnet-9863b9a7",
       "kind": "lb-subnet",
       "label": "",
-      "to": "subnet-99826efa"
+      "to": "subnet-9863b9a7"
     },
     {
-      "from": "arn:aws:elasticloadbalancing:ap-southeast-2:000000000000:listener/app/w2-alb/74ca62bb5d81462c/a5fd1a810d4f417a",
-      "id": "listener-of:arn:aws:elasticloadbalancing:ap-southeast-2:000000000000:listener/app/w2-alb/74ca62bb5d81462c/a5fd1a810d4f417a->arn:aws:elasticloadbalancing:ap-southeast-2:000000000000:loadbalancer/app/w2-alb/74ca62bb5d81462c",
+      "from": "arn:aws:elasticloadbalancing:ap-southeast-2:000000000000:listener/app/w2-alb/3208d4a460774ed9/cc5403fc2d8b46a8",
+      "id": "listener-of:arn:aws:elasticloadbalancing:ap-southeast-2:000000000000:listener/app/w2-alb/3208d4a460774ed9/cc5403fc2d8b46a8->arn:aws:elasticloadbalancing:ap-southeast-2:000000000000:loadbalancer/app/w2-alb/3208d4a460774ed9",
       "kind": "listener-of",
       "label": "",
-      "to": "arn:aws:elasticloadbalancing:ap-southeast-2:000000000000:loadbalancer/app/w2-alb/74ca62bb5d81462c"
+      "to": "arn:aws:elasticloadbalancing:ap-southeast-2:000000000000:loadbalancer/app/w2-alb/3208d4a460774ed9"
     },
     {
       "from": "/w2/cfn/param",
-      "id": "managed-by:/w2/cfn/param->arn:aws:cloudformation:ap-southeast-2:000000000000:stack/w2-stack/ddaa2528-cfe7-45aa-8b6a-2fcce41f32cc",
+      "id": "managed-by:/w2/cfn/param->arn:aws:cloudformation:ap-southeast-2:000000000000:stack/w2-stack/b32603f1-6960-4155-8f40-dc6f576f5fae",
       "kind": "managed-by",
       "label": "",
-      "to": "arn:aws:cloudformation:ap-southeast-2:000000000000:stack/w2-stack/ddaa2528-cfe7-45aa-8b6a-2fcce41f32cc"
+      "to": "arn:aws:cloudformation:ap-southeast-2:000000000000:stack/w2-stack/b32603f1-6960-4155-8f40-dc6f576f5fae"
     },
     {
-      "from": "fsmt-01d42c19e91d48119",
-      "id": "mount-of:fsmt-01d42c19e91d48119->fs-52d5401d27744359b",
+      "from": "fsmt-8ce5c2be424643d89",
+      "id": "mount-of:fsmt-8ce5c2be424643d89->fs-172656eef7ba4c46b",
       "kind": "mount-of",
       "label": "",
-      "to": "fs-52d5401d27744359b"
+      "to": "fs-172656eef7ba4c46b"
     },
     {
       "from": "arn:aws:autoscaling:ap-southeast-2:000000000000:scalingPolicy:w2-asg:w2-cpu50",
@@ -369,29 +369,29 @@
       "to": "arn:aws:autoscaling:ap-southeast-2:000000000000:autoScalingGroup:w2-asg"
     },
     {
-      "from": "/hostedzone/Z45OBADPP2X6797/app.w2.internal./A",
-      "id": "record-of:/hostedzone/Z45OBADPP2X6797/app.w2.internal./A->/hostedzone/Z45OBADPP2X6797",
+      "from": "/hostedzone/ZLILUB282Q45AJT/app.w2.internal./A",
+      "id": "record-of:/hostedzone/ZLILUB282Q45AJT/app.w2.internal./A->/hostedzone/ZLILUB282Q45AJT",
       "kind": "record-of",
       "label": "",
-      "to": "/hostedzone/Z45OBADPP2X6797"
+      "to": "/hostedzone/ZLILUB282Q45AJT"
     },
     {
-      "from": "/hostedzone/Z45OBADPP2X6797/db.w2.internal./A",
-      "id": "record-of:/hostedzone/Z45OBADPP2X6797/db.w2.internal./A->/hostedzone/Z45OBADPP2X6797",
+      "from": "/hostedzone/ZLILUB282Q45AJT/db.w2.internal./A",
+      "id": "record-of:/hostedzone/ZLILUB282Q45AJT/db.w2.internal./A->/hostedzone/ZLILUB282Q45AJT",
       "kind": "record-of",
       "label": "",
-      "to": "/hostedzone/Z45OBADPP2X6797"
+      "to": "/hostedzone/ZLILUB282Q45AJT"
     },
     {
-      "from": "arn:aws:elasticloadbalancing:ap-southeast-2:000000000000:listener-rule/app/w2-alb/74ca62bb5d81462c/a5fd1a810d4f417a/836427531c514b87",
-      "id": "rule-of:arn:aws:elasticloadbalancing:ap-southeast-2:000000000000:listener-rule/app/w2-alb/74ca62bb5d81462c/a5fd1a810d4f417a/836427531c514b87->arn:aws:elasticloadbalancing:ap-southeast-2:000000000000:listener/app/w2-alb/74ca62bb5d81462c/a5fd1a810d4f417a",
+      "from": "arn:aws:elasticloadbalancing:ap-southeast-2:000000000000:listener-rule/app/w2-alb/3208d4a460774ed9/cc5403fc2d8b46a8/21eff4f14b7a49c5",
+      "id": "rule-of:arn:aws:elasticloadbalancing:ap-southeast-2:000000000000:listener-rule/app/w2-alb/3208d4a460774ed9/cc5403fc2d8b46a8/21eff4f14b7a49c5->arn:aws:elasticloadbalancing:ap-southeast-2:000000000000:listener/app/w2-alb/3208d4a460774ed9/cc5403fc2d8b46a8",
       "kind": "rule-of",
       "label": "",
-      "to": "arn:aws:elasticloadbalancing:ap-southeast-2:000000000000:listener/app/w2-alb/74ca62bb5d81462c/a5fd1a810d4f417a"
+      "to": "arn:aws:elasticloadbalancing:ap-southeast-2:000000000000:listener/app/w2-alb/3208d4a460774ed9/cc5403fc2d8b46a8"
     },
     {
-      "from": "2c68298e-38b6-44d7-8c1d-7a5b35e1f5e9",
-      "id": "selects:2c68298e-38b6-44d7-8c1d-7a5b35e1f5e9->arn:aws:s3:::w2-backup-src",
+      "from": "bdf8a87d-f82a-4ac1-83a3-72d531663b2d",
+      "id": "selects:bdf8a87d-f82a-4ac1-83a3-72d531663b2d->arn:aws:s3:::w2-backup-src",
       "kind": "selects",
       "label": "",
       "to": "arn:aws:s3:::w2-backup-src"
@@ -419,17 +419,17 @@
     },
     {
       "from": "arn:aws:autoscaling:ap-southeast-2:000000000000:autoScalingGroup:w2-asg",
-      "id": "uses-launch-template:arn:aws:autoscaling:ap-southeast-2:000000000000:autoScalingGroup:w2-asg->lt-aff1b0b07a8eb90d9",
+      "id": "uses-launch-template:arn:aws:autoscaling:ap-southeast-2:000000000000:autoScalingGroup:w2-asg->lt-852f81e82c5c65e3c",
       "kind": "uses-launch-template",
       "label": "",
-      "to": "lt-aff1b0b07a8eb90d9"
+      "to": "lt-852f81e82c5c65e3c"
     },
     {
-      "from": "arn:aws:elasticloadbalancing:ap-southeast-2:000000000000:loadbalancer/app/w2-alb/74ca62bb5d81462c",
-      "id": "uses-target-group:arn:aws:elasticloadbalancing:ap-southeast-2:000000000000:loadbalancer/app/w2-alb/74ca62bb5d81462c->arn:aws:elasticloadbalancing:ap-southeast-2:000000000000:targetgroup/w2-tg/d4fadde448d443e1",
+      "from": "arn:aws:elasticloadbalancing:ap-southeast-2:000000000000:loadbalancer/app/w2-alb/3208d4a460774ed9",
+      "id": "uses-target-group:arn:aws:elasticloadbalancing:ap-southeast-2:000000000000:loadbalancer/app/w2-alb/3208d4a460774ed9->arn:aws:elasticloadbalancing:ap-southeast-2:000000000000:targetgroup/w2-tg/793cf05a4840403f",
       "kind": "uses-target-group",
       "label": "",
-      "to": "arn:aws:elasticloadbalancing:ap-southeast-2:000000000000:targetgroup/w2-tg/d4fadde448d443e1"
+      "to": "arn:aws:elasticloadbalancing:ap-southeast-2:000000000000:targetgroup/w2-tg/793cf05a4840403f"
     },
     {
       "from": "arn:aws:cloudwatch:ap-southeast-2:000000000000:alarm:w2-errors-alarm",
@@ -439,17 +439,17 @@
       "to": "metric-filter:ap-southeast-2:w2-app-logs:w2-errors"
     },
     {
-      "from": "/hostedzone/Z45OBADPP2X6797",
-      "id": "zone-vpc:/hostedzone/Z45OBADPP2X6797->vpc-1db2f371",
+      "from": "/hostedzone/ZLILUB282Q45AJT",
+      "id": "zone-vpc:/hostedzone/ZLILUB282Q45AJT->vpc-e033a7a4",
       "kind": "zone-vpc",
       "label": "",
-      "to": "vpc-1db2f371"
+      "to": "vpc-e033a7a4"
     }
   ],
   "emulator": "floci",
   "nodes": [
     {
-      "id": "/hostedzone/Z45OBADPP2X6797",
+      "id": "/hostedzone/ZLILUB282Q45AJT",
       "kind": "hosted-zone",
       "label": "w2.internal.",
       "props": {
@@ -459,28 +459,28 @@
         "vpcs": [
           {
             "region": "ap-southeast-2",
-            "vpc": "vpc-1db2f371"
+            "vpc": "vpc-e033a7a4"
           }
         ]
       }
     },
     {
-      "id": "/hostedzone/Z45OBADPP2X6797/app.w2.internal./A",
+      "id": "/hostedzone/ZLILUB282Q45AJT/app.w2.internal./A",
       "kind": "record-set",
       "label": "app.w2.internal. A",
       "props": {
         "alias": {
-          "dnsName": "w2-alb-74ca62bb5d81462c.elb.localhost.floci.io",
+          "dnsName": "w2-alb-3208d4a460774ed9.elb.localhost.floci.io",
           "evaluateHealth": false,
           "zone": "Z1GM3OXH4ZPM65"
         },
         "name": "app.w2.internal.",
         "type": "A",
-        "zone": "/hostedzone/Z45OBADPP2X6797"
+        "zone": "/hostedzone/ZLILUB282Q45AJT"
       }
     },
     {
-      "id": "/hostedzone/Z45OBADPP2X6797/db.w2.internal./A",
+      "id": "/hostedzone/ZLILUB282Q45AJT/db.w2.internal./A",
       "kind": "record-set",
       "label": "db.w2.internal. A",
       "props": {
@@ -490,7 +490,7 @@
         "values": [
           "10.91.1.20"
         ],
-        "zone": "/hostedzone/Z45OBADPP2X6797"
+        "zone": "/hostedzone/ZLILUB282Q45AJT"
       }
     },
     {
@@ -499,8 +499,8 @@
       "label": "/w2/app/api-token",
       "props": {
         "dataType": "text",
-        "kmsKey": "b13ec560-c4f7-420a-9463-c4bddbe501c1",
-        "lastModified": "2026-10-31 22:16:09.231000+07:00",
+        "kmsKey": "ef4cdec5-ea05-4214-8e8c-e5a6ee387ac9",
+        "lastModified": "2026-11-01 16:05:21.001000+07:00",
         "tags": {
           "lab": "w2"
         },
@@ -515,7 +515,7 @@
       "label": "/w2/app/db-host",
       "props": {
         "dataType": "text",
-        "lastModified": "2026-10-31 22:16:09.229000+07:00",
+        "lastModified": "2026-11-01 16:05:20.998000+07:00",
         "tags": {
           "lab": "w2"
         },
@@ -530,7 +530,7 @@
       "label": "/w2/cfn/param",
       "props": {
         "dataType": "text",
-        "lastModified": "2026-10-31 22:16:09.248000+07:00",
+        "lastModified": "2026-11-01 16:05:21.016000+07:00",
         "tier": "Standard",
         "type": "String",
         "version": 1
@@ -543,18 +543,7 @@
       "props": {}
     },
     {
-      "id": "2c68298e-38b6-44d7-8c1d-7a5b35e1f5e9",
-      "kind": "backup-selection",
-      "label": "w2-selection",
-      "props": {
-        "resources": [
-          "arn:aws:s3:::w2-backup-src"
-        ],
-        "role": "arn:aws:iam::000000000000:role/w2-mon-role"
-      }
-    },
-    {
-      "id": "a042f776-eaf9-464e-8f1e-8d88a6ad3967",
+      "id": "81dc3600-5953-4af0-8855-77f86fd253b4",
       "kind": "backup-plan",
       "label": "w2-plan",
       "props": {
@@ -583,15 +572,15 @@
         "desiredCapacity": 0,
         "healthCheckType": "ELB",
         "launchTemplate": {
-          "id": "lt-aff1b0b07a8eb90d9",
+          "id": "lt-852f81e82c5c65e3c",
           "name": null,
           "version": "$Latest"
         },
         "maxSize": 2,
         "minSize": 0,
-        "subnets": "subnet-5c186171,subnet-99826efa",
+        "subnets": "subnet-595709ec,subnet-9863b9a7",
         "targetGroups": [
-          "arn:aws:elasticloadbalancing:ap-southeast-2:000000000000:targetgroup/w2-tg/d4fadde448d443e1"
+          "arn:aws:elasticloadbalancing:ap-southeast-2:000000000000:targetgroup/w2-tg/793cf05a4840403f"
         ]
       }
     },
@@ -617,11 +606,11 @@
       }
     },
     {
-      "id": "arn:aws:cloudformation:ap-southeast-2:000000000000:stack/w2-stack/ddaa2528-cfe7-45aa-8b6a-2fcce41f32cc",
+      "id": "arn:aws:cloudformation:ap-southeast-2:000000000000:stack/w2-stack/b32603f1-6960-4155-8f40-dc6f576f5fae",
       "kind": "cloudformation-stack",
       "label": "w2-stack",
       "props": {
-        "created": "2026-10-31 15:16:09.245770+00:00",
+        "created": "2026-11-01 09:05:21.013534+00:00",
         "resourceCount": 1,
         "resources": [
           {
@@ -635,7 +624,7 @@
           "lab": "w2"
         },
         "terminationProtection": false,
-        "updated": "2026-10-31 15:16:09.248908+00:00"
+        "updated": "2026-11-01 09:05:21.016365+00:00"
       }
     },
     {
@@ -682,24 +671,24 @@
           }
         ],
         "itemCount": 0,
-        "kmsKey": "arn:aws:kms:ap-southeast-2:000000000000:key/b13ec560-c4f7-420a-9463-c4bddbe501c1",
+        "kmsKey": "arn:aws:kms:ap-southeast-2:000000000000:key/ef4cdec5-ea05-4214-8e8c-e5a6ee387ac9",
         "partitionKey": "pk",
         "pointInTimeRecovery": "ENABLED",
         "status": "ACTIVE",
         "stream": "NEW_AND_OLD_IMAGES",
-        "streamArn": "arn:aws:dynamodb:ap-southeast-2:000000000000:table/w2-orders/stream/2026-10-31T15:16:09.221",
+        "streamArn": "arn:aws:dynamodb:ap-southeast-2:000000000000:table/w2-orders/stream/2026-11-01T09:05:20.989",
         "tableClass": "STANDARD",
         "ttlAttribute": "expiresAt"
       }
     },
     {
-      "id": "arn:aws:elasticloadbalancing:ap-southeast-2:000000000000:listener-rule/app/w2-alb/74ca62bb5d81462c/a5fd1a810d4f417a/836427531c514b87",
+      "id": "arn:aws:elasticloadbalancing:ap-southeast-2:000000000000:listener-rule/app/w2-alb/3208d4a460774ed9/cc5403fc2d8b46a8/21eff4f14b7a49c5",
       "kind": "listener-rule",
       "label": "priority 10",
       "props": {
         "actions": [
           {
-            "targetGroup": "arn:aws:elasticloadbalancing:ap-southeast-2:000000000000:targetgroup/w2-tg/d4fadde448d443e1",
+            "targetGroup": "arn:aws:elasticloadbalancing:ap-southeast-2:000000000000:targetgroup/w2-tg/793cf05a4840403f",
             "type": "forward"
           }
         ],
@@ -715,7 +704,7 @@
       }
     },
     {
-      "id": "arn:aws:elasticloadbalancing:ap-southeast-2:000000000000:listener/app/w2-alb/74ca62bb5d81462c/a5fd1a810d4f417a",
+      "id": "arn:aws:elasticloadbalancing:ap-southeast-2:000000000000:listener/app/w2-alb/3208d4a460774ed9/cc5403fc2d8b46a8",
       "kind": "listener",
       "label": "HTTP:18091",
       "props": {
@@ -723,7 +712,7 @@
           {
             "fixedResponse": null,
             "redirect": null,
-            "targetGroup": "arn:aws:elasticloadbalancing:ap-southeast-2:000000000000:targetgroup/w2-tg/d4fadde448d443e1",
+            "targetGroup": "arn:aws:elasticloadbalancing:ap-southeast-2:000000000000:targetgroup/w2-tg/793cf05a4840403f",
             "type": "forward"
           }
         ],
@@ -733,7 +722,7 @@
       }
     },
     {
-      "id": "arn:aws:elasticloadbalancing:ap-southeast-2:000000000000:loadbalancer/app/w2-alb/74ca62bb5d81462c",
+      "id": "arn:aws:elasticloadbalancing:ap-southeast-2:000000000000:loadbalancer/app/w2-alb/3208d4a460774ed9",
       "kind": "load-balancer",
       "label": "w2-alb",
       "props": {
@@ -741,22 +730,22 @@
           "ap-southeast-2a",
           "ap-southeast-2b"
         ],
-        "dnsName": "w2-alb-74ca62bb5d81462c.elb.localhost.floci.io",
+        "dnsName": "w2-alb-3208d4a460774ed9.elb.localhost.floci.io",
         "ipAddressType": "ipv4",
         "scheme": "internal",
         "securityGroups": [
-          "sg-bb3624e3b61656762"
+          "sg-413e26e52f5ad84d7"
         ],
         "state": "active",
         "subnets": [
-          "subnet-5c186171",
-          "subnet-99826efa"
+          "subnet-595709ec",
+          "subnet-9863b9a7"
         ],
         "type": "application"
       }
     },
     {
-      "id": "arn:aws:elasticloadbalancing:ap-southeast-2:000000000000:targetgroup/w2-tg/d4fadde448d443e1",
+      "id": "arn:aws:elasticloadbalancing:ap-southeast-2:000000000000:targetgroup/w2-tg/793cf05a4840403f",
       "kind": "target-group",
       "label": "w2-tg",
       "props": {
@@ -770,7 +759,7 @@
           "unhealthy": 2
         },
         "loadBalancers": [
-          "arn:aws:elasticloadbalancing:ap-southeast-2:000000000000:loadbalancer/app/w2-alb/74ca62bb5d81462c"
+          "arn:aws:elasticloadbalancing:ap-southeast-2:000000000000:loadbalancer/app/w2-alb/3208d4a460774ed9"
         ],
         "port": 80,
         "protocol": "HTTP",
@@ -839,16 +828,16 @@
       "kind": "kms-alias",
       "label": "alias/w2-data-key",
       "props": {
-        "targetKey": "b13ec560-c4f7-420a-9463-c4bddbe501c1"
+        "targetKey": "ef4cdec5-ea05-4214-8e8c-e5a6ee387ac9"
       }
     },
     {
-      "id": "arn:aws:kms:ap-southeast-2:000000000000:key/b13ec560-c4f7-420a-9463-c4bddbe501c1",
+      "id": "arn:aws:kms:ap-southeast-2:000000000000:key/ef4cdec5-ea05-4214-8e8c-e5a6ee387ac9",
       "kind": "kms-key",
       "label": "w2-data-key",
       "props": {
         "description": "w2-data-key",
-        "keyId": "b13ec560-c4f7-420a-9463-c4bddbe501c1",
+        "keyId": "ef4cdec5-ea05-4214-8e8c-e5a6ee387ac9",
         "multiRegion": false,
         "origin": "AWS_KMS",
         "rotation": true,
@@ -863,9 +852,15 @@
       "label": "w2-app-logs",
       "props": {
         "deletionProtection": false,
+        "logStreams": [
+          {
+            "lastEvent": 1793523921054,
+            "name": "web-1"
+          }
+        ],
         "metricFilters": 1,
         "retentionDays": 7,
-        "storedBytes": 0
+        "storedBytes": 46
       }
     },
     {
@@ -913,13 +908,13 @@
       }
     },
     {
-      "id": "arn:aws:secretsmanager:ap-southeast-2:000000000000:secret:w2-db-password-4BZU6K",
+      "id": "arn:aws:secretsmanager:ap-southeast-2:000000000000:secret:w2-db-password-4EDJJ2",
       "kind": "secretsmanager-secret",
       "label": "w2-db-password",
       "props": {
         "description": "w2 dummy secret",
-        "kmsKey": "b13ec560-c4f7-420a-9463-c4bddbe501c1",
-        "lastChanged": "2026-10-31 22:16:09.236000+07:00",
+        "kmsKey": "ef4cdec5-ea05-4214-8e8c-e5a6ee387ac9",
+        "lastChanged": "2026-11-01 16:05:21.008000+07:00",
         "pendingRotation": false,
         "rotationEnabled": false,
         "tags": {
@@ -929,7 +924,18 @@
       }
     },
     {
-      "id": "fs-52d5401d27744359b",
+      "id": "bdf8a87d-f82a-4ac1-83a3-72d531663b2d",
+      "kind": "backup-selection",
+      "label": "w2-selection",
+      "props": {
+        "resources": [
+          "arn:aws:s3:::w2-backup-src"
+        ],
+        "role": "arn:aws:iam::000000000000:role/w2-mon-role"
+      }
+    },
+    {
+      "id": "fs-172656eef7ba4c46b",
       "kind": "efs-file-system",
       "label": "w2-efs",
       "props": {
@@ -946,25 +952,25 @@
       }
     },
     {
-      "id": "fsap-55193c50dc8a47628",
+      "id": "fsap-e1ff7fe20d1744929",
       "kind": "efs-access-point",
       "label": "w2-efs-ap",
       "props": {
-        "fileSystem": "fs-52d5401d27744359b",
+        "fileSystem": "fs-172656eef7ba4c46b",
         "path": "/app",
         "posixUser": "1000:1000",
         "state": "available"
       }
     },
     {
-      "id": "fsmt-01d42c19e91d48119",
+      "id": "fsmt-8ce5c2be424643d89",
       "kind": "efs-mount-target",
-      "label": "fs-52d5401d27744359b subnet-5c186171",
+      "label": "fs-172656eef7ba4c46b subnet-595709ec",
       "props": {
-        "fileSystem": "fs-52d5401d27744359b",
+        "fileSystem": "fs-172656eef7ba4c46b",
         "ipAddress": "10.0.0.10",
         "securityGroups": [
-          "sg-bb3624e3b61656762"
+          "sg-413e26e52f5ad84d7"
         ],
         "state": "available"
       }
@@ -976,7 +982,7 @@
       "props": {}
     },
     {
-      "id": "lt-aff1b0b07a8eb90d9",
+      "id": "lt-852f81e82c5c65e3c",
       "kind": "launch-template",
       "label": "w2-lt",
       "props": {
@@ -1002,25 +1008,7 @@
       }
     },
     {
-      "id": "sg-5bfd55daf853758d5",
-      "kind": "security-group",
-      "label": "default",
-      "props": {
-        "egress": [
-          {
-            "from": null,
-            "protocol": "-1",
-            "sources": [
-              "0.0.0.0/0"
-            ],
-            "to": null
-          }
-        ],
-        "groupName": "default"
-      }
-    },
-    {
-      "id": "sg-bb3624e3b61656762",
+      "id": "sg-413e26e52f5ad84d7",
       "kind": "security-group",
       "label": "w2-net-sg",
       "props": {
@@ -1056,6 +1044,24 @@
       }
     },
     {
+      "id": "sg-8ed80a96045ce3e92",
+      "kind": "security-group",
+      "label": "default",
+      "props": {
+        "egress": [
+          {
+            "from": null,
+            "protocol": "-1",
+            "sources": [
+              "0.0.0.0/0"
+            ],
+            "to": null
+          }
+        ],
+        "groupName": "default"
+      }
+    },
+    {
       "id": "sg-default-ap-southeast-2",
       "kind": "security-group",
       "label": "default",
@@ -1074,7 +1080,7 @@
       }
     },
     {
-      "id": "subnet-5c186171",
+      "id": "subnet-595709ec",
       "kind": "subnet-private",
       "label": "w2-net-a",
       "props": {
@@ -1084,7 +1090,7 @@
       }
     },
     {
-      "id": "subnet-99826efa",
+      "id": "subnet-9863b9a7",
       "kind": "subnet-private",
       "label": "w2-net-b",
       "props": {
@@ -1124,27 +1130,6 @@
       }
     },
     {
-      "id": "vpc-1db2f371",
-      "kind": "vpc",
-      "label": "w2-net-vpc",
-      "props": {
-        "cidr": "10.91.0.0/16",
-        "enableDnsHostnames": false
-      }
-    },
-    {
-      "id": "vpc-1db2f371/ap-southeast-2a",
-      "kind": "az",
-      "label": "ap-southeast-2a",
-      "props": {}
-    },
-    {
-      "id": "vpc-1db2f371/ap-southeast-2b",
-      "kind": "az",
-      "label": "ap-southeast-2b",
-      "props": {}
-    },
-    {
       "id": "vpc-default-ap-southeast-2",
       "kind": "vpc",
       "label": "vpc-default-ap-southeast-2",
@@ -1170,6 +1155,27 @@
       "id": "vpc-default-ap-southeast-2/ap-southeast-2c",
       "kind": "az",
       "label": "ap-southeast-2c",
+      "props": {}
+    },
+    {
+      "id": "vpc-e033a7a4",
+      "kind": "vpc",
+      "label": "w2-net-vpc",
+      "props": {
+        "cidr": "10.91.0.0/16",
+        "enableDnsHostnames": false
+      }
+    },
+    {
+      "id": "vpc-e033a7a4/ap-southeast-2a",
+      "kind": "az",
+      "label": "ap-southeast-2a",
+      "props": {}
+    },
+    {
+      "id": "vpc-e033a7a4/ap-southeast-2b",
+      "kind": "az",
+      "label": "ap-southeast-2b",
       "props": {}
     }
   ],

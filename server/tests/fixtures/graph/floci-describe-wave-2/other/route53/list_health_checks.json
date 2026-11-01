@@ -1,0 +1,13 @@
+{
+  "calls": [
+    {
+      "params": {},
+      "response": {
+        "HealthChecks": [],
+        "IsTruncated": false,
+        "Marker": "",
+        "MaxItems": "100"
+      }
+    }
+  ]
+}

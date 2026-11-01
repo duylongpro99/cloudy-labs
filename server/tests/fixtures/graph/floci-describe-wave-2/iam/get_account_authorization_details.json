@@ -30,10 +30,10 @@
               "Version": "2012-10-17"
             },
             "AttachedManagedPolicies": [],
-            "CreateDate": "2026-10-31 15:16:09.270000+00:00",
+            "CreateDate": "2026-11-01 09:05:21.035000+00:00",
             "InstanceProfileList": [],
             "Path": "/",
-            "RoleId": "AROAFAD5J90EXOQGX2B9",
+            "RoleId": "AROADG25D93Q9L6P0Q8D",
             "RoleName": "w2-mon-role",
             "RolePolicyList": [],
             "Tags": [

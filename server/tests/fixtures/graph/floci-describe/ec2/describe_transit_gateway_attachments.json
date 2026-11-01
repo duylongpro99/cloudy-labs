@@ -3,7 +3,7 @@
     {
       "params": {
         "TransitGatewayAttachmentIds": [
-          "tgw-attach-2fc188cb4468af231"
+          "tgw-attach-f65b20b05d2d6ceda"
         ]
       },
       "response": {
@@ -11,10 +11,10 @@
           {
             "Association": {
               "State": "associated",
-              "TransitGatewayRouteTableId": "tgw-rtb-91762891d9f9209f7"
+              "TransitGatewayRouteTableId": "tgw-rtb-52fea0ac9f29d14d9"
             },
-            "CreationTime": "2026-10-31 14:41:10.376000+00:00",
-            "ResourceId": "vpc-29250840",
+            "CreationTime": "2026-11-01 09:04:55.168000+00:00",
+            "ResourceId": "vpc-0359d433",
             "ResourceOwnerId": "000000000000",
             "ResourceType": "vpc",
             "State": "available",
@@ -24,8 +24,8 @@
                 "Value": "wave1-tgw-b"
               }
             ],
-            "TransitGatewayAttachmentId": "tgw-attach-2fc188cb4468af231",
-            "TransitGatewayId": "tgw-694378cffac133fc8",
+            "TransitGatewayAttachmentId": "tgw-attach-f65b20b05d2d6ceda",
+            "TransitGatewayId": "tgw-7d32641965bf5b49c",
             "TransitGatewayOwnerId": "000000000000"
           }
         ]

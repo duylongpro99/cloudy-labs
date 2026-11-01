@@ -5,10 +5,10 @@
       "response": {
         "AccessPoints": [
           {
-            "AccessPointArn": "arn:aws:elasticfilesystem:ap-southeast-2:000000000000:access-point/fsap-55193c50dc8a47628",
-            "AccessPointId": "fsap-55193c50dc8a47628",
-            "ClientToken": "9a533ca6-636d-4b9e-81b2-17c1a1dac7bc",
-            "FileSystemId": "fs-52d5401d27744359b",
+            "AccessPointArn": "arn:aws:elasticfilesystem:ap-southeast-2:000000000000:access-point/fsap-e1ff7fe20d1744929",
+            "AccessPointId": "fsap-e1ff7fe20d1744929",
+            "ClientToken": "ee91871d-1044-44e4-ac42-2e1df67f4cd6",
+            "FileSystemId": "fs-172656eef7ba4c46b",
             "LifeCycleState": "available",
             "Name": "w2-efs-ap",
             "OwnerId": "000000000000",

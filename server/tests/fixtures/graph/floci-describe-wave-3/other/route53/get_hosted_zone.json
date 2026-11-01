@@ -2,7 +2,7 @@
   "calls": [
     {
       "params": {
-        "Id": "/hostedzone/Z6WG0M5Q336PDHF"
+        "Id": "/hostedzone/Z4HMOJ1ZS4SW4F9"
       },
       "response": {
         "DelegationSet": {
@@ -18,7 +18,7 @@
           "Config": {
             "PrivateZone": false
           },
-          "Id": "/hostedzone/Z6WG0M5Q336PDHF",
+          "Id": "/hostedzone/Z4HMOJ1ZS4SW4F9",
           "Name": "w3-edge.example.com.",
           "ResourceRecordSetCount": 4
         }

@@ -3,13 +3,13 @@
     {
       "params": {
         "ResourceArns": [
-          "arn:aws:elasticloadbalancing:ap-southeast-2:000000000000:loadbalancer/app/w3-edge-alb/69f799da92464b34"
+          "arn:aws:elasticloadbalancing:ap-southeast-2:000000000000:loadbalancer/app/w3-edge-alb/7004a8a039ba453d"
         ]
       },
       "response": {
         "TagDescriptions": [
           {
-            "ResourceArn": "arn:aws:elasticloadbalancing:ap-southeast-2:000000000000:loadbalancer/app/w3-edge-alb/69f799da92464b34",
+            "ResourceArn": "arn:aws:elasticloadbalancing:ap-southeast-2:000000000000:loadbalancer/app/w3-edge-alb/7004a8a039ba453d",
             "Tags": []
           }
         ]

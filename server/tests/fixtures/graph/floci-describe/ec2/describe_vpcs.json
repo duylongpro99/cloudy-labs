@@ -8,7 +8,7 @@
             "CidrBlock": "10.80.0.0/16",
             "CidrBlockAssociationSet": [
               {
-                "AssociationId": "vpc-cidr-assoc-dae62a8d",
+                "AssociationId": "vpc-cidr-assoc-4f692c97",
                 "CidrBlock": "10.80.0.0/16",
                 "CidrBlockState": {
                   "State": "associated"
@@ -27,13 +27,13 @@
                 "Value": "wave1-a"
               }
             ],
-            "VpcId": "vpc-03e9e3f9"
+            "VpcId": "vpc-95741f0b"
           },
           {
             "CidrBlock": "10.81.0.0/16",
             "CidrBlockAssociationSet": [
               {
-                "AssociationId": "vpc-cidr-assoc-51448ab4",
+                "AssociationId": "vpc-cidr-assoc-044529d1",
                 "CidrBlock": "10.81.0.0/16",
                 "CidrBlockState": {
                   "State": "associated"
@@ -52,7 +52,7 @@
                 "Value": "wave1-b"
               }
             ],
-            "VpcId": "vpc-29250840"
+            "VpcId": "vpc-0359d433"
           },
           {
             "CidrBlock": "172.31.0.0/16",

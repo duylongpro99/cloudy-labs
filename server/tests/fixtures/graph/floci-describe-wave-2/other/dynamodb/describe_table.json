@@ -18,9 +18,9 @@
           ],
           "BillingModeSummary": {
             "BillingMode": "PAY_PER_REQUEST",
-            "LastUpdateToPayPerRequestDateTime": "2026-10-31 22:16:09+07:00"
+            "LastUpdateToPayPerRequestDateTime": "2026-11-01 16:05:20+07:00"
           },
-          "CreationDateTime": "2026-10-31 22:16:09+07:00",
+          "CreationDateTime": "2026-11-01 16:05:20+07:00",
           "DeletionProtectionEnabled": false,
           "GlobalSecondaryIndexes": [
             {
@@ -52,15 +52,15 @@
               "KeyType": "HASH"
             }
           ],
-          "LatestStreamArn": "arn:aws:dynamodb:ap-southeast-2:000000000000:table/w2-orders/stream/2026-10-31T15:16:09.221",
-          "LatestStreamLabel": "2026-10-31T15:16:09.221",
+          "LatestStreamArn": "arn:aws:dynamodb:ap-southeast-2:000000000000:table/w2-orders/stream/2026-11-01T09:05:20.989",
+          "LatestStreamLabel": "2026-11-01T09:05:20.989",
           "ProvisionedThroughput": {
             "NumberOfDecreasesToday": 0,
             "ReadCapacityUnits": 0,
             "WriteCapacityUnits": 0
           },
           "SSEDescription": {
-            "KMSMasterKeyArn": "arn:aws:kms:ap-southeast-2:000000000000:key/b13ec560-c4f7-420a-9463-c4bddbe501c1",
+            "KMSMasterKeyArn": "arn:aws:kms:ap-southeast-2:000000000000:key/ef4cdec5-ea05-4214-8e8c-e5a6ee387ac9",
             "SSEType": "KMS",
             "Status": "ENABLED"
           },
@@ -72,7 +72,7 @@
           "TableClassSummary": {
             "TableClass": "STANDARD"
           },
-          "TableId": "221187b5-fa0b-40ae-986a-9882f7fbb751",
+          "TableId": "9bdaa5fd-481a-461f-84b3-248a69f42698",
           "TableName": "w2-orders",
           "TableSizeBytes": 0,
           "TableStatus": "ACTIVE",

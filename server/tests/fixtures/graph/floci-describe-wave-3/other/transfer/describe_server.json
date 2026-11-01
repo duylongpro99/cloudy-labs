@@ -2,27 +2,27 @@
   "calls": [
     {
       "params": {
-        "ServerId": "s-5f25bf4cc12f4b3bb"
+        "ServerId": "s-9f27bcb53c884c8eb"
       },
       "response": {
         "Server": {
-          "Arn": "arn:aws:transfer:ap-southeast-2:000000000000:server/s-5f25bf4cc12f4b3bb",
+          "Arn": "arn:aws:transfer:ap-southeast-2:000000000000:server/s-9f27bcb53c884c8eb",
           "Domain": "S3",
           "EndpointDetails": {
             "SubnetIds": [
-              "subnet-85834620"
+              "subnet-959a86c4"
             ],
-            "VpcId": "vpc-51ff849d"
+            "VpcId": "vpc-733acc97"
           },
           "EndpointType": "VPC",
-          "HostKeyFingerprint": "SHA256:AAAAflociemulatedkey5f25bf4c",
+          "HostKeyFingerprint": "SHA256:AAAAflociemulatedkey9f27bcb5",
           "IdentityProviderType": "SERVICE_MANAGED",
           "LoggingRole": "arn:aws:iam::000000000000:role/w3-dm-role",
           "Protocols": [
             "SFTP"
           ],
           "SecurityPolicyName": "TransferSecurityPolicy-2020-06",
-          "ServerId": "s-5f25bf4cc12f4b3bb",
+          "ServerId": "s-9f27bcb53c884c8eb",
           "State": "ONLINE",
           "Tags": [
             {

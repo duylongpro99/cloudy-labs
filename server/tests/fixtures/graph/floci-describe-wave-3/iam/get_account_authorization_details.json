@@ -26,10 +26,10 @@
               "Version": "2012-10-17"
             },
             "AttachedManagedPolicies": [],
-            "CreateDate": "2026-10-31 16:25:12.209000+00:00",
+            "CreateDate": "2026-11-01 09:05:41.602000+00:00",
             "InstanceProfileList": [],
             "Path": "/",
-            "RoleId": "AROA9B4G5NO99CKM6SQ9",
+            "RoleId": "AROABZ3CR26YCW9X1PRA",
             "RoleName": "w3-cognito-auth",
             "RolePolicyList": []
           },
@@ -48,10 +48,10 @@
               "Version": "2012-10-17"
             },
             "AttachedManagedPolicies": [],
-            "CreateDate": "2026-10-31 16:25:12.208000+00:00",
+            "CreateDate": "2026-11-01 09:05:41.601000+00:00",
             "InstanceProfileList": [],
             "Path": "/",
-            "RoleId": "AROA6Q35FGNC9UWHL8AG",
+            "RoleId": "AROA53BUJU0NYB1Q4BAC",
             "RoleName": "w3-config",
             "RolePolicyList": []
           },
@@ -74,10 +74,10 @@
               "Version": "2012-10-17"
             },
             "AttachedManagedPolicies": [],
-            "CreateDate": "2026-10-31 16:25:10.349000+00:00",
+            "CreateDate": "2026-11-01 09:05:39.747000+00:00",
             "InstanceProfileList": [],
             "Path": "/",
-            "RoleId": "AROAAGERYIWIFVXPQT65",
+            "RoleId": "AROADCC8ALMSI7OPT8N8",
             "RoleName": "w3-delivery-role",
             "RolePolicyList": []
           },
@@ -101,10 +101,10 @@
               "Version": "2012-10-17"
             },
             "AttachedManagedPolicies": [],
-            "CreateDate": "2026-10-31 16:25:07.933000+00:00",
+            "CreateDate": "2026-11-01 09:05:37.433000+00:00",
             "InstanceProfileList": [],
             "Path": "/",
-            "RoleId": "AROATZJZUN8QS63IL569",
+            "RoleId": "AROA1HX2MEX756MI9P6A",
             "RoleName": "w3-dm-role",
             "RolePolicyList": []
           },
@@ -126,10 +126,10 @@
               "Version": "2012-10-17"
             },
             "AttachedManagedPolicies": [],
-            "CreateDate": "2026-10-31 16:25:12+00:00",
+            "CreateDate": "2026-11-01 09:05:41.410000+00:00",
             "InstanceProfileList": [],
             "Path": "/",
-            "RoleId": "AROAUBXA5BU3WBTW3EIX",
+            "RoleId": "AROA2540MHJYWC6OG8WQ",
             "RoleName": "w3-edge-fn-role",
             "RolePolicyList": []
           },
@@ -152,10 +152,10 @@
               "Version": "2012-10-17"
             },
             "AttachedManagedPolicies": [],
-            "CreateDate": "2026-10-31 16:25:12.589000+00:00",
+            "CreateDate": "2026-11-01 09:05:41.855000+00:00",
             "InstanceProfileList": [],
             "Path": "/",
-            "RoleId": "AROAHY4TSFA9Q1MTQEJJ",
+            "RoleId": "AROAN87QIHYAKFSULXM7",
             "RoleName": "w3-msg-role",
             "RolePolicyList": [],
             "Tags": [
@@ -195,10 +195,10 @@
               "Version": "2012-10-17"
             },
             "AttachedManagedPolicies": [],
-            "CreateDate": "2026-10-31 16:25:12.209000+00:00",
+            "CreateDate": "2026-11-01 09:05:41.602000+00:00",
             "InstanceProfileList": [],
             "Path": "/",
-            "RoleId": "AROA9B4G5NO99CKM6SQ9",
+            "RoleId": "AROABZ3CR26YCW9X1PRA",
             "RoleName": "w3-cognito-auth",
             "RolePolicyList": []
           },
@@ -217,10 +217,10 @@
               "Version": "2012-10-17"
             },
             "AttachedManagedPolicies": [],
-            "CreateDate": "2026-10-31 16:25:12.208000+00:00",
+            "CreateDate": "2026-11-01 09:05:41.601000+00:00",
             "InstanceProfileList": [],
             "Path": "/",
-            "RoleId": "AROA6Q35FGNC9UWHL8AG",
+            "RoleId": "AROA53BUJU0NYB1Q4BAC",
             "RoleName": "w3-config",
             "RolePolicyList": []
           },
@@ -243,10 +243,10 @@
               "Version": "2012-10-17"
             },
             "AttachedManagedPolicies": [],
-            "CreateDate": "2026-10-31 16:25:10.349000+00:00",
+            "CreateDate": "2026-11-01 09:05:39.747000+00:00",
             "InstanceProfileList": [],
             "Path": "/",
-            "RoleId": "AROAAGERYIWIFVXPQT65",
+            "RoleId": "AROADCC8ALMSI7OPT8N8",
             "RoleName": "w3-delivery-role",
             "RolePolicyList": []
           },
@@ -270,10 +270,10 @@
               "Version": "2012-10-17"
             },
             "AttachedManagedPolicies": [],
-            "CreateDate": "2026-10-31 16:25:07.933000+00:00",
+            "CreateDate": "2026-11-01 09:05:37.433000+00:00",
             "InstanceProfileList": [],
             "Path": "/",
-            "RoleId": "AROATZJZUN8QS63IL569",
+            "RoleId": "AROA1HX2MEX756MI9P6A",
             "RoleName": "w3-dm-role",
             "RolePolicyList": []
           },
@@ -295,10 +295,10 @@
               "Version": "2012-10-17"
             },
             "AttachedManagedPolicies": [],
-            "CreateDate": "2026-10-31 16:25:12+00:00",
+            "CreateDate": "2026-11-01 09:05:41.410000+00:00",
             "InstanceProfileList": [],
             "Path": "/",
-            "RoleId": "AROAUBXA5BU3WBTW3EIX",
+            "RoleId": "AROA2540MHJYWC6OG8WQ",
             "RoleName": "w3-edge-fn-role",
             "RolePolicyList": []
           },
@@ -321,10 +321,10 @@
               "Version": "2012-10-17"
             },
             "AttachedManagedPolicies": [],
-            "CreateDate": "2026-10-31 16:25:12.589000+00:00",
+            "CreateDate": "2026-11-01 09:05:41.855000+00:00",
             "InstanceProfileList": [],
             "Path": "/",
-            "RoleId": "AROAHY4TSFA9Q1MTQEJJ",
+            "RoleId": "AROAN87QIHYAKFSULXM7",
             "RoleName": "w3-msg-role",
             "RolePolicyList": [],
             "Tags": [
@@ -364,10 +364,10 @@
               "Version": "2012-10-17"
             },
             "AttachedManagedPolicies": [],
-            "CreateDate": "2026-10-31 16:25:12.209000+00:00",
+            "CreateDate": "2026-11-01 09:05:41.602000+00:00",
             "InstanceProfileList": [],
             "Path": "/",
-            "RoleId": "AROA9B4G5NO99CKM6SQ9",
+            "RoleId": "AROABZ3CR26YCW9X1PRA",
             "RoleName": "w3-cognito-auth",
             "RolePolicyList": []
           },
@@ -386,10 +386,10 @@
               "Version": "2012-10-17"
             },
             "AttachedManagedPolicies": [],
-            "CreateDate": "2026-10-31 16:25:12.208000+00:00",
+            "CreateDate": "2026-11-01 09:05:41.601000+00:00",
             "InstanceProfileList": [],
             "Path": "/",
-            "RoleId": "AROA6Q35FGNC9UWHL8AG",
+            "RoleId": "AROA53BUJU0NYB1Q4BAC",
             "RoleName": "w3-config",
             "RolePolicyList": []
           },
@@ -412,10 +412,10 @@
               "Version": "2012-10-17"
             },
             "AttachedManagedPolicies": [],
-            "CreateDate": "2026-10-31 16:25:10.349000+00:00",
+            "CreateDate": "2026-11-01 09:05:39.747000+00:00",
             "InstanceProfileList": [],
             "Path": "/",
-            "RoleId": "AROAAGERYIWIFVXPQT65",
+            "RoleId": "AROADCC8ALMSI7OPT8N8",
             "RoleName": "w3-delivery-role",
             "RolePolicyList": []
           },
@@ -439,10 +439,10 @@
               "Version": "2012-10-17"
             },
             "AttachedManagedPolicies": [],
-            "CreateDate": "2026-10-31 16:25:07.933000+00:00",
+            "CreateDate": "2026-11-01 09:05:37.433000+00:00",
             "InstanceProfileList": [],
             "Path": "/",
-            "RoleId": "AROATZJZUN8QS63IL569",
+            "RoleId": "AROA1HX2MEX756MI9P6A",
             "RoleName": "w3-dm-role",
             "RolePolicyList": []
           },
@@ -464,10 +464,10 @@
               "Version": "2012-10-17"
             },
             "AttachedManagedPolicies": [],
-            "CreateDate": "2026-10-31 16:25:12+00:00",
+            "CreateDate": "2026-11-01 09:05:41.410000+00:00",
             "InstanceProfileList": [],
             "Path": "/",
-            "RoleId": "AROAUBXA5BU3WBTW3EIX",
+            "RoleId": "AROA2540MHJYWC6OG8WQ",
             "RoleName": "w3-edge-fn-role",
             "RolePolicyList": []
           },
@@ -490,10 +490,10 @@
               "Version": "2012-10-17"
             },
             "AttachedManagedPolicies": [],
-            "CreateDate": "2026-10-31 16:25:12.589000+00:00",
+            "CreateDate": "2026-11-01 09:05:41.855000+00:00",
             "InstanceProfileList": [],
             "Path": "/",
-            "RoleId": "AROAHY4TSFA9Q1MTQEJJ",
+            "RoleId": "AROAN87QIHYAKFSULXM7",
             "RoleName": "w3-msg-role",
             "RolePolicyList": [],
             "Tags": [
@@ -534,10 +534,10 @@
               "Version": "2012-10-17"
             },
             "AttachedManagedPolicies": [],
-            "CreateDate": "2026-10-31 16:25:12.209000+00:00",
+            "CreateDate": "2026-11-01 09:05:41.602000+00:00",
             "InstanceProfileList": [],
             "Path": "/",
-            "RoleId": "AROA9B4G5NO99CKM6SQ9",
+            "RoleId": "AROABZ3CR26YCW9X1PRA",
             "RoleName": "w3-cognito-auth",
             "RolePolicyList": []
           },
@@ -556,10 +556,10 @@
               "Version": "2012-10-17"
             },
             "AttachedManagedPolicies": [],
-            "CreateDate": "2026-10-31 16:25:12.208000+00:00",
+            "CreateDate": "2026-11-01 09:05:41.601000+00:00",
             "InstanceProfileList": [],
             "Path": "/",
-            "RoleId": "AROA6Q35FGNC9UWHL8AG",
+            "RoleId": "AROA53BUJU0NYB1Q4BAC",
             "RoleName": "w3-config",
             "RolePolicyList": []
           },
@@ -582,10 +582,10 @@
               "Version": "2012-10-17"
             },
             "AttachedManagedPolicies": [],
-            "CreateDate": "2026-10-31 16:25:10.349000+00:00",
+            "CreateDate": "2026-11-01 09:05:39.747000+00:00",
             "InstanceProfileList": [],
             "Path": "/",
-            "RoleId": "AROAAGERYIWIFVXPQT65",
+            "RoleId": "AROADCC8ALMSI7OPT8N8",
             "RoleName": "w3-delivery-role",
             "RolePolicyList": []
           },
@@ -609,10 +609,10 @@
               "Version": "2012-10-17"
             },
             "AttachedManagedPolicies": [],
-            "CreateDate": "2026-10-31 16:25:07.933000+00:00",
+            "CreateDate": "2026-11-01 09:05:37.433000+00:00",
             "InstanceProfileList": [],
             "Path": "/",
-            "RoleId": "AROATZJZUN8QS63IL569",
+            "RoleId": "AROA1HX2MEX756MI9P6A",
             "RoleName": "w3-dm-role",
             "RolePolicyList": []
           },
@@ -634,10 +634,10 @@
               "Version": "2012-10-17"
             },
             "AttachedManagedPolicies": [],
-            "CreateDate": "2026-10-31 16:25:12+00:00",
+            "CreateDate": "2026-11-01 09:05:41.410000+00:00",
             "InstanceProfileList": [],
             "Path": "/",
-            "RoleId": "AROAUBXA5BU3WBTW3EIX",
+            "RoleId": "AROA2540MHJYWC6OG8WQ",
             "RoleName": "w3-edge-fn-role",
             "RolePolicyList": []
           },
@@ -660,10 +660,10 @@
               "Version": "2012-10-17"
             },
             "AttachedManagedPolicies": [],
-            "CreateDate": "2026-10-31 16:25:12.589000+00:00",
+            "CreateDate": "2026-11-01 09:05:41.855000+00:00",
             "InstanceProfileList": [],
             "Path": "/",
-            "RoleId": "AROAHY4TSFA9Q1MTQEJJ",
+            "RoleId": "AROAN87QIHYAKFSULXM7",
             "RoleName": "w3-msg-role",
             "RolePolicyList": [],
             "Tags": [

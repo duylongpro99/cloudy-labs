@@ -2,19 +2,19 @@
   "calls": [
     {
       "params": {
-        "FileSystemId": "fs-52d5401d27744359b"
+        "FileSystemId": "fs-172656eef7ba4c46b"
       },
       "response": {
         "MountTargets": [
           {
             "AvailabilityZoneId": "apse2-az1",
             "AvailabilityZoneName": "ap-southeast-2a",
-            "FileSystemId": "fs-52d5401d27744359b",
+            "FileSystemId": "fs-172656eef7ba4c46b",
             "IpAddress": "10.0.0.10",
             "LifeCycleState": "available",
-            "MountTargetId": "fsmt-01d42c19e91d48119",
-            "NetworkInterfaceId": "eni-e4b46fcfc894439db",
-            "SubnetId": "subnet-5c186171",
+            "MountTargetId": "fsmt-8ce5c2be424643d89",
+            "NetworkInterfaceId": "eni-a9a936214f594bff8",
+            "SubnetId": "subnet-595709ec",
             "VpcId": "vpc-12345678"
           }
         ]

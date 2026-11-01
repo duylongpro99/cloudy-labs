@@ -65,6 +65,9 @@
   scope: global
   list: {method: get_account_authorization_details, items: UserDetailList, params: {Filter: [User]}}
   protected: "UserName == 'cloudy-labs-admin'"
+  # ListAccessKeys answers ids and status only; a secret key is shown once, by CreateAccessKey.
+  enrich:
+    - {method: list_access_keys, params: {UserName: UserName}, pick: AccessKeyMetadata, merge_as: _AccessKeys}
   id: Arn
   name: [UserName]
   parent: [{kind: global}]
@@ -73,12 +76,13 @@
     groups: "GroupList && sort(GroupList)"
     managedPolicies: "AttachedManagedPolicies[].PolicyName"
     inlinePolicies: "UserPolicyList[].PolicyName"
-  chat_props: [path, groups, managedPolicies, inlinePolicies]
+    accessKeys: "sort_by(_AccessKeys || `[]`, &AccessKeyId)[].{id: AccessKeyId, status: Status}"
+  chat_props: [path, groups, managedPolicies, inlinePolicies, accessKeys]
   edges:
     - {kind: member-of, target: GroupList, match: GroupName, to: iam-group, style: reference}
     - {kind: attached-policy, target: "AttachedManagedPolicies[].PolicyArn", to: iam-policy, style: reference}
   builder: true
-  view: {role: block, category: security, icon: Res_User_48_Light.svg, source: Resource-Icons_07312026/Res_General-Icons/Res_48_Light/Res_User_48_Light.svg, height: 0.4, order: 101, actions: [User]}
+  view: {role: block, category: security, icon: Res_User_48_Light.svg, source: Resource-Icons_07312026/Res_General-Icons/Res_48_Light/Res_User_48_Light.svg, height: 0.4, order: 101, actions: [User, AccessKey]}
   contract:
     create: {op: create-user, params: {UserName: ct-user}, save: user}
   ops:

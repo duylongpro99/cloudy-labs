@@ -12,13 +12,13 @@
           },
           "arn": "arn:aws:eks:ap-southeast-2:000000000000:cluster/w3-delivery",
           "certificateAuthority": {
-            "data": "LS0tLS1CRUdJTiBDRVJUSUZJQ0FURS0tLS0tCk1JSUJkekNDQVIyZ0F3SUJBZ0lCQURBS0JnZ3Foa2pPUFFRREFqQWpNU0V3SHdZRFZRUUREQmhyTTNNdGMyVnkKZG1WeUxXTmhRREUzT1RNME5qTTVNVEV3SGhjTk1qWXhNRE14TVRZeU5URXhXaGNOTXpZeE1ESTRNVFl5TlRFeApXakFqTVNFd0h3WURWUVFEREJock0zTXRjMlZ5ZG1WeUxXTmhRREUzT1RNME5qTTVNVEV3V1RBVEJnY3Foa2pPClBRSUJCZ2dxaGtqT1BRTUJCd05DQUFSemt0TndHQzRISzRMUGZBQ3gwRnJFcXZuUHFOSjZXeVlNb0hrWFV0YWcKd1VPc1dBb2FDNHV5bHN3cDZ6Y0dWeDNKei82a0p1VXpyRDdOazRDMFhGUThvMEl3UURBT0JnTlZIUThCQWY4RQpCQU1DQXFRd0R3WURWUjBUQVFIL0JBVXdBd0VCL3pBZEJnTlZIUTRFRmdRVXhRNTR5M3dSa0xtSnF2T0MzSUY3CnJFNVNSYk13Q2dZSUtvWkl6ajBFQXdJRFNBQXdSUUlnV3g2cEp3b056Y0R2VEJtRGlENVVkY0w1bWlyay8wZkkKNENTQld4endZMjRDSVFETzVnYzF0OWRxS09OMUh2YUMvZC9IcENzWDlEdTlpcWhObDdjbjhIcTU1dz09Ci0tLS0tRU5EIENFUlRJRklDQVRFLS0tLS0K"
+            "data": ""
           },
-          "createdAt": "2026-10-31 23:25:10.613315+07:00",
+          "createdAt": "2026-11-01 16:05:39.830812+07:00",
           "endpoint": "https://localhost:6500",
           "identity": {
             "oidc": {
-              "issuer": "https://oidc.eks.ap-southeast-2.amazonaws.com/id/3D909371C8D7427E8FE351DC648B9597"
+              "issuer": "https://oidc.eks.ap-southeast-2.amazonaws.com/id/B7D42AAD8CA0423E8FBBEF24D4EF1B7F"
             }
           },
           "kubernetesNetworkConfig": {
@@ -52,7 +52,7 @@
             "vpcId": ""
           },
           "roleArn": "arn:aws:iam::000000000000:role/w3-delivery-role",
-          "status": "ACTIVE",
+          "status": "CREATING",
           "tags": {},
           "version": "1.29"
         }

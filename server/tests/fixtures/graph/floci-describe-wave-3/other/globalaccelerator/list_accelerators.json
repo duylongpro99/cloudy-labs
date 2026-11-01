@@ -5,9 +5,9 @@
       "response": {
         "Accelerators": [
           {
-            "AcceleratorArn": "arn:aws:globalaccelerator::000000000000:accelerator/4446017a-ee15-432b-aadc-908b93397ab3",
-            "CreatedTime": "2026-10-31 23:25:12+07:00",
-            "DnsName": "afc7fee269b090d57.awsglobalaccelerator.com",
+            "AcceleratorArn": "arn:aws:globalaccelerator::000000000000:accelerator/9479869e-b9ba-4c95-92b5-59818f27a754",
+            "CreatedTime": "2026-11-01 16:05:41+07:00",
+            "DnsName": "aaeb15d04fd24df2f.awsglobalaccelerator.com",
             "Enabled": true,
             "Events": [],
             "IpAddressType": "IPV4",
@@ -15,13 +15,13 @@
               {
                 "IpAddressFamily": "IPv4",
                 "IpAddresses": [
-                  "75.2.203.59",
-                  "99.83.235.43"
+                  "75.2.74.28",
+                  "99.83.101.40"
                 ],
                 "IpFamily": "IPv4"
               }
             ],
-            "LastModifiedTime": "2026-10-31 23:25:12+07:00",
+            "LastModifiedTime": "2026-11-01 16:05:41+07:00",
             "Name": "w3-edge-ga",
             "Status": "DEPLOYED"
           }

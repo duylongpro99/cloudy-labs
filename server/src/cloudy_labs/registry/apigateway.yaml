@@ -60,3 +60,103 @@
       targets: [apigateway-rest-api]
       target_param: restApiId
       note: "Delete the API with all its resources, methods, deployments and stages."
+
+# API keys and usage plans belong to the account and region, not to one API: a usage plan names the
+# API stages it meters and the keys allowed through. A key's value is never read.
+
+- kind: apigateway-api-key
+  service: apigateway
+  label: API Gateway API Key
+  list: {method: get_api_keys, items: items}
+  id: id
+  name: [name, id]
+  parent: [{kind: region}]
+  props:
+    description: description
+    enabled: enabled
+    stageKeys: stageKeys
+    tags: tags
+  chat_props: [description, enabled, stageKeys]
+  caveats:
+    - {code: apigateway-no-throttling, text: "Floci 2.3.0 serves a deployed stage's methods and Lambda integrations, but does not enforce API keys, usage plans or throttling, and stage caching is not emulated. Check the configuration, not throttled or cached responses."}
+  builder: true
+  view: {role: block, category: networking, icon: Res_Client_48_Light.svg, source: Resource-Icons_07312026/Res_General-Icons/Res_48_Light/Res_Client_48_Light.svg, height: 0.3, order: 508, actions: [ApiKey]}
+  contract:
+    create: {op: create-api-key, params: {name: ct-api-key, enabled: "true"}, save: key}
+  ops:
+    - id: create-api-key
+      api: CreateApiKey
+      gesture: create
+      title: "Tạo API key"
+      fields: [name, description, enabled]
+      defaults: {enabled: true}
+      result_id: id
+      expect: {label: name}
+      note: "Create an API key that clients send in the x-api-key header. It lets a client through only on methods with apiKeyRequired and only once a usage plan with the API's stage holds the key (create-usage-plan-key)."
+    - id: delete-api-key
+      api: DeleteApiKey
+      gesture: delete
+      title: "Xoá API key"
+      fields: [{name: apiKey, ref: apigateway-api-key}]
+      targets: [apigateway-api-key]
+      target_param: apiKey
+      note: "Delete an API key; clients sending it are refused."
+
+- kind: apigateway-usage-plan
+  service: apigateway
+  label: API Gateway Usage Plan
+  list: {method: get_usage_plans, items: items}
+  enrich:
+    - {method: get_usage_plan_keys, params: {usagePlanId: id}, pick: "items[].{id: id, name: name, type: type}", merge_as: _Keys}
+  id: id
+  name: [name, id]
+  parent: [{kind: region}]
+  props:
+    description: description
+    throttle: "throttle.{rate: rateLimit, burst: burstLimit}"
+    quota: "quota.{limit: limit, period: period}"
+    apiStages: "apiStages[].join('/', [apiId, stage])"
+    keys: "sort_by(_Keys || `[]`, &id)[].name"
+  chat_props: [description, throttle, quota, apiStages, keys]
+  edges:
+    - {kind: allows-key, target: "(_Keys || `[]`)[].id", to: apigateway-api-key, style: reference}
+    - {kind: meters, target: "apiStages[].apiId", to: apigateway-rest-api, style: reference}
+  caveats:
+    - {code: apigateway-usage-plan-name-only, text: "Floci 2.3.0 keeps a usage plan's name and keys only: throttle, quota and apiStages are dropped on CreateUsagePlan and UpdateUsagePlan refuses their paths, and nothing is metered. Check the plan's keys; throttle and quota can be checked only on AWS."}
+  builder: true
+  view: {role: block, category: networking, icon: Res_Metrics_48_Light.svg, source: Resource-Icons_07312026/Res_General-Icons/Res_48_Light/Res_Metrics_48_Light.svg, height: 0.3, order: 509, actions: [UsagePlan, UsagePlanKey]}
+  contract:
+    needs:
+      - {op: create-api-key, params: {name: ct-plan-key, enabled: "true"}, save: key}
+    create: {op: create-usage-plan, params: {name: ct-usage-plan}, save: plan}
+    then:
+      - {op: create-usage-plan-key, params: {usagePlanId: "{plan}", keyId: "{key}", keyType: API_KEY}}
+  ops:
+    - id: create-usage-plan
+      api: CreateUsagePlan
+      gesture: create
+      title: "Tạo usage plan"
+      fields: [name, description, throttle.rateLimit, throttle.burstLimit, quota.limit, quota.period, {name: apiStages, multiline: true}]
+      choices: {quota.period: [DAY, WEEK, MONTH]}
+      result_id: id
+      expect: {label: name}
+      note: "Meter clients by API key: throttle (requests per second, burst) and quota (requests per DAY, WEEK or MONTH) for the API stages listed. apiStages JSON: [{\"apiId\": <REST API id>, \"stage\": \"prod\"}]; the stage must be deployed. Then add keys with create-usage-plan-key."
+    - id: create-usage-plan-key
+      api: CreateUsagePlanKey
+      gesture: connect
+      title: "Thêm API key vào usage plan"
+      fields: [{name: usagePlanId, ref: apigateway-usage-plan}, {name: keyId, ref: apigateway-api-key}, keyType]
+      defaults: {keyType: API_KEY}
+      source: apigateway-usage-plan
+      source_param: usagePlanId
+      targets: [apigateway-api-key]
+      target_param: keyId
+      note: "Let clients with this API key call the plan's API stages under its throttle and quota."
+    - id: delete-usage-plan
+      api: DeleteUsagePlan
+      gesture: delete
+      title: "Xoá usage plan"
+      fields: [{name: usagePlanId, ref: apigateway-usage-plan}]
+      targets: [apigateway-usage-plan]
+      target_param: usagePlanId
+      note: "Delete a usage plan; remove its API stages first on AWS."

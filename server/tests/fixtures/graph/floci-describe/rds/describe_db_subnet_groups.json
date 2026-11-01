@@ -44,18 +44,18 @@
                 "SubnetAvailabilityZone": {
                   "Name": "ap-southeast-2a"
                 },
-                "SubnetIdentifier": "subnet-2b9c9233",
+                "SubnetIdentifier": "subnet-427c8089",
                 "SubnetStatus": "Active"
               },
               {
                 "SubnetAvailabilityZone": {
                   "Name": "ap-southeast-2b"
                 },
-                "SubnetIdentifier": "subnet-4f1dede6",
+                "SubnetIdentifier": "subnet-b5c0089c",
                 "SubnetStatus": "Active"
               }
             ],
-            "VpcId": "vpc-03e9e3f9"
+            "VpcId": "vpc-95741f0b"
           }
         ],
         "Marker": ""

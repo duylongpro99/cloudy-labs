@@ -5,7 +5,16 @@
       "response": {
         "TransitGatewayRouteTables": [
           {
-            "CreationTime": "2026-10-31 14:41:10.377000+00:00",
+            "CreationTime": "2026-11-01 09:04:55.164000+00:00",
+            "DefaultAssociationRouteTable": true,
+            "DefaultPropagationRouteTable": true,
+            "State": "available",
+            "Tags": [],
+            "TransitGatewayId": "tgw-7d32641965bf5b49c",
+            "TransitGatewayRouteTableId": "tgw-rtb-52fea0ac9f29d14d9"
+          },
+          {
+            "CreationTime": "2026-11-01 09:04:55.170000+00:00",
             "DefaultAssociationRouteTable": false,
             "DefaultPropagationRouteTable": false,
             "State": "available",
@@ -15,17 +24,8 @@
                 "Value": "wave1-tgw-rt"
               }
             ],
-            "TransitGatewayId": "tgw-694378cffac133fc8",
-            "TransitGatewayRouteTableId": "tgw-rtb-94e55f216fa9ff145"
-          },
-          {
-            "CreationTime": "2026-10-31 14:41:10.372000+00:00",
-            "DefaultAssociationRouteTable": true,
-            "DefaultPropagationRouteTable": true,
-            "State": "available",
-            "Tags": [],
-            "TransitGatewayId": "tgw-694378cffac133fc8",
-            "TransitGatewayRouteTableId": "tgw-rtb-91762891d9f9209f7"
+            "TransitGatewayId": "tgw-7d32641965bf5b49c",
+            "TransitGatewayRouteTableId": "tgw-rtb-4712cf3954c739e35"
           }
         ]
       }

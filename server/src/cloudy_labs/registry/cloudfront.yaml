@@ -35,6 +35,9 @@
     - {kind: origin, target: "_Config.DistributionConfig.Origins.Items[].DomainName", to: apigateway-rest-api, match: "join('', [id, '.execute-api.', _Region, '.amazonaws.com'])", style: reference}
     - {kind: origin, target: "_Config.DistributionConfig.Origins.Items[].DomainName", to: apigateway-http-api, match: "join('', [ApiId, '.execute-api.', _Region, '.amazonaws.com'])", style: reference}
     - {kind: uses-certificate, target: _Config.DistributionConfig.ViewerCertificate.ACMCertificateArn, to: acm-certificate, style: reference}
+    - {kind: uses-policy, target: "[_Config.DistributionConfig.DefaultCacheBehavior.CachePolicyId, _Config.DistributionConfig.CacheBehaviors.Items[].CachePolicyId][]", to: cloudfront-cache-policy, style: reference}
+    - {kind: uses-policy, target: "[_Config.DistributionConfig.DefaultCacheBehavior.OriginRequestPolicyId, _Config.DistributionConfig.CacheBehaviors.Items[].OriginRequestPolicyId][]", to: cloudfront-origin-request-policy, style: reference}
+    - {kind: uses-oac, target: "_Config.DistributionConfig.Origins.Items[].OriginAccessControlId", to: cloudfront-origin-access-control, style: reference}
     # Lambda@Edge takes a published version's ARN.
     - {kind: invokes, target: "_Config.DistributionConfig.DefaultCacheBehavior.LambdaFunctionAssociations.Items[].LambdaFunctionARN", to: [lambda-version, lambda-function], style: reference}
   caveats:
@@ -74,3 +77,136 @@
       targets: [cloudfront-distribution]
       target_param: Id
       note: "Delete a distribution. Disable it first (update-distribution with Enabled false); IfMatch is its current ETag (the etag prop)."
+
+# Cache policies, origin request policies and origin access controls are global and shared: a
+# distribution's behaviors name policies by id and its S3 origins name an OAC by id. Only the ones the
+# account made are listed (Type custom); AWS's managed policies are not drawn.
+
+- kind: cloudfront-cache-policy
+  service: cloudfront
+  label: CloudFront Cache Policy
+  scope: global
+  list: {method: list_cache_policies, items: "CachePolicyList.Items[].CachePolicy", params: {Type: custom}}
+  enrich:
+    - {method: get_cache_policy, params: {Id: Id}, pick: ETag, merge_as: _ETag}
+  id: Id
+  name: [CachePolicyConfig.Name, Id]
+  parent: [{kind: global}]
+  props:
+    comment: CachePolicyConfig.Comment
+    ttl: "CachePolicyConfig.{min: MinTTL, default: DefaultTTL, max: MaxTTL}"
+    cacheKey: "CachePolicyConfig.ParametersInCacheKeyAndForwardedToOrigin.{headers: HeadersConfig.HeaderBehavior, cookies: CookiesConfig.CookieBehavior, queryStrings: QueryStringsConfig.QueryStringBehavior, gzip: EnableAcceptEncodingGzip, brotli: EnableAcceptEncodingBrotli}"
+    etag: _ETag
+  chat_props: [comment, ttl, cacheKey, etag]
+  caveats:
+    - {code: cloudfront-policy-not-applied, text: "Floci 2.3.0 stores cache and origin request policies and lets behaviors name them, but caches nothing and forwards requests unchanged: TTLs and cache keys have no effect that can be observed. Check the policy's settings and the behavior that names it."}
+  builder: true
+  view: {role: block, category: networking, icon: Res_Document_48_Light.svg, source: Resource-Icons_07312026/Res_General-Icons/Res_48_Light/Res_Document_48_Light.svg, height: 0.3, order: 501, actions: [CachePolicy, CachePolicyConfig]}
+  contract:
+    create: {op: create-cache-policy, params: {CachePolicyConfig.Name: ct-cache, CachePolicyConfig.MinTTL: "1", CachePolicyConfig.DefaultTTL: "60", CachePolicyConfig.MaxTTL: "300"}, save: policy}
+  ops:
+    - id: create-cache-policy
+      api: CreateCachePolicy
+      gesture: create
+      title: "Tạo cache policy"
+      fields: [CachePolicyConfig.Name, CachePolicyConfig.Comment, CachePolicyConfig.MinTTL, CachePolicyConfig.DefaultTTL, CachePolicyConfig.MaxTTL, {name: CachePolicyConfig.ParametersInCacheKeyAndForwardedToOrigin, multiline: true}]
+      defaults:
+        CachePolicyConfig.MinTTL: 1
+        CachePolicyConfig.DefaultTTL: 86400
+        CachePolicyConfig.MaxTTL: 31536000
+        CachePolicyConfig.ParametersInCacheKeyAndForwardedToOrigin: '{"EnableAcceptEncodingGzip": true, "HeadersConfig": {"HeaderBehavior": "none"}, "CookiesConfig": {"CookieBehavior": "none"}, "QueryStringsConfig": {"QueryStringBehavior": "none"}}'
+      result_id: CachePolicy.Id
+      expect: {label: CachePolicyConfig.Name}
+      note: "Create a cache policy: how long CloudFront keeps objects (MinTTL <= DefaultTTL <= MaxTTL, seconds) and which headers, cookies and query strings make up the cache key. A behavior uses it through CachePolicyId (update-distribution)."
+    - id: delete-cache-policy
+      api: DeleteCachePolicy
+      gesture: delete
+      title: "Xoá cache policy"
+      fields: [{name: Id, ref: cloudfront-cache-policy}, IfMatch]
+      targets: [cloudfront-cache-policy]
+      target_param: Id
+      note: "Delete a cache policy no behavior uses. IfMatch is its current ETag (the etag prop)."
+
+- kind: cloudfront-origin-request-policy
+  service: cloudfront
+  label: CloudFront Origin Request Policy
+  scope: global
+  list: {method: list_origin_request_policies, items: "OriginRequestPolicyList.Items[].OriginRequestPolicy", params: {Type: custom}}
+  enrich:
+    - {method: get_origin_request_policy, params: {Id: Id}, pick: ETag, merge_as: _ETag}
+  id: Id
+  name: [OriginRequestPolicyConfig.Name, Id]
+  parent: [{kind: global}]
+  props:
+    comment: OriginRequestPolicyConfig.Comment
+    forwards: "OriginRequestPolicyConfig.{headers: HeadersConfig.HeaderBehavior, cookies: CookiesConfig.CookieBehavior, queryStrings: QueryStringsConfig.QueryStringBehavior}"
+    etag: _ETag
+  chat_props: [comment, forwards, etag]
+  caveats:
+    - {code: cloudfront-policy-not-applied, text: "Floci 2.3.0 stores cache and origin request policies and lets behaviors name them, but caches nothing and forwards requests unchanged: TTLs and cache keys have no effect that can be observed. Check the policy's settings and the behavior that names it."}
+  builder: true
+  view: {role: block, category: networking, icon: Res_Document_48_Light.svg, source: Resource-Icons_07312026/Res_General-Icons/Res_48_Light/Res_Document_48_Light.svg, height: 0.3, order: 502, actions: [OriginRequestPolicy, OriginRequestPolicyConfig]}
+  contract:
+    create: {op: create-origin-request-policy, params: {OriginRequestPolicyConfig.Name: ct-orp}, save: policy}
+  ops:
+    - id: create-origin-request-policy
+      api: CreateOriginRequestPolicy
+      gesture: create
+      title: "Tạo origin request policy"
+      fields: [OriginRequestPolicyConfig.Name, OriginRequestPolicyConfig.Comment, {name: OriginRequestPolicyConfig.HeadersConfig, multiline: true}, {name: OriginRequestPolicyConfig.CookiesConfig, multiline: true}, {name: OriginRequestPolicyConfig.QueryStringsConfig, multiline: true}]
+      defaults:
+        OriginRequestPolicyConfig.HeadersConfig: '{"HeaderBehavior": "none"}'
+        OriginRequestPolicyConfig.CookiesConfig: '{"CookieBehavior": "none"}'
+        OriginRequestPolicyConfig.QueryStringsConfig: '{"QueryStringBehavior": "all"}'
+      result_id: OriginRequestPolicy.Id
+      expect: {label: OriginRequestPolicyConfig.Name}
+      note: "Create an origin request policy: the headers, cookies and query strings CloudFront passes to the origin without putting them in the cache key. A behavior uses it through OriginRequestPolicyId."
+    - id: delete-origin-request-policy
+      api: DeleteOriginRequestPolicy
+      gesture: delete
+      title: "Xoá origin request policy"
+      fields: [{name: Id, ref: cloudfront-origin-request-policy}, IfMatch]
+      targets: [cloudfront-origin-request-policy]
+      target_param: Id
+      note: "Delete a policy no behavior uses. IfMatch is its current ETag (the etag prop)."
+
+- kind: cloudfront-origin-access-control
+  service: cloudfront
+  label: CloudFront Origin Access Control
+  scope: global
+  list: {method: list_origin_access_controls, items: "OriginAccessControlList.Items"}
+  enrich:
+    - {method: get_origin_access_control, params: {Id: Id}, pick: ETag, merge_as: _ETag}
+  id: Id
+  name: [Name, Id]
+  parent: [{kind: global}]
+  props:
+    description: Description
+    originType: OriginAccessControlOriginType
+    signing: "join(' ', [SigningProtocol, SigningBehavior])"
+    etag: _ETag
+  chat_props: [description, originType, signing, etag]
+  caveats:
+    - {code: cloudfront-oac-not-signed, text: "Floci 2.3.0 stores origin access controls and lets an origin name one, but does not sign requests to the origin and does not check the bucket policy's aws:SourceArn: a bucket that blocks everyone still serves the distribution. Check the OAC, the origin that names it and the bucket policy."}
+  builder: true
+  view: {role: block, category: networking, icon: Res_Gear_48_Light.svg, source: Resource-Icons_07312026/Res_General-Icons/Res_48_Light/Res_Gear_48_Light.svg, height: 0.3, order: 503, actions: [OriginAccessControl, OriginAccessControlConfig]}
+  contract:
+    create: {op: create-origin-access-control, params: {OriginAccessControlConfig.Name: ct-oac}, save: oac}
+  ops:
+    - id: create-origin-access-control
+      api: CreateOriginAccessControl
+      gesture: create
+      title: "Tạo origin access control (OAC)"
+      fields: [OriginAccessControlConfig.Name, OriginAccessControlConfig.Description, OriginAccessControlConfig.OriginAccessControlOriginType, OriginAccessControlConfig.SigningBehavior, OriginAccessControlConfig.SigningProtocol]
+      defaults: {OriginAccessControlConfig.OriginAccessControlOriginType: s3, OriginAccessControlConfig.SigningBehavior: always, OriginAccessControlConfig.SigningProtocol: sigv4}
+      result_id: OriginAccessControl.Id
+      expect: {label: OriginAccessControlConfig.Name}
+      note: "Create an OAC so CloudFront signs its requests to a private S3 bucket. Put its Id in the origin's OriginAccessControlId (with S3OriginConfig.OriginAccessIdentity empty), then let the bucket policy allow cloudfront.amazonaws.com with aws:SourceArn set to the distribution's ARN."
+    - id: delete-origin-access-control
+      api: DeleteOriginAccessControl
+      gesture: delete
+      title: "Xoá origin access control"
+      fields: [{name: Id, ref: cloudfront-origin-access-control}, IfMatch]
+      targets: [cloudfront-origin-access-control]
+      target_param: Id
+      note: "Delete an OAC no origin uses. IfMatch is its current ETag (the etag prop)."

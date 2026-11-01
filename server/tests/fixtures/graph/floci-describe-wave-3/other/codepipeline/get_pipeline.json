@@ -6,9 +6,9 @@
       },
       "response": {
         "metadata": {
-          "created": "2026-10-31 23:25:11.339000+07:00",
+          "created": "2026-11-01 16:05:40.713000+07:00",
           "pipelineArn": "arn:aws:codepipeline:ap-southeast-2:000000000000:w3-delivery-pipeline",
-          "updated": "2026-10-31 23:25:11.339000+07:00"
+          "updated": "2026-11-01 16:05:40.713000+07:00"
         },
         "pipeline": {
           "artifactStore": {

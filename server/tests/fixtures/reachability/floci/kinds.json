@@ -1,0 +1,23 @@
+[
+  "vpc",
+  "az",
+  "subnet-public",
+  "subnet-private",
+  "igw",
+  "nat",
+  "route-table",
+  "security-group",
+  "instance",
+  "elastic-ip",
+  "network-acl",
+  "vpc-endpoint",
+  "vpc-peering",
+  "transit-gateway",
+  "tgw-attachment",
+  "tgw-route-table",
+  "network-interface",
+  "prefix-list",
+  "lambda-function",
+  "db-subnet-group",
+  "db-instance"
+]

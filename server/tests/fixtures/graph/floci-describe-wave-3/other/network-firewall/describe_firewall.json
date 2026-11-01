@@ -16,10 +16,10 @@
           "SubnetChangeProtection": false,
           "SubnetMappings": [
             {
-              "SubnetId": "subnet-52650042"
+              "SubnetId": "subnet-615ab73b"
             }
           ],
-          "VpcId": "vpc-c238e6aa"
+          "VpcId": "vpc-7f4a8d38"
         },
         "FirewallStatus": {
           "ConfigurationSyncStateSummary": "IN_SYNC",
@@ -29,12 +29,12 @@
               "Attachment": {
                 "EndpointId": "vpce-124587678c1d47382",
                 "Status": "READY",
-                "SubnetId": "subnet-52650042"
+                "SubnetId": "subnet-615ab73b"
               }
             }
           }
         },
-        "UpdateToken": "d69aa825-fbd2-4fe4-b3e7-205bc3407c2d"
+        "UpdateToken": "cb4665b2-0eaf-400d-93b3-59f01071a3f3"
       }
     }
   ]

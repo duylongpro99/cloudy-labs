@@ -5,7 +5,7 @@ from collections import Counter
 
 from cloudy_labs.graph.schema import ResourceGraph
 
-from graph_fixtures import WAVE_1_GOLDEN, wave_1_graph
+from graph_fixtures import DESCRIBED, WAVE_1_GOLDEN, wave_1_graph
 
 
 def test_the_recorded_scenario_gives_the_golden_graph():
@@ -51,3 +51,19 @@ def test_every_recorded_edge_joins_two_drawn_nodes():
     ids = {n.id for n in g.nodes}
     assert all(e.from_ in ids and e.to in ids for e in g.edges)
     assert {"replica-of", "execution-role", "attached-policy", "nacl-association", "replicates-to", "proxy-target"} <= {e.kind for e in g.edges}
+
+
+def test_a_user_shows_its_access_keys_without_their_secret():
+    [user] = [n for n in wave_1_graph().nodes if n.kind == "iam-user" and n.label == "wave1-dev"]
+    [key] = user.props["accessKeys"]
+    assert key["status"] == "Inactive" and key["id"].startswith("AKIA")
+    recorded = "".join(p.read_text() for p in (DESCRIBED / "iam").rglob("*.json"))
+    assert "SecretAccessKey" not in recorded and "SecretAccessKey" not in wave_1_graph().to_json()
+
+
+def test_a_tgw_route_table_shows_static_blackhole_and_propagated_routes():
+    [rt] = [n for n in wave_1_graph().nodes if n.kind == "tgw-route-table" and n.label == "wave1-tgw-rt"]
+    assert {(r["destination"], r["type"], r["state"]) for r in rt.props["routes"]} >= {
+        ("10.90.0.0/16", "static", "active"), ("10.91.0.0/16", "static", "blackhole")}
+    assert any(r["type"] == "propagated" for r in rt.props["routes"])
+    assert [p["state"] for p in rt.props["propagations"]] == ["enabled"]

@@ -3,25 +3,25 @@
     {
       "params": {
         "Attribute": "enableDnsHostnames",
-        "VpcId": "vpc-03e9e3f9"
+        "VpcId": "vpc-95741f0b"
       },
       "response": {
         "EnableDnsHostnames": {
           "Value": false
         },
-        "VpcId": "vpc-03e9e3f9"
+        "VpcId": "vpc-95741f0b"
       }
     },
     {
       "params": {
         "Attribute": "enableDnsHostnames",
-        "VpcId": "vpc-29250840"
+        "VpcId": "vpc-0359d433"
       },
       "response": {
         "EnableDnsHostnames": {
           "Value": false
         },
-        "VpcId": "vpc-29250840"
+        "VpcId": "vpc-0359d433"
       }
     },
     {

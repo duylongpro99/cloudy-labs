@@ -344,7 +344,10 @@
       "stack": false,
       "host": false,
       "actions": [
-        "TransitGatewayRouteTable"
+        "TransitGatewayRouteTable",
+        "TransitGatewayRoute",
+        "TransitGatewayRouteTablePropagation",
+        "TransitGatewayRouteTableAssociation"
       ],
       "curveSegments": null,
       "parents": [
@@ -1270,7 +1273,8 @@
       "stack": false,
       "host": false,
       "actions": [
-        "User"
+        "User",
+        "AccessKey"
       ],
       "curveSegments": null,
       "parents": [
@@ -1511,7 +1515,8 @@
       "stack": false,
       "host": false,
       "actions": [
-        "Stack"
+        "Stack",
+        "ChangeSet"
       ],
       "curveSegments": null,
       "parents": [
@@ -1584,7 +1589,9 @@
       "host": false,
       "actions": [
         "LogGroup",
-        "RetentionPolicy"
+        "RetentionPolicy",
+        "LogStream",
+        "LogEvents"
       ],
       "curveSegments": null,
       "parents": [
@@ -1789,6 +1796,81 @@
       "scope": "global"
     },
     {
+      "kind": "cloudfront-cache-policy",
+      "label": "CloudFront Cache Policy",
+      "service": "cloudfront",
+      "signingName": "cloudfront",
+      "role": "block",
+      "category": "networking",
+      "icon": "Res_Document_48_Light.svg",
+      "source": "Resource-Icons_07312026/Res_General-Icons/Res_48_Light/Res_Document_48_Light.svg",
+      "height": 0.3,
+      "order": 501,
+      "group": false,
+      "stack": false,
+      "host": false,
+      "actions": [
+        "CachePolicy",
+        "CachePolicyConfig"
+      ],
+      "curveSegments": null,
+      "parents": [
+        "global"
+      ],
+      "floci": "supported",
+      "scope": "global"
+    },
+    {
+      "kind": "cloudfront-origin-request-policy",
+      "label": "CloudFront Origin Request Policy",
+      "service": "cloudfront",
+      "signingName": "cloudfront",
+      "role": "block",
+      "category": "networking",
+      "icon": "Res_Document_48_Light.svg",
+      "source": "Resource-Icons_07312026/Res_General-Icons/Res_48_Light/Res_Document_48_Light.svg",
+      "height": 0.3,
+      "order": 502,
+      "group": false,
+      "stack": false,
+      "host": false,
+      "actions": [
+        "OriginRequestPolicy",
+        "OriginRequestPolicyConfig"
+      ],
+      "curveSegments": null,
+      "parents": [
+        "global"
+      ],
+      "floci": "supported",
+      "scope": "global"
+    },
+    {
+      "kind": "cloudfront-origin-access-control",
+      "label": "CloudFront Origin Access Control",
+      "service": "cloudfront",
+      "signingName": "cloudfront",
+      "role": "block",
+      "category": "networking",
+      "icon": "Res_Gear_48_Light.svg",
+      "source": "Resource-Icons_07312026/Res_General-Icons/Res_48_Light/Res_Gear_48_Light.svg",
+      "height": 0.3,
+      "order": 503,
+      "group": false,
+      "stack": false,
+      "host": false,
+      "actions": [
+        "OriginAccessControl",
+        "OriginAccessControlConfig"
+      ],
+      "curveSegments": null,
+      "parents": [
+        "global"
+      ],
+      "floci": "supported",
+      "scope": "global"
+    },
+    {
       "kind": "apigateway-rest-api",
       "label": "API Gateway REST API",
       "service": "apigateway",
@@ -1839,6 +1921,55 @@
       "scope": "regional"
     },
     {
+      "kind": "apigateway-api-key",
+      "label": "API Gateway API Key",
+      "service": "apigateway",
+      "signingName": "apigateway",
+      "role": "block",
+      "category": "networking",
+      "icon": "Res_Client_48_Light.svg",
+      "source": "Resource-Icons_07312026/Res_General-Icons/Res_48_Light/Res_Client_48_Light.svg",
+      "height": 0.3,
+      "order": 508,
+      "group": false,
+      "stack": false,
+      "host": false,
+      "actions": [
+        "ApiKey"
+      ],
+      "curveSegments": null,
+      "parents": [
+        "region"
+      ],
+      "floci": "supported",
+      "scope": "regional"
+    },
+    {
+      "kind": "apigateway-usage-plan",
+      "label": "API Gateway Usage Plan",
+      "service": "apigateway",
+      "signingName": "apigateway",
+      "role": "block",
+      "category": "networking",
+      "icon": "Res_Metrics_48_Light.svg",
+      "source": "Resource-Icons_07312026/Res_General-Icons/Res_48_Light/Res_Metrics_48_Light.svg",
+      "height": 0.3,
+      "order": 509,
+      "group": false,
+      "stack": false,
+      "host": false,
+      "actions": [
+        "UsagePlan",
+        "UsagePlanKey"
+      ],
+      "curveSegments": null,
+      "parents": [
+        "region"
+      ],
+      "floci": "supported",
+      "scope": "regional"
+    },
+    {
       "kind": "global-accelerator",
       "label": "Global Accelerator",
       "service": "globalaccelerator",
@@ -1854,7 +1985,9 @@
       "host": false,
       "actions": [
         "Accelerator",
-        "AcceleratorAttributes"
+        "AcceleratorAttributes",
+        "Listener",
+        "EndpointGroup"
       ],
       "curveSegments": null,
       "parents": [
@@ -3057,6 +3190,10 @@
       "style": "reference"
     },
     {
+      "kind": "allows-key",
+      "style": "reference"
+    },
+    {
       "kind": "asg-instance",
       "style": "reference"
     },
@@ -3114,6 +3251,10 @@
     },
     {
       "kind": "encrypted-by",
+      "style": "reference"
+    },
+    {
+      "kind": "endpoint",
       "style": "reference"
     },
     {
@@ -3182,6 +3323,10 @@
     },
     {
       "kind": "member-of",
+      "style": "reference"
+    },
+    {
+      "kind": "meters",
       "style": "reference"
     },
     {
@@ -3333,11 +3478,19 @@
       "style": "reference"
     },
     {
+      "kind": "uses-oac",
+      "style": "reference"
+    },
+    {
       "kind": "uses-option-group",
       "style": "reference"
     },
     {
       "kind": "uses-parameter-group",
+      "style": "reference"
+    },
+    {
+      "kind": "uses-policy",
       "style": "reference"
     },
     {
