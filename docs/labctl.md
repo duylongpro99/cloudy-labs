@@ -148,7 +148,7 @@ LLM_API_FORMAT=anthropic
 
 > **Không bao giờ commit key.** Để key trong `~/.cloudy-labs/llm.env` (ngoài repo, nên `chmod 600`) hoặc biến môi trường của shell, không ghi vào file nào trong repo.
 
-Thiếu biến thì panel hiện hướng dẫn và tên biến còn thiếu; builder vẫn dùng bình thường. Model nhỏ hay không theo đúng định dạng JSON; server gửi lại một lần kèm lỗi, vẫn sai thì chat báo model không làm theo định dạng. Provider lỗi (sai key, sai URL, quá 60 giây) thì chat hiện thông báo kèm URL đã gọi, không kèm key.
+Thiếu biến thì panel hiện hướng dẫn và tên biến còn thiếu; builder vẫn dùng bình thường. Model nhỏ hay không theo đúng định dạng JSON; server gửi lại một lần kèm lỗi, vẫn sai thì chat báo model không làm theo định dạng. Câu trả lời ghi một id không có trong graph (id bịa, hoặc bỏ bước tạo tài nguyên) thì server cũng gửi lại một lần, nêu tên từng id đó và nhắc thêm bước tạo rồi dùng `{"ref": n}`. Server giữ câu trả lời có ít id bịa hơn; id bịa còn lại thành problem của bước, kể cả bước deferred, nên bước đó không Run được. Provider lỗi (sai key, sai URL, quá 60 giây) thì chat hiện thông báo kèm URL đã gọi, không kèm key.
 
 | Endpoint | Việc làm |
 |---|---|

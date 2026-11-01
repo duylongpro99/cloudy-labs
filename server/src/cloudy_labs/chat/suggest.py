@@ -26,6 +26,7 @@ from .settings import LlmSettings
 FORMAT_FAILED = "Model không trả về đúng định dạng; thử hỏi lại hoặc đổi model"
 RAW_ECHO_MAX = 2000  # how much of a malformed answer is sent back with the request to fix it
 FENCE = re.compile(r"```(?:json)?\s*(.*?)```", re.DOTALL)
+QUOTED_REF = re.compile(r'\{\s*"ref"\s*:\s*(\d+)\s*\}')
 
 Complete = Callable[[LlmSettings, str, list[Message]], Awaitable[str]]
 
@@ -54,6 +55,8 @@ class RawStep(_Strict):
 
 
 def _as_text(x: Any) -> Any:
+    if isinstance(x, str) and (m := QUOTED_REF.fullmatch(x.strip())):
+        return {"ref": int(m.group(1))}  # a ref the model wrote as a string
     if x is None:
         return ""
     if isinstance(x, bool):
@@ -68,6 +71,24 @@ def _ref_fields(op: BuilderOp) -> set[str]:
     if op.legacy:
         return {f.alias or n for n, f in op.legacy.params.model_fields.items() if (f.alias or n).endswith("Id")}
     return {f.name for f in op.fields() if f.ref and f.ref_by == "id"}
+
+
+def _graph_id_fields(op: BuilderOp) -> set[str]:
+    """Params whose id must name a resource in the graph (an AMI is checked against the image choices)."""
+    return _ref_fields(op) - {"imageId"}
+
+
+def invented_ids(steps: list[RawStep], graph: ResourceGraph) -> list[tuple[int, str, str]]:
+    """(step number, param, value) for every id a step writes as text that the graph does not hold.
+    The model must copy an id from the graph or use {"ref": n}; anything else it made up."""
+    known = {n.id for n in graph.nodes}
+    out = []
+    for n, raw in enumerate(steps, start=1):
+        if (op := op_named(raw.op)) is None:
+            continue
+        fields = _graph_id_fields(op)
+        out += [(n, name, v) for name, v in raw.params.items() if name in fields and isinstance(v, str) and v and v not in known]
+    return out
 
 
 class Reply(BaseModel):
@@ -192,14 +213,18 @@ def check_step(n: int, raw: RawStep, earlier: list[RawStep], lab: Lab, graph: Re
     return step
 
 
-async def suggest(messages: list[Message], *, lab: Lab, graph: ResourceGraph, azs: list[str], choices: Choices,
-                  settings: LlmSettings, complete: Complete = provider.complete) -> Suggestion:
-    """Ask the model, parse its answer (asking once more if it is malformed), and check every step.
-    Raises ProviderError when the provider cannot be reached."""
-    system = system_prompt(lab, graph, azs, choices)
+def _invented_feedback(invented: list[tuple[int, str, str]]) -> str:
+    listed = "; ".join(f"step {n} {name}={value!r}" for n, name, value in invented)
+    return (f"These ids are not in the current resources: {listed}. Never invent an id. If the resource exists, "
+            "copy its id from the graph. If it does not exist yet, add the step that creates it before the step "
+            "that needs it and write {\"ref\": n} there. Answer the same request again with only the JSON object.")
+
+
+async def _ask(complete: Complete, settings: LlmSettings, system: str, messages: list[Message]) -> tuple[Reply, str] | None:
+    """The model's answer and its text, asking once more if it is malformed; None if it is malformed twice."""
     text = await complete(settings, system, messages)
     try:
-        reply = parse_reply(text)
+        return parse_reply(text), text
     except (ValidationError, ValueError) as e:
         retry: list[Message] = [
             *messages,
@@ -207,11 +232,43 @@ async def suggest(messages: list[Message], *, lab: Lab, graph: ResourceGraph, az
             {"role": "user", "content": f"That answer was not the JSON object asked for ({_short_error(e)}). "
                                         "Answer the same request again with only that JSON object."},
         ]
+        text = await complete(settings, system, retry)
         try:
-            reply = parse_reply(await complete(settings, system, retry))
+            return parse_reply(text), text
         except (ValidationError, ValueError):
-            return Suggestion(reply=FORMAT_FAILED)
-    steps: list[Step] = []
-    for n, raw in enumerate([] if reply.refusal else reply.steps, start=1):
-        steps.append(check_step(n, raw, reply.steps[: n - 1], lab, graph, azs, choices))
+            return None
+
+
+def _steps_of(reply: Reply) -> list[RawStep]:
+    return [] if reply.refusal else reply.steps
+
+
+async def suggest(messages: list[Message], *, lab: Lab, graph: ResourceGraph, azs: list[str], choices: Choices,
+                  settings: LlmSettings, complete: Complete = provider.complete) -> Suggestion:
+    """Ask the model, parse its answer (asking once more if it is malformed), and check every step.
+    An answer that writes an id the graph does not hold is sent back once with those ids named; the
+    answer with fewer invented ids is kept, and every one left is a problem on its step, so it cannot
+    run even when the step is deferred. Raises ProviderError when the provider cannot be reached."""
+    system = system_prompt(lab, graph, azs, choices)
+    asked = await _ask(complete, settings, system, messages)
+    if asked is None:
+        return Suggestion(reply=FORMAT_FAILED)
+    reply, text = asked
+    invented = invented_ids(_steps_of(reply), graph)
+    if invented:
+        repair: list[Message] = [*messages, {"role": "assistant", "content": text[:RAW_ECHO_MAX]},
+                                 {"role": "user", "content": _invented_feedback(invented)}]
+        try:
+            again = await _ask(complete, settings, system, repair)
+        except provider.ProviderError:
+            again = None  # the first answer still stands, its invented ids marked below
+        if again is not None and len(still := invented_ids(_steps_of(again[0]), graph)) < len(invented):
+            reply, invented = again[0], still
+    raws = _steps_of(reply)
+    steps = [check_step(n, raw, raws[: n - 1], lab, graph, azs, choices) for n, raw in enumerate(raws, start=1)]
+    for n, name, value in invented:
+        step = steps[n - 1]
+        if not any(p.field == name for p in step.problems):
+            step.problems.append(Problem(name, f"{value} is not in the scene and no earlier step makes it; "
+                                               "create it first or use an id from the scene"))
     return Suggestion(reply=reply.reply, refusal=reply.refusal or None, steps=steps)

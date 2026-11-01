@@ -28,6 +28,8 @@ Answer with exactly one JSON object and nothing else:
 - steps run in order. Give every param of the op, as strings. Use ids exactly as they appear in the graph.
 - A step may use the id of a resource that an earlier create step in the same answer makes: write {"ref": n} as \
 the param value, where n is that step's number counting from 1. Never invent ids.
+- When the request needs a resource the graph does not show (a VPC, subnet, group...), first add the step that \
+creates it, then refer to it with {"ref": n}. An id that is neither in the graph nor a ref is refused.
 - Skip work the graph shows is already done, and do not repeat a resource that already exists.
 - When the request needs something no op can do, or is not about this lab, set "refusal" to a short reason \
 (outside this lab's scope, or not supported by the emulator), "steps" to [], and suggest what the learner can do here.

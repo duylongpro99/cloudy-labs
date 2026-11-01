@@ -87,6 +87,7 @@ Trên Mac Apple Silicon, builder chỉ cho AMI `ami-amazonlinux2023-arm64` với
 | Coverage, sau khi có `--optional` | `uv run labctl coverage lab-900 --accept --optional 434` | `ready-with-caveats`. Dòng `get-console-output` thành caveat `optional-step-unsupported`. `aws sso login` ở phần chuẩn bị giờ được đọc là việc của CLI, không còn là lời gọi API. |
 | Lần 4: builder, có IMDSv2 | Như lần 1, `run-instances` thêm `httpTokens: required` | 14/14. `describe-instances` cho thấy cả hai instance có `HttpTokens=required`. |
 | Lần 5: chat, có IMDSv2 | 5 câu như lần 3 | 14/14, cả 5 câu qua validate ngay lần đầu; `run-instances` của hai instance có `--metadata-options HttpTokens=required`. Hai lượt chạy trước đó dừng giữa chừng: một lượt vì provider LLM không trả lời trong 60 giây, một lượt vì model bỏ bước `create-vpc` và bịa VPC id (validate chặn, lần hỏi lại cũng sai). |
+| Lần 6: chat, có chặn id bịa | 5 câu như lần 3, ba lượt | Lượt đầu: guardrail bắt một lần model viết ref dạng chuỗi (`vpcId='{"ref": 1}'`), server hỏi lại và câu trả lời thứ hai qua validate; cả 5 câu chạy được, 12/14 vì script chỉ chờ trang web 90 giây. Server giờ đọc ref dạng chuỗi là ref, không cần hỏi lại. Lượt hai dừng ở câu 5 vì provider quá 60 giây. Lượt ba, chờ trang 240 giây: 14/14, không câu nào cần hỏi lại. |
 | Rò nội dung | `uv run python scripts/check-content-leak.py` | exit 0. Vòng lặp tên instance trong `checks.py` được viết lại thành hằng `WEB_NAMES`. Các idiom AWS trùng trang (URL và header IMDSv2, subnet ghi theo AZ kèm CIDR, đường dẫn SSM của AMI AL2023, filter CLI tìm IGW, rule mở tcp 80) được ghi hash trong `labs/lab-900/leak-review.json`. |
 
 ### Khoảng trống còn lại
@@ -94,6 +95,6 @@ Trên Mac Apple Silicon, builder chỉ cho AMI `ami-amazonlinux2023-arm64` với
 | Khoảng trống | Ảnh hưởng |
 |---|---|
 | Floci lưu `HttpTokens=required` nhưng vẫn trả IMDSv1 | Check chấm trên `MetadataOptions`; người học không thấy IMDSv1 bị chặn như trên AWS. |
-| Chat đôi khi bỏ bước tạo tài nguyên và bịa id | Validate chặn lệnh, nhưng người học phải hỏi lại. |
+| Chat đôi khi bỏ bước tạo tài nguyên và bịa id | Server tự gửi lại một lần, nêu tên id bịa; id bịa còn lại thành problem kể cả ở bước deferred, nên không Run được. Không bảo đảm model sửa đúng ở lần hai. |
 | Instance Floci không có systemd, IMDS chiếm cổng 80 | UserData `httpd` + `systemctl` của trang không chạy; hint của task `instances` chỉ sang `builder.userData`. |
 | Floci không có `GetConsoleOutput` | Bước kiểm tra tuỳ chọn của trang không chạy được; coverage ghi caveat thay vì `blocked` vì dòng đó được đánh dấu `--optional`. |

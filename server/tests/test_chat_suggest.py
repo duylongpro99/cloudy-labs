@@ -3,6 +3,7 @@ import json
 from pathlib import Path
 
 from cloudy_labs.builder.ec2_choices import choices
+from cloudy_labs.chat.provider import ProviderError
 from cloudy_labs.chat.settings import LlmSettings
 from cloudy_labs.chat.suggest import FORMAT_FAILED, parse_reply, suggest
 from cloudy_labs.graph.schema import ResourceGraph
@@ -18,12 +19,14 @@ QUESTION = [{"role": "user", "content": "help"}]
 
 
 def ask(*answers, lab=LAB06):
-    """suggest() with a fake provider that gives these answers in turn."""
+    """suggest() with a fake provider that gives these answers in turn, then the last one again."""
     calls = []
 
     async def complete(settings, system, messages):
         calls.append(messages)
-        answer = answers[len(calls) - 1]
+        answer = answers[min(len(calls), len(answers)) - 1]
+        if isinstance(answer, Exception):
+            raise answer
         return answer if isinstance(answer, str) else json.dumps(answer)
 
     result = asyncio.run(suggest(QUESTION, lab=lab, graph=GOLDEN, azs=["ap-southeast-2a", "ap-southeast-2b"],
@@ -113,8 +116,47 @@ def test_overlapping_cidr_is_caught_by_validate():
 
 
 def test_made_up_id_is_caught_by_validate():
-    result, _ = ask(answer(("attach-internet-gateway", {"igwId": "igw-made-up", "vpcId": VPC})))
+    result, calls = ask(answer(("attach-internet-gateway", {"igwId": "igw-made-up", "vpcId": VPC})))
+    assert len(calls) == 2 and "igwId" in fields(result.steps[0])
     assert "not in the scene" in result.steps[0].problems[0].message
+
+
+def test_an_invented_id_is_sent_back_and_the_fixed_answer_kept():
+    made_up = answer(("attach-internet-gateway", {"igwId": "igw-lab06-igw", "vpcId": VPC}))
+    fixed = answer(("create-internet-gateway", {"name": "lab06-igw"}),
+                   ("attach-internet-gateway", {"igwId": {"ref": 1}, "vpcId": VPC}))
+    result, calls = ask(made_up, fixed)
+    feedback = calls[1][-1]["content"]
+    assert len(calls) == 2 and "step 1 igwId='igw-lab06-igw'" in feedback and '{"ref": n}' in feedback
+    assert [s.op for s in result.steps] == ["create-internet-gateway", "attach-internet-gateway"]
+    assert all(s.problems == [] for s in result.steps) and result.steps[1].refs == [1]
+
+
+def test_an_invented_id_in_a_deferred_step_still_blocks_it():
+    result, calls = ask(answer(("create-route-table", {"name": "rt", "vpcId": VPC}),
+                               ("associate-route-table", {"routeTableId": {"ref": 1}, "subnetId": "subnet-made-up"})))
+    step = result.steps[1]
+    assert len(calls) == 2 and step.deferred and fields(step) == ["subnetId"]
+    assert "no earlier step makes it" in step.problems[0].message
+
+
+def test_a_ref_written_as_text_is_a_ref():
+    result, calls = ask(answer(("create-route-table", {"name": "rt", "vpcId": VPC}),
+                               ("associate-route-table", {"routeTableId": '{"ref": 1}', "subnetId": "subnet-83a1f79a"})))
+    assert len(calls) == 1 and result.steps[1].refs == [1] and result.steps[1].params["routeTableId"] == {"ref": 1}
+
+
+def test_a_failed_repair_keeps_the_first_answer_with_its_problem():
+    result, calls = ask(answer(("attach-internet-gateway", {"igwId": "igw-made-up", "vpcId": VPC})),
+                        ProviderError("timed out"))
+    assert len(calls) == 2 and "igwId" in fields(result.steps[0])
+
+
+def test_ids_from_the_graph_and_an_image_need_no_repair():
+    result, calls = ask(answer(("run-instances", {"name": "web", "subnetId": "subnet-83a1f79a",
+                                                  "imageId": "ami-amazonlinux2023-arm64", "instanceType": "t4g.micro",
+                                                  "securityGroupId": SG_WEB, "keyName": "", "userData": ""})), lab=LAB07)
+    assert len(calls) == 1
 
 
 def test_refusal_without_steps():
