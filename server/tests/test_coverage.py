@@ -110,6 +110,13 @@ def test_cli_command_names_map_to_the_api_service(line, service, api):
     [cmd] = extract.commands(f"```\n{line}\n```\n")
     assert (cmd.service, cmd.apis) == (service, (api,))
 
+
+def test_a_cli_wait_maps_to_the_describe_api_it_polls():
+    [cmd] = extract.commands("```\naws rds wait db-instance-available --db-instance-identifier db1\n```\n")
+    assert (cmd.service, cmd.apis) == ("rds", ("DescribeDBInstances",))
+    [unknown] = extract.commands("```\naws rds wait db-made-up\n```\n")
+    assert (unknown.service, unknown.apis) == ("rds", ())
+
 def test_mentions_read_prose_only_prefer_longer_terms_and_split_certain_from_not():
     terms = extract.dictionary(REGISTRY)
     found = {(m.term, m.certain, m.line) for m in extract.mentions(PAGE, terms)}
