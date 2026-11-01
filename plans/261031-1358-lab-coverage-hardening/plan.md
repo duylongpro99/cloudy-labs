@@ -1,7 +1,7 @@
 ---
 title: "Tăng cường nền tảng để phủ lab tuỳ ý của labaws.site"
 description: "Chuyển mọi chỗ khai báo cứng loại tài nguyên sang một registry khai báo; builder sinh từ botocore; region theo lab; hiển thị lý thuyết lab cục bộ; phân tích reachability tĩnh; và lệnh labctl coverage trả lời 'lab này chạy được chưa' mà không cần hỏi lại."
-status: in-progress
+status: completed
 priority: P1
 effort: 358h
 branch: master
@@ -104,7 +104,7 @@ Với bất kỳ lab nào trong danh mục labaws.site:
    - principal nội bộ (admin của moto) không xoá hay sửa được.
 
    Mỗi chốt có test.
-10. Lab-001 RDS (`lab-001-chon-rds-aurora-hay-self-managed-database`) được soạn từ nội dung người dùng dán vào và chạy trọn: builder, chat, twin và check đều đạt. `coverage` báo `ready-with-caveats`, caveat Multi-AZ lấy từ registry.
+10. Lab-001 RDS (`lab-001 (labaws RDS, Aurora or self-managed)`) được soạn từ nội dung người dùng dán vào và chạy trọn: builder, chat, twin và check đều đạt. `coverage` báo `ready-with-caveats`, caveat Multi-AZ lấy từ registry.
 11. Lab 6/7 fixture chạy lại đầu-cuối vẫn đạt; 50 fps với 200 node vẫn đạt.
 
 ## Phases
@@ -121,7 +121,7 @@ Với bất kỳ lab nào trong danh mục labaws.site:
 | 8 | [Dịch vụ đợt 1: VPC mở rộng, EBS, RDS/Aurora, S3, Lambda, IAM](./phase-08-service-wave-1.md) | Completed | 40h |
 | 9 | [Dịch vụ đợt 2: tần suất trung bình](./phase-09-service-wave-2.md) | Completed | 40h |
 | 10 | [Dịch vụ đợt 3: phần còn lại Floci hỗ trợ](./phase-10-service-wave-3.md) | Completed | 50h |
-| 11 | [Nghiệm thu với lab-001 RDS và cập nhật tài liệu](./phase-11-lab-001-acceptance-and-docs.md) | In Progress (chờ nội dung lab-001) | 8h |
+| 11 | [Nghiệm thu với lab-001 RDS và cập nhật tài liệu](./phase-11-lab-001-acceptance-and-docs.md) | Completed (chat chưa chạy: chưa có provider) | 8h |
 
 Thứ tự phụ thuộc. Phase 2, 3, 4 và 5 cùng sửa `server/app.py` và `labs/schema.py`, nên chạy tuần tự, không song song.
 

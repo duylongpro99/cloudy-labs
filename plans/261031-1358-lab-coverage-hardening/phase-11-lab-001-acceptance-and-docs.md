@@ -1,7 +1,7 @@
 ---
 phase: 11
 title: "Nghiệm thu với lab-001 RDS và cập nhật tài liệu"
-status: in-progress
+status: completed
 priority: P1
 effort: "8h"
 dependencies: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
@@ -11,15 +11,15 @@ dependencies: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
 
 ## Goal
 
-Chứng minh toàn bộ chuỗi trên một lab thật, `lab-001-chon-rds-aurora-hay-self-managed-database`. Sau đó cập nhật roadmap, PRD và docs.
+Chứng minh toàn bộ chuỗi trên một lab thật, `lab-001 (labaws RDS, Aurora or self-managed)`. Sau đó cập nhật roadmap, PRD và docs.
 
 ## Điều kiện
 
-Người dùng dán nội dung lab (bản đã đăng nhập) vào `labs/lab-001-chon-rds-aurora-hay-self-managed-database/content/lab.md` qua `labctl content import`. File này không được commit.
+Người dùng dán nội dung lab (bản đã đăng nhập) vào `labs/lab-001/content/lab.md` qua `labctl content import`. File này không được commit.
 
 ## Tasks & Steps
 
-1. Chạy `labctl coverage labs/lab-001-...` **trước khi** viết YAML.
+1. Chạy `labctl coverage lab-001` **trước khi** viết YAML.
    - **[Red team]** Kỳ vọng là kết luận nháp `ready-with-caveats`, kèm danh sách đề cập chưa nhận diện (heading và số dòng).
    - Caveat lấy từ registry: `MultiAZ` `flag-only`; Aurora chạy trên engine thường.
    - Xem danh sách đó một lượt, rồi chạy `coverage <lab> --accept` để có kết luận cuối.
@@ -45,15 +45,19 @@ Người dùng dán nội dung lab (bản đã đăng nhập) vào `labs/lab-001
 
 ## Files to Create / Modify
 
-- Create: `labs/lab-001-chon-rds-aurora-hay-self-managed-database/lab.yaml`, `checks.py`.
+- Create: `labs/lab-001/lab.yaml`, `checks.py`.
 - Modify: `server/src/cloudy_labs/registry/ec2.yaml` (caveat `self-managed-install`, nếu cần).
 - Modify: `docs/roadmap.md`, `docs/product-requirements.md`, `docs/labctl.md`, `docs/emulator-differences.md`.
 - Create: `plans/261031-1358-lab-coverage-hardening/notes/e2e-results.md`.
 
 ## Verification
 
-- `uv run labctl coverage labs/lab-001-...` ra `ready-with-caveats` sau `--accept`.
-- `uv run labctl check lab-001-...` đạt sau mỗi cách làm.
+- `uv run labctl coverage lab-001` ra `ready-with-caveats` sau `--accept`.
+- `uv run labctl check lab-001` đạt sau mỗi cách làm.
 - `git status --ignored labs/` cho thấy `content/` bị ignore và không có trong index.
 - `cd server && uv run python scripts/check-content-leak.py` thoát 0.
 - Toàn bộ test server và web xanh; e2e Lab 6/7 fixture đạt; bench ≥ 50 fps.
+
+## Kết quả
+
+Đã xong. Lab-001 cho `ready-with-caveats` và qua `labctl check` 12/12 (cộng 1 INFO) bằng builder và bằng terminal. Reset làm sạch. Twin bind đủ 13/13 node. Lần làm bằng chat chưa chạy vì máy chưa có provider LLM. Bước 2 không áp dụng vì lab không cài DB trên EC2. Hint không có: trang lab không có phần hint riêng. Chi tiết ở [notes/e2e-results.md](./notes/e2e-results.md#lab-001-rds-phase-11-bước-14).
