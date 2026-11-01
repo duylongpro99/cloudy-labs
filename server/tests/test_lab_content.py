@@ -225,3 +225,28 @@ def test_leak_check_finds_copied_text_without_printing_it(tmp_path):
     assert module.leaks(repo) == {"notes.md": 1}
     run = subprocess.run([sys.executable, str(script)], capture_output=True, text=True, cwd=REPO / "server")
     assert run.returncode == 0, run.stdout + run.stderr  # the real repo has no copied content
+
+
+def test_leak_check_skips_the_public_catalog_and_reviewed_idioms(tmp_path):
+    script = Path(__file__).parents[1] / "scripts" / "check-content-leak.py"
+    spec = importlib.util.spec_from_file_location("check_content_leak", script)
+    module = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(module)
+    title = "Lab 999 build a shared network across three zones with care"
+    idiom = "aws ec2 describe-flow-logs --filter Name=resource-id,Values=vpc-1 --query FlowLogs"
+    repo = tmp_path / "repo"
+    (repo / "labs" / "x" / "content").mkdir(parents=True)
+    (repo / ".gitignore").write_text("labs/*/content/\n")
+    (repo / "labs" / "x" / "content" / "lab.md").write_text(f"# {title}\n\n{idiom}\n\n{SECRET_SENTENCE}\n")
+    (repo / Path(module.PUBLIC_CATALOG).parent).mkdir(parents=True)
+    (repo / module.PUBLIC_CATALOG).write_text(f"slug,title\nlab-999,{title}\n")
+    (repo / "notes.md").write_text(f"{title}\nand\n{idiom}\n")
+    subprocess.run(["git", "init", "-q", str(repo)], check=True)
+    subprocess.run(["git", "-C", str(repo), "add", "."], check=True)
+    [(_, idiom_runs)] = module.shared_runs(repo).items()
+    assert idiom_runs == module.ngrams(idiom)  # the title is public, the idiom not reviewed yet
+    reviewed = {module.run_hash(r): "a CLI filter" for r in idiom_runs}
+    (repo / "labs" / "x" / module.REVIEW_FILE).write_text(json.dumps({"reviewed": "2026-11-01", "runs": reviewed}))
+    assert module.leaks(repo) == {}
+    (repo / "notes.md").write_text(f"{title}\nand\n{SECRET_SENTENCE}\n")
+    assert module.leaks(repo) == {"notes.md": len(module.ngrams(SECRET_SENTENCE))}
