@@ -1,0 +1,126 @@
+# Lab 020: a three-AZ VPC with zonal egress. The lab page itself is personal content and stays in
+# content/ (gitignored); this file holds only our tasks, checks and target.
+# The learner builds from an empty region; the VPC is found by its Name tag, as the lab names it.
+id: lab-020
+provider: aws
+emulator: floci
+region: ap-southeast-2
+title: Lab 020 (three-AZ VPC with zonal NAT Gateways)
+cidrs: [10.200.0.0/16]
+builder:
+  palette: [vpc, subnet, igw, elastic-ip, nat, route-table, db-subnet-group]
+  tags: {lab: lab-020}
+tasks:
+  - id: vpc
+    text: Create a 10.200.0.0/16 VPC, name it lab020-vpc and turn on DNS hostnames.
+  - id: subnets
+    text: >-
+      Create nine subnets, three tiers in each of ap-southeast-2a, 2b and 2c: public 10.200.1-3.0/24,
+      app 10.200.11-13.0/24 and data 10.200.21-23.0/24, named lab020-subnet-{pub,app,data}-{a,b,c}.
+  - id: internet-gateway
+    text: Create the Internet Gateway lab020-igw and attach it to the VPC.
+  - id: public-routing
+    text: Route 0.0.0.0/0 of the route table lab020-rt-public to the Internet Gateway and give it the three public subnets.
+  - id: zonal-nat
+    text: In each AZ, allocate an Elastic IP and create a NAT Gateway in that AZ's public subnet.
+  - id: app-routing
+    text: >-
+      Give each app subnet its own route table (lab020-rt-priv-a, -b, -c) whose 0.0.0.0/0 goes to the
+      NAT Gateway of the same AZ, so no app traffic crosses an AZ to leave the VPC.
+  - id: data-routing
+    text: Give the three data subnets one route table, lab020-rt-data, with only the local route.
+  - id: db-subnet-group
+    text: Group the three data subnets into the DB subnet group lab020-dbsubnet-group.
+checks:
+  - id: vpc-exists
+    task: vpc
+    fn: checks:vpc_exists
+    args: {cidr: 10.200.0.0/16}
+    description: The VPC lab020-vpc exists with the expected CIDR.
+  - id: vpc-dns-hostnames
+    task: vpc
+    fn: checks:vpc_dns_hostnames
+    description: The VPC has DNS hostnames enabled.
+  - id: nine-subnets
+    task: subnets
+    fn: checks:nine_subnets
+    description: Each tier has a subnet with the expected CIDR in each of the three AZs.
+  - id: three-az-ids
+    task: subnets
+    fn: checks:three_az_ids
+    description: The subnets span three distinct AZ IDs.
+  - id: igw-attached
+    task: internet-gateway
+    fn: checks:igw_attached
+    description: An Internet Gateway is attached to the VPC.
+  - id: public-route-table
+    task: public-routing
+    fn: checks:public_route_table
+    description: One route table sends 0.0.0.0/0 to the Internet Gateway and serves the three public subnets.
+  - id: nat-a
+    task: zonal-nat
+    fn: checks:nat_in_az
+    args: {az: ap-southeast-2a}
+    description: A NAT Gateway with an Elastic IP sits in the public subnet of ap-southeast-2a.
+  - id: nat-b
+    task: zonal-nat
+    fn: checks:nat_in_az
+    args: {az: ap-southeast-2b}
+    description: A NAT Gateway with an Elastic IP sits in the public subnet of ap-southeast-2b.
+  - id: nat-c
+    task: zonal-nat
+    fn: checks:nat_in_az
+    args: {az: ap-southeast-2c}
+    description: A NAT Gateway with an Elastic IP sits in the public subnet of ap-southeast-2c.
+  - id: app-route-a
+    task: app-routing
+    fn: checks:app_route_zonal
+    args: {az: ap-southeast-2a}
+    description: The app subnet of ap-southeast-2a has its own route table sending 0.0.0.0/0 to the NAT Gateway of that AZ.
+  - id: app-route-b
+    task: app-routing
+    fn: checks:app_route_zonal
+    args: {az: ap-southeast-2b}
+    description: The app subnet of ap-southeast-2b has its own route table sending 0.0.0.0/0 to the NAT Gateway of that AZ.
+  - id: app-route-c
+    task: app-routing
+    fn: checks:app_route_zonal
+    args: {az: ap-southeast-2c}
+    description: The app subnet of ap-southeast-2c has its own route table sending 0.0.0.0/0 to the NAT Gateway of that AZ.
+  - id: data-route-table-local
+    task: data-routing
+    fn: checks:data_route_table_local
+    description: One route table with only the local route serves the three data subnets.
+  - id: db-subnet-group-three-azs
+    task: db-subnet-group
+    fn: checks:db_subnet_group_three_azs
+    description: The DB subnet group holds the three data subnets, one per AZ.
+target:
+  nodes:
+    - {id: vpc, kind: vpc, label: VPC 10.200.0.0/16, checks: [vpc-exists, vpc-dns-hostnames]}
+    - {id: igw, kind: igw, parent: vpc, label: Internet Gateway, checks: [igw-attached]}
+    - {id: az-a, kind: az, parent: vpc, label: AZ a}
+    - {id: az-b, kind: az, parent: vpc, label: AZ b}
+    - {id: az-c, kind: az, parent: vpc, label: AZ c}
+    - {id: pub-a, kind: subnet-public, parent: az-a, label: Public a, checks: [public-route-table]}
+    - {id: pub-b, kind: subnet-public, parent: az-b, label: Public b, checks: [public-route-table]}
+    - {id: pub-c, kind: subnet-public, parent: az-c, label: Public c, checks: [public-route-table]}
+    - {id: app-a, kind: subnet-private, parent: az-a, label: App a, checks: [app-route-a]}
+    - {id: app-b, kind: subnet-private, parent: az-b, label: App b, checks: [app-route-b]}
+    - {id: app-c, kind: subnet-private, parent: az-c, label: App c, checks: [app-route-c]}
+    - {id: data-a, kind: subnet-private, parent: az-a, label: Data a, checks: [data-route-table-local]}
+    - {id: data-b, kind: subnet-private, parent: az-b, label: Data b, checks: [data-route-table-local]}
+    - {id: data-c, kind: subnet-private, parent: az-c, label: Data c, checks: [data-route-table-local]}
+    # Declared after the subnets, so each NAT binds only inside the public subnet of its own AZ.
+    - {id: nat-a, kind: nat, parent: pub-a, label: NAT Gateway a, checks: [nat-a]}
+    - {id: nat-b, kind: nat, parent: pub-b, label: NAT Gateway b, checks: [nat-b]}
+    - {id: nat-c, kind: nat, parent: pub-c, label: NAT Gateway c, checks: [nat-c]}
+    - {id: eip-a, kind: elastic-ip, label: Elastic IP a, checks: [nat-a]}
+    - {id: eip-b, kind: elastic-ip, label: Elastic IP b, checks: [nat-b]}
+    - {id: eip-c, kind: elastic-ip, label: Elastic IP c, checks: [nat-c]}
+    - {id: rt-public, kind: route-table, parent: vpc, label: Route table public, checks: [public-route-table]}
+    - {id: rt-priv-a, kind: route-table, parent: vpc, label: Route table app a, checks: [app-route-a]}
+    - {id: rt-priv-b, kind: route-table, parent: vpc, label: Route table app b, checks: [app-route-b]}
+    - {id: rt-priv-c, kind: route-table, parent: vpc, label: Route table app c, checks: [app-route-c]}
+    - {id: rt-data, kind: route-table, parent: vpc, label: Route table data, checks: [data-route-table-local]}
+    - {id: dbsg, kind: db-subnet-group, parent: vpc, label: DB subnet group, checks: [db-subnet-group-three-azs]}
