@@ -84,13 +84,16 @@ Trên Mac Apple Silicon, builder chỉ cho AMI `ami-amazonlinux2023-arm64` với
 | Lần 2: terminal | Chỉ AWS CLI, `run-instances --metadata-options HttpTokens=required`. Web-1 dùng UserData của trang (`dnf install httpd` rồi `systemctl enable --now httpd`), web-2 dùng `builder.userData` | Web-1 không có trang sau 4 phút (13/14); thông điệp check nói rõ instance không có `index.html` và cổng 80 chỉ có IMDS. Terminate web-1 rồi chạy lại với `builder.userData`: 14/14. Twin 11/11, 0 ghost. |
 | Reset | `labctl reset lab-900` | 0/14, không còn container instance của lab. |
 | Lần 3: chat | 5 câu tiếng Việt viết lại từ task của `lab.yaml` qua `/api/chat`, mỗi chuỗi chạy qua `/api/run` | 13/14, chỉ `imdsv2-required` FAIL như builder: chat chỉ chọn op trong danh mục builder. 4 câu đạt ngay. Câu VPC cần hỏi lại một lần vì validate chặn một bước ở câu trả lời đầu (script không lưu chi tiết bước bị chặn). Câu chạy instance dùng đúng AMI arm64, `t4g.micro`, SG, key và UserData gợi ý của lab. 6 prompt gửi đi trùng trang ở 14 cụm 8 từ: 13 cụm là URL và header IMDSv2 nằm trong `builder.userData` (system prompt gửi kèm UserData gợi ý của lab), 1 cụm là tên VPC kèm CIDR. Không có đoạn văn nào của trang. |
+| Coverage, sau khi có `--optional` | `uv run labctl coverage lab-900 --accept --optional 434` | `ready-with-caveats`. Dòng `get-console-output` thành caveat `optional-step-unsupported`. `aws sso login` ở phần chuẩn bị giờ được đọc là việc của CLI, không còn là lời gọi API. |
+| Lần 4: builder, có IMDSv2 | Như lần 1, `run-instances` thêm `httpTokens: required` | 14/14. `describe-instances` cho thấy cả hai instance có `HttpTokens=required`. |
+| Lần 5: chat, có IMDSv2 | 5 câu như lần 3 | 14/14, cả 5 câu qua validate ngay lần đầu; `run-instances` của hai instance có `--metadata-options HttpTokens=required`. Hai lượt chạy trước đó dừng giữa chừng: một lượt vì provider LLM không trả lời trong 60 giây, một lượt vì model bỏ bước `create-vpc` và bịa VPC id (validate chặn, lần hỏi lại cũng sai). |
 | Rò nội dung | `uv run python scripts/check-content-leak.py` | exit 0. Vòng lặp tên instance trong `checks.py` được viết lại thành hằng `WEB_NAMES`. Các idiom AWS trùng trang (URL và header IMDSv2, subnet ghi theo AZ kèm CIDR, đường dẫn SSM của AMI AL2023, filter CLI tìm IGW, rule mở tcp 80) được ghi hash trong `labs/lab-900/leak-review.json`. |
 
 ### Khoảng trống còn lại
 
 | Khoảng trống | Ảnh hưởng |
 |---|---|
-| Builder và chat không đặt được `HttpTokens=required` | Lab yêu cầu IMDSv2 chỉ đạt 14/14 bằng terminal. |
 | Floci lưu `HttpTokens=required` nhưng vẫn trả IMDSv1 | Check chấm trên `MetadataOptions`; người học không thấy IMDSv1 bị chặn như trên AWS. |
+| Chat đôi khi bỏ bước tạo tài nguyên và bịa id | Validate chặn lệnh, nhưng người học phải hỏi lại. |
 | Instance Floci không có systemd, IMDS chiếm cổng 80 | UserData `httpd` + `systemctl` của trang không chạy; hint của task `instances` chỉ sang `builder.userData`. |
-| Floci không có `GetConsoleOutput` | Coverage báo `blocked` dù đó chỉ là bước kiểm tra tuỳ chọn. |
+| Floci không có `GetConsoleOutput` | Bước kiểm tra tuỳ chọn của trang không chạy được; coverage ghi caveat thay vì `blocked` vì dòng đó được đánh dấu `--optional`. |
