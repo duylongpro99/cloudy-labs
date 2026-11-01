@@ -33,6 +33,8 @@ S3_HIGH_LEVEL = {"mb": ("CreateBucket",), "rb": ("DeleteBucket",), "ls": ("ListO
                  "website": ("PutBucketWebsite",)}
 # CLI commands that are not API calls.
 LOCAL = {"configure", "help", "history", "cli"}
+# Subcommands the CLI handles itself (`aws sso login` caches a token) though the service has APIs.
+LOCAL_OPS = {("sso", "login"), ("sso", "logout")}
 # The noun of a creating API: CreateDBSubnetGroup -> "DB Subnet Group".
 CREATE = re.compile(r"^(Create|Run|Allocate|Register|Put|Import|Start)([A-Z].*)$")
 WORD = re.compile(r"[A-Z]+(?=[A-Z][a-z]|\d|$)|[A-Z]?[a-z]+|\d+")
@@ -155,6 +157,8 @@ def _command(tokens: list[str], i: int, line: int, heading: str) -> Command | No
     if word in LOCAL:
         return None
     op = tokens[j + 1] if j + 1 < len(tokens) and re.fullmatch(r"[a-z0-9-]+", tokens[j + 1]) else ""
+    if (word, op) in LOCAL_OPS:
+        return None
     flags: list[tuple[str, str]] = []
     k = j + 2
     while k < len(tokens) and tokens[k] not in ("|", "||", "&&", ";", ")", "&"):

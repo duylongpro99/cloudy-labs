@@ -64,6 +64,9 @@ def build_parser() -> argparse.ArgumentParser:
                            help="record the lab's unrecognised lines as reviewed (ignored unless --require names them)")
             p.add_argument("--require", type=int, action="append", default=[], metavar="LINE",
                            help="with --accept: a line whose resource the lab does need (repeatable)")
+            p.add_argument("--optional", type=int, action="append", default=[], metavar="LINE",
+                           help="with --accept: a command line the page calls optional; what it lacks is a caveat "
+                                "(repeatable)")
             p.add_argument("--quote", action="store_true",
                            help="print the text of the lines to review (to this terminal only; never in --json)")
             p.add_argument("--strict", action="store_true", help="fail when the contract results are missing or stale")
@@ -160,7 +163,7 @@ def _print_report(report, quote_lines: list[str] | None) -> None:
         where = f" [line {f.line}, {f.heading}]" if f.line else ""
         print(f"  {f.level:7} {f.code}: {f.text}{where}")
     if report.unrecognised:
-        print("lines naming resources the platform may not cover (review, then `--accept [--require LINE]`):")
+        print("lines naming resources the platform may not cover (review, then `--accept [--require LINE] [--optional LINE]`):")
         for u in report.unrecognised:
             text = f": {quote_lines[u['line'] - 1].strip()}" if quote_lines else ""
             print(f"  line {u['line']} [{u['heading']}] {u['term']} ({', '.join(u['services'])}){text}")
@@ -205,8 +208,16 @@ def _coverage(args: argparse.Namespace) -> int:
         raise LabError("name a lab, or pass --catalog CSV or --matrix")
     lab_dir = lab_path(args.lab)
     if args.accept:
+        if args.optional:
+            from .coverage import extract
+
+            page = lab_dir / CONTENT_DIR / LAB_MD
+            commands = {cmd.line for cmd in extract.commands(page.read_text(encoding="utf-8"))} if page.is_file() else set()
+            if stray := sorted(set(args.optional) - commands):
+                raise LabError(f"--optional names line(s) with no aws command: {', '.join(map(str, stray))}")
         report = evaluate.evaluate_lab(lab_dir, ev, review={})
-        path = evaluate.write_review(lab_dir, [u["line"] for u in report.unrecognised], set(args.require))
+        path = evaluate.write_review(lab_dir, [u["line"] for u in report.unrecognised], set(args.require),
+                                           frozenset(args.optional))
         print(f"reviewed {len(report.unrecognised)} line(s) into {path}")
     report = evaluate.evaluate_lab(lab_dir, ev)
     if args.json:

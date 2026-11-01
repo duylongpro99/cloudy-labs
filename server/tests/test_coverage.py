@@ -117,6 +117,11 @@ def test_a_cli_wait_maps_to_the_describe_api_it_polls():
     [unknown] = extract.commands("```\naws rds wait db-made-up\n```\n")
     assert (unknown.service, unknown.apis) == ("rds", ())
 
+def test_sso_login_is_handled_by_the_cli_not_the_service():
+    assert extract.commands("```\naws sso login --profile x\naws sso logout\n```\n") == []
+    [cmd] = extract.commands("```\naws sso list-accounts --access-token t\n```\n")
+    assert cmd.service == "sso"
+
 def test_mentions_read_prose_only_prefer_longer_terms_and_split_certain_from_not():
     terms = extract.dictionary(REGISTRY)
     found = {(m.term, m.certain, m.line) for m in extract.mentions(PAGE, terms)}
@@ -221,6 +226,30 @@ def test_unreviewed_names_keep_the_verdict_a_draft_until_accepted(tmp_path, evid
     assert any(f.code == "reviewed-requirement" and f.line == 23 for f in required.findings)
     assert "elbv2" in required.services
     assert set(json.loads((d / "coverage-review.json").read_text())) == {"reviewed", "lines"}
+
+
+def test_an_optional_step_the_emulator_lacks_is_a_caveat_not_a_blocker(tmp_path, evidence):
+    d = lab_dir(tmp_path, "## Back up (optional)\n\n```\naws ec2 create-snapshot --volume-id vol-1\n```\n")
+    ev = evidence(contract(all_create_kinds()))
+    assert evaluate.evaluate_lab(d, ev).verdict == "blocked"
+
+    evaluate.write_review(d, [], require=set(), optional=frozenset({4}))
+    report = evaluate.evaluate_lab(d, ev)
+    assert report.verdict == "ready-with-caveats"
+    optional = [f for f in report.findings if f.line == 4]
+    assert {f.code for f in optional} == {"optional-step-unsupported"} and len(optional) == 2  # missing API + override
+    assert all(f.level == "caveat" for f in optional)
+    assert json.loads((d / "coverage-review.json").read_text())["lines"] == {"4": "optional"}
+
+
+def test_accept_refuses_an_optional_line_without_a_command(tmp_path, evidence, monkeypatch, capsys):
+    d = lab_dir(tmp_path, PAGE, "lab-opt")
+    ev = evidence(contract(all_create_kinds()))
+    monkeypatch.setattr(evaluate.Evidence, "load", classmethod(lambda cls, **_: ev))
+    monkeypatch.setattr("cloudy_labs.labs.lab_path", lambda slug: tmp_path / "labs" / slug)
+    assert cli.main(["coverage", "lab-opt", "--accept", "--optional", "3"]) == 1
+    assert "no aws command: 3" in capsys.readouterr().err
+    assert not (d / "coverage-review.json").exists()
 
 
 def test_an_override_named_only_in_prose_is_listed_for_review_not_counted(tmp_path, evidence):

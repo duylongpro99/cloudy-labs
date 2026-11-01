@@ -250,18 +250,26 @@ def _dedupe(findings: list[Finding]) -> list[Finding]:
 # One lab ------------------------------------------------------------------------------------------
 
 
+def _optional_step(ev: Evidence, cmd: extract.Command, where: dict[str, Any]) -> list[Finding]:
+    """What a step the lab can do without lacks: a caveat each, never a blocker or a kind it needs."""
+    lacks = [p.text for api in cmd.apis if (p := ev.floci_api(cmd.service, api))]
+    lacks += [f"{o.id}: {o.reason}" for o in ev.overrides if o.hits_command(cmd)]
+    return [Finding("caveat", "optional-step-unsupported", f"{text} (an optional step)", **where) for text in lacks]
+
+
 def read_review(lab_dir: Path) -> dict[str, str]:
-    """line number (as text) -> "ignore" | "require", from `coverage <lab> --accept`."""
+    """line number (as text) -> "ignore" | "require" | "optional", from `coverage <lab> --accept`."""
     path = lab_dir / REVIEW_FILE
     if not path.is_file():
         return {}
     return {str(k): v for k, v in json.loads(path.read_text()).get("lines", {}).items()}
 
 
-def write_review(lab_dir: Path, lines: list[int], require: set[int]) -> Path:
+def write_review(lab_dir: Path, lines: list[int], require: set[int], optional: frozenset[int] = frozenset()) -> Path:
+    """`optional`: lines of commands the page itself calls optional (a check the learner may skip)."""
     path = lab_dir / REVIEW_FILE
-    data = {"reviewed": date.today().isoformat(),
-            "lines": {str(n): "require" if n in require else "ignore" for n in sorted(set(lines) | require)}}
+    decision = {n: "ignore" for n in lines} | {n: "optional" for n in optional} | {n: "require" for n in require}
+    data = {"reviewed": date.today().isoformat(), "lines": {str(n): decision[n] for n in sorted(decision)}}
     path.write_text(json.dumps(data, indent=1) + "\n")
     return path
 
@@ -294,6 +302,9 @@ def evaluate_lab(lab_dir: Path, ev: Evidence, review: dict[str, str] | None = No
         text = page.read_text(encoding="utf-8")
         for cmd in extract.commands(text):
             where = {"line": cmd.line, "heading": cmd.heading}
+            if review.get(str(cmd.line)) == "optional":
+                findings += _optional_step(ev, cmd, where)
+                continue
             if cmd.service not in extract.services():
                 findings.append(Finding("blocked", "unknown-service", f"aws {cmd.cli}: not an AWS service botocore knows", **where))
                 continue
