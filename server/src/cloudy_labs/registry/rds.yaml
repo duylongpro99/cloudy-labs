@@ -230,7 +230,7 @@
       api: CreateDBInstance
       gesture: create
       title: "Tạo RDS DB instance"
-      fields: [DBInstanceIdentifier, Engine, DBInstanceClass, MasterUsername, MasterUserPassword, AllocatedStorage, StorageType, MaxAllocatedStorage, DBSubnetGroupName, VpcSecurityGroupIds, MultiAZ, PubliclyAccessible, DBParameterGroupName, OptionGroupName, DBClusterIdentifier]
+      fields: [DBInstanceIdentifier, Engine, DBInstanceClass, MasterUsername, MasterUserPassword, AllocatedStorage, StorageType, MaxAllocatedStorage, DBSubnetGroupName, VpcSecurityGroupIds, MultiAZ, PubliclyAccessible, DBParameterGroupName, OptionGroupName, {name: DBClusterIdentifier, ref: db-cluster, ref_by: label, required: false}]
       choices: {Engine: [postgres, mysql, mariadb, aurora-postgresql, aurora-mysql]}
       defaults: {Engine: postgres, DBInstanceClass: db.t3.micro}
       result_id: DBInstance.DBInstanceArn

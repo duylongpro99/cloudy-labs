@@ -16,7 +16,7 @@ from pydantic import BaseModel, ConfigDict, ValidationError, field_validator
 from ..builder.catalog import BuilderOp, OpError, op_named, practice_expectation, prepare, server_field_problem
 from ..builder.ec2_choices import Choices
 from ..builder.sanitize import Problem
-from ..graph.schema import ResourceGraph
+from ..graph.schema import Node, ResourceGraph
 from ..labs.schema import Lab
 from . import provider
 from .prompt import system_prompt
@@ -123,6 +123,19 @@ def _short_error(e: ValidationError | ValueError) -> str:
     return str(e)[:300]
 
 
+def _ahead(graph: ResourceGraph, earlier: list[RawStep]) -> ResourceGraph:
+    """The scene as a step will find it: what earlier create steps make by name (an Aurora cluster
+    its member instance names) is there too. Only registry ops: the hand-written ones check props."""
+    made = []
+    for n, raw in enumerate(earlier, start=1):
+        op = op_named(raw.op)
+        if op is None or op.legacy or op.gesture != "create" or not op.spec.expect:
+            continue
+        if isinstance(name := raw.params.get(op.spec.expect.label), str):
+            made.append(Node(id=f"step-{n}", kind=op.spec.expect.kind or op.creates or op.kind, label=name))
+    return graph.model_copy(update={"nodes": [*graph.nodes, *made]}) if made else graph
+
+
 def check_step(n: int, raw: RawStep, earlier: list[RawStep], lab: Lab, graph: ResourceGraph,
                azs: list[str], choices: Choices) -> Step:
     """Step `n` (1-based), given the steps before it."""
@@ -168,7 +181,7 @@ def check_step(n: int, raw: RawStep, earlier: list[RawStep], lab: Lab, graph: Re
             return step
     step.deferred = any(isinstance(v, Ref) for v in raw.params.values())
     try:
-        prepared = prepare(op, values, graph=graph, azs=azs, choices=choices, tags=lab.builder.tags,
+        prepared = prepare(op, values, graph=graph if op.legacy else _ahead(graph, earlier), azs=azs, choices=choices, tags=lab.builder.tags,
                            check=not step.deferred)
     except OpError as e:
         step.problems.append(Problem("", str(e)))

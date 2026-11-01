@@ -149,3 +149,23 @@ def test_model_cannot_send_current_groups():
     result, _ = ask(answer(("modify-instance-attribute", {"instanceId": INSTANCE, "groupId": SG_DEFAULT,
                                                           "currentGroups": ""})), lab=LAB07)
     assert "currentGroups" in fields(result.steps[0])
+
+
+RDS_LAB = LAB06.model_copy(update={"builder": LAB06.builder.model_copy(update={"palette": ["db-cluster", "db-instance"]})})
+CLUSTER = ("create-db-cluster", {"DBClusterIdentifier": "aurora", "Engine": "aurora-mysql",
+                                 "MasterUsername": "admin", "MasterUserPassword": "Secret-pass-1"})
+
+
+def member(cluster):
+    return ("create-db-instance", {"DBInstanceIdentifier": "aurora-writer", "Engine": "aurora-mysql",
+                                   "DBInstanceClass": "db.t4g.medium", "DBClusterIdentifier": cluster})
+
+
+def test_a_member_of_a_cluster_nobody_makes_is_caught():
+    result, _ = ask(answer(member("aurora")), lab=RDS_LAB)
+    assert fields(result.steps[0]) == ["DBClusterIdentifier"] and "not in the scene" in result.steps[0].problems[0].message
+
+
+def test_a_member_may_name_the_cluster_an_earlier_step_makes():
+    result, _ = ask(answer(CLUSTER, member("aurora")), lab=RDS_LAB)
+    assert [s.problems for s in result.steps] == [[], []] and not result.steps[1].deferred
